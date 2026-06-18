@@ -77,6 +77,22 @@ generation:
   max_output_tokens: 4096
 ```
 
+## Pre-flight check (doctor)
+
+Before running an evaluation, check the environment:
+
+```bash
+./cada0001_alpha --doctor        # or:  python3 -m cada.doctor  /  python3 scripts/doctor.py
+```
+
+It verifies, in order: **Python** (uv installed → `.venv` present → packages
+inside `.venv`; if uv or `.venv` is missing the section fails and the host Python
+is *not* inspected); **external tools** (`abc` required, `yosys` fallback —
+resolved the same way the agent resolves them, then actually executed, so a
+present-but-broken binary, e.g. a glibc/arch mismatch, is caught); the **config
+files** and optional LLM key; and the **agent package** itself (import + parse a
+testcase).  Exit code is non-zero on hard failures.
+
 ## External tool locations (avoid relying on $PATH)
 
 Pin `abc`/`yosys` (and any other tool) in **`configs/tools.yaml`**, which is

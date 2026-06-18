@@ -53,6 +53,16 @@ generation:
   max_output_tokens: 4096
 ```
 
+## 環境自檢(doctor)
+
+評測前先檢查環境裝齊了沒:
+
+```bash
+./cada0001_alpha --doctor        # 或:python3 -m cada.doctor / python3 scripts/doctor.py
+```
+
+依序檢查:**Python**(先看有沒有裝 uv → 有的話看 `.venv/` 在不在 → 套件都查 `.venv` 裡的;只要 uv 或 `.venv` 不在,這段直接 fail,**不會去檢查 host 的 Python**);**外部工具**(`abc` 必要、`yosys` 備援,用跟 agent 一樣的順序解析路徑後**實際執行一次**,所以「檔案在但跑不起來」例如 glibc/架構不合也會被抓出來);**設定檔**與選用的 LLM key;以及 **agent 套件本身**(import + 解析一個 testcase)。有 hard failure 時 exit code 非 0。
+
 ## 指定外部工具位置(不靠 $PATH)
 
 在 **`configs/tools.yaml`**(會自動載入)裡指定 `abc`/`yosys`(或其他工具)的絕對路徑,就不必把它們放進 `$PATH`:

@@ -25,6 +25,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Path to a tools file pinning abc/yosys/... locations")
     p.add_argument("--log-dir", dest="log_dir", default=".",
                    help="Directory for <case_name>.log files")
+    p.add_argument("--doctor", dest="doctor", action="store_true",
+                   help="Run environment pre-flight checks and exit")
     return p
 
 
@@ -44,6 +46,9 @@ def _configure_tools(config, tools_file):
 
 def main(argv=None) -> int:
     args = build_arg_parser().parse_args(argv)
+    if args.doctor:
+        from .doctor import main as doctor_main
+        return doctor_main()
     config = load_config(args.config)
     _configure_tools(config, args.tools)
     agent = Agent(config)
