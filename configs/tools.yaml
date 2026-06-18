@@ -9,5 +9,9 @@
 # `abc` at the real binary, not a wrapper, so resyn2/dc2 aliases resolve.
 
 tools:
-  abc: /home/as6325400/abc/abc
-  yosys: /usr/local/bin/yosys
+  # abc is required (equivalence + optimization). Set it to YOUR abc binary:
+  abc: /project/cad11/cada1125/abc/abc
+
+  # yosys is an optional fallback that the benchmark never actually invokes,
+  # so you can leave it commented out. Uncomment and set a path if you have it:
+  # yosys: /path/to/yosys
