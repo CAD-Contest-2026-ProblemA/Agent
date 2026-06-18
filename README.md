@@ -32,6 +32,26 @@ equivalence / cost-ranked-synthesis oracles.
   benchmark never calls the LLM) and `PyYAML` (config parsing; falls back to a
   built-in mini-parser if absent).
 
+## Get the code
+
+To clone the repository contents **directly into the current folder** (no extra
+`Agent/` subdirectory), pass `.` as the target — the current directory must be
+empty:
+
+```bash
+mkdir my-submission && cd my-submission
+git clone https://github.com/CAD-Contest-2026-ProblemA/Agent.git .
+```
+
+Or clone into a folder of your choosing:
+
+```bash
+git clone https://github.com/CAD-Contest-2026-ProblemA/Agent.git <folder> && cd <folder>
+```
+
+(If the target directory is not empty, `git clone … .` refuses; clone into a temp
+dir and move the contents instead.)
+
 ## Quick start (recommended: uv)
 
 `uv` fetches a self-contained modern Python (built on old glibc, so it runs on
