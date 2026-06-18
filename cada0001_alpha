@@ -9,6 +9,8 @@
 set -uo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PYTHONPATH="${HERE}${PYTHONPATH:+:${PYTHONPATH}}"
+# deterministic, reproducible output (stable set/dict-of-strings iteration order)
+export PYTHONHASHSEED=0
 
 PY=""
 if [ -x "${HERE}/.venv/bin/python" ]; then

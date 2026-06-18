@@ -3,7 +3,7 @@ Loaded gate-level Verilog from "testcase/test32/test32.v" successfully. Detected
 Total gate count: 14094 AND: 0 OR: 239 NOT: 726 NAND: 9347 NOR: 1192 XOR: 49 XNOR: 592 BUF: 1 DFF: 1948
 No gate named whether exists.
 The design has 12 primary input ports (57 bits) and 17 primary output ports (244 bits).
-There are 45173 register-to-register connections through combinational logic. Examples: g926->g868, g1003->g868, g903->g868, g868->g868, g992->g868, g926->g869, g1003->g869, g903->g869, g868->g869, g992->g869, g869->g869, g992->g870, g869->g870, g1003->g870, g926->g870, g903->g870, g870->g870, g868->g870, g871->g871, g992->g871, g869->g871, g1003->g871, g926->g871, g903->g871, g868->g871, g870->g871, g871->g872, g992->g872, g869->g872, g1003->g872
+There are 45173 register-to-register connections through combinational logic. Examples: g926->g868, g992->g868, g1003->g868, g903->g868, g868->g868, g926->g869, g992->g869, g1003->g869, g903->g869, g868->g869, g869->g869, g926->g870, g992->g870, g1003->g870, g903->g870, g868->g870, g869->g870, g870->g870, g926->g871, g992->g871, g1003->g871, g903->g871, g868->g871, g869->g871, g870->g871, g871->g871, g926->g872, g992->g872, g1003->g872, g903->g872
 Replaced 0 NAND gate(s) tied to constant 1 with inverters; equivalence verified.
 There are currently 726 NOT gates in the design.
 No combinational path from n2 to n12 exists.

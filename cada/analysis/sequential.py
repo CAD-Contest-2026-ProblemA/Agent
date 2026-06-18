@@ -30,7 +30,9 @@ def reg_to_reg_pairs(nl: Netlist, limit: int = 200) -> Tuple[int, List[Tuple[str
     count = 0
     for dst in nl.dffs:
         cone = cones.transitive_fanin(nl, dst.d)
-        for q in cone:
+        # iterate in a deterministic order (set iteration order depends on
+        # PYTHONHASHSEED, which would make the reported examples non-reproducible)
+        for q in sorted(cone):
             if q in q_to_ffs:
                 for src in q_to_ffs[q]:
                     count += 1
