@@ -1,1 +1,135 @@
-# Agent
+# CADA — LLM-Assisted Netlist Exploration and Transformation
+
+An entry for **ICCAD 2026 Contest Problem A**.  The system accepts
+natural-language requests on stdin, interprets each one, runs the corresponding
+analysis / transformation / optimization on a gate-level Verilog netlist, and
+streams answers back as `#RESPONSE <id>` … `#END <id>` frames (mirrored to
+`<case_name>.log`).
+
+> 中文版說明請見 [README_ZH.md](README_ZH.md)。
+
+## Design in one sentence
+
+A **deterministic gate-level EDA engine** wrapped in a **thin natural-language
+front end**: a rule-based regex router maps each (highly templated) request to
+one structured intent, and an LLM is used *only* as a fallback translator that
+turns an unrecognised line into one `{"intent", "params"}` object — it never
+reasons about the circuit.  All correctness-critical work (parsing, analysis,
+transforms, equivalence) is deterministic Python; ABC/yosys are used only as
+equivalence / cost-ranked-synthesis oracles.
+
+## Requirements
+
+* A Python interpreter — **3.8+** (the project itself is pure-stdlib for the
+  benchmark path).
+* `abc` and `yosys` on `PATH` (or `ABC_BIN` pointing at the ABC binary) — used
+  as equivalence / optimization back ends.
+* Optional, only for the LLM fallback: `PyYAML`, `openai`, `anthropic`.
+
+## Quick start (recommended: uv)
+
+`uv` fetches a self-contained modern Python (built on old glibc, so it runs on
+old contest machines too) independent of the system Python:
+
+```bash
+bash setup.sh        # one-time: uv creates .venv with Python 3.12 (+ optional deps)
+
+# run exactly like the contest harness:
+./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+```
+
+The `cada0001_alpha` launcher prefers `.venv/bin/python`; if `.venv` is absent
+but `uv` is present it bootstraps once; otherwise it falls back to the system
+`python3`.
+
+### Without uv
+
+```bash
+pip install -r requirements.txt     # only needed for the LLM fallback
+./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+```
+
+The benchmark runs fully **offline** with no third-party packages — the config
+parser falls back to a built-in mini-parser, and the regex router covers all 40
+testcases (the LLM is never invoked on them).
+
+## Configuration (`-config`)
+
+Same shape as the contest's Figure 6.  Drop your key into
+`configs/default.yaml`:
+
+```yaml
+provider: "openai"          # or: "anthropic"
+openai:
+  api_key: <YOUR_API_KEY>
+  model: "gpt-4o-mini"
+anthropic:
+  api_key: <YOUR_API_KEY>
+  model: "claude-haiku-4-5"
+generation:
+  temperature: 0.2
+  max_output_tokens: 4096
+```
+
+## Local testing
+
+```bash
+python3 scripts/run_local.py testcase/test22          # one case to stdout
+python3 scripts/run_local.py --all                    # every case
+```
+
+## Architecture
+
+```
+stdin ─► io_/protocol ─► agent/agent (regex router; LLM fallback)
+                              │
+            ┌─────────────────┼──────────────────────────┐
+            ▼                 ▼                           ▼
+       analysis/*        transform/*  ── guards ──►  optimize/abc_opt
+   counts depth paths    rewrite constprop           (cost-ranked, ABC)
+   cones connectivity    cleanup buffering naming           │
+   functional sequential        │                           │
+            │                    ▼                           ▼
+            └────────►  netlist/ir  (single source of truth) ◄── equiv/gate
+                         reader · writer · blif_export        (ABC cec / yosys)
+                              │
+                  #RESPONSE/#END ─► stdout + <case>.log  (flushed every frame)
+```
+
+| Area | Module | Purpose |
+|------|--------|---------|
+| IR | `netlist/ir.py` | Flat gate-level netlist; gates, named-port DFFs, driver/loads, snapshots |
+| Parse/emit | `netlist/reader.py`, `netlist/writer.py` | Self-written Verilog parser + canonical structural writer (round-trips exactly) |
+| Equivalence | `netlist/blif_export.py`, `equiv/*` | Register-cut BLIF → ABC `cec`; yosys fallback |
+| Analysis | `analysis/*` | counts, cones, depth, connectivity, paths (DP, never materialised), functional (ABC/SAT), sequential |
+| Transform | `transform/*` | basis remap, XOR/XNOR decomposition, constant propagation, dangling removal, fixpoint duplicate merge, buffer trees, renaming |
+| Optimize | `optimize/abc_opt.py` | Depth/area minimisation via ABC + unit-delay genlib mapping, basis-preserving, cec-guarded |
+| Agent | `agent/*` | rule router, request state + snapshots + transform deltas |
+| LLM | `llm/*` | thin dual-provider client + cached fallback translator |
+
+## Correctness model
+
+* Every structural transform is **equivalence-preserving by construction** and
+  is additionally checked with a register-cut combinational `cec` before
+  commit; any violation rolls back to the pre-transform snapshot.
+* Basis conversion uses **pure-Python templates** (no ABC technology mapping),
+  so the classic ABC `zero`/`one` cell leak never reaches the output and basis
+  purity is guaranteed.
+* Paths are **counted with a topological DP** (exact big-integer counts) and
+  enumerated only under a bounded threshold — path sets are never materialised.
+* Depth is measured as the contest defines it (one gate = one level, inverters
+  included); the optimizer maps to a unit-delay library so ABC minimises that
+  same metric.
+
+Validation: all 40 testcases run end-to-end with correct framing, every prompt
+line maps to a specific EDA operation, and every output netlist is ABC-verified
+functionally equivalent to its input.
+
+## Notes / tunable semantics
+
+A few "exactly-correct-or-zero" conventions (path-enumeration output format,
+"wire is a cut" definition, enable/hold strict-vs-broad counting, Boolean
+equation over register-state leaves) are centralised and documented; adjust them
+against an official sample if the grader's wording differs.  The DFF model is the
+general named-port form `dff(.RN,.SN,.CK,.D,.Q)` with both asynchronous
+active-low reset (RN) and set (SN) handled per-instance (reset dominates set).

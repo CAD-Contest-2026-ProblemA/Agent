@@ -1,0 +1,13 @@
+provider: "openai"          # or: "anthropic"
+
+openai:
+  api_key: <YOUR_API_KEY>
+  model: "gpt-4o-mini"
+
+anthropic:
+  api_key: <YOUR_API_KEY>
+  model: "claude-haiku-4-5"
+
+generation:
+  temperature: 0.2
+  max_output_tokens: 4096

@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# ICCAD 2026 Problem A — contest executable.
+# Usage: ./cada0001_alpha -config <config_file>
+#
+# Runs the agent under a uv-managed Python if available (see setup.sh), so the
+# contest machine's own Python version does not matter. Falls back to a one-time
+# uv bootstrap, then to the system python3.  The working directory is left
+# unchanged so relative file paths in the requests resolve as the harness expects.
+set -uo pipefail
+HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export PYTHONPATH="${HERE}${PYTHONPATH:+:${PYTHONPATH}}"
+
+PY=""
+if [ -x "${HERE}/.venv/bin/python" ]; then
+  PY="${HERE}/.venv/bin/python"
+elif command -v uv >/dev/null 2>&1; then
+  # one-time bootstrap (quiet); safe to re-run
+  uv venv --python "${CADA_PYTHON:-3.12}" "${HERE}/.venv" >/dev/null 2>&1 || \
+    uv venv "${HERE}/.venv" >/dev/null 2>&1 || true
+  uv pip install --python "${HERE}/.venv/bin/python" -r "${HERE}/requirements.txt" >/dev/null 2>&1 || true
+  [ -x "${HERE}/.venv/bin/python" ] && PY="${HERE}/.venv/bin/python"
+fi
+[ -z "${PY}" ] && PY="$(command -v python3 || command -v python)"
+
+exec "${PY}" -m cada.main "$@"

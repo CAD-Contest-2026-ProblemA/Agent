@@ -1,0 +1,17 @@
+[project]
+name = "cada"
+version = "0.1.0"
+description = "LLM-Assisted Netlist Exploration and Transformation (ICCAD 2026 Problem A)"
+requires-python = ">=3.8"
+# The benchmark runs with ZERO third-party packages (config has a built-in
+# mini-parser fallback). These deps only enable the optional LLM fallback and
+# nicer YAML parsing.
+dependencies = ["PyYAML>=6.0"]
+
+[project.optional-dependencies]
+llm = ["openai>=1.40", "anthropic>=0.40"]
+
+[tool.uv]
+# This is run via `python -m cada.main` (PYTHONPATH), not installed as a wheel,
+# so uv should not try to build/install the project itself.
+package = false
