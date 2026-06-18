@@ -1,0 +1,20 @@
+Acknowledged. Initialized testcase "test32". All subsequent responses will be recorded to test32.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test32/test32.v" successfully. Detected a single top module (flat netlist) with 12146 combinational gates and 1948 flip-flops. Design state has been updated.
+Total gate count: 14094 AND: 0 OR: 239 NOT: 726 NAND: 9347 NOR: 1192 XOR: 49 XNOR: 592 BUF: 1 DFF: 1948
+No gate named whether exists.
+The design has 12 primary input ports (57 bits) and 17 primary output ports (244 bits).
+There are 45173 register-to-register connections through combinational logic. Examples: g926->g868, g1003->g868, g903->g868, g868->g868, g992->g868, g926->g869, g1003->g869, g903->g869, g868->g869, g992->g869, g869->g869, g992->g870, g869->g870, g1003->g870, g926->g870, g903->g870, g870->g870, g868->g870, g871->g871, g992->g871, g869->g871, g1003->g871, g926->g871, g903->g871, g868->g871, g870->g871, g871->g872, g992->g872, g869->g872, g1003->g872
+Replaced 0 NAND gate(s) tied to constant 1 with inverters; equivalence verified.
+There are currently 726 NOT gates in the design.
+No combinational path from n2 to n12 exists.
+Renamed wire n1214 to renamed_wire and updated all references.
+Verified: the current design is functionally equivalent to the original loaded netlist.
+The fanout of n0 is 1948. It directly drives: g868, g869, g870, g871, g872, g873, g874, g875, g876, g877, g878, g879, g880, g881, g882, g883, g884, g885, g886, g887, g888, g889, g890, g891, g892, g893, g894, g895, g896, g897, g898, g899, g900, g901, g902, g903, g904, g905, g906, g907, g908, g909, g910, g911, g912, g913, g914, g915, g916, g917, g918, g919, g920, g921, g922, g923, g924, g925, g926, g927, g928, g929, g930, g931, g932, g933, g934, g935, g936, g937, g938, g939, g940, g941, g942, g943, g944, g945, g946, g947, g948, g949, g950, g951, g952, g953, g954, g955, g956, g957, g958, g959, g960, g961, g962, g963, g964, g965, g966, g967, g968, g969, g970, g971, g972, g973, g974, g975, g976, g977, g978, g979, g980, g981, g982, g983, g984, g985, g986, g987, g988, g989, g990, g991, g992, g993, g994, g995, g996, g997, g998, g999, g1000, g1001, g1002, g1003, g1004, g1005, g1006, g1007, g1008, g1009, g1010, g1011, g1012, g1013, g1014, g1015, g1016, g1017, g1018, g1019, g1020, g1021, g1022, g1023, g1024, g1025, g1026, g1027, g1028, g1029, g1030, g1031, g1032, g1033, g1034, g1035, g1036, g1037, g1038, g1039, g1040, g1041, g1042, g1043, g1044, g1045, g1046, g1047, g1048, g1049, g1050, g1051, g1052, g1053, g1054, g1055, g1056, g1057, g1058, g1059, g1060, g1061, g1062, g1063, g1064, g1065, g1066, g1067
+The fan-in cone of n12 contains 8 gates.
+Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
+0
+No NAND gates with constant inputs were found.
+Constant propagation eliminated 0 NAND gate(s); equivalence verified.
+0
+There are no combinational paths from n2 to n12.
+Wrote the current netlist to "test32_out.v" successfully.

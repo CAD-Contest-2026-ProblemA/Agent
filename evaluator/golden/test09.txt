@@ -1,0 +1,8 @@
+Acknowledged. Initialized testcase "test09". All subsequent responses will be recorded to test09.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test09/test09.v" successfully. Detected a single top module (flat netlist) with 1981 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 1981 AND: 439 OR: 328 NOT: 549 NAND: 0 NOR: 248 XOR: 44 XNOR: 195 BUF: 178 DFF: 0
+Yes. A combinational path from n0 to n117[0] that avoids n1816 exists.
+No. There is no combinational path from n1 to n117[1] that avoids n1646.
+There are no combinational paths from n1 to n117[1].
+There are no combinational paths from n2 to n117[0].
+Wrote the current netlist to "test09_out.v" successfully.

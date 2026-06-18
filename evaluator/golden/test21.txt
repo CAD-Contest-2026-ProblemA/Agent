@@ -1,0 +1,5 @@
+Acknowledged. Initialized testcase "test21". All subsequent responses will be recorded to test21.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test21/test21.v" successfully. Detected a single top module (flat netlist) with 343 combinational gates and 55 flip-flops. Design state has been updated.
+Total gate count: 398 AND: 0 OR: 8 NOT: 43 NAND: 227 NOR: 57 XOR: 1 XNOR: 7 BUF: 0 DFF: 55
+Inserted 30 buffer(s) so that no driver exceeds 4 loads; max-fanout bound and equivalence verified.
+Wrote the current netlist to "test21_out.v" successfully.

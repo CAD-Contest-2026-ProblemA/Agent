@@ -1,0 +1,9 @@
+Acknowledged. Initialized testcase "test10". All subsequent responses will be recorded to test10.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test10/test10.v" successfully. Detected a single top module (flat netlist) with 4836 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 4836 AND: 903 OR: 1076 NOT: 1293 NAND: 0 NOR: 339 XOR: 82 XNOR: 807 BUF: 336 DFF: 0
+Yes. A combinational path from n12 to n25[0] that avoids n1127 exists.
+No. There is no combinational path from n13 to n25[1] that avoids n4156.
+There are no combinational paths from n13 to n25[1].
+There are 1 path(s) from n14 to n25[0]: n14 -> g605 -> g624 -> g623 -> g643 -> g642 -> g610 -> g1644 -> g1485 -> g1042 -> g945 -> n25[0]
+The maximum combinational logic depth from n12 to n25[0] is 10.
+Wrote the current netlist to "test10_out.v" successfully.

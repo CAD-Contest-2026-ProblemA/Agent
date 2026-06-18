@@ -1,0 +1,18 @@
+Acknowledged. Initialized testcase "test19". All subsequent responses will be recorded to test19.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test19/test19.v" successfully. Detected a single top module (flat netlist) with 688 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 688 AND: 190 OR: 128 NOT: 161 NAND: 0 NOR: 16 XOR: 3 XNOR: 71 BUF: 119 DFF: 0
+Yes. A combinational path from n3 to n17[0] that avoids n269 exists.
+No. There is no combinational path from n4 to n17[1] that avoids n269.
+There are no combinational paths from n4 to n17[1].
+There are 16 path(s) from n5 to n17[0]: n5 -> g42 -> g23 -> g10 -> g3 -> g2 -> g430 -> g423 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g23 -> g10 -> g3 -> g2 -> g430 -> g423 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g23 -> g10 -> g3 -> g2 -> g434 -> g431 -> g423 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g23 -> g10 -> g3 -> g2 -> g434 -> g431 -> g423 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g23 -> g18 -> g0 -> g74 -> g83 -> g82 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g23 -> g18 -> g0 -> g74 -> g83 -> g82 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g2 -> g430 -> g423 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g2 -> g430 -> g423 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g2 -> g434 -> g431 -> g423 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g2 -> g434 -> g431 -> g423 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g31 -> g47 -> g80 -> g74 -> g83 -> g82 -> g70 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g42 -> g35 -> g31 -> g47 -> g80 -> g74 -> g83 -> g82 -> g70 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g78 -> g59 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g78 -> g59 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g81 -> g67 -> g90 -> g88 -> g62 -> g55 -> g158 -> g124 -> g173 -> g617 -> g607 -> n17[0] n5 -> g81 -> g67 -> g90 -> g88 -> g62 -> g55 -> g502 -> g113 -> g133 -> g124 -> g173 -> g617 -> g607 -> n17[0]
+The maximum combinational logic depth from n3 to n17[0] is 12.
+There is no combinational path from n4 to n17[1] (depth 0).
+The maximum combinational logic depth from n5 to n17[0] is 18.
+Gate g0 drives 1 gate(s): g74
+Could not identify the two endpoints for path enumeration.
+The transitive fan-in cone of n17[0] contains 82 gates.
+The transitive fan-out cone of n3 contains 421 gates.
+No. Signals n296 and n269 are not functionally equivalent.
+No. Signals n273 and n275 are not functionally equivalent.
+No. Signals n270 and n243 are not functionally equivalent.
+Wrote the current netlist to "test19_out.v" successfully.

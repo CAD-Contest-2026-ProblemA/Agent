@@ -136,6 +136,35 @@ python3 scripts/run_local.py testcase/test22          # one case to stdout
 python3 scripts/run_local.py --all                    # every case
 ```
 
+## Evaluator (local self-check)
+
+The contest ships no golden answers, so the evaluator rigorously checks what
+*can* be verified locally and snapshots the rest:
+
+```bash
+python3 evaluator/evaluate.py                  # all cases
+python3 evaluator/evaluate.py test21 test40    # selected cases
+python3 evaluator/evaluate.py --verbose        # show every check
+python3 evaluator/evaluate.py --update-golden   # pin current responses as baseline
+```
+
+Per case it reports four groups:
+
+* **HARD** — the binary 0-score gate, checked *independently* and auto-derived
+  from each request's wording: functional equivalence to the original (ABC
+  `cec`), structural bounds ("no gate/signal drives > K"), gate-basis purity
+  (whole design or a cone), and a valid round-tripping output netlist.
+* **DERIVED** — answers with an objective value computed a second way (gate-type
+  counts and PI/PO counts straight from the `.v`).
+* **GOLDEN** — every response diffed against a pinned baseline in
+  `evaluator/golden/` (regression detection).
+* **OPT** — the achieved optimize cost (max depth / gate count); lower ranks better.
+
+Exit code is non-zero if any HARD requirement fails.  Note: the golden baseline
+is the *current engine's* output, not official answers — it catches drift, not
+correctness.  Drop the organizers' answers into `evaluator/golden/<case>.txt`
+(one normalized response per line) to grade for real.
+
 ## Architecture
 
 ```

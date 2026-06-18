@@ -1,0 +1,5 @@
+Acknowledged. Initialized testcase "test06". All subsequent responses will be recorded to test06.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test06/test06.v" successfully. Detected a single top module (flat netlist) with 721 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 721 AND: 89 OR: 104 NOT: 185 NAND: 0 NOR: 208 XOR: 74 XNOR: 23 BUF: 38 DFF: 0
+Yes. A combinational path from n0[0] to n4 that avoids n719 exists.
+Wrote the current netlist to "test06_out.v" successfully.

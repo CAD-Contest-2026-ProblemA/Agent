@@ -1,0 +1,11 @@
+Acknowledged. Initialized testcase "test12". All subsequent responses will be recorded to test12.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test12/test12.v" successfully. Detected a single top module (flat netlist) with 91583 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 91583 AND: 18359 OR: 26146 NOT: 17450 NAND: 1 NOR: 5855 XOR: 1834 XNOR: 18954 BUF: 2984 DFF: 0
+Yes. A combinational path from n24[0] to n26[0] that avoids n86984 exists.
+Yes. A combinational path from n24[1] to n26[1] that avoids n87234 exists.
+There are 8 path(s) from n24[1] to n26[1]: n24[1] -> g1473 -> g1428 -> g1515 -> g685 -> g28072 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g8575 -> g7951 -> g6923 -> n26[1] n24[1] -> g1473 -> g1428 -> g1515 -> g685 -> g28072 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g9493 -> g8574 -> g7951 -> g6923 -> n26[1] n24[1] -> g30723 -> g28072 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g8575 -> g7951 -> g6923 -> n26[1] n24[1] -> g30723 -> g28072 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g9493 -> g8574 -> g7951 -> g6923 -> n26[1] n24[1] -> g31063 -> g30161 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g8575 -> g7951 -> g6923 -> n26[1] n24[1] -> g31063 -> g30161 -> g23625 -> g20018 -> g17076 -> g13652 -> g11610 -> g9617 -> g9493 -> g8574 -> g7951 -> g6923 -> n26[1] n24[1] -> g34447 -> g31896 -> g23923 -> g20211 -> g16846 -> g13932 -> g11516 -> g8575 -> g7951 -> g6923 -> n26[1] n24[1] -> g34447 -> g31896 -> g23923 -> g20211 -> g16846 -> g13932 -> g11516 -> g11274 -> g8574 -> g7951 -> g6923 -> n26[1]
+There are no combinational paths from n24[2] to n26[0].
+The maximum combinational logic depth from n24[0] to n26[0] is 11.
+The maximum combinational logic depth from n24[1] to n26[1] is 15.
+Gate g0 drives 1 gate(s): g39905
+Wrote the current netlist to "test12_out.v" successfully.

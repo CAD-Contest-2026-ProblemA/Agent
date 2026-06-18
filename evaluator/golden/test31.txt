@@ -1,0 +1,20 @@
+Acknowledged. Initialized testcase "test31". All subsequent responses will be recorded to test31.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test31/test31.v" successfully. Detected a single top module (flat netlist) with 5384 combinational gates and 844 flip-flops. Design state has been updated.
+Total gate count: 6228 AND: 0 OR: 239 NOT: 543 NAND: 3726 NOR: 550 XOR: 32 XNOR: 294 BUF: 0 DFF: 844
+344 gate(s) are reachable from n2: g1870, g1871, g1873, g1874, g1952, g1953, g1954, g1955, g2093, g2094, g2095, g2096, g2100, g2167, g2168, g2169, g2173, g2175, g2176, g2179, g2182, g2186, g2187, g2189, g2193, g2199, g2200, g2201, g2202, g2203, g2206, g2207, g2208, g2209, g2210, g2228, g2251, g2252, g2263, g2294, g2417, g2523, g2633, g2634, g2636, g2637, g2638, g2639, g2640, g2641, g2642, g2643, g2644, g2645, g2646, g2647, g2648, g2737, g2741, g2750, g2751, g2752, g2754, g2755, g2756, g2757, g2758, g2759, g2760, g2761, g2762, g2763, g2764, g2765, g2766, g2767, g2768, g2769, g2770, g2771, g2859, g2860, g2861, g2862, g2863, g2864, g2865, g2866, g2867, g2868, g2869, g2870, g2871, g2872, g2873, g2874, g2875, g2876, g2880, g2881
+Collapsed 8 back-to-back inverter pair(s) into direct wires; equivalence verified.
+Verified: the current design is functionally equivalent to the pre-transformation netlist.
+The fanout of n0 is 844. It directly drives: g906, g907, g908, g909, g910, g911, g912, g913, g914, g915, g916, g917, g918, g919, g920, g921, g922, g923, g924, g925, g926, g927, g928, g929, g930, g931, g932, g933, g934, g935, g936, g937, g938, g939, g940, g941, g942, g943, g944, g945, g946, g947, g948, g949, g950, g951, g952, g953, g954, g955, g956, g957, g958, g959, g960, g961, g962, g963, g964, g965, g966, g967, g968, g969, g970, g971, g972, g973, g974, g975, g976, g977, g978, g979, g980, g981, g982, g983, g984, g985, g986, g987, g988, g989, g990, g991, g992, g993, g994, g995, g996, g997, g998, g999, g1000, g1001, g1002, g1003, g1004, g1005, g1006, g1007, g1008, g1009, g1010, g1011, g1012, g1013, g1014, g1015, g1016, g1017, g1018, g1019, g1020, g1021, g1022, g1023, g1024, g1025, g1026, g1027, g1028, g1029, g1030, g1031, g1032, g1033, g1034, g1035, g1036, g1037, g1038, g1039, g1040, g1041, g1042, g1043, g1044, g1045, g1046, g1047, g1048, g1049, g1050, g1051, g1052, g1053, g1054, g1055, g1056, g1057, g1058, g1059, g1060, g1061, g1062, g1063, g1064, g1065, g1066, g1067, g1068, g1069, g1070, g1071, g1072, g1073, g1074, g1075, g1076, g1077, g1078, g1079, g1080, g1081, g1082, g1083, g1084, g1085, g1086, g1087, g1088, g1089, g1090, g1091, g1092, g1093, g1094, g1095, g1096, g1097, g1098, g1099, g1100, g1101, g1102, g1103, g1104, g1105
+No. Output n16 is not constant; it depends on the inputs.
+0 gate(s) are shared between the fan-in cones of n16 and n17: (none)
+The Boolean equation for n16 has too large a support to express compactly in terms of the primary inputs.
+Gates connected to the output of g0: g771
+Renamed signal n1289 to renamed_sig and updated all references.
+Gates connected to renamed_sig: g4309, g3774, g3875, g3881, g3882, g3884, g3885, g3886, g3888, g3891, g3892, g3893, g3894, g3895, g3897, g3899, g3901, g3902, g3904, g3905, g3907, g3908, g3909, g3911, g3912, g3913, g3914, g3915, g3916, g3917, g3918, g3919, g3921, g4001, g4163, g4171, g4172, g4173, g4174, g4175, g4176, g4177, g4178, g4179, g4182, g4183
+Could not determine the design file to load.
+8
+The maximum logic depth from any primary input to any DFF D-pin is 14.
+186 output(s) have a logic depth greater than 4.
+Gate g0 is a NOT gate. Output: n5015; inputs: n5123.
+No. Signals n1287 and n2404 are not functionally equivalent.
+Wrote the current netlist to "test31_out.v" successfully.

@@ -1,0 +1,9 @@
+Acknowledged. Initialized testcase "test30". All subsequent responses will be recorded to test30.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test30/test30.v" successfully. Detected a single top module (flat netlist) with 768 combinational gates and 150 flip-flops. Design state has been updated.
+Total gate count: 918 AND: 0 OR: 69 NOT: 54 NAND: 264 NOR: 280 XOR: 4 XNOR: 97 BUF: 0 DFF: 150
+Remapped the entire design to AND+NOT gates (714 gates rewritten); functional equivalence verified.
+Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
+Collapsed 952 back-to-back inverter pair(s) into direct wires; equivalence verified.
+Merged 125 structurally-duplicate gate(s); equivalence verified.
+The design is already optimal at depth 23; reported the original (equivalence preserved).
+Wrote the current netlist to "test30_out.v" successfully.

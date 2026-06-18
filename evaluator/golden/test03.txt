@@ -1,0 +1,4 @@
+Acknowledged. Initialized testcase "test03". All subsequent responses will be recorded to test03.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test03/test03.v" successfully. Detected a single top module (flat netlist) with 931 combinational gates and 0 flip-flops. Design state has been updated.
+The fan-in cone of n15 contains 525 gates.
+Wrote the current netlist to "test03_out.v" successfully.

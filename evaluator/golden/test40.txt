@@ -1,0 +1,19 @@
+Acknowledged. Initialized testcase "test40". All subsequent responses will be recorded to test40.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test40/test40.v" successfully. Detected a single top module (flat netlist) with 23349 combinational gates and 2745 flip-flops. Design state has been updated.
+Total gate count: 26094 AND: 0 OR: 811 NOT: 1421 NAND: 17597 NOR: 3100 XOR: 14 XNOR: 401 BUF: 5 DFF: 2745
+Remapped the entire design to NAND+NOT gates (4331 gates rewritten); functional equivalence verified.
+Replaced 0 NAND gate(s) tied to constant 1 with inverters; equivalence verified.
+There are currently 14759 NOT gates in the design.
+Collapsed 3798 back-to-back inverter pair(s) into direct wires; equivalence verified.
+Verified: the current design is functionally equivalent to the original loaded netlist.
+Primary outputs: n9 [32-bit] n10 [32-bit] n11 [32-bit] n13 [1-bit] n15 [4-bit] n14 [1-bit] n12 [32-bit]
+0 XOR gate(s): (none)
+The maximum combinational depth on any register-to-register path is 133.
+2373 flip-flop(s) implement an enable/hold structure in their D-input logic (next state depends on the register's own current state). Examples: g1255, g1256, g1257, g1258, g1259, g1260, g1261, g1262, g1263, g1264, g1265, g1266, g1267, g1268, g1269, g1270, g1271, g1272, g1273, g1274, g1275, g1276, g1277, g1278, g1279, g1280, g1281, g1282, g1283, g1284
+2373 flip-flops were found to have enable or hold structures in their D-input logic.
+Gate g0 is a NOT gate. Output: n11[0]; inputs: n18265.
+Output n12[0] has the largest fan-in cone (4457 gates).
+The cone of n14 is already optimal at depth 2; reported the original (equivalence preserved).
+The maximum logic depth of the cone of n14 is 2.
+The maximum combinational logic depth in the design is 133.
+Wrote the current netlist to "test40_out.v" successfully.

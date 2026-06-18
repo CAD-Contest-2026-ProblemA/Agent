@@ -1,0 +1,16 @@
+Acknowledged. Initialized testcase "test17". All subsequent responses will be recorded to test17.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test17/test17.v" successfully. Detected a single top module (flat netlist) with 3160 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 3160 AND: 734 OR: 645 NOT: 953 NAND: 0 NOR: 123 XOR: 122 XNOR: 313 BUF: 270 DFF: 0
+Yes. A combinational path from n7 to n42[0] that avoids n1034 exists.
+No. There is no combinational path from n8 to n42[1] that avoids n2116.
+There are no combinational paths from n8 to n42[1].
+There are no combinational paths from n9 to n42[0].
+The maximum combinational logic depth from n7 to n42[0] is 20.
+There is no combinational path from n8 to n42[1] (depth 0).
+There is no combinational path from n9 to n42[0] (depth 0).
+Gate g0 drives 3 gate(s): g868, g1193, g1239
+Could not identify the two endpoints for path enumeration.
+The transitive fan-in cone of n42[0] contains 194 gates.
+The transitive fan-out cone of n7 contains 1261 gates.
+No. Signals n2122 and n2116 are not functionally equivalent.
+Wrote the current netlist to "test17_out.v" successfully.

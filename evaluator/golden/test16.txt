@@ -1,0 +1,15 @@
+Acknowledged. Initialized testcase "test16". All subsequent responses will be recorded to test16.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test16/test16.v" successfully. Detected a single top module (flat netlist) with 16098 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 16098 AND: 2677 OR: 3492 NOT: 5244 NAND: 0 NOR: 1669 XOR: 165 XNOR: 2539 BUF: 312 DFF: 0
+No. There is no combinational path from n6 to n33[0] that avoids n16010.
+No. There is no combinational path from n7 to n33[1] that avoids n15819.
+There are no combinational paths from n7 to n33[1].
+There are no combinational paths from n8 to n33[0].
+There is no combinational path from n6 to n33[0] (depth 0).
+There is no combinational path from n7 to n33[1] (depth 0).
+There is no combinational path from n8 to n33[0] (depth 0).
+Gate g0 drives 1 gate(s): g24
+Could not identify the two endpoints for path enumeration.
+The transitive fan-in cone of n33[0] contains 388 gates.
+The transitive fan-out cone of n6 contains 165 gates.
+Wrote the current netlist to "test16_out.v" successfully.

@@ -1,0 +1,17 @@
+Acknowledged. Initialized testcase "test18". All subsequent responses will be recorded to test18.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test18/test18.v" successfully. Detected a single top module (flat netlist) with 8538 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 8538 AND: 1316 OR: 2054 NOT: 2804 NAND: 0 NOR: 820 XOR: 170 XNOR: 1370 BUF: 4 DFF: 0
+No. There is no combinational path from n0[0] to n12 that avoids n1038.
+Yes. A combinational path from n0[1] to n13 that avoids n1080 exists.
+There are 5402 combinational paths from n0[1] to n13 (too many to enumerate explicitly).
+There are no combinational paths from n0[2] to n12.
+There is no combinational path from n0[0] to n12 (depth 0).
+The maximum combinational logic depth from n0[1] to n13 is 55.
+Gate g0 drives 2 gate(s): g1642, g4124
+Could not identify the two endpoints for path enumeration.
+The transitive fan-in cone of n12 contains 3752 gates.
+The transitive fan-out cone of n0[0] contains 567 gates.
+No. Signals n848 and n1080 are not functionally equivalent.
+No. Signals n1039 and n1046 are not functionally equivalent.
+No. Signals n1035 and n1029 are not functionally equivalent.
+Wrote the current netlist to "test18_out.v" successfully.

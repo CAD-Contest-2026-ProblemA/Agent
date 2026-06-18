@@ -1,0 +1,20 @@
+Acknowledged. Initialized testcase "test38". All subsequent responses will be recorded to test38.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test38/test38.v" successfully. Detected a single top module (flat netlist) with 3629 combinational gates and 571 flip-flops. Design state has been updated.
+Total gate count: 4200 AND: 0 OR: 189 NOT: 344 NAND: 2416 NOR: 546 XOR: 9 XNOR: 123 BUF: 2 DFF: 571
+Inserted 147 buffer(s) on n1 so each driver has at most 4 loads; equivalence verified.
+The maximum fanout of n1 is now 4.
+Primary input n0 has the highest fanout (571).
+Collapsed 2 back-to-back inverter pair(s) into direct wires; equivalence verified.
+The maximum combinational logic depth in the design is 26.
+Removed 1 dangling gate(s) that do not affect any primary output; equivalence verified.
+1
+No length-0 paths exist (no primary input directly drives a primary output).
+There are no articulation points between n2 and n14.
+Renamed signal n440 to renamed_wire and updated all references.
+Verified: the current design is functionally equivalent to the original loaded netlist.
+No NAND gates with constant inputs were found.
+Constant propagation eliminated 0 NAND gate(s); equivalence verified.
+0
+Gate-type counts in the cone of n14 (total 11): AND: 0 OR: 2 NOT: 3 NAND: 2 NOR: 4 XOR: 0 XNOR: 0 BUF: 0
+The fan-in cone of n14 contains 11 gates.
+Wrote the current netlist to "test38_out.v" successfully.

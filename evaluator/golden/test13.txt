@@ -1,0 +1,12 @@
+Acknowledged. Initialized testcase "test13". All subsequent responses will be recorded to test13.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test13/test13.v" successfully. Detected a single top module (flat netlist) with 299 combinational gates and 0 flip-flops. Design state has been updated.
+Total gate count: 299 AND: 62 OR: 99 NOT: 36 NAND: 0 NOR: 4 XOR: 7 XNOR: 67 BUF: 24 DFF: 0
+Yes. A combinational path from n2 to n5[0] that avoids n58 exists.
+No. There is no combinational path from n3 to n5[1] that avoids n208.
+There are no combinational paths from n3 to n5[1].
+There are no combinational paths from n4 to n5[0].
+The maximum combinational logic depth from n2 to n5[0] is 3.
+There is no combinational path from n3 to n5[1] (depth 0).
+There is no combinational path from n4 to n5[0] (depth 0).
+Gate g0 drives 1 gate(s): g138
+Wrote the current netlist to "test13_out.v" successfully.

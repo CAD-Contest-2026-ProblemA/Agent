@@ -1,0 +1,4 @@
+Acknowledged. Initialized testcase "test05". All subsequent responses will be recorded to test05.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test05/test05.v" successfully. Detected a single top module (flat netlist) with 3462 combinational gates and 0 flip-flops. Design state has been updated.
+The fanout of n5 is 35. It directly drives: g201, g234, g237, g238, g240, g241, g243, g244, g245, g247, g248, g250, g252, g255, g256, g259, g262, g263, g264, g267, g269, g270, g271, g274, g276, g281, g284, g285, g286, g290, g293, g294, g295, g300, g443
+Wrote the current netlist to "test05_out.v" successfully.

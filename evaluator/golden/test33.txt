@@ -1,0 +1,20 @@
+Acknowledged. Initialized testcase "test33". All subsequent responses will be recorded to test33.log. Design state is empty and ready for commands.
+Loaded gate-level Verilog from "testcase/test33/test33.v" successfully. Detected a single top module (flat netlist) with 60219 combinational gates and 4211 flip-flops. Design state has been updated.
+Total gate count: 64430 AND: 0 OR: 3585 NOT: 4748 NAND: 35261 NOR: 8372 XOR: 355 XNOR: 7748 BUF: 150 DFF: 4211
+No length-0 paths exist (no primary input directly drives a primary output).
+Converted 7748 XNOR gate(s) to NOR-only logic (30992 NOR gates added); functional equivalence verified.
+There are currently 39364 NOR gates in the design.
+Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
+0
+Remapped the cone to NAND+NOT gates (9 gates rewritten); functional equivalence verified.
+There are currently 35270 NAND gates in the design.
+No. Signals n55146 and n55104 are not functionally equivalent.
+There are no combinational paths from n3 to n9.
+No. Output n8 does not depend on input n1.
+Verified: the current design is functionally equivalent to the netlist as last loaded from disk.
+No. Wire whether is not a cut between a primary input and a primary output.
+Primary inputs: n0 [1-bit] n1 [1-bit] n5 [8-bit] n2 [1-bit] n3 [1-bit] n4 [1-bit] n6 [6-bit] n7 [32-bit]
+Merged 2902 structurally-duplicate gate(s); equivalence verified.
+Merged 0 structurally-duplicate gate(s); equivalence verified.
+Optimized the cone of n8: depth reduced from 15 to 14 (basis preserved); equivalence verified.
+Wrote the current netlist to "test33_out.v" successfully.

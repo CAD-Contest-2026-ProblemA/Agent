@@ -99,6 +99,26 @@ python3 scripts/run_local.py testcase/test22          # 單一 case,輸出到 st
 python3 scripts/run_local.py --all                    # 全部 case
 ```
 
+## 評估器(本機自檢)
+
+比賽沒有附官方標準答案,所以評估器只嚴格檢查「本機驗得了的」部分,其餘用 baseline 快照做回歸:
+
+```bash
+python3 evaluator/evaluate.py                  # 全部 case
+python3 evaluator/evaluate.py test21 test40    # 指定 case
+python3 evaluator/evaluate.py --verbose        # 顯示每一項檢查
+python3 evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
+```
+
+每個 case 回報四組:
+
+* **HARD**(0 分與否的硬門檻,**獨立**檢查,從每行請求的文字自動推導):與原始設計功能等價(ABC `cec`)、結構界限(no gate/signal drives > K)、basis 純度(全設計或某 cone)、輸出網表合法且能 round-trip。
+* **DERIVED**(有客觀值、用另一種方法重算):閘類型計數、PI/PO 數,直接從 `.v` 算。
+* **GOLDEN**:每個回應跟 `evaluator/golden/` 裡的 baseline 比對(回歸偵測)。
+* **OPT**:達到的最佳化成本(max depth / gate count),越小排名越好。
+
+有 HARD 沒過時 exit code 非 0。注意:golden baseline 是**目前引擎的輸出**,不是官方答案——在你放進真正答案前,它抓的是「有沒有飄移」,不是「對不對」。把主辦的答案放進 `evaluator/golden/<case>.txt`(每行一個正規化後的回應)就能真的評分。
+
 ## 架構
 
 ```
