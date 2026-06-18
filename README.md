@@ -77,6 +77,22 @@ generation:
   max_output_tokens: 4096
 ```
 
+## External tool locations (avoid relying on $PATH)
+
+Pin `abc`/`yosys` (and any other tool) in **`configs/tools.yaml`**, which is
+auto-loaded — no need to put them on `$PATH`:
+
+```yaml
+tools:
+  abc: /home/me/abc/abc          # point at the real binary (abc.rc lives beside it)
+  yosys: /usr/local/bin/yosys
+```
+
+Resolution order (later wins): `configs/tools.yaml` → env vars
+(`ABC_BIN`, `YOSYS_BIN`, or `CADA_<NAME>_BIN`) → `-tools <file>` → a `tools:`
+section inside the `-config` file → built-in candidates → `$PATH` (last resort).
+If a configured path is missing it degrades gracefully to the next source.
+
 ## Local testing
 
 ```bash

@@ -15,10 +15,10 @@ import tempfile
 from typing import List, Optional, Tuple
 
 _ABC_CANDIDATES = [
-    os.environ.get("ABC_BIN", ""),
     "/home/as6325400/abc/abc",
-    shutil.which("abc") or "",
     os.path.expanduser("~/abc/abc"),
+    "/usr/local/bin/abc",
+    "/usr/bin/abc",
 ]
 
 EQUIV_OK = "Networks are equivalent"
@@ -26,10 +26,8 @@ EQUIV_NO = "NOT EQUIVALENT"
 
 
 def find_abc() -> Optional[str]:
-    for c in _ABC_CANDIDATES:
-        if c and os.path.exists(c) and os.access(c, os.X_OK):
-            return c
-    return None
+    from ..toolpaths import resolve
+    return resolve("abc", env_var="ABC_BIN", candidates=_ABC_CANDIDATES)
 
 
 def _abc_rc(abc_bin: str) -> Optional[str]:

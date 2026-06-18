@@ -1,0 +1,13 @@
+# External EDA tool locations — edit these per machine so the agent does not
+# rely on $PATH.  This file is auto-loaded from configs/tools.yaml.
+#
+# Each entry is  <tool-name>: <absolute path to the executable>.
+# If a path is missing/wrong, the agent falls back to env vars
+# (ABC_BIN / YOSYS_BIN / CADA_<NAME>_BIN), then built-in candidates, then $PATH.
+#
+# Note: abc.rc must sit next to the abc binary (standard ABC layout) — point
+# `abc` at the real binary, not a wrapper, so resyn2/dc2 aliases resolve.
+
+tools:
+  abc: /home/as6325400/abc/abc
+  yosys: /usr/local/bin/yosys

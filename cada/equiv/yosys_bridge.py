@@ -30,7 +30,9 @@ endmodule
 
 
 def find_yosys() -> Optional[str]:
-    return shutil.which("yosys")
+    from ..toolpaths import resolve
+    return resolve("yosys", env_var="YOSYS_BIN",
+                   candidates=["/usr/local/bin/yosys", "/usr/bin/yosys"])
 
 
 def equivalent(before: Netlist, after: Netlist,

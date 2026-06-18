@@ -53,6 +53,18 @@ generation:
   max_output_tokens: 4096
 ```
 
+## 指定外部工具位置(不靠 $PATH)
+
+在 **`configs/tools.yaml`**(會自動載入)裡指定 `abc`/`yosys`(或其他工具)的絕對路徑,就不必把它們放進 `$PATH`:
+
+```yaml
+tools:
+  abc: /home/me/abc/abc          # 指向真正的執行檔(abc.rc 要跟它放一起)
+  yosys: /usr/local/bin/yosys
+```
+
+解析順序(後者覆蓋前者):`configs/tools.yaml` → 環境變數(`ABC_BIN`、`YOSYS_BIN`、或 `CADA_<NAME>_BIN`)→ `-tools <file>` → `-config` 檔裡的 `tools:` 區段 → 內建候選路徑 → `$PATH`(最後手段)。若設定的路徑不存在,會自動往下一個來源退,不會直接壞掉。
+
 ## 本機測試
 
 ```bash

@@ -16,6 +16,7 @@ Expected shape (Figure 6 of the problem PDF)::
 
 from __future__ import annotations
 
+import os
 from dataclasses import dataclass, field
 from typing import Optional
 
@@ -29,6 +30,7 @@ class Config:
     anthropic_model: str = "claude-haiku-4-5"
     temperature: float = 0.2
     max_output_tokens: int = 4096
+    tools: dict = field(default_factory=dict)   # name -> path (abc, yosys, ...)
     raw: dict = field(default_factory=dict)
 
     @property
@@ -108,6 +110,13 @@ def load_config(path: Optional[str]) -> Config:
     cfg.temperature = float(gen.get("temperature", cfg.temperature))
     cfg.max_output_tokens = int(gen.get("max_output_tokens", cfg.max_output_tokens))
 
+    # optional tools: section -> external tool paths (abc, yosys, ...)
+    tools = data.get("tools") or {}
+    if isinstance(tools, dict):
+        for k, v in tools.items():
+            if isinstance(v, str) and v.strip() and not v.strip().startswith("<"):
+                cfg.tools[str(k).strip().lower()] = v.strip()
+
     # Treat unfilled placeholders as "no key".
     for attr in ("openai_api_key", "anthropic_api_key"):
         v = getattr(cfg, attr)
@@ -115,3 +124,30 @@ def load_config(path: Optional[str]) -> Config:
             setattr(cfg, attr, None)
 
     return cfg
+
+
+def load_tools_file(path: Optional[str]) -> dict:
+    """Parse a standalone tools file (flat ``name: path`` mapping, optionally
+    nested under a ``tools:`` header).  Returns {name: path}."""
+    if not path or not os.path.exists(path):
+        return {}
+    try:
+        with open(path, "r") as fh:
+            text = fh.read()
+    except Exception:
+        return {}
+    data = None
+    try:
+        import yaml
+        data = yaml.safe_load(text)
+    except Exception:
+        data = None
+    if not isinstance(data, dict):
+        data = _mini_yaml(text)
+    if isinstance(data.get("tools"), dict):
+        data = data["tools"]
+    out = {}
+    for k, v in (data or {}).items():
+        if isinstance(v, str) and v.strip() and not v.strip().startswith("<"):
+            out[str(k).strip().lower()] = v.strip()
+    return out
