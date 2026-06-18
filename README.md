@@ -22,9 +22,15 @@ equivalence / cost-ranked-synthesis oracles.
 
 * A Python interpreter — **3.8+** (the project itself is pure-stdlib for the
   benchmark path).
-* `abc` and `yosys` on `PATH` (or `ABC_BIN` pointing at the ABC binary) — used
-  as equivalence / optimization back ends.
-* Optional, only for the LLM fallback: `PyYAML`, `openai`, `anthropic`.
+* **`abc` (required)** and **`yosys` (fallback)** on `PATH` (or `ABC_BIN`
+  pointing at the ABC binary) — equivalence / optimization back ends.  Note:
+  `setup.sh` / pip / uv do **not** install these external binaries; make sure
+  they exist on the machine.  ABC is used by 24/40 testcases (test01–16 are pure
+  Python and never call it); yosys is only a fallback when ABC's cec can't
+  decide — exercised by 0/40.
+* Optional Python packages: `openai` / `anthropic` (LLM fallback only — the
+  benchmark never calls the LLM) and `PyYAML` (config parsing; falls back to a
+  built-in mini-parser if absent).
 
 ## Quick start (recommended: uv)
 

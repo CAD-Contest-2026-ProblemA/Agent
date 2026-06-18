@@ -11,8 +11,8 @@
 ## 環境需求
 
 * Python 直譯器 — **3.8 以上**(benchmark 路徑本身只用標準函式庫)。
-* `abc` 與 `yosys` 在 `PATH` 上(或用環境變數 `ABC_BIN` 指向 ABC 執行檔)——當作等價 / 最佳化後端。
-* 選用(只有 LLM fallback 需要):`PyYAML`、`openai`、`anthropic`。
+* **`abc`(必要)** 與 **`yosys`(備援)** 在 `PATH` 上(或用環境變數 `ABC_BIN` 指向 ABC 執行檔)——當作等價 / 最佳化後端。注意:`setup.sh` / pip / uv **都不會幫你裝這兩個外部執行檔**,要自己確認機器上有。實測 ABC 被 24/40 個 testcase 使用(test01–16 純 Python 不碰 ABC);yosys 只在 ABC 無法判定時當 fallback,實測 0/40。
+* 選用的 Python 套件:`openai` / `anthropic`(只有 LLM fallback 會用到;benchmark 不會呼叫 LLM)、`PyYAML`(設定檔解析,沒裝會自動退回內建 mini-parser)。
 
 ## 快速開始(建議用 uv)
 
