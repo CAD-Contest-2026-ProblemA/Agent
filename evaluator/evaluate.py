@@ -14,7 +14,9 @@ import argparse
 import io
 import os
 import re
+import shutil
 import sys
+import tempfile
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
@@ -197,17 +199,50 @@ def _mark(status):
             "NA": YEL("?"), "INFO": DIM("·")}.get(status, status)
 
 
+def _enter_sandbox():
+    """Run from a throwaway dir so the agent's `testNN_out.v` writes never land
+    in the repo.  Code / testcases / golden are reached by absolute paths;
+    only the working directory changes (the testcase symlink lets the prompts'
+    relative load paths resolve).  Returns the temp dir or None if unavailable.
+    """
+    tmp = tempfile.mkdtemp(prefix="cada_eval_")
+    try:
+        os.symlink(os.path.join(ROOT, "testcase"), os.path.join(tmp, "testcase"))
+        os.chdir(tmp)
+        return tmp
+    except Exception:
+        shutil.rmtree(tmp, ignore_errors=True)
+        return None
+
+
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cases", nargs="*", help="testcase names (default: all)")
     ap.add_argument("--config", default=os.path.join(ROOT, "configs", "default.yaml"))
     ap.add_argument("--update-golden", action="store_true")
     ap.add_argument("--verbose", action="store_true")
+    ap.add_argument("--no-sandbox", action="store_true",
+                    help="write outputs in the current directory instead of a temp dir")
     args = ap.parse_args(argv)
+
+    # absolutise the config path before any chdir into the sandbox
+    if args.config:
+        args.config = os.path.abspath(args.config)
 
     cases = args.cases or sorted(d for d in os.listdir(TC_ROOT)
                                  if os.path.isdir(os.path.join(TC_ROOT, d)))
 
+    orig_cwd = os.getcwd()
+    sandbox = None if args.no_sandbox else _enter_sandbox()
+    try:
+        return _run_cases(args, cases)
+    finally:
+        if sandbox:
+            os.chdir(orig_cwd)
+            shutil.rmtree(sandbox, ignore_errors=True)
+
+
+def _run_cases(args, cases) -> int:
     total_hard = total_hard_fail = 0
     failed_cases = []
 

@@ -117,12 +117,7 @@ python3 evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
 * **GOLDEN**:每個回應跟 `evaluator/golden/` 裡的 baseline 比對(回歸偵測)。
 * **OPT**:達到的最佳化成本(max depth / gate count),越小排名越好。
 
-想讓 repo 保持乾淨,可以用 sandbox 方式跑(agent 寫的 `testNN_out.v` 會落在暫存目錄、結束時自動刪掉;`--update-golden` 仍會寫回 repo 的 golden):
-
-```bash
-scripts/eval_sandbox.sh                 # 全部 case,不留任何檔
-scripts/eval_sandbox.sh test32 --verbose
-```
+評估器**預設就在拋棄式 sandbox 裡跑**——agent 寫的 `testNN_out.v` 會落在暫存目錄、結束時自動刪掉,所以**不會弄髒 repo**(`--update-golden` 仍會寫回 repo 的 golden)。要把輸出留在當前目錄就加 `--no-sandbox`。
 
 有 HARD 沒過時 exit code 非 0。注意:golden baseline 是**目前引擎的輸出**,不是官方答案——在你放進真正答案前,它抓的是「有沒有飄移」,不是「對不對」。把主辦的答案放進 `evaluator/golden/<case>.txt`(每行一個正規化後的回應)就能真的評分。
 

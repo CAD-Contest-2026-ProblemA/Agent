@@ -160,14 +160,10 @@ Per case it reports four groups:
   `evaluator/golden/` (regression detection).
 * **OPT** — the achieved optimize cost (max depth / gate count); lower ranks better.
 
-To keep the repo clean, run it in a throwaway sandbox dir (the agent's
-`testNN_out.v` writes land in a temp dir and are deleted on exit; golden updates
-still go to the repo):
-
-```bash
-scripts/eval_sandbox.sh                 # all cases, no files left behind
-scripts/eval_sandbox.sh test32 --verbose
-```
+The evaluator runs in a **throwaway sandbox by default** — the agent's
+`testNN_out.v` writes go to a temp dir that is deleted on exit, so the repo is
+never polluted (golden updates still go to the repo). Pass `--no-sandbox` to
+write the outputs in the current directory instead.
 
 Exit code is non-zero if any HARD requirement fails.  Note: the golden baseline
 is the *current engine's* output, not official answers — it catches drift, not
