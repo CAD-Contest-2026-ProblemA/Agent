@@ -160,6 +160,15 @@ Per case it reports four groups:
   `evaluator/golden/` (regression detection).
 * **OPT** — the achieved optimize cost (max depth / gate count); lower ranks better.
 
+To keep the repo clean, run it in a throwaway sandbox dir (the agent's
+`testNN_out.v` writes land in a temp dir and are deleted on exit; golden updates
+still go to the repo):
+
+```bash
+scripts/eval_sandbox.sh                 # all cases, no files left behind
+scripts/eval_sandbox.sh test32 --verbose
+```
+
 Exit code is non-zero if any HARD requirement fails.  Note: the golden baseline
 is the *current engine's* output, not official answers — it catches drift, not
 correctness.  Drop the organizers' answers into `evaluator/golden/<case>.txt`
