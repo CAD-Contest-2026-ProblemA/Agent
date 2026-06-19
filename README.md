@@ -79,6 +79,23 @@ The benchmark runs fully **offline** with no third-party packages — the config
 parser falls back to a built-in mini-parser, and the regex router covers all 40
 testcases (the LLM is never invoked on them).
 
+### Single-file binary (optional)
+
+To ship one self-contained executable (no Python/uv needed on the target),
+package it with PyInstaller:
+
+```bash
+scripts/build_exe.sh cada1125_alpha          # -> dist/cada1125_alpha (use YOUR team no.)
+WITH_LLM=1 scripts/build_exe.sh cada1125_alpha   # also bundle the openai/anthropic fallback
+```
+
+* **glibc:** PyInstaller bundles Python but not the C library — build on a
+  machine whose glibc is ≤ the target's (ideally the contest machine, which has
+  uv), or the binary won't start.
+* `abc`/`yosys` stay **external** (resolved at runtime via `configs/tools.yaml`
+  next to the binary, the `-config` `tools:` section, `ABC_BIN`/`YOSYS_BIN`, or
+  `$PATH`).
+
 ## Configuration (`-config`)
 
 Same shape as the contest's Figure 6.  Drop your key into

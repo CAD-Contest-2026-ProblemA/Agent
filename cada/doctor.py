@@ -108,6 +108,10 @@ def _pkg_version(python: str, module: str):
 # ----- sections ----------------------------------------------------------
 def check_python(rep: Report):
     rep.section("Python environment (uv + .venv)")
+    if getattr(sys, "frozen", False):
+        rep.ok("running as a standalone binary",
+               f"Python {sys.version.split()[0]} is bundled; uv/.venv not needed")
+        return
     uv = _find_uv()
     if not uv:
         rep.fail("uv is not installed",

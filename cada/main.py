@@ -30,13 +30,31 @@ def build_arg_parser() -> argparse.ArgumentParser:
     return p
 
 
+def _config_search_dirs():
+    """Where to look for configs/tools.yaml, lowest priority first.
+
+    Works both from source and from a PyInstaller one-file binary: when frozen,
+    look inside the bundle (sys._MEIPASS) and next to the executable; from source,
+    look at the project root.
+    """
+    dirs = []
+    if getattr(sys, "frozen", False):
+        meipass = getattr(sys, "_MEIPASS", None)
+        if meipass:
+            dirs.append(meipass)                       # bundled defaults
+        dirs.append(os.path.dirname(os.path.abspath(sys.executable)))  # next to binary
+    else:
+        dirs.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    return dirs
+
+
 def _configure_tools(config, tools_file):
     """Register external-tool paths, lowest priority first so later wins."""
-    # 1. auto-discovered configs/tools.yaml next to the project root
-    root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    for cand in (os.path.join(root, "configs", "tools.yaml"),
-                 os.path.join(root, "configs", "tools.yml")):
-        toolpaths.register_many(load_tools_file(cand))
+    # 1. auto-discovered configs/tools.yaml (bundle / next to exe / project root)
+    for base in _config_search_dirs():
+        for cand in (os.path.join(base, "configs", "tools.yaml"),
+                     os.path.join(base, "configs", "tools.yml")):
+            toolpaths.register_many(load_tools_file(cand))
     # 2. explicit --tools file
     if tools_file:
         toolpaths.register_many(load_tools_file(tools_file))
