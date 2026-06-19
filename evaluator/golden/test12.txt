@@ -8,4 +8,4 @@ There are no combinational paths from n24[2] to n26[0].
 The maximum combinational logic depth from n24[0] to n26[0] is 11.
 The maximum combinational logic depth from n24[1] to n26[1] is 15.
 Gate g0 drives 1 gate(s): g39905
-Wrote the current netlist to "test12_out.v" successfully.
+Wrote the current netlist to "testcase/test12/test12_out.v" successfully.

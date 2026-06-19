@@ -89,7 +89,7 @@ generation:
 評測前先檢查環境裝齊了沒:
 
 ```bash
-./cada1125_alpha --doctor        # 或:python3 -m cada.doctor / python3 scripts/doctor.py
+./cada1125_alpha --doctor        # 或:.venv/bin/python -m cada.doctor / .venv/bin/python scripts/doctor.py
 ```
 
 依序檢查:**Python**(先看有沒有裝 uv → 有的話看 `.venv/` 在不在 → 套件都查 `.venv` 裡的;只要 uv 或 `.venv` 不在,這段直接 fail,**不會去檢查 host 的 Python**);**外部工具**(`abc` 必要、`yosys` 備援,用跟 agent 一樣的順序解析路徑後**實際執行一次**,所以「檔案在但跑不起來」例如 glibc/架構不合也會被抓出來);**設定檔**與選用的 LLM key;以及 **agent 套件本身**(import + 解析一個 testcase)。有 hard failure 時 exit code 非 0。
@@ -108,9 +108,11 @@ tools:
 
 ## 本機測試
 
+開發工具(run_local、evaluator、doctor)需要 **Python 3.8+**;比賽機器的系統 `python3` 可能太舊(例如 RedHat 8 是 3.6),所以請用 venv 的直譯器(`.venv/bin/python`)或 `uv run` 來跑。
+
 ```bash
-python3 scripts/run_local.py testcase/test22          # 單一 case,輸出到 stdout
-python3 scripts/run_local.py --all                    # 全部 case
+.venv/bin/python scripts/run_local.py testcase/test22          # 單一 case,輸出到 stdout
+.venv/bin/python scripts/run_local.py --all                    # 全部 case
 ```
 
 ## 評估器(本機自檢)
@@ -118,10 +120,10 @@ python3 scripts/run_local.py --all                    # 全部 case
 比賽沒有附官方標準答案,所以評估器只嚴格檢查「本機驗得了的」部分,其餘用 baseline 快照做回歸:
 
 ```bash
-python3 evaluator/evaluate.py                  # 全部 case
-python3 evaluator/evaluate.py test21 test40    # 指定 case
-python3 evaluator/evaluate.py --verbose        # 顯示每一項檢查
-python3 evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
+.venv/bin/python evaluator/evaluate.py                  # 全部 case
+.venv/bin/python evaluator/evaluate.py test21 test40    # 指定 case
+.venv/bin/python evaluator/evaluate.py --verbose        # 顯示每一項檢查
+.venv/bin/python evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
 ```
 
 每個 case 回報四組:
@@ -134,8 +136,8 @@ python3 evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
 預設評估器是 **in-process** 驅動引擎(快、可逐步檢查)。加 `--exe` 則改成把**真正的執行檔**當 subprocess 跑,檢查它實際的 stdout framing + 寫出的網表——最忠實的「我交的東西到底能不能跑」測試:
 
 ```bash
-python3 evaluator/evaluate.py --exe dist/cada1125_alpha     # 打包好的 binary
-python3 evaluator/evaluate.py --exe ./cada1125_alpha        # uv wrapper
+.venv/bin/python evaluator/evaluate.py --exe dist/cada1125_alpha     # 打包好的 binary
+.venv/bin/python evaluator/evaluate.py --exe ./cada1125_alpha        # uv wrapper
 ```
 
 評估器**預設就在拋棄式 sandbox 裡跑**——agent 寫的 `testNN_out.v` 會落在暫存目錄、結束時自動刪掉,所以**不會弄髒 repo**(`--update-golden` 仍會寫回 repo 的 golden)。要把輸出留在當前目錄就加 `--no-sandbox`。

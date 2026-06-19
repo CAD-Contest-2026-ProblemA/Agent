@@ -5,4 +5,4 @@ Remapped the entire design to AND+NOT gates (13680 gates rewritten); functional 
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 Collapsed 19964 back-to-back inverter pair(s) into direct wires; equivalence verified.
 The design is already optimal at depth 130; reported the original (equivalence preserved).
-Wrote the current netlist to "test28_out.v" successfully.
+Wrote the current netlist to "testcase/test28/test28_out.v" successfully.

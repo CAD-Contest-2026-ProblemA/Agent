@@ -1,4 +1,4 @@
 Acknowledged. Initialized testcase "test02". All subsequent responses will be recorded to test02.log. Design state is empty and ready for commands.
 Loaded gate-level Verilog from "testcase/test02/test02.v" successfully. Detected a single top module (flat netlist) with 11227 combinational gates and 0 flip-flops. Design state has been updated.
 Total gate count: 11227 AND: 2301 OR: 3270 NOT: 2412 NAND: 0 NOR: 524 XOR: 174 XNOR: 2538 BUF: 8 DFF: 0
-Wrote the current netlist to "test02_out.v" successfully.
+Wrote the current netlist to "testcase/test02/test02_out.v" successfully.

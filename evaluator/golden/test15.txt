@@ -11,4 +11,4 @@ Gate g0 drives 0 gate(s): (none)
 Could not identify the two endpoints for path enumeration.
 The transitive fan-in cone of n3 contains 0 gates.
 The transitive fan-out cone of n0[0] contains 189 gates.
-Wrote the current netlist to "test15_out.v" successfully.
+Wrote the current netlist to "testcase/test15/test15_out.v" successfully.

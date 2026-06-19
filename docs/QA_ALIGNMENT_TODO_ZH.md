@@ -1,7 +1,16 @@
 # 官方 Q&A 對照 — 待調整清單(TODO)
 
 來源:`problem/A_QA_20260615.pdf`。這份記錄「官方怎麼說 vs 我們現在怎麼做 vs 要不要改」。
-撰寫當下**尚未改動程式碼**,只留紀錄。優先序:🔴 高(可能丟分)、🟡 中、🟢 低/邊界。
+優先序:🔴 高(可能丟分)、🟡 中、🟢 低/邊界。
+
+> **狀態(更新):下面 1~5 + doctor 卡死 已全部實作完成。** 變更摘要:
+> 1. ✅ write 輸出到 design_dir(輸入同目錄);evaluator sandbox 改用 copytree 避免污染。
+> 2. ✅ cone/depth 把 DFF.Q 當 PI(`redirect_q` 預設改 False)。
+> 3. ✅ 路徑「完整列舉」與大型 gate 清單改寫檔案、回應給路徑(超過門檻)。
+> 4. ✅ constant 改為「功能常數」(模擬 + cec 確認;test39 找到 3 個結構檢查會漏的)。
+> 5. ✅ fanout 計數含 primary-output 連線(查詢用;buffer 守門員用 pin-only)。
+> 6. ✅ doctor 在 frozen binary 不再卡死(改 in-process 檢查);evaluator 要用 `.venv` python。
+> 下面保留原始分析作為紀錄。
 
 > 大前提(A14):最終評分是 **LLM-as-judge 語意比對**,不是字串完全比對。
 > 所以「格式/措辭」不重要,**「值對不對」才重要**。下面挑的都是會影響「值」或「檔案位置」的。

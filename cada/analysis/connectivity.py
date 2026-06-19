@@ -20,9 +20,19 @@ def _consumer_gate_names(nl: Netlist, net: str) -> List[str]:
     return names
 
 
-def fanout_count(nl: Netlist, net: str) -> int:
-    """Number of load pins on this net (a gate using a net twice counts twice)."""
-    return len(nl.loads(net))
+def fanout_count(nl: Netlist, net: str, include_po: bool = True) -> int:
+    """Number of load connections on this net.
+
+    Counts gate input pins and flip-flop pins (D/CK/RN/SN); a gate using a net
+    twice counts twice.  Per official Q&A A29 a primary-output connection is
+    also a fan-out load, so ``include_po`` (default True) adds one when the net
+    is a primary output.  The buffer-insertion guard passes include_po=False
+    (it bounds re-routable gate fan-out only).
+    """
+    n = len(nl.loads(net))
+    if include_po and net in nl.po:
+        n += 1
+    return n
 
 
 def fanout_load_instances(nl: Netlist, net: str) -> List[str]:

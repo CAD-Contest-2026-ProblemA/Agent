@@ -15,6 +15,6 @@ Verified: the current design is functionally equivalent to the original loaded n
 No NAND gates with constant inputs were found.
 Constant propagation eliminated 0 NAND gate(s); equivalence verified.
 0
-Gate-type counts in the cone of n14 (total 11): AND: 0 OR: 2 NOT: 3 NAND: 2 NOR: 4 XOR: 0 XNOR: 0 BUF: 0
-The fan-in cone of n14 contains 11 gates.
-Wrote the current netlist to "test38_out.v" successfully.
+Gate-type counts in the cone of n14 (total 0): AND: 0 OR: 0 NOT: 0 NAND: 0 NOR: 0 XOR: 0 XNOR: 0 BUF: 0
+The fan-in cone of n14 contains 0 gates.
+Wrote the current netlist to "testcase/test38/test38_out.v" successfully.

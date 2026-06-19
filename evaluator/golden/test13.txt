@@ -9,4 +9,4 @@ The maximum combinational logic depth from n2 to n5[0] is 3.
 There is no combinational path from n3 to n5[1] (depth 0).
 There is no combinational path from n4 to n5[0] (depth 0).
 Gate g0 drives 1 gate(s): g138
-Wrote the current netlist to "test13_out.v" successfully.
+Wrote the current netlist to "testcase/test13/test13_out.v" successfully.

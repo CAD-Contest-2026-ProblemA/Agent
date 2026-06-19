@@ -1,18 +1,18 @@
 Acknowledged. Initialized testcase "test37". All subsequent responses will be recorded to test37.log. Design state is empty and ready for commands.
 Loaded gate-level Verilog from "testcase/test37/test37.v" successfully. Detected a single top module (flat netlist) with 44655 combinational gates and 2324 flip-flops. Design state has been updated.
 Total gate count: 46979 AND: 0 OR: 1999 NOT: 3664 NAND: 24182 NOR: 12400 XOR: 233 XNOR: 2169 BUF: 8 DFF: 2324
-Gate-type counts in the cone of n8 (total 3): AND: 0 OR: 0 NOT: 1 NAND: 1 NOR: 1 XOR: 0 XNOR: 0 BUF: 0
-Remapped the cone to NAND+NOT gates (1 gates rewritten); functional equivalence verified.
-There are currently 24183 NAND gates in the design.
+Gate-type counts in the cone of n8 (total 0): AND: 0 OR: 0 NOT: 0 NAND: 0 NOR: 0 XOR: 0 XNOR: 0 BUF: 0
+Remapped the entire design to NAND+NOT gates (0 gates rewritten); functional equivalence verified.
+There are currently 24182 NAND gates in the design.
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 Verified: the current design is functionally equivalent to the netlist as last loaded from disk.
 There are 192848 register-to-register connections through combinational logic. Examples: g2198->g5, g2199->g5, g2200->g5, g5->g5, g454->g5, g2198->g6, g2199->g6, g2200->g6, g5->g6, g6->g6, g454->g6, g2198->g7, g2199->g7, g2200->g7, g5->g7, g6->g7, g7->g7, g454->g7, g2198->g8, g2199->g8, g2200->g8, g5->g8, g6->g8, g7->g8, g8->g8, g454->g8, g2198->g9, g2199->g9, g2200->g9, g5->g9
 The design has 7 primary input ports (168 bits) and 6 primary output ports (164 bits).
 Primary outputs: n7 [128-bit] n8 [1-bit] n9 [1-bit] n12 [32-bit] n10 [1-bit] n11 [1-bit]
 0 gate(s) have an input tied to 1'b1: (none)
-n8 = n13[2] * !n13[0] * !n13[1]
+n8 = n8
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 0
 Gates connected to the output of g0: g44798
 Yes. The function at n8 is symmetric in n3 and n4[0].
-Wrote the current netlist to "test37_out.v" successfully.
+Wrote the current netlist to "testcase/test37/test37_out.v" successfully.

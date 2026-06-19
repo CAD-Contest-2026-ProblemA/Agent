@@ -1,4 +1,4 @@
 Acknowledged. Initialized testcase "test04". All subsequent responses will be recorded to test04.log. Design state is empty and ready for commands.
 Loaded gate-level Verilog from "testcase/test04/test04.v" successfully. Detected a single top module (flat netlist) with 66 combinational gates and 0 flip-flops. Design state has been updated.
 The maximum logic depth of the cone of n3 is 14.
-Wrote the current netlist to "test04_out.v" successfully.
+Wrote the current netlist to "testcase/test04/test04_out.v" successfully.

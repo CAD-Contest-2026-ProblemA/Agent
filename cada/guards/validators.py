@@ -36,10 +36,10 @@ def check(before: Netlist, after: Netlist, *,
         # additionally bounds primary inputs.
         mx = 0
         for g in after.gates:
-            mx = max(mx, connectivity.fanout_count(after, g.out))
+            mx = max(mx, connectivity.fanout_count(after, g.out, include_po=False))
         if max_fanout_pi:
             for p in after.pi:
-                mx = max(mx, connectivity.fanout_count(after, p))
+                mx = max(mx, connectivity.fanout_count(after, p, include_po=False))
         if mx > max_fanout:
             return False, f"max-fanout {mx} exceeds {max_fanout}"
 

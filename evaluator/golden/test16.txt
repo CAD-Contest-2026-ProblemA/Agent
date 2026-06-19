@@ -12,4 +12,4 @@ Gate g0 drives 1 gate(s): g24
 Could not identify the two endpoints for path enumeration.
 The transitive fan-in cone of n33[0] contains 388 gates.
 The transitive fan-out cone of n6 contains 165 gates.
-Wrote the current netlist to "test16_out.v" successfully.
+Wrote the current netlist to "testcase/test16/test16_out.v" successfully.

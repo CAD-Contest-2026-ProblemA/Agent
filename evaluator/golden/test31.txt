@@ -7,14 +7,14 @@ Verified: the current design is functionally equivalent to the pre-transformatio
 The fanout of n0 is 844. It directly drives: g906, g907, g908, g909, g910, g911, g912, g913, g914, g915, g916, g917, g918, g919, g920, g921, g922, g923, g924, g925, g926, g927, g928, g929, g930, g931, g932, g933, g934, g935, g936, g937, g938, g939, g940, g941, g942, g943, g944, g945, g946, g947, g948, g949, g950, g951, g952, g953, g954, g955, g956, g957, g958, g959, g960, g961, g962, g963, g964, g965, g966, g967, g968, g969, g970, g971, g972, g973, g974, g975, g976, g977, g978, g979, g980, g981, g982, g983, g984, g985, g986, g987, g988, g989, g990, g991, g992, g993, g994, g995, g996, g997, g998, g999, g1000, g1001, g1002, g1003, g1004, g1005, g1006, g1007, g1008, g1009, g1010, g1011, g1012, g1013, g1014, g1015, g1016, g1017, g1018, g1019, g1020, g1021, g1022, g1023, g1024, g1025, g1026, g1027, g1028, g1029, g1030, g1031, g1032, g1033, g1034, g1035, g1036, g1037, g1038, g1039, g1040, g1041, g1042, g1043, g1044, g1045, g1046, g1047, g1048, g1049, g1050, g1051, g1052, g1053, g1054, g1055, g1056, g1057, g1058, g1059, g1060, g1061, g1062, g1063, g1064, g1065, g1066, g1067, g1068, g1069, g1070, g1071, g1072, g1073, g1074, g1075, g1076, g1077, g1078, g1079, g1080, g1081, g1082, g1083, g1084, g1085, g1086, g1087, g1088, g1089, g1090, g1091, g1092, g1093, g1094, g1095, g1096, g1097, g1098, g1099, g1100, g1101, g1102, g1103, g1104, g1105
 No. Output n16 is not constant; it depends on the inputs.
 0 gate(s) are shared between the fan-in cones of n16 and n17: (none)
-The Boolean equation for n16 has too large a support to express compactly in terms of the primary inputs.
+n16 = n16
 Gates connected to the output of g0: g771
 Renamed signal n1289 to renamed_sig and updated all references.
 Gates connected to renamed_sig: g4309, g3774, g3875, g3881, g3882, g3884, g3885, g3886, g3888, g3891, g3892, g3893, g3894, g3895, g3897, g3899, g3901, g3902, g3904, g3905, g3907, g3908, g3909, g3911, g3912, g3913, g3914, g3915, g3916, g3917, g3918, g3919, g3921, g4001, g4163, g4171, g4172, g4173, g4174, g4175, g4176, g4177, g4178, g4179, g4182, g4183
 Could not determine the design file to load.
 8
 The maximum logic depth from any primary input to any DFF D-pin is 14.
-186 output(s) have a logic depth greater than 4.
+32 output(s) have a logic depth greater than 4.
 Gate g0 is a NOT gate. Output: n5015; inputs: n5123.
 No. Signals n1287 and n2404 are not functionally equivalent.
-Wrote the current netlist to "test31_out.v" successfully.
+Wrote the current netlist to "testcase/test31/test31_out.v" successfully.

@@ -3,11 +3,11 @@ Loaded gate-level Verilog from "testcase/test14/test14.v" successfully. Detected
 Total gate count: 15245 AND: 2545 OR: 3496 NOT: 3729 NAND: 2 NOR: 1465 XOR: 257 XNOR: 3445 BUF: 306 DFF: 0
 Yes. A combinational path from n61 to n63[0] that avoids n4363 exists.
 Yes. A combinational path from n0[0] to n63[1] that avoids n141 exists.
-There are 289366 combinational paths from n0[0] to n63[1] (too many to enumerate explicitly).
-There are 203810 combinational paths from n0[1] to n63[0] (too many to enumerate explicitly).
+There are 289366 combinational paths from n0[0] to n63[1]. The complete enumeration has been written to testcase/test14/test14_paths_n0_0__to_n63_1_.txt.
+There are 203810 combinational paths from n0[1] to n63[0]. The complete enumeration has been written to testcase/test14/test14_paths_n0_1__to_n63_0_.txt.
 The maximum combinational logic depth from n61 to n63[0] is 5.
 The maximum combinational logic depth from n0[0] to n63[1] is 54.
 The maximum combinational logic depth from n0[1] to n63[0] is 51.
 Gate g0 drives 1 gate(s): g13209
 Could not identify the two endpoints for path enumeration.
-Wrote the current netlist to "test14_out.v" successfully.
+Wrote the current netlist to "testcase/test14/test14_out.v" successfully.

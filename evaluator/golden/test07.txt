@@ -3,4 +3,4 @@ Loaded gate-level Verilog from "testcase/test07/test07.v" successfully. Detected
 Total gate count: 938 AND: 113 OR: 262 NOT: 309 NAND: 0 NOR: 52 XOR: 2 XNOR: 138 BUF: 62 DFF: 0
 Yes. A combinational path from n0[0] to n5 that avoids n95 exists.
 Yes. A combinational path from n0[1] to n6 that avoids n94 exists.
-Wrote the current netlist to "test07_out.v" successfully.
+Wrote the current netlist to "testcase/test07/test07_out.v" successfully.

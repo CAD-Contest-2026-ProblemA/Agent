@@ -6,4 +6,4 @@ No. There is no combinational path from n13 to n25[1] that avoids n4156.
 There are no combinational paths from n13 to n25[1].
 There are 1 path(s) from n14 to n25[0]: n14 -> g605 -> g624 -> g623 -> g643 -> g642 -> g610 -> g1644 -> g1485 -> g1042 -> g945 -> n25[0]
 The maximum combinational logic depth from n12 to n25[0] is 10.
-Wrote the current netlist to "test10_out.v" successfully.
+Wrote the current netlist to "testcase/test10/test10_out.v" successfully.

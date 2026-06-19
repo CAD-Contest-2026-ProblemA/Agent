@@ -122,7 +122,7 @@ generation:
 Before running an evaluation, check the environment:
 
 ```bash
-./cada1125_alpha --doctor        # or:  python3 -m cada.doctor  /  python3 scripts/doctor.py
+./cada1125_alpha --doctor        # or:  .venv/bin/python -m cada.doctor  /  .venv/bin/python scripts/doctor.py
 ```
 
 It verifies, in order: **Python** (uv installed → `.venv` present → packages
@@ -151,9 +151,13 @@ If a configured path is missing it degrades gracefully to the next source.
 
 ## Local testing
 
+The dev tools (run_local, evaluator, doctor) need **Python 3.8+** — the contest
+machine's system `python3` may be older (e.g. RedHat 8 ships 3.6), so invoke
+them with the venv's interpreter as shown (`.venv/bin/python`), or `uv run`.
+
 ```bash
-python3 scripts/run_local.py testcase/test22          # one case to stdout
-python3 scripts/run_local.py --all                    # every case
+.venv/bin/python scripts/run_local.py testcase/test22          # one case to stdout
+.venv/bin/python scripts/run_local.py --all                    # every case
 ```
 
 ## Evaluator (local self-check)
@@ -162,10 +166,10 @@ The contest ships no golden answers, so the evaluator rigorously checks what
 *can* be verified locally and snapshots the rest:
 
 ```bash
-python3 evaluator/evaluate.py                  # all cases
-python3 evaluator/evaluate.py test21 test40    # selected cases
-python3 evaluator/evaluate.py --verbose        # show every check
-python3 evaluator/evaluate.py --update-golden   # pin current responses as baseline
+.venv/bin/python evaluator/evaluate.py                  # all cases
+.venv/bin/python evaluator/evaluate.py test21 test40    # selected cases
+.venv/bin/python evaluator/evaluate.py --verbose        # show every check
+.venv/bin/python evaluator/evaluate.py --update-golden   # pin current responses as baseline
 ```
 
 Per case it reports four groups:
@@ -186,8 +190,8 @@ subprocess and check its real stdout framing + the written netlist — the most
 faithful "does my submission work" test:
 
 ```bash
-python3 evaluator/evaluate.py --exe dist/cada1125_alpha     # the packaged binary
-python3 evaluator/evaluate.py --exe ./cada1125_alpha        # the uv wrapper
+.venv/bin/python evaluator/evaluate.py --exe dist/cada1125_alpha     # the packaged binary
+.venv/bin/python evaluator/evaluate.py --exe ./cada1125_alpha        # the uv wrapper
 ```
 
 The evaluator runs in a **throwaway sandbox by default** — the agent's

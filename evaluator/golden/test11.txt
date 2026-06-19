@@ -7,4 +7,4 @@ There are no combinational paths from n30 to n31[1].
 There are 1 path(s) from n0[0] to n31[0]: n0[0] -> g61 -> g5 -> g1534 -> g1533 -> g1291 -> g1023 -> g825 -> n31[0]
 The maximum combinational logic depth from n29 to n31[0] is 15.
 There is no combinational path from n30 to n31[1] (depth 0).
-Wrote the current netlist to "test11_out.v" successfully.
+Wrote the current netlist to "testcase/test11/test11_out.v" successfully.

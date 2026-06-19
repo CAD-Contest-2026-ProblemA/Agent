@@ -16,4 +16,4 @@ No. Signals n13082 and n13083 are not functionally equivalent.
 No. Signals n2257 and n2184 are not functionally equivalent.
 No. Signals n2233 and n2193 are not functionally equivalent.
 The total gate count of the design is 14371.
-Wrote the current netlist to "test20_out.v" successfully.
+Wrote the current netlist to "testcase/test20/test20_out.v" successfully.

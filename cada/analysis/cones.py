@@ -1,10 +1,11 @@
 """Logic-cone queries (fan-in / fan-out cones, shared cones).
 
-DFF-Q convention: when a queried "output" net is actually a flip-flop's Q
-(register output), its *combinational* fan-in cone is empty.  Because the
-benchmark questions about "the cone of output X" are clearly about the logic
-feeding that output, we redirect a Q-net query to the D-side next-state
-cone(s).  This is controlled by ``redirect_q`` (default True).
+DFF-Q convention (per official Q&A A21.2): fan-in cones are *combinational
+only* — a flip-flop's Q output is treated as a primary input, so the cone of a
+net terminates at DFF.Q.  If a queried output net is itself a DFF.Q, its
+combinational fan-in cone is therefore empty.  ``redirect_q`` (default False)
+can optionally redirect a Q-net query to the D-side next-state cone, but the
+default matches the official "treat DFF.Q as a primary input" rule.
 """
 
 from __future__ import annotations
@@ -15,7 +16,7 @@ from ..netlist.ir import Netlist
 from . import graph
 
 
-def effective_sinks(nl: Netlist, net: str, redirect_q: bool = True) -> List[str]:
+def effective_sinks(nl: Netlist, net: str, redirect_q: bool = False) -> List[str]:
     drv = nl.driver(net)
     if drv[0] == "gate":
         return [net]
@@ -26,11 +27,11 @@ def effective_sinks(nl: Netlist, net: str, redirect_q: bool = True) -> List[str]
     return [net]
 
 
-def fanin_cone_nets(nl: Netlist, net: str, redirect_q: bool = True) -> Set[str]:
+def fanin_cone_nets(nl: Netlist, net: str, redirect_q: bool = False) -> Set[str]:
     return graph.fanin_cone_nets(nl, effective_sinks(nl, net, redirect_q))
 
 
-def fanin_cone_gates(nl: Netlist, net: str, redirect_q: bool = True):
+def fanin_cone_gates(nl: Netlist, net: str, redirect_q: bool = False):
     nets = fanin_cone_nets(nl, net, redirect_q)
     return [g for g in nl.gates if g.out in nets]
 
@@ -55,7 +56,7 @@ def shared_fanin_gates(nl: Netlist, a: str, b: str):
     return [g for g in nl.gates if g.name in shared]
 
 
-def largest_fanin_output(nl: Netlist, redirect_q: bool = True):
+def largest_fanin_output(nl: Netlist, redirect_q: bool = False):
     """Return (output_net, gate_count) for the PO with the biggest fan-in cone."""
     best = None
     for po in sorted(nl.po):

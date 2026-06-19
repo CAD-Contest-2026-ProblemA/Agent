@@ -15,4 +15,4 @@ The transitive fan-out cone of n3 contains 421 gates.
 No. Signals n296 and n269 are not functionally equivalent.
 No. Signals n273 and n275 are not functionally equivalent.
 No. Signals n270 and n243 are not functionally equivalent.
-Wrote the current netlist to "test19_out.v" successfully.
+Wrote the current netlist to "testcase/test19/test19_out.v" successfully.

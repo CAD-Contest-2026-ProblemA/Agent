@@ -252,6 +252,31 @@ def check_config(rep: Report):
 
 def check_package(rep: Report):
     rep.section("Agent package")
+
+    # Frozen binary: cada is bundled — check in-process. (Do NOT spawn
+    # sys.executable, which is the binary itself; it would re-enter the agent
+    # and block on stdin.)  testcase/ isn't bundled, so parse one from cwd if
+    # present.
+    if getattr(sys, "frozen", False):
+        try:
+            from cada.netlist.reader import parse_file
+        except Exception as exc:
+            rep.fail("cada failed to import", str(exc)[:200])
+            return
+        for cand in ("testcase/test01/test01.v",):
+            if os.path.exists(cand):
+                try:
+                    nl = parse_file(cand)
+                    rep.ok("cada imports and parses a testcase",
+                           f"test01 -> {len(nl.gates)} gates")
+                    return
+                except Exception as exc:
+                    rep.fail("cada failed to parse a testcase", str(exc)[:200])
+                    return
+        rep.ok("cada package imports OK", "(no testcase in cwd to parse)")
+        return
+
+    # Source/uv layout: run the check under the .venv python.
     py = _venv_python()
     if not os.path.exists(py):
         py = sys.executable

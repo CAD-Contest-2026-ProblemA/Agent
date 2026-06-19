@@ -25,6 +25,70 @@ def signals_equivalent(nl: Netlist, a: str, b: str) -> Optional[bool]:
     return equiv_gate.signals_equivalent(nl, a, b)
 
 
+def _splitmix(i: int) -> int:
+    """Deterministic 64-bit pseudo-random (splitmix64) — no Math.random, so the
+    constant-net detection is reproducible."""
+    mask = (1 << 64) - 1
+    z = (i + 0x9E3779B97F4A7C15) & mask
+    z = ((z ^ (z >> 30)) * 0xBF58476D1CE4E5B9) & mask
+    z = ((z ^ (z >> 27)) * 0x94D049BB133111EB) & mask
+    return (z ^ (z >> 31)) & mask
+
+
+def constant_nets(nl: Netlist, vectors: int = 256,
+                  max_confirm: int = 64) -> dict:
+    """Find FUNCTIONALLY-constant nets (provably 0/1 for all inputs), per Q&A
+    A21.1.  Random-vector simulation cheaply nominates candidates (signature all
+    0s or all 1s); each candidate is then confirmed with a SAT/cec check.
+    Returns {net: "1'b0"|"1'b1"} (literal constants are not included).
+    Fully guarded — returns {} on any problem."""
+    try:
+        from . import graph
+        mask = (1 << vectors) - 1
+        srcs = sorted(set(nl.pi) | {ff.q for ff in nl.dffs})
+        val = {name: _splitmix(j) & mask for j, name in enumerate(srcs)}
+        val["1'b0"] = 0
+        val["1'b1"] = mask
+        for net in graph.topo_nets(nl):
+            if net in val:
+                continue
+            drv = nl.driver(net)
+            if drv[0] != "gate":
+                continue
+            g = drv[1]
+            iv = [val.get(i, 0) for i in g.ins]
+            t = g.type
+            if t == "and":
+                v = iv[0] & iv[1]
+            elif t == "or":
+                v = iv[0] | iv[1]
+            elif t == "nand":
+                v = mask ^ (iv[0] & iv[1])
+            elif t == "nor":
+                v = mask ^ (iv[0] | iv[1])
+            elif t == "xor":
+                v = iv[0] ^ iv[1]
+            elif t == "xnor":
+                v = mask ^ (iv[0] ^ iv[1])
+            elif t == "not":
+                v = mask ^ iv[0]
+            elif t == "buf":
+                v = iv[0]
+            else:
+                continue
+            val[net] = v
+        cand = [(n, 0) for n, v in val.items() if v == 0 and n != "1'b0"]
+        cand += [(n, 1) for n, v in val.items() if v == mask and n != "1'b1"]
+        result = {}
+        for net, _guess in cand[:max_confirm]:
+            c = output_always_constant(nl, net)
+            if c is not None:
+                result[net] = "1'b%d" % c
+        return result
+    except Exception:
+        return {}
+
+
 def _cone_inputs(nl: Netlist, sinks) -> List[str]:
     cone = graph.fanin_cone_nets(nl, sinks)
     return sorted(i for i in cone

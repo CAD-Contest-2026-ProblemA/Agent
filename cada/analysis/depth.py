@@ -41,14 +41,14 @@ def global_max_depth(nl: Netlist) -> int:
     return max((lv.get(s, 0) for s in sinks), default=0)
 
 
-def depth_of_cone(nl: Netlist, output: str, redirect_q: bool = True) -> int:
+def depth_of_cone(nl: Netlist, output: str, redirect_q: bool = False) -> int:
     lv = graph.forward_levels(nl)
     sinks = cones.effective_sinks(nl, output, redirect_q)
     return max((lv.get(s, 0) for s in sinks), default=0)
 
 
 def max_depth_from_to(nl: Netlist, a: str, b: str,
-                      redirect_q: bool = True) -> Optional[int]:
+                      redirect_q: bool = False) -> Optional[int]:
     dist = longest_from_set(nl, {a})
     sinks = cones.effective_sinks(nl, b, redirect_q)
     vals = [dist[s] for s in sinks if s in dist]
@@ -88,7 +88,7 @@ def outputs_depth_greater_than(nl: Netlist, k: int) -> List[str]:
     return out
 
 
-def deepest_output(nl: Netlist, redirect_q: bool = True):
+def deepest_output(nl: Netlist, redirect_q: bool = False):
     lv = graph.forward_levels(nl)
     best = None
     for p in sorted(nl.po):

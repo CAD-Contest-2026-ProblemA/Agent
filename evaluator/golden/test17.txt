@@ -13,4 +13,4 @@ Could not identify the two endpoints for path enumeration.
 The transitive fan-in cone of n42[0] contains 194 gates.
 The transitive fan-out cone of n7 contains 1261 gates.
 No. Signals n2122 and n2116 are not functionally equivalent.
-Wrote the current netlist to "test17_out.v" successfully.
+Wrote the current netlist to "testcase/test17/test17_out.v" successfully.

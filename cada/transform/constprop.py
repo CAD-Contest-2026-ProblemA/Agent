@@ -20,12 +20,22 @@ C0, C1 = "1'b0", "1'b1"
 
 
 def gates_with_const_input(nl: Netlist, gtype: Optional[str] = None,
-                           const_val: Optional[str] = None) -> List[Gate]:
+                           const_val: Optional[str] = None,
+                           extra_const: Optional[dict] = None) -> List[Gate]:
+    """Gates with a constant input.  ``extra_const`` maps functionally-constant
+    nets to their literal value (Q&A A21.1: a signal is constant if provably
+    0/1), so we report structural literals AND proven-constant signals."""
+    extra_const = extra_const or {}
     res = []
     for g in nl.gates:
         if gtype is not None and g.type != gtype:
             continue
-        consts = [i for i in g.ins if is_const(i)]
+        consts = []
+        for i in g.ins:
+            if is_const(i):
+                consts.append(i)
+            elif i in extra_const:
+                consts.append(extra_const[i])
         if not consts:
             continue
         if const_val is not None and const_val not in consts:
@@ -100,9 +110,18 @@ def _simplify_one(gtype: str, ins: List[str]) -> Optional[str]:
     return None
 
 
-def const_propagate(nl: Netlist, restrict_type: Optional[str] = None) -> int:
+def const_propagate(nl: Netlist, restrict_type: Optional[str] = None,
+                    extra_const: Optional[dict] = None) -> int:
     """Propagate constants to a fixpoint.  Returns the number of gates
-    eliminated (output became a constant or a direct wire)."""
+    eliminated (output became a constant or a direct wire).
+
+    ``extra_const`` maps functionally-constant nets to their literal value;
+    those references are replaced by the literal first (equivalence-preserving,
+    since the net provably equals that constant), then the fixpoint runs."""
+    if extra_const:
+        for g in nl.gates:
+            if any(i in extra_const for i in g.ins):
+                g.ins = [extra_const.get(i, i) for i in g.ins]
     subst: Dict[str, str] = {}
 
     def resolve(net: str) -> str:

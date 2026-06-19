@@ -6,4 +6,4 @@ Removed 0 dangling gate(s) that do not affect any primary output; equivalence ve
 Collapsed 1124 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Merged 40 structurally-duplicate gate(s); equivalence verified.
 Reduced the maximum logic depth from 316 to 289 (basis preserved); equivalence verified.
-Wrote the current netlist to "test29_out.v" successfully.
+Wrote the current netlist to "testcase/test29/test29_out.v" successfully.

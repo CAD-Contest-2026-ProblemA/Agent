@@ -53,6 +53,7 @@ class Agent:
         self.llm = LLMClient(config)
         self.fallback = Fallback(self.llm)
         self.rules = self._build_rules()
+        self.const_nets = {}     # functionally-constant nets (from last report)
 
     # ===================================================================
     # main entry
@@ -272,17 +273,44 @@ class Agent:
                 f"{len(nl.gates)} combinational gates and {len(nl.dffs)} "
                 f"flip-flops. Design state has been updated.")
 
+    def _list_to_file(self, basename: str, lines):
+        """Write a long result list to a file (next to the design) and return
+        its path — per official Q&A A16/A21.3 (large result sets go to a file)."""
+        path = self._out_path(basename)
+        try:
+            with open(path, "w") as fh:
+                fh.write("\n".join(lines))
+                if lines:
+                    fh.write("\n")
+            return path
+        except Exception:
+            return None
+
+    @staticmethod
+    def _san_name(s: str) -> str:
+        return re.sub(r"[^0-9A-Za-z_]", "_", s)
+
+    def _out_path(self, fname: str) -> str:
+        """Resolve an output file path. If the name has no directory component,
+        place it in the loaded design's directory (the contest expects outputs
+        in the same testcase directory as the input — Q&A A5.3)."""
+        if os.path.dirname(fname):
+            return fname
+        d = self.state.design_dir or "."
+        return os.path.join(d, fname)
+
     def h_write(self, m, line):
         if self._need_design():
             return self._need_design()
         fm = re.search(r"(?:file|into|to)\s+['\"]?(\S+\.v)['\"]?", line, re.IGNORECASE) or \
              re.search(r"(\S+\.v)", line)
         fname = fm.group(1).strip("'\"") if fm else f"{self.state.case_name or 'out'}_out.v"
+        out_path = self._out_path(fname)
         try:
-            writer.write_file(self.state.current, fname)
+            writer.write_file(self.state.current, out_path)
         except Exception as exc:
-            return f"Failed to write design to {fname}: {exc}"
-        return f'Wrote the current netlist to "{fname}" successfully.'
+            return f"Failed to write design to {out_path}: {exc}"
+        return f'Wrote the current netlist to "{out_path}" successfully.'
 
     # ===================================================================
     # counts / reports
@@ -364,19 +392,29 @@ class Agent:
         return (f"{name} is a DFF. Q={g.q}, D={g.d}, CK={g.clk}, "
                 f"RN={g.rn}, SN={g.sn}.")
 
+    LIST_INLINE = 200          # list inline up to this many; else write a file
+
     def h_list_type(self, m, line):
         if self._need_design():
             return self._need_design()
         gtype = m.group(1).lower()
         if gtype == "dff":
             gs = self.state.current.dffs
-            items = [f"{g.name} (Q={g.q}, D={g.d})" for g in gs[:200]]
+            items = [f"{g.name} (Q={g.q}, D={g.d})" for g in gs]
         else:
             gs = counts.list_gates_of_type(self.state.current, gtype)
-            items = [f"{g.name} (out={g.out}, in={', '.join(g.ins)})" for g in gs[:200]]
-        more = "" if len(gs) <= 200 else f" ... ({len(gs)} total)"
-        head = f"{len(gs)} {gtype.upper()} gate(s):"
-        return head + ("\n" + "\n".join(items) + more if gs else " (none)")
+            items = [f"{g.name} (out={g.out}, in={', '.join(g.ins)})" for g in gs]
+        if not gs:
+            return f"There are 0 {gtype.upper()} gates in the design."
+        if len(items) <= self.LIST_INLINE:
+            return f"{len(gs)} {gtype.upper()} gate(s):\n" + "\n".join(items)
+        # large list -> write to a file and report the path (Q&A A16)
+        fname = f"{self.state.case_name or 'case'}_{gtype}_gates.txt"
+        path = self._list_to_file(fname, items)
+        if path:
+            return (f"{len(gs)} {gtype.upper()} gates. The complete list has been "
+                    f"written to {path}.")
+        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items[:self.LIST_INLINE])
 
     def h_list_xor(self, m, line):
         return self.h_list_type(re.match(r"(xor)", "xor"), line)
@@ -437,9 +475,12 @@ class Agent:
             val = "1'b1"
         elif "constant 0" in line.lower() or "constant-0" in line.lower():
             val = "1'b0"
-        gs = constprop.gates_with_const_input(self.state.current,
-                                              gtype if gtype in ("and", "or", "nand", "nor") else None,
-                                              val)
+        # "constant" = structural literal OR functionally constant (Q&A A21.1)
+        self.const_nets = functional.constant_nets(self.state.current)
+        gs = constprop.gates_with_const_input(
+            self.state.current,
+            gtype if gtype in ("and", "or", "nand", "nor") else None,
+            val, extra_const=self.const_nets)
         self.state.last_report = [g.name for g in gs]
         self.state.last_report_kind = gtype
         if not gs:
@@ -478,27 +519,41 @@ class Agent:
             return f"Yes. A combinational path from {a} to {b} exists."
         return f"No. There is no combinational path from {a} to {b}."
 
+    PATH_INLINE = 50           # list inline up to this many paths
+    PATH_FILE_CAP = 2_000_000  # above this, listing literally is infeasible
+
     def h_enum_paths(self, m, line):
         if self._need_design():
             return self._need_design()
+        nl = self.state.current
         toks = re.findall(NET, line)
-        # heuristic: take the last two distinct net-like tokens
         cand = [t for t in toks if re.match(r"n\d", t)]
         if len(cand) < 2:
             return "Could not identify the two endpoints for path enumeration."
         a, b = cand[-2], cand[-1]
-        count, plist = paths.enumerate_paths(self.state.current, a, b)
+        count = paths.count_paths(nl, a, b)
         if count == 0:
             return f"There are no combinational paths from {a} to {b}."
-        if plist is None:
-            return (f"There are {count} combinational paths from {a} to {b} "
-                    f"(too many to enumerate explicitly).")
-        lines = [f"There are {count} path(s) from {a} to {b}:"]
-        for p in plist[:50]:
-            lines.append("  " + a + " -> " + " -> ".join(p) + " -> " + b)
-        if count > 50:
-            lines.append(f"  ... ({count} total)")
-        return "\n".join(lines)
+        if count <= self.PATH_INLINE:
+            _, plist = paths.enumerate_paths(nl, a, b, limit=self.PATH_INLINE)
+            lines = [f"There are {count} path(s) from {a} to {b}:"]
+            for p in plist:
+                lines.append("  " + a + " -> " + " -> ".join(p) + " -> " + b
+                             if p else "  " + a + " -> " + b)
+            return "\n".join(lines)
+        if count <= self.PATH_FILE_CAP:
+            fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
+            path = self._out_path(fname)
+            try:
+                with open(path, "w") as fh:
+                    paths.stream_paths(nl, a, b, fh, count + 1)
+                return (f"There are {count} combinational paths from {a} to {b}. "
+                        f"The complete enumeration has been written to {path}.")
+            except Exception as exc:
+                return (f"There are {count} combinational paths from {a} to {b} "
+                        f"(could not write the list file: {exc}).")
+        return (f"There are {count} combinational paths from {a} to {b} — too "
+                f"many to enumerate literally.")
 
     def h_len0(self, m, line):
         if self._need_design():
@@ -904,7 +959,11 @@ class Agent:
             rtype = mm.group(1).lower()
         elif self.state.last_report_kind:
             rtype = self.state.last_report_kind
-        info, ok, reason = self._commit(lambda nl: constprop.const_propagate(nl, rtype))
+        # reuse the functional-constant set from the preceding "report" (A21.1);
+        # if absent (simplify without a prior report), detect now
+        extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
+        info, ok, reason = self._commit(
+            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
         if not ok:
             return f"The constant propagation was reverted: {reason}."
         self.state.record_delta("const_eliminated", info)

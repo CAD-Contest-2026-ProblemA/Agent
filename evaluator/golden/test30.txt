@@ -6,4 +6,4 @@ Removed 0 dangling gate(s) that do not affect any primary output; equivalence ve
 Collapsed 952 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Merged 125 structurally-duplicate gate(s); equivalence verified.
 The design is already optimal at depth 23; reported the original (equivalence preserved).
-Wrote the current netlist to "test30_out.v" successfully.
+Wrote the current netlist to "testcase/test30/test30_out.v" successfully.

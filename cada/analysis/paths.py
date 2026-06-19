@@ -176,3 +176,39 @@ def enumerate_paths(nl: Netlist, a: str, b: str,
 
     dfs(a, [])
     return count, paths
+
+
+def stream_paths(nl: Netlist, a: str, b: str, out_fh, cap: int) -> int:
+    """Write up to ``cap`` A->B paths (one per line, gate sequence) to a file
+    handle.  Pruned to nets that can reach B so the DFS stays productive.
+    Returns the number of paths written."""
+    import sys
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), 200000))
+    reach_b = graph.fanin_cone_nets(nl, [b])
+    nl.driver("__force_build__")
+    loads = nl._loads
+    written = [0]
+
+    def dfs(net: str, acc: List[str]):
+        if written[0] >= cap:
+            return
+        if net == b:
+            out_fh.write((a + " -> " + " -> ".join(acc) + " -> " + b) if acc
+                         else (a + " -> " + b))
+            out_fh.write("\n")
+            written[0] += 1
+            return
+        for consumer in loads.get(net, []):
+            if consumer[0] != "gate":
+                continue
+            g = consumer[1]
+            if g.out not in reach_b:
+                continue
+            acc.append(g.name)
+            dfs(g.out, acc)
+            acc.pop()
+            if written[0] >= cap:
+                return
+
+    dfs(a, [])
+    return written[0]

@@ -128,12 +128,16 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
     responses, nframes = _parse_frames(stdout, len(raw))
 
     final = None
-    outv = f"{case}_out.v"
-    if os.path.exists(outv):
-        try:
-            final = reader.parse_file(outv)
-        except Exception:
-            final = None
+    # the agent writes the output next to the input (testcase/<case>/), and
+    # historically also cwd-root; check both
+    for outv in (os.path.join("testcase", case, f"{case}_out.v"),
+                 f"{case}_out.v"):
+        if os.path.exists(outv):
+            try:
+                final = reader.parse_file(outv)
+            except Exception:
+                final = None
+            break
 
     original = reader.parse_file(os.path.join(case_dir, f"{case}.v"))
     return {
@@ -273,7 +277,10 @@ def _enter_sandbox():
     """
     tmp = tempfile.mkdtemp(prefix="cada_eval_")
     try:
-        os.symlink(os.path.join(ROOT, "testcase"), os.path.join(tmp, "testcase"))
+        # copy (not symlink) testcase/ so the agent's output files (written next
+        # to the input) land inside the sandbox and never touch the repo
+        shutil.copytree(os.path.join(ROOT, "testcase"),
+                        os.path.join(tmp, "testcase"))
         os.chdir(tmp)
         return tmp
     except Exception:

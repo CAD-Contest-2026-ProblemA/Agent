@@ -14,4 +14,4 @@ Primary input n0 has the highest fanout (690).
 Inserted 244 buffer(s) so that no driver exceeds 16 loads; max-fanout bound and equivalence verified.
 The maximum fanout of n1 is now 15.
 The fanout of n0 is 15. It directly drives: cg370, cg372, cg374, cg376, cg378, cg380, cg382, cg384, cg386, cg388, cg390, cg392, cg394, cg396, cg398
-Wrote the current netlist to "test36_out.v" successfully.
+Wrote the current netlist to "testcase/test36/test36_out.v" successfully.
