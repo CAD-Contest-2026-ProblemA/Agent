@@ -1,9 +1,13 @@
 #!/usr/bin/env bash
 # Package the agent into a single standalone executable with PyInstaller.
 #
-#   scripts/build_exe.sh [exec_name]        # default name: cada0001_alpha
-#   scripts/build_exe.sh cada1125_alpha     # use YOUR team number
-#   WITH_LLM=1 scripts/build_exe.sh cada1125_alpha   # also bundle openai/anthropic
+#   scripts/build.sh [exec_name]        # default name: cada0001_alpha
+#   scripts/build.sh cada1125_alpha     # use YOUR team number
+#   WITH_LLM=0 scripts/build.sh cada1125_alpha   # lightweight: skip openai/anthropic
+#
+# By default the openai/anthropic LLM fallback IS bundled. Set WITH_LLM=0 for a
+# smaller binary (the 40 public testcases never invoke the LLM, so the
+# lightweight build still passes them).
 #
 # Output:  dist/<exec_name>   (a single file; no Python/uv needed to run it)
 #
@@ -20,7 +24,7 @@ set -euo pipefail
 repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo"
 NAME="${1:-cada0001_alpha}"
-WITH_LLM="${WITH_LLM:-0}"
+WITH_LLM="${WITH_LLM:-1}"
 
 # throwaway build venv with PyInstaller (kept out of the runtime .venv)
 bvroot="$(mktemp -d)"

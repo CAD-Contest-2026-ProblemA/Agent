@@ -85,9 +85,12 @@ To ship one self-contained executable (no Python/uv needed on the target),
 package it with PyInstaller:
 
 ```bash
-scripts/build_exe.sh cada1125_alpha          # -> dist/cada1125_alpha (use YOUR team no.)
-WITH_LLM=1 scripts/build_exe.sh cada1125_alpha   # also bundle the openai/anthropic fallback
+scripts/build.sh cada1125_alpha           # -> dist/cada1125_alpha (use YOUR team no.)
+WITH_LLM=0 scripts/build.sh cada1125_alpha   # lightweight: skip the openai/anthropic fallback
 ```
+
+The openai/anthropic LLM fallback is **bundled by default**; `WITH_LLM=0` makes
+a smaller binary (the 40 public testcases never invoke the LLM either way).
 
 * **glibc:** PyInstaller bundles Python but not the C library — build on a
   machine whose glibc is ≤ the target's (ideally the contest machine, which has

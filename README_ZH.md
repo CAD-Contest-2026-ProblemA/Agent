@@ -58,9 +58,11 @@ benchmark **完全可離線執行、不需任何第三方套件**——config pa
 想要一個自包含的執行檔(目標機器不需要 Python / uv),用 PyInstaller 打包:
 
 ```bash
-scripts/build_exe.sh cada1125_alpha          # -> dist/cada1125_alpha(用你自己的隊號)
-WITH_LLM=1 scripts/build_exe.sh cada1125_alpha   # 連 openai/anthropic fallback 也包進去
+scripts/build.sh cada1125_alpha           # -> dist/cada1125_alpha(用你自己的隊號)
+WITH_LLM=0 scripts/build.sh cada1125_alpha   # 輕量版:不包 openai/anthropic
 ```
+
+openai/anthropic 的 LLM fallback **預設就會包進去**;加 `WITH_LLM=0` 才會做比較小的 binary(反正這 40 題兩種都用不到 LLM)。
 
 * **glibc 注意**:PyInstaller 會包 Python 但不包 C library——要在 glibc ≤ 目標機器的環境上 build(最好直接在比賽機器上 build,它有 uv),不然 binary 會起不來。
 * `abc`/`yosys` 仍是**外部程式**(執行時透過 binary 旁邊的 `configs/tools.yaml`、`-config` 的 `tools:` 區段、`ABC_BIN`/`YOSYS_BIN`、或 `$PATH` 解析)。
