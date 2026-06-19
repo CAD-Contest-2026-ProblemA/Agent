@@ -79,14 +79,13 @@ def collapse_double_inverters(nl: Netlist) -> int:
         a = first.ins[0]                 # g.out == NOT(NOT(a)) == a
         y = g.out
         if y in po:
-            # turn the second inverter into a buffer of a (keep the port driven)
-            g.type = "buf"
-            g.ins = [a]
-            collapsed += 1
-        else:
-            subst[y] = a
-            remove.add(g_index[id(g)])
-            collapsed += 1
+            # Collapsing into a primary output would need the PO driven by a
+            # wire/buffer; a BUF would break a "NAND/NOT only" basis. Leave this
+            # pair as NOT(NOT(a)) (functionally identical, still in-basis).
+            continue
+        subst[y] = a
+        remove.add(g_index[id(g)])
+        collapsed += 1
 
     if subst or remove:
         def resolve(n):

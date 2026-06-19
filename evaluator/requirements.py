@@ -45,27 +45,27 @@ class LineSpec:
     is_transform: bool = False
 
 
-_GW = r"nand|nor|xnor|xor|and|or|not|buf"
-
-
 def _basis_phrase(line: str) -> Optional[str]:
-    """Extract a target basis only from an explicit 'only <gates>' /
-    '<gates> ... only' clause, so unrelated words (e.g. 'does not change')
-    cannot fabricate a basis."""
-    low = line.lower()
-    cands = re.findall(r"only\s+((?:%s)(?:[,\s]+(?:and\s+)?(?:%s))*)" % (_GW, _GW), low)
-    cands += re.findall(r"((?:%s)(?:[,\s]+(?:and\s+)?(?:%s))*)\s+(?:gates?\s+)?only" % (_GW, _GW), low)
-    for c in cands:
-        w = set(re.findall(_GW, c))
-        w.discard("buf")
-        if w in ({"nand", "not"}, {"nand"}):
-            return "NAND_NOT"
-        if w in ({"nor", "not"}, {"nor"}):
-            return "NOR_NOT"
-        if w == {"and", "or", "not"}:
-            return "AND_OR_NOT"
-        if w in ({"and", "not"}, {"and"}):
-            return "AND_NOT"
+    """Map a basis-purity instruction to a basis name.
+
+    Gate names are written in UPPERCASE in the prompts (NAND, NOT, ...), while
+    the conjunction 'and' is lowercase — so we extract only uppercase gate
+    tokens.  That avoids mistaking the 'and' in "NAND and NOT" for the AND gate
+    (which would otherwise yield {nand, and, not} and match no basis), and
+    avoids unrelated words (e.g. "does not change") fabricating a basis.
+    A basis is returned only on an exact match of the recognised gate set.
+    """
+    toks = set(t.lower() for t in
+               re.findall(r"\b(NAND|NOR|XNOR|XOR|AND|OR|NOT|BUF)\b", line))
+    toks.discard("buf")
+    if toks == {"nand", "not"}:
+        return "NAND_NOT"
+    if toks == {"nor", "not"}:
+        return "NOR_NOT"
+    if toks == {"and", "or", "not"}:
+        return "AND_OR_NOT"
+    if toks == {"and", "not"}:
+        return "AND_NOT"
     return None
 
 

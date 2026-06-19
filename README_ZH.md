@@ -39,16 +39,16 @@ git clone https://github.com/CAD-Contest-2026-ProblemA/Agent.git <資料夾名> 
 bash setup.sh        # 一次性:uv 建立 .venv(內含 Python 3.12,並裝可選相依套件)
 
 # 用跟競賽 harness 一模一樣的方式執行:
-./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
 ```
 
-`cada0001_alpha` 啟動器會優先用 `.venv/bin/python`;若沒有 `.venv` 但機器上有 `uv`,會自動 bootstrap 一次;再不行就退回系統的 `python3`。
+`cada1125_alpha` 啟動器會優先用 `.venv/bin/python`;若沒有 `.venv` 但機器上有 `uv`,會自動 bootstrap 一次;再不行就退回系統的 `python3`。
 
 ### 不用 uv 的情況
 
 ```bash
 pip install -r requirements.txt     # 只有要用 LLM fallback 才需要
-./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
 ```
 
 benchmark **完全可離線執行、不需任何第三方套件**——config parser 內建了一個 mini-parser fallback,而 regex router 已涵蓋全部 40 個 testcase(在這些測資上 LLM 完全不會被呼叫)。
@@ -89,7 +89,7 @@ generation:
 評測前先檢查環境裝齊了沒:
 
 ```bash
-./cada0001_alpha --doctor        # 或:python3 -m cada.doctor / python3 scripts/doctor.py
+./cada1125_alpha --doctor        # 或:python3 -m cada.doctor / python3 scripts/doctor.py
 ```
 
 依序檢查:**Python**(先看有沒有裝 uv → 有的話看 `.venv/` 在不在 → 套件都查 `.venv` 裡的;只要 uv 或 `.venv` 不在,這段直接 fail,**不會去檢查 host 的 Python**);**外部工具**(`abc` 必要、`yosys` 備援,用跟 agent 一樣的順序解析路徑後**實際執行一次**,所以「檔案在但跑不起來」例如 glibc/架構不合也會被抓出來);**設定檔**與選用的 LLM key;以及 **agent 套件本身**(import + 解析一個 testcase)。有 hard failure 時 exit code 非 0。
@@ -130,6 +130,13 @@ python3 evaluator/evaluate.py --update-golden   # 把目前回應釘成 baseline
 * **DERIVED**(有客觀值、用另一種方法重算):閘類型計數、PI/PO 數,直接從 `.v` 算。
 * **GOLDEN**:每個回應跟 `evaluator/golden/` 裡的 baseline 比對(回歸偵測)。
 * **OPT**:達到的最佳化成本(max depth / gate count),越小排名越好。
+
+預設評估器是 **in-process** 驅動引擎(快、可逐步檢查)。加 `--exe` 則改成把**真正的執行檔**當 subprocess 跑,檢查它實際的 stdout framing + 寫出的網表——最忠實的「我交的東西到底能不能跑」測試:
+
+```bash
+python3 evaluator/evaluate.py --exe dist/cada1125_alpha     # 打包好的 binary
+python3 evaluator/evaluate.py --exe ./cada1125_alpha        # uv wrapper
+```
 
 評估器**預設就在拋棄式 sandbox 裡跑**——agent 寫的 `testNN_out.v` 會落在暫存目錄、結束時自動刪掉,所以**不會弄髒 repo**(`--update-golden` 仍會寫回 repo 的 golden)。要把輸出留在當前目錄就加 `--no-sandbox`。
 

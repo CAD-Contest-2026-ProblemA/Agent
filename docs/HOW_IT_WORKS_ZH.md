@@ -1,0 +1,155 @@
+# 這個系統怎麼運作(agent + evaluator 白話說明)
+
+這份文件用白話把兩件事講清楚:
+1. **agent**:一個自然語言請求,怎麼從 stdin 進來、被處理、再從 stdout 出去。
+2. **evaluator**:本機怎麼檢查 agent 跑得對不對。
+
+---
+
+## 一、核心觀念(先記住這句)
+
+> **「大腦」是 deterministic 的 EDA 程式,LLM 只負責把一句話翻成一個指令。**
+
+- 真正在做電路分析/轉換/驗證的,是我們自己寫的 Python(在自寫的網表 IR 上跑圖演算法)。
+- ABC / yosys 只當兩種「裁判」:**判斷兩個電路等不等價**、**幫忙做成本最小化的最佳化**。它們不負責命名、不當答案來源。
+- LLM(gpt-4o-mini / claude-haiku)只在「規則認不出這句話」時才出場,把那句話翻成 `{intent, params}`。實測 40 個 testcase 全部都被規則認出來了,**LLM 一次都沒被叫到**(所以不放 API key 也能跑)。
+
+---
+
+## 二、一個請求的生命週期(agent 怎麼跑)
+
+```
+./cada1125_alpha -config cfg.yaml < prompt.txt
+        │
+        ▼
+cada1125_alpha (bash shim)        ── 找 .venv/python、設 PYTHONPATH、PYTHONHASHSEED=0
+        │                            不改工作目錄(讓相對路徑照常解析)
+        ▼
+cada/main.py                       ── 讀 config(LLM 設定 + 工具路徑)→ 設定 abc/yosys 路徑 → 建 Agent
+        │                            → 跑 Protocol REPL
+        ▼
+cada/io_/protocol.py (REPL)        ── 從 stdin 一行一行讀
+        │   第1行:抽出 case name → 開 <case>.log
+        │   每一行:呼叫 agent.handle(line, id) 拿到回應
+        │           印出   #RESPONSE <id> / 回應內容 / #END <id>
+        │           stdout 和 .log 都 flush(harness 看到 #END 才送下一行)
+        │   EOF:直接結束,不發 frame
+        ▼
+cada/agent/agent.py : handle(line)
+        │
+        │  (1) 規則 router:一張 regex 表,由上到下比對,第一個命中的就呼叫它的 handler
+        │  (2) 沒命中 → LLM fallback:把這行丟給小模型翻成 {intent, params}(有 cache)→ dispatch
+        │  (3) 還是不行 → 安全 no-op(回「已收到、設計不變」)
+        ▼
+   對應的 handler 做事(分三類,見下)
+        ▼
+   回傳一段文字 → protocol 包成 #RESPONSE/#END 印出去
+```
+
+### handler 三大類
+
+| 類型 | 例子請求 | 做什麼 | 會不會改設計 |
+|------|----------|--------|--------------|
+| **分析** | 「count gates」「max depth A→B」「path 存不存在」「cone 有幾個 gate」 | 在 IR 上跑圖演算法算出答案,格式化成文字 | 否 |
+| **轉換** | 「remap 成 NAND+NOT」「插 buffer 讓 fanout≤4」「移除 dangling」「合併重複」「改名」 | 先 snapshot → 改 IR → **過 guards** → 過了 commit、沒過 rollback | 是 |
+| **最佳化** | 「minimize depth」「optimize cone of X」 | 丟給 ABC 做深度/面積最小化 → cec 驗證 → 有改善才採用,否則回原圖 | 是(只在更好時) |
+
+### 「轉換」為什麼安全(防 0 分的關鍵)
+
+每個轉換 **commit 前**都會過 `cada/guards/validators.py` 的三關:
+1. **功能等價**:用 register-cut 把時序電路投影成組合電路,丟 ABC `cec`。
+2. **結構界限**:該行有要求(例如 fanout ≤ 4)就重算一次確認。
+3. **basis 純度**:該行要求只用某些閘(例如只有 NAND/NOT)就檢查 gate 型別。
+
+任何一關沒過 → **rollback** 回轉換前的 snapshot(寧可不做,也不交出功能被改壞的設計)。
+另外,每個轉換會把「改了幾個」記成 delta,後面那種「How many X were added?」的問題就直接讀這個 delta。
+
+---
+
+## 三、用到的關鍵零件
+
+| 檔案 | 角色 |
+|------|------|
+| `cada/netlist/ir.py` | 網表 IR(唯一真相):gate / dff / net、driver/loads、snapshot |
+| `cada/netlist/reader.py` `writer.py` | 自寫 Verilog parser / canonical 結構 writer(可完整 round-trip) |
+| `cada/analysis/*` | 計數、cone、深度、連通性、path(DP 計數不列舉)、functional、sequential |
+| `cada/transform/*` | basis 轉換、XOR/XNOR 分解、常數傳遞、dangling 移除、重複合併、buffer 樹、改名 |
+| `cada/optimize/abc_opt.py` | 用 ABC + 單位延遲 genlib 做深度/面積最小化,保 basis,過 cec |
+| `cada/equiv/*` | 等價閘:IR→BLIF→ABC cec(主);yosys 當備援 |
+| `cada/agent/*` | 規則 router、狀態(snapshot / delta / case name / frame id) |
+
+---
+
+## 四、具體例子:trace test21(5 行)
+
+`testcase/test21/prompt.txt`:
+
+| # | 請求(節錄) | 走哪個 handler | 做了什麼 | 回應(節錄) |
+|---|--------------|----------------|----------|-------------|
+| 1 | This is the beginning ... case name is test21. | `h_begin` | 設 case name、開 test21.log | Acknowledged. Initialized testcase "test21"... |
+| 2 | load the design from file test21.v ... | `h_load` | 解析網表,存成 original 快照 | Loaded ... 343 combinational gates, 55 flip-flops. |
+| 3 | count all the gates ... broken down by type | `h_count_all` | 掃 IR 算各型別數量 | Total gate count: 398 / AND: 0 / OR: 8 / ... / DFF: 55 |
+| 4 | Insert buffers ... no gate drives more than 4 loads. ... | `h_buffers_fanout` | snapshot → 插平衡 buffer 樹(每 driver ≤4)→ guard 重算 max-fanout≤4 + cec → commit | Inserted 30 buffer(s) so that no driver exceeds 4 loads; ... verified. |
+| 5 | write the current design to test21_out.v | `h_write` | 自寫 writer 輸出結構網表 | Wrote the current netlist to "test21_out.v" successfully. |
+
+每一行都會被 protocol 包成:
+```
+#RESPONSE 4
+Inserted 30 buffer(s) so that no driver exceeds 4 loads; max-fanout bound and equivalence verified.
+#END 4
+```
+
+---
+
+## 五、evaluator 怎麼檢查(`evaluator/`)
+
+執行:`python evaluator/evaluate.py`(**預設在拋棄式 sandbox 裡跑**,不會留下 `*_out.v`)。
+
+流程(對每個 case):
+```
+harness:一行一行餵給 agent,記下 (request, response)
+        並在「有結構性需求的那一步」拍下 netlist snapshot
+        保留 original(載入時)和 final(最後)
+        │
+        ▼
+requirements.derive(每一行)  ── 從文字推導「這行該檢查什麼」
+        │
+        ▼
+四類檢查 + 報告
+```
+
+### `derive` 會從句子推出這些需求
+- **equiv**:出現「preserve functional equivalence / nothing changes functionally」→ 最終要與原始等價。
+- **basis**(全設計):「remap the entire design to only NAND and NOT」之類。
+- **basis**(某 cone):「restructure the cone of n8 using only NAND and NOT」之類。
+- **gate_absent**(指定閘消失):「convert every XNOR ... to NOR-only」→ 之後不該再有 XNOR(不是整個設計變 NOR/NOT!這是我特地區分的)。
+- **max_fanout**:「no gate/signal drives more than K」。
+- **optimize cost**:成本是 depth / cone depth / gate count。
+
+### 四類檢查
+| 群組 | 檢查什麼 | 怎麼驗(關鍵:用「另一種方法」獨立重算) |
+|------|----------|------------------------------------------|
+| **HARD** | 0 分與否的硬門檻 | final 與 original 等價(ABC cec)、結構界限重算、basis 純度 grep、指定閘是否歸零、輸出網表能 round-trip |
+| **DERIVED** | 有客觀值的答案 | gate 型別數、PI/PO 數,**直接掃 `.v` 原檔**重算後比對回應 |
+| **GOLDEN** | 回歸偵測 | 每個回應跟 `evaluator/golden/<case>.txt` 基準逐行比 |
+| **OPT** | 最佳化成本 | 報 final 的 max depth / gate count(越小排名越好) |
+
+報告長這樣:
+```
+test21   HARD 3/3  DERIVED 1/1  GOLDEN ✓
+test28   HARD 4/4  DERIVED 1/1  GOLDEN ✓  OPT 130
+```
+**只要有任何 HARD 沒過,exit code 就非 0**(可以拿來當 CI gate)。
+
+### 重要分際
+- **HARD / DERIVED 是真檢查**:等價交給 ABC(外部裁判)、計數掃原檔、界限/basis 從結果網表重算——都不是再問一次 agent 自己。
+- **GOLDEN 是回歸,不是對錯**:basis 沒有官方答案,所以 golden 存的是「目前引擎的輸出」。它能抓「輸出有沒有變動」,但要等你把**官方答案**放進 `evaluator/golden/<case>.txt` 才會變成「答案對不對」的真評分。
+- `--update-golden`:把目前輸出釘成新基準(只在確定輸出正確時用)。
+- `--no-sandbox`:把 `*_out.v` 留在當前目錄(預設是 sandbox、不留檔)。
+
+---
+
+## 六、一句話總結
+
+- **agent**:stdin 進來一句話 → 規則翻成指令(LLM 當後備)→ deterministic EDA 引擎做事(轉換一定過等價/界限/basis 三關才 commit)→ stdout 出去一段答案 + `#RESPONSE/#END`。
+- **evaluator**:重跑一遍,**獨立**驗硬性要求(等價/界限/basis/計數),其餘用 golden 做回歸;預設 sandbox、不污染 repo。

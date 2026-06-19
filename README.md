@@ -61,10 +61,10 @@ old contest machines too) independent of the system Python:
 bash setup.sh        # one-time: uv creates .venv with Python 3.12 (+ optional deps)
 
 # run exactly like the contest harness:
-./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
 ```
 
-The `cada0001_alpha` launcher prefers `.venv/bin/python`; if `.venv` is absent
+The `cada1125_alpha` launcher prefers `.venv/bin/python`; if `.venv` is absent
 but `uv` is present it bootstraps once; otherwise it falls back to the system
 `python3`.
 
@@ -72,7 +72,7 @@ but `uv` is present it bootstraps once; otherwise it falls back to the system
 
 ```bash
 pip install -r requirements.txt     # only needed for the LLM fallback
-./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
 ```
 
 The benchmark runs fully **offline** with no third-party packages — the config
@@ -122,7 +122,7 @@ generation:
 Before running an evaluation, check the environment:
 
 ```bash
-./cada0001_alpha --doctor        # or:  python3 -m cada.doctor  /  python3 scripts/doctor.py
+./cada1125_alpha --doctor        # or:  python3 -m cada.doctor  /  python3 scripts/doctor.py
 ```
 
 It verifies, in order: **Python** (uv installed → `.venv` present → packages
@@ -179,6 +179,16 @@ Per case it reports four groups:
 * **GOLDEN** — every response diffed against a pinned baseline in
   `evaluator/golden/` (regression detection).
 * **OPT** — the achieved optimize cost (max depth / gate count); lower ranks better.
+
+By default the evaluator drives the engine **in-process** (fast, with per-step
+introspection).  Pass `--exe` to instead run the **actual executable** as a
+subprocess and check its real stdout framing + the written netlist — the most
+faithful "does my submission work" test:
+
+```bash
+python3 evaluator/evaluate.py --exe dist/cada1125_alpha     # the packaged binary
+python3 evaluator/evaluate.py --exe ./cada1125_alpha        # the uv wrapper
+```
 
 The evaluator runs in a **throwaway sandbox by default** — the agent's
 `testNN_out.v` writes go to a temp dir that is deleted on exit, so the repo is

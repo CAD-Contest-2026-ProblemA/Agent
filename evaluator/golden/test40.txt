@@ -4,7 +4,7 @@ Total gate count: 26094 AND: 0 OR: 811 NOT: 1421 NAND: 17597 NOR: 3100 XOR: 14 X
 Remapped the entire design to NAND+NOT gates (4331 gates rewritten); functional equivalence verified.
 Replaced 0 NAND gate(s) tied to constant 1 with inverters; equivalence verified.
 There are currently 14759 NOT gates in the design.
-Collapsed 3798 back-to-back inverter pair(s) into direct wires; equivalence verified.
+Collapsed 3797 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Verified: the current design is functionally equivalent to the original loaded netlist.
 Primary outputs: n9 [32-bit] n10 [32-bit] n11 [32-bit] n13 [1-bit] n15 [4-bit] n14 [1-bit] n12 [32-bit]
 0 XOR gate(s): (none)

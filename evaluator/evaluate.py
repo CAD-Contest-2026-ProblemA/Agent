@@ -21,10 +21,13 @@ import tempfile
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
+import subprocess                                           # noqa: E402
+
 from cada.io_.config import load_config                     # noqa: E402
 from cada.agent.agent import Agent                          # noqa: E402
 from cada.main import _configure_tools                      # noqa: E402
 from cada.analysis import depth as depth_mod                # noqa: E402
+from cada.netlist import reader                             # noqa: E402
 from evaluator import checks                                # noqa: E402
 from evaluator.requirements import derive                   # noqa: E402
 
@@ -85,6 +88,63 @@ def run_case(case: str, config_path):
     }
 
 
+def _parse_frames(stdout: str, n: int):
+    """Pull each #RESPONSE <id> .. #END <id> body out of an executable's stdout,
+    returned as a list indexed by id (1..n)."""
+    bodies = {}
+    for m in re.finditer(r"#RESPONSE\s+(\d+)\s*\n(.*?)\n?#END\s+\1",
+                         stdout, re.DOTALL):
+        bodies[int(m.group(1))] = m.group(2)
+    return [bodies.get(i, "") for i in range(1, n + 1)], len(bodies)
+
+
+def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
+    """Drive the REAL executable (the PyInstaller binary or the wrapper) as a
+    subprocess and evaluate its actual stdout + written netlist.
+
+    No per-step netlist snapshots are available here (we only see stdout and the
+    final written *_out.v), so the structural checks run on the final design —
+    which is exactly what the contest grades.
+    """
+    case_dir = os.path.join(TC_ROOT, case)
+    with open(os.path.join(case_dir, "prompt.txt")) as fh:
+        raw = [ln.strip() for ln in fh if ln.strip()]
+    specs, tb, seen = [], [], False
+    for line in raw:
+        s = derive(line)
+        specs.append(s)
+        tb.append(seen)
+        if s.is_transform:
+            seen = True
+
+    # run the executable in the current (sandbox) cwd; out.v lands here
+    try:
+        proc = subprocess.run([os.path.abspath(exe), "-config", config_path],
+                              input="\n".join(raw) + "\n",
+                              capture_output=True, text=True, timeout=timeout)
+        stdout = proc.stdout
+    except Exception as exc:
+        stdout = ""
+    responses, nframes = _parse_frames(stdout, len(raw))
+
+    final = None
+    outv = f"{case}_out.v"
+    if os.path.exists(outv):
+        try:
+            final = reader.parse_file(outv)
+        except Exception:
+            final = None
+
+    original = reader.parse_file(os.path.join(case_dir, f"{case}.v"))
+    return {
+        "case": case, "lines": raw, "responses": responses, "specs": specs,
+        "snaps": {}, "transform_before": tb,
+        "original": original, "final": final,
+        "vfile": os.path.join(case_dir, f"{case}.v"),
+        "exe_frames": (nframes, len(raw)),
+    }
+
+
 # ----- evaluate one case -------------------------------------------------
 class Check:
     def __init__(self, group, label, status, detail=""):
@@ -106,6 +166,12 @@ def evaluate_case(run, golden_dir, update_golden=False):
     out = []
     specs, lines, resps = run["specs"], run["lines"], run["responses"]
     has_transform = any(s.is_transform for s in specs)
+
+    # HARD (exe mode only): the executable produced one frame per request
+    if "exe_frames" in run:
+        got, want = run["exe_frames"]
+        out.append(Check("HARD", f"protocol frames {got}/{want}",
+                         "PASS" if got == want else "FAIL"))
 
     # HARD: functional equivalence of the submitted design to the original
     if has_transform and run["original"] is not None and run["final"] is not None:
@@ -223,7 +289,12 @@ def main(argv=None) -> int:
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--no-sandbox", action="store_true",
                     help="write outputs in the current directory instead of a temp dir")
+    ap.add_argument("--exe", default=None,
+                    help="run this executable (e.g. dist/cada1125_alpha or "
+                         "./cada1125_alpha) as a subprocess instead of in-process")
     args = ap.parse_args(argv)
+    if args.exe:
+        args.exe = os.path.abspath(args.exe)
 
     # absolutise the config path before any chdir into the sandbox
     if args.config:
@@ -248,7 +319,10 @@ def _run_cases(args, cases) -> int:
 
     for case in cases:
         try:
-            run = run_case(case, args.config)
+            if args.exe:
+                run = run_case_exe(case, args.exe, args.config)
+            else:
+                run = run_case(case, args.config)
             results = evaluate_case(run, GOLDEN_DIR, args.update_golden)
         except Exception as exc:
             print(f"{BOLD(case)}  {RED('ERROR')} {exc}")
