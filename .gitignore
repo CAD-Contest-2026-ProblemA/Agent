@@ -1,3 +1,6 @@
+# ---- secrets ----
+configs/api_key.yaml
+
 # ---- Python ----
 __pycache__/
 *.py[cod]
@@ -32,3 +35,7 @@ abc.history
 .vscode/
 .DS_Store
 Thumbs.db
+
+# ---- abc ----
+abc
+abc.rc
