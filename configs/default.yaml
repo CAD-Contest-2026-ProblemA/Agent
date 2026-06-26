@@ -1,11 +1,10 @@
-provider: "openai"          # or: "anthropic"
+provider: "anthropic"          # or: "anthropic"
 
+# API keys live in configs/api_key.yaml (git-ignored) and are merged in at load time.
 openai:
-  api_key: <YOUR_API_KEY>
-  model: "gpt-4o-mini"
+  model: "gpt-4o"
 
 anthropic:
-  api_key: <YOUR_API_KEY>
   model: "claude-haiku-4-5"
 
 generation:

@@ -239,7 +239,14 @@ class Agent:
     # IO / basic
     # ===================================================================
     def h_begin(self, m, line):
-        mm = re.search(r"case name is\s+(\S+?)[\.\s]*$", line, re.IGNORECASE)
+        mm = (
+            re.search(r"case name is\s+(\S+?)[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"testcase identifier is\s+(\S+?)[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"(?:testcase|case)\s+(?:called|named)\s+(\S+?)[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"(?:the )?identifier(?:\s+is|[:\s]+)\s*(\S+?)[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"case\s+(?:id|title|label)[:\s]+\s*(\S+?)[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"test.?case\s+(\S+?)[\.\s]*$", line, re.IGNORECASE)
+        )
         name = mm.group(1).rstrip(".") if mm else (self.state.case_name or "case")
         self.state.case_name = name
         return (f'Acknowledged. Initialized testcase "{name}". All subsequent '
@@ -247,31 +254,20 @@ class Agent:
                 "empty and ready for commands.")
 
     def h_load(self, m, line):
-        fm = re.search(r"file\s+(\S+\.v)", line, re.IGNORECASE) or \
-             re.search(r"from\s+(\S+\.v)", line, re.IGNORECASE) or \
-             re.search(r"(\S+\.v)", line)
-        dm = re.search(r"director(?:y|ies)\s+(\S+?)[\.\s]*$", line, re.IGNORECASE) or \
-             re.search(r"folder\s+['\"]?([^'\"]+?)['\"]?[\.\s]*$", line, re.IGNORECASE)
-        fname = fm.group(1) if fm else None
-        d = (dm.group(1).strip().strip("'\"") if dm else "")
+        fm = (
+            re.search(r"(?:file|from)\s+['\"]?(\S+\.v)['\"]?", line, re.IGNORECASE)
+            or re.search(r"verilog\s+file\s+['\"]?(\S+\.v)['\"]?", line, re.IGNORECASE)
+            or re.search(r"['\"]?(\S+\.v)['\"]?", line)
+        )
+        dm = (
+            re.search(r"(?:under|in|inside|located in|from)\s+(?:the\s+)?(?:director(?:y|ies)|folder)\s+['\"]?([^'\"]+?)['\"]?[\.\s]*$", line, re.IGNORECASE)
+            or re.search(r"(?:director(?:y|ies)|folder)\s+['\"]?([^'\"]+?)['\"]?[\.\s]*$", line, re.IGNORECASE)
+        )
+        fname = fm.group(1).strip("'\"") if fm else None
+        d = dm.group(1).strip().strip("'\"") if dm else ""
         if fname is None:
             return "Could not determine the design file to load."
-        path = os.path.join(d, fname) if d else fname
-        for cand in (path, fname, os.path.join(self.state.design_dir, fname)):
-            if os.path.exists(cand):
-                path = cand
-                break
-        try:
-            nl = reader.parse_file(path)
-        except Exception as exc:
-            return f"Failed to load design from {path}: {exc}"
-        self.state.set_loaded(nl)
-        self.state.design_dir = os.path.dirname(path) or "."
-        c = nl.type_counts()
-        return (f'Loaded gate-level Verilog from "{path}" successfully. '
-                f"Detected a single top module (flat netlist) with "
-                f"{len(nl.gates)} combinational gates and {len(nl.dffs)} "
-                f"flip-flops. Design state has been updated.")
+        return self.op_load_design(fname, d)
 
     def _list_to_file(self, basename: str, lines):
         """Write a long result list to a file (next to the design) and return
@@ -300,17 +296,12 @@ class Agent:
         return os.path.join(d, fname)
 
     def h_write(self, m, line):
-        if self._need_design():
-            return self._need_design()
-        fm = re.search(r"(?:file|into|to)\s+['\"]?(\S+\.v)['\"]?", line, re.IGNORECASE) or \
-             re.search(r"(\S+\.v)", line)
+        fm = (
+            re.search(r"(?:output\s+file|file|into|to|as)\s+['\"]?(\S+\.v)['\"]?", line, re.IGNORECASE)
+            or re.search(r"['\"]?(\S+\.v)['\"]?", line)
+        )
         fname = fm.group(1).strip("'\"") if fm else f"{self.state.case_name or 'out'}_out.v"
-        out_path = self._out_path(fname)
-        try:
-            writer.write_file(self.state.current, out_path)
-        except Exception as exc:
-            return f"Failed to write design to {out_path}: {exc}"
-        return f'Wrote the current netlist to "{out_path}" successfully.'
+        return self.op_write_design(fname)
 
     # ===================================================================
     # counts / reports
@@ -466,10 +457,16 @@ class Agent:
         return (f"{len(gs)} gate(s) have an input tied to 1'b1: " +
                 self._names([g.name for g in gs[:100]]))
 
+    _GATE_SYNONYMS = {
+        "sheffer stroke": "nand", "pierce arrow": "nor",
+        "inverter": "not", "inv": "not",
+    }
+
     def h_report_const(self, m, line):
         if self._need_design():
             return self._need_design()
         gtype = m.group(1).lower()
+        gtype = self._GATE_SYNONYMS.get(gtype, gtype)
         val = "1'b0" if "0" in line.split(gtype)[-1][:40] else None
         if "constant 1" in line.lower():
             val = "1'b1"
@@ -487,6 +484,14 @@ class Agent:
             return f"No {gtype.upper()} gates with constant inputs were found."
         return (f"Found {len(gs)} {gtype.upper()} gate(s) with constant inputs: " +
                 self._names([g.name for g in gs[:100]]))
+
+    def h_report_const_synonym(self, m, line):
+        """Handle patterns with non-standard gate synonyms (Sheffer stroke→NAND, etc.)."""
+        import re
+        gtype = m.group(1).lower().strip()
+        canonical = self._GATE_SYNONYMS.get(gtype, gtype)
+        fake_m = re.match(f"({canonical})", canonical, re.IGNORECASE)
+        return self.h_report_const(fake_m, line)
 
     # ===================================================================
     # paths
@@ -1029,7 +1034,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No object named {old} was found to rename."
-        return f"Renamed {old} to {new} and updated all references."
+        return f"Renamed {kind} {old} to {new} and updated all references."
 
     def h_connected_renamed(self, m, line):
         if self._need_design():
@@ -1149,12 +1154,769 @@ class Agent:
     # intent dispatch (LLM fallback path)
     # ===================================================================
     def _dispatch_intent(self, intent, params, line):
-        # Map a structured intent back onto the handlers by synthesising a line.
+        """Dispatch a structured LLM intent directly to op_* methods.
+
+        The original natural-language line has already failed the regex router
+        in handle(), so do not run the same rule table on that original line
+        again.  The LLM fallback returns an intent plus extracted parameters;
+        this method sends those parameters to the corresponding op_* function.
+        """
         if intent in (None, "noop"):
             return self._default_ack(line)
-        # Re-run the rule router on the original line first (covers most cases).
-        for rx, fn in self.rules:
-            mm = rx.search(line)
-            if mm:
-                return fn(mm, line)
-        return self._default_ack(line)
+
+        params = params or {}
+        handler = getattr(self, f"op_{intent}", None)
+        if handler is None:
+            return (f'Acknowledged. The request was mapped to intent "{intent}", '
+                    "but that operation is not implemented; the current design "
+                    "is unchanged.")
+        return handler(**params)
+
+    # ===================================================================
+    # op_* methods: parameter-based operations for LLM fallback
+    # ===================================================================
+    @staticmethod
+    def _clean_opt(v, default=None):
+        if v is None or v == "":
+            return default
+        return v
+
+    @staticmethod
+    def _norm_gate_type(t):
+        return str(t).lower() if t is not None else ""
+
+    @staticmethod
+    def _norm_basis(basis):
+        if not basis:
+            return None
+        b = str(basis).upper().replace("+", "_").replace(" ", "_").replace("-", "_")
+        aliases = {
+            "NAND_NOT": "NAND_NOT",
+            "NAND_AND_NOT": "NAND_NOT",
+            "NOR_NOT": "NOR_NOT",
+            "NOR_AND_NOT": "NOR_NOT",
+            "AND_NOT": "AND_NOT",
+            "AND_AND_NOT": "AND_NOT",
+            "AND_OR_NOT": "AND_OR_NOT",
+            "AND_OR_AND_NOT": "AND_OR_NOT",
+        }
+        return aliases.get(b, b)
+
+    def _scope_from_param(self, scope):
+        """Convert an LLM scope/output parameter into a gate-name set.
+
+        The rewrite helpers expect scope=None for whole design, or a set of gate
+        instance names for a scoped cone rewrite.
+        """
+        scope = self._clean_opt(scope)
+        if scope is None:
+            return None
+        if self._need_design():
+            return None
+        return {g.name for g in cones.fanin_cone_gates(self.state.current, str(scope))}
+
+    # ----- IO / testcase -------------------------------------------------
+    def op_begin_case(self, name="case"):
+        name = str(name).rstrip(".") if name else "case"
+        self.state.case_name = name
+        return (f'Acknowledged. Initialized testcase "{name}". All subsequent '
+                f"responses will be recorded to {name}.log. Design state is "
+                "empty and ready for commands.")
+
+    def op_load_design(self, file, dir=""):
+        fname = str(file).strip().strip("'\"")
+        d = str(dir or "").strip().strip("'\"")
+        path = os.path.join(d, fname) if d else fname
+        candidates = [path, fname, os.path.join(self.state.design_dir, fname)]
+        # If the LLM returned a directory with the file already appended, avoid
+        # failing on testcase/test41/test41.v/test41.v-like paths.
+        if d and d.endswith(fname):
+            candidates.insert(0, d)
+        for cand in candidates:
+            if os.path.exists(cand):
+                path = cand
+                break
+        try:
+            nl = reader.parse_file(path)
+        except Exception as exc:
+            return f"Failed to load design from {path}: {exc}"
+        self.state.set_loaded(nl)
+        self.state.design_dir = os.path.dirname(path) or "."
+        return (f'Loaded gate-level Verilog from "{path}" successfully. '
+                f"Detected a single top module (flat netlist) with "
+                f"{len(nl.gates)} combinational gates and {len(nl.dffs)} "
+                f"flip-flops. Design state has been updated.")
+
+    def op_write_design(self, file=None):
+        if self._need_design():
+            return self._need_design()
+        fname = str(file or f"{self.state.case_name or 'out'}_out.v").strip().strip("'\"")
+        out_path = self._out_path(fname)
+        try:
+            writer.write_file(self.state.current, out_path)
+        except Exception as exc:
+            return f"Failed to write design to {out_path}: {exc}"
+        return f'Wrote the current netlist to "{out_path}" successfully.'
+
+    # ----- counts / reports ---------------------------------------------
+    def op_count_gates(self):
+        if self._need_design():
+            return self._need_design()
+        return counts.count_breakdown_text(self.state.current)
+
+    def op_total_gate_count(self):
+        if self._need_design():
+            return self._need_design()
+        n = counts.total_gate_count(self.state.current)
+        return f"The total gate count of the design is {n}."
+
+    def op_count_type(self, type):
+        if self._need_design():
+            return self._need_design()
+        gtype = self._norm_gate_type(type)
+        n = counts.count_of_type(self.state.current, gtype)
+        return f"There are currently {n} {gtype.upper()} gates in the design."
+
+    def op_delta_count(self, kind=""):
+        low = str(kind or "").lower()
+        d = self.state.deltas
+        val = None
+        if "buf" in low or "buffer" in low:
+            val = d.get("buffers_added")
+        elif "const" in low or "eliminated" in low or "propagation" in low:
+            val = d.get("const_eliminated")
+        elif "merge" in low or "duplicate" in low:
+            val = d.get("merged")
+        elif "collapse" in low or "inverter" in low:
+            val = d.get("collapsed")
+        elif "enable" in low or "hold" in low:
+            val = d.get("enable_hold")
+        elif "remove" in low or "dangling" in low or "redundant" in low or "floating" in low:
+            val = d.get("removed")
+        if val is None and d:
+            val = d[list(d)[-1]]
+        return f"{val if val is not None else 0}"
+
+    def op_gate_info(self, gate):
+        if self._need_design():
+            return self._need_design()
+        name = str(gate)
+        inst = self.state.current.instance_by_name(name)
+        if inst is None:
+            return f"No gate named {name} exists in the design."
+        kind, g = inst
+        if kind == "gate":
+            return (f"Gate {name} is a {g.type.upper()} gate. "
+                    f"Output: {g.out}; inputs: {', '.join(g.ins)}.")
+        return (f"{name} is a DFF. Q={g.q}, D={g.d}, CK={g.clk}, "
+                f"RN={g.rn}, SN={g.sn}.")
+
+    def op_list_type(self, type):
+        if self._need_design():
+            return self._need_design()
+        gtype = self._norm_gate_type(type)
+        if gtype == "dff":
+            gs = self.state.current.dffs
+            items = [f"{g.name} (Q={g.q}, D={g.d})" for g in gs]
+        else:
+            gs = counts.list_gates_of_type(self.state.current, gtype)
+            items = [f"{g.name} (out={g.out}, in={', '.join(g.ins)})" for g in gs]
+        if not gs:
+            return f"There are 0 {gtype.upper()} gates in the design."
+        if len(items) <= self.LIST_INLINE:
+            return f"{len(gs)} {gtype.upper()} gate(s):\n" + "\n".join(items)
+        fname = f"{self.state.case_name or 'case'}_{gtype}_gates.txt"
+        path = self._list_to_file(fname, items)
+        if path:
+            return (f"{len(gs)} {gtype.upper()} gates. The complete list has been "
+                    f"written to {path}.")
+        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items[:self.LIST_INLINE])
+
+    def op_cone_gate_count(self, output):
+        if self._need_design():
+            return self._need_design()
+        out = str(output)
+        n = counts.gates_in_fanin_cone(self.state.current, out)
+        return f"The fan-in cone of {out} contains {n} gates."
+
+    def op_cone_type_counts(self, output):
+        if self._need_design():
+            return self._need_design()
+        return counts.cone_type_counts_text(self.state.current, str(output))
+
+    def op_list_ports(self, dir="input"):
+        if self._need_design():
+            return self._need_design()
+        nl = self.state.current
+        direction = str(dir or "input").lower()
+        items = []
+        for name in nl.port_order:
+            p = nl.ports.get(name)
+            if p and p.direction == direction:
+                items.append(f"{name} [{p.width}-bit]" if p.is_bus else f"{name} [1-bit]")
+        label = "Primary inputs" if direction == "input" else "Primary outputs"
+        return f"{label}:\n" + "\n".join(items)
+
+    def op_count_ports(self):
+        if self._need_design():
+            return self._need_design()
+        nl = self.state.current
+        ni = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "input")
+        no = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "output")
+        bi = len(nl.pi)
+        bo = len(nl.po)
+        return (f"The design has {ni} primary input ports ({bi} bits) and "
+                f"{no} primary output ports ({bo} bits).")
+
+    # ----- connectivity --------------------------------------------------
+    def op_fanout(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        f = connectivity.fanout_count(self.state.current, net)
+        loads = connectivity.fanout_load_instances(self.state.current, net)
+        return (f"The fanout of {net} is {f}. It directly drives: " +
+                self._names(loads[:200]))
+
+    def op_gates_driven_by(self, gate):
+        if self._need_design():
+            return self._need_design()
+        g = str(gate)
+        ds = connectivity.gates_driven_by_gate(self.state.current, g)
+        if ds is None:
+            return f"No gate named {g} exists."
+        return f"Gate {g} drives {len(ds)} gate(s): " + self._names(ds[:200])
+
+    def op_successors(self, gate):
+        if self._need_design():
+            return self._need_design()
+        g = str(gate)
+        ds = connectivity.immediate_successors(self.state.current, g)
+        if ds is None:
+            return f"No instance named {g} exists."
+        return f"Immediate successors of {g}: " + self._names(ds[:200])
+
+    def op_transitive_fanin(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        gs = cones.fanin_cone_gates(self.state.current, net)
+        return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
+
+    def op_transitive_fanout(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        gs = cones.fanout_cone_gates(self.state.current, net)
+        return f"The transitive fan-out cone of {net} contains {len(gs)} gates."
+
+    def op_reachable_from(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        gs = connectivity.reachable_gates_from(self.state.current, net)
+        return f"{len(gs)} gate(s) are reachable from {net}: " + self._names(gs[:100])
+
+    def op_highest_fanout_pi(self):
+        if self._need_design():
+            return self._need_design()
+        name, f = connectivity.highest_fanout_pi(self.state.current)
+        return f"Primary input {name} has the highest fanout ({f})."
+
+    def op_max_fanout_of(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        f = connectivity.max_fanout_of(self.state.current, net)
+        return f"The maximum fanout of {net} is now {f}."
+
+    def op_shared_cone(self, a, b):
+        if self._need_design():
+            return self._need_design()
+        a, b = str(a), str(b)
+        gs = cones.shared_fanin_gates(self.state.current, a, b)
+        return (f"{len(gs)} gate(s) are shared between the fan-in cones of "
+                f"{a} and {b}: " + self._names([g.name for g in gs[:100]]))
+
+    def op_connected_to_output(self, gate):
+        if self._need_design():
+            return self._need_design()
+        g = str(gate)
+        ds = connectivity.gates_driven_by_gate(self.state.current, g)
+        if ds is None:
+            return f"No gate named {g} exists."
+        return f"Gates connected to the output of {g}: " + self._names(ds[:200])
+
+    # ----- paths ---------------------------------------------------------
+    def op_path_exists(self, a, b, avoid=None):
+        if self._need_design():
+            return self._need_design()
+        a, b = str(a), str(b)
+        avoid = self._clean_opt(avoid)
+        if avoid:
+            ok = paths.path_exists(self.state.current, a, b, avoid={str(avoid)})
+            if ok:
+                return f"Yes. A combinational path from {a} to {b} that avoids {avoid} exists."
+            return f"No. There is no combinational path from {a} to {b} that avoids {avoid}."
+        ok = paths.path_exists(self.state.current, a, b)
+        if ok:
+            return f"Yes. A combinational path from {a} to {b} exists."
+        return f"No. There is no combinational path from {a} to {b}."
+
+    def op_enumerate_paths(self, a, b):
+        if self._need_design():
+            return self._need_design()
+        a, b = str(a), str(b)
+        nl = self.state.current
+        count = paths.count_paths(nl, a, b)
+        if count == 0:
+            return f"There are no combinational paths from {a} to {b}."
+        if count <= self.PATH_INLINE:
+            _, plist = paths.enumerate_paths(nl, a, b, limit=self.PATH_INLINE)
+            lines = [f"There are {count} path(s) from {a} to {b}:"]
+            for p in plist:
+                lines.append("  " + a + " -> " + " -> ".join(p) + " -> " + b
+                             if p else "  " + a + " -> " + b)
+            return "\n".join(lines)
+        if count <= self.PATH_FILE_CAP:
+            fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
+            path = self._out_path(fname)
+            try:
+                with open(path, "w") as fh:
+                    paths.stream_paths(nl, a, b, fh, count + 1)
+                return (f"There are {count} combinational paths from {a} to {b}. "
+                        f"The complete enumeration has been written to {path}.")
+            except Exception as exc:
+                return (f"There are {count} combinational paths from {a} to {b} "
+                        f"(could not write the list file: {exc}).")
+        return (f"There are {count} combinational paths from {a} to {b} — too "
+                f"many to enumerate literally.")
+
+    def op_length_zero_paths(self):
+        if self._need_design():
+            return self._need_design()
+        z = paths.length_zero_paths(self.state.current)
+        if not z:
+            return "No length-0 paths exist (no primary input directly drives a primary output)."
+        return f"{len(z)} length-0 path(s): " + self._names(z)
+
+    def op_dominator(self, a, b, gate):
+        if self._need_design():
+            return self._need_design()
+        a, b, g = str(a), str(b), str(gate)
+        res = paths.every_path_passes_through(self.state.current, a, b, g)
+        if res is None:
+            return f"No combinational path from {a} to {b} exists."
+        return (("Yes." if res else "No.") +
+                f" {'Every' if res else 'Not every'} path from {a} to {b} passes through {g}.")
+
+    def op_articulation(self, a, b):
+        if self._need_design():
+            return self._need_design()
+        a, b = str(a), str(b)
+        pts = paths.articulation_points(self.state.current, a, b)
+        if not pts:
+            return f"There are no articulation points between {a} and {b}."
+        return (f"{len(pts)} articulation point(s) between {a} and {b}: " +
+                self._names(pts[:100]))
+
+    def op_is_cut(self, wire):
+        if self._need_design():
+            return self._need_design()
+        w = str(wire)
+        res = paths.is_cut_pi_po(self.state.current, w)
+        return (("Yes." if res else "No.") +
+                f" Wire {w} {'is' if res else 'is not'} a cut between a primary input and a primary output.")
+
+    # ----- depth ---------------------------------------------------------
+    def op_max_depth_between(self, a, b):
+        if self._need_design():
+            return self._need_design()
+        a, b = str(a), str(b)
+        d = depth.max_depth_from_to(self.state.current, a, b)
+        if d is None:
+            return f"There is no combinational path from {a} to {b} (depth 0)."
+        return f"The maximum combinational logic depth from {a} to {b} is {d}."
+
+    def op_cone_depth(self, output):
+        if self._need_design():
+            return self._need_design()
+        out = str(output)
+        d = depth.depth_of_cone(self.state.current, out)
+        return f"The maximum logic depth of the cone of {out} is {d}."
+
+    def op_global_max_depth(self):
+        if self._need_design():
+            return self._need_design()
+        d = depth.global_max_depth(self.state.current)
+        return f"The maximum combinational logic depth in the design is {d}."
+
+    def op_pi_to_dff_depth(self):
+        if self._need_design():
+            return self._need_design()
+        d = depth.pi_to_dff_d_max_depth(self.state.current)
+        return f"The maximum logic depth from any primary input to any DFF D-pin is {max(d,0)}."
+
+    def op_reg_to_reg_depth(self):
+        if self._need_design():
+            return self._need_design()
+        d = depth.reg_to_reg_max_depth(self.state.current)
+        if d < 0:
+            return "There are no register-to-register combinational paths."
+        return f"The maximum combinational depth on any register-to-register path is {d}."
+
+    def op_outputs_depth_gt(self, k):
+        if self._need_design():
+            return self._need_design()
+        k = int(k)
+        outs = depth.outputs_depth_greater_than(self.state.current, k)
+        return f"{len(outs)} output(s) have a logic depth greater than {k}."
+
+    def op_deepest_output(self):
+        if self._need_design():
+            return self._need_design()
+        name, n = depth.deepest_output(self.state.current)
+        return f"Output {name} has the deepest fan-in cone (depth {n})."
+
+    def op_gate_on_max_path(self, gate):
+        if self._need_design():
+            return self._need_design()
+        g = str(gate)
+        res = depth.gate_on_max_depth_path(self.state.current, g)
+        if res is None:
+            return f"No gate named {g} exists."
+        return ("Yes." if res else "No.") + f" Gate {g} {'lies' if res else 'does not lie'} on a maximum-depth path."
+
+    # ----- functional ----------------------------------------------------
+    def op_signals_equivalent(self, a, b):
+        return self._sig_equiv(str(a), str(b))
+
+    def op_output_constant(self, output):
+        if self._need_design():
+            return self._need_design()
+        out = str(output)
+        v = functional.output_always_constant(self.state.current, out)
+        if v == 0:
+            return f"Yes. Output {out} is always 0 regardless of the inputs."
+        if v == 1:
+            return f"Output {out} is constant and always 1 regardless of the inputs."
+        return f"No. Output {out} is not constant; it depends on the inputs."
+
+    def op_depends_on(self, output, input):
+        if self._need_design():
+            return self._need_design()
+        out, inp = str(output), str(input)
+        r = functional.depends_on(self.state.current, out, inp)
+        return ("Yes." if r else "No.") + f" Output {out} {'depends' if r else 'does not depend'} on input {inp}."
+
+    def op_boolean_equation(self, output):
+        if self._need_design():
+            return self._need_design()
+        out = str(output)
+        eq = functional.boolean_equation(self.state.current, out)
+        if eq is None:
+            return (f"The Boolean equation for {out} has too large a support to "
+                    "express compactly in terms of the primary inputs.")
+        return f"{out} = {eq}"
+
+    def op_symmetric(self, output, a, b):
+        if self._need_design():
+            return self._need_design()
+        out, a, b = str(output), str(a), str(b)
+        r = functional.is_symmetric(self.state.current, out, a, b)
+        if r is None:
+            return f"Could not determine symmetry of {out} in {a}, {b}."
+        return ("Yes." if r else "No.") + f" The function at {out} is {'' if r else 'not '}symmetric in {a} and {b}."
+
+    def op_exists_nand_pair(self, target):
+        if self._need_design():
+            return self._need_design()
+        target = str(target)
+        r = functional.exists_nand_pair(self.state.current, target)
+        if r is None:
+            return f"No pair of internal signals (a, b) with NAND(a, b) equivalent to {target} was found."
+        return f"Yes. NAND({r[0]}, {r[1]}) is functionally equivalent to {target}."
+
+    # ----- sequential ----------------------------------------------------
+    def op_ffs_on_clock(self, clk):
+        if self._need_design():
+            return self._need_design()
+        clk = str(clk)
+        ff = sequential.ffs_on_clock(self.state.current, clk)
+        return (f"{len(ff)} flip-flop(s) are driven by clock {clk}: " +
+                self._names([f.name for f in ff[:100]]))
+
+    def op_same_clock(self, a, b):
+        if self._need_design():
+            return self._need_design()
+        r = sequential.same_clock_domain(self.state.current, str(a), str(b))
+        if r is None:
+            return "One or both flip-flops were not found."
+        return "Yes. They are in the same clock domain." if r else "No. They are in different clock domains."
+
+    def op_reg_to_reg_paths(self):
+        if self._need_design():
+            return self._need_design()
+        count, pairs = sequential.reg_to_reg_pairs(self.state.current)
+        head = f"There are {count} register-to-register connections through combinational logic."
+        if pairs:
+            head += " Examples: " + self._names([f"{a}->{b}" for a, b in pairs[:30]])
+        return head
+
+    def op_enable_hold_report(self):
+        if self._need_design():
+            return self._need_design()
+        eh = sequential.enable_hold_ffs(self.state.current)
+        self.state.record_delta("enable_hold", len(eh))
+        return (f"{len(eh)} flip-flop(s) implement an enable/hold structure in "
+                f"their D-input logic (next state depends on the register's own "
+                f"current state). Examples: " +
+                self._names([f.name for f in eh[:30]]))
+
+    def op_enable_hold_count(self):
+        if self._need_design():
+            return self._need_design()
+        n = self.state.get_delta("enable_hold")
+        if not n:
+            eh = sequential.enable_hold_ffs(self.state.current)
+            n = len(eh)
+        return f"{n} flip-flops were found to have enable or hold structures in their D-input logic."
+
+    # ----- transforms ----------------------------------------------------
+    def op_convert_basis(self, basis=None, scope=None):
+        if self._need_design():
+            return self._need_design()
+        basis = self._norm_basis(basis)
+        if basis is None:
+            return "Could not determine the target gate basis."
+        scope_gates = self._scope_from_param(scope)
+        info, ok, reason = self._commit(
+            lambda nl: rewrite.to_basis(nl, basis, scope_gates),
+            basis=(None if scope_gates is not None else basis))
+        if not ok:
+            return f"The basis remap was reverted: {reason}."
+        self.state.record_delta("basis_remap", info)
+        b = basis.replace("_", "+")
+        return (f"Remapped {'the cone' if scope_gates else 'the entire design'} to "
+                f"{b} gates ({info} gates rewritten); functional equivalence verified.")
+
+    def op_xor_to_nand(self, scope=None):
+        if self._need_design():
+            return self._need_design()
+        scope_gates = self._scope_from_param(scope)
+        before = counts.count_of_type(self.state.current, "nand")
+        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_nand(nl, scope_gates))
+        if not ok:
+            return f"The XOR->NAND conversion was reverted: {reason}."
+        added = counts.count_of_type(self.state.current, "nand") - before
+        self.state.record_delta("nand_added", added)
+        self.state.record_delta("xor_converted", info)
+        return (f"Converted {info} XOR gate(s) to 4-NAND logic "
+                f"({added} NAND gates added); functional equivalence verified.")
+
+    def op_xnor_to_nor(self, scope=None):
+        if self._need_design():
+            return self._need_design()
+        scope_gates = self._scope_from_param(scope)
+        before = counts.count_of_type(self.state.current, "nor")
+        info, ok, reason = self._commit(lambda nl: rewrite.xnor_to_nor(nl, scope_gates))
+        if not ok:
+            return f"The XNOR->NOR conversion was reverted: {reason}."
+        added = counts.count_of_type(self.state.current, "nor") - before
+        self.state.record_delta("nor_added", added)
+        self.state.record_delta("xnor_converted", info)
+        return (f"Converted {info} XNOR gate(s) to NOR-only logic "
+                f"({added} NOR gates added); functional equivalence verified.")
+
+    def op_xor_to_aoi(self, scope=None):
+        if self._need_design():
+            return self._need_design()
+        scope_gates = self._scope_from_param(scope)
+        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_aoi(nl, scope_gates))
+        if not ok:
+            return f"The XOR decomposition was reverted: {reason}."
+        self.state.record_delta("xor_converted", info)
+        return f"Decomposed {info} XOR gate(s) into AND/OR/NOT logic; equivalence verified."
+
+    def op_nand_const1_to_inv(self):
+        if self._need_design():
+            return self._need_design()
+        info, ok, reason = self._commit(lambda nl: rewrite.nand_const1_to_inv(nl))
+        if not ok:
+            return f"The NAND(const-1)->INV conversion was reverted: {reason}."
+        self.state.record_delta("nand_to_inv", info)
+        return f"Replaced {info} NAND gate(s) tied to constant 1 with inverters; equivalence verified."
+
+    def op_report_const_gates(self, type="nand", value=None):
+        if self._need_design():
+            return self._need_design()
+        gtype = self._norm_gate_type(type)
+        val = None
+        if value in (0, "0", "1'b0"):
+            val = "1'b0"
+        elif value in (1, "1", "1'b1"):
+            val = "1'b1"
+        self.const_nets = functional.constant_nets(self.state.current)
+        gs = constprop.gates_with_const_input(
+            self.state.current,
+            gtype if gtype in ("and", "or", "nand", "nor") else None,
+            val, extra_const=self.const_nets)
+        self.state.last_report = [g.name for g in gs]
+        self.state.last_report_kind = gtype
+        if not gs:
+            return f"No {gtype.upper()} gates with constant inputs were found."
+        return (f"Found {len(gs)} {gtype.upper()} gate(s) with constant inputs: " +
+                self._names([g.name for g in gs[:100]]))
+
+    def op_const_propagate(self, type=None):
+        if self._need_design():
+            return self._need_design()
+        rtype = self._norm_gate_type(type) if type else self.state.last_report_kind
+        extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
+        info, ok, reason = self._commit(
+            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
+        if not ok:
+            return f"The constant propagation was reverted: {reason}."
+        self.state.record_delta("const_eliminated", info)
+        tlabel = (rtype.upper() + " ") if rtype else ""
+        return f"Constant propagation eliminated {info} {tlabel}gate(s); equivalence verified."
+
+    def op_collapse_inverters(self):
+        if self._need_design():
+            return self._need_design()
+        info, ok, reason = self._commit(lambda nl: cleanup.collapse_double_inverters(nl))
+        if not ok:
+            return f"The inverter collapse was reverted: {reason}."
+        self.state.record_delta("collapsed", info)
+        return f"Collapsed {info} back-to-back inverter pair(s) into direct wires; equivalence verified."
+
+    def op_remove_dangling(self):
+        if self._need_design():
+            return self._need_design()
+        info, ok, reason = self._commit(lambda nl: cleanup.remove_dangling(nl))
+        if not ok:
+            return f"The dangling-gate removal was reverted: {reason}."
+        self.state.record_delta("removed", info)
+        return f"Removed {info} dangling gate(s) that do not affect any primary output; equivalence verified."
+
+    def op_merge_duplicates(self):
+        if self._need_design():
+            return self._need_design()
+        info, ok, reason = self._commit(lambda nl: cleanup.merge_structural_duplicates(nl))
+        if not ok:
+            return f"The duplicate merge was reverted: {reason}."
+        self.state.record_delta("merged", info)
+        return f"Merged {info} structurally-duplicate gate(s); equivalence verified."
+
+    def op_rename(self, old, new, kind="signal"):
+        if self._need_design():
+            return self._need_design()
+        old, new = str(old), str(new)
+        kind = str(kind or "signal").lower()
+        if kind in ("wire", "net"):
+            kind = "signal"  # LLM synonym: wires/nets are signals
+        if kind == "gate":
+            ok = naming.rename_gate(self.state.current, old, new)
+        else:
+            ok = naming.rename_net(self.state.current, old, new)
+        self.state.current.touch()
+        if not ok:
+            return f"No {kind} named {old} was found to rename."
+        return f"Renamed {kind} {old} to {new} and updated all references."
+
+    def op_insert_buffers(self, k=4, net=None, mode="fanout"):
+        if self._need_design():
+            return self._need_design()
+        k = int(k)
+        net = self._clean_opt(net)
+        mode = str(mode or "fanout").lower()
+        if mode == "dedicated" and net:
+            info, ok, reason = self._commit(lambda nl: buffering.dedicated_buffer_per_load(nl, str(net)))
+            if not ok:
+                return f"The buffer insertion was reverted: {reason}."
+            self.state.record_delta("buffers_added", info)
+            return f"Inserted {info} dedicated buffer(s), one per load of {net}; equivalence verified."
+        if net:
+            info, ok, reason = self._commit(
+                lambda nl: buffering.limit_fanout(nl, k, only_nets={str(net)}), max_fanout=None)
+            if not ok:
+                return f"The buffer insertion was reverted: {reason}."
+            self.state.record_delta("buffers_added", info)
+            return f"Inserted {info} buffer(s) on {net} so each driver has at most {k} loads; equivalence verified."
+        info, ok, reason = self._commit(
+            lambda nl: buffering.limit_fanout(nl, k, include_pi=True),
+            max_fanout=k, max_fanout_pi=True)
+        if not ok:
+            return f"The buffer insertion was reverted: {reason}."
+        self.state.record_delta("buffers_added", info)
+        return (f"Inserted {info} buffer(s) so that no driver exceeds {k} loads; "
+                f"max-fanout bound and equivalence verified.")
+
+    # ----- optimize ------------------------------------------------------
+    def op_minimize_depth(self, basis=None):
+        if self._need_design():
+            return self._need_design()
+        basis = self._norm_basis(basis)
+        before = depth.global_max_depth(self.state.current)
+        res, imp = abc_opt.minimize_depth(self.state.current, basis=basis)
+        self.state.current = res
+        after = depth.global_max_depth(res)
+        if imp:
+            return (f"Reduced the maximum logic depth from {before} to {after}"
+                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+        return (f"The design is already optimal at depth {before}; reported the "
+                "original (equivalence preserved).")
+
+    def op_minimize_area(self, basis=None):
+        if self._need_design():
+            return self._need_design()
+        if not hasattr(abc_opt, "minimize_area"):
+            return "Area minimization is not implemented in this build; the current design is unchanged."
+        basis = self._norm_basis(basis)
+        before = len(self.state.current.gates)
+        res, imp = abc_opt.minimize_area(self.state.current, basis=basis)
+        self.state.current = res
+        after = len(res.gates)
+        if imp:
+            return (f"Reduced the gate count from {before} to {after}"
+                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+        return (f"The design is already optimal at gate count {before}; reported the "
+                "original (equivalence preserved).")
+
+    def op_optimize_cone(self, output, basis=None):
+        if self._need_design():
+            return self._need_design()
+        out = str(output)
+        basis = self._norm_basis(basis)
+        before = depth.depth_of_cone(self.state.current, out)
+        res, imp = abc_opt.optimize_cone_depth(self.state.current, out, basis=basis)
+        self.state.current = res
+        after = depth.depth_of_cone(res, out)
+        if imp:
+            return (f"Optimized the cone of {out}: depth reduced from {before} "
+                    f"to {after}{' (basis preserved)' if basis else ''}; equivalence verified.")
+        return (f"The cone of {out} is already optimal at depth {before}; "
+                "reported the original (equivalence preserved).")
+
+    # ----- equivalence ---------------------------------------------------
+    def op_verify_equivalence(self, against="original"):
+        if self._need_design():
+            return self._need_design()
+        target = str(against or "original").lower()
+        if target in ("pre", "pre_transformation", "pre-transformation"):
+            ref = self.state.pre or self.state.original
+            label = "pre-transformation netlist"
+        elif target in ("last_loaded", "last-loaded", "last loaded"):
+            ref = self.state.last_loaded
+            label = "netlist as last loaded from disk"
+        else:
+            ref = self.state.original
+            label = "original loaded netlist"
+        if ref is None:
+            return "No reference design is available for comparison."
+        r = equiv_gate.equivalent(ref, self.state.current)
+        if r is True:
+            return f"Verified: the current design is functionally equivalent to the {label}."
+        if r is False:
+            return f"The current design is NOT functionally equivalent to the {label}."
+        return f"Could not conclusively verify equivalence to the {label}."

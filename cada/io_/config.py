@@ -72,6 +72,32 @@ def _mini_yaml(text: str) -> dict:
     return data
 
 
+def _load_secrets(path: Optional[str]) -> dict:
+    """Parse a sibling api_key.yaml (same two-level shape as default.yaml).
+
+    Returns {} if the file is missing/unparseable so the agent still runs
+    (e.g. on machines where keys live only in default.yaml or env)."""
+    if not path or not os.path.exists(path):
+        return {}
+    try:
+        with open(path, "r") as fh:
+            text = fh.read()
+    except Exception:
+        return {}
+    data = None
+    try:
+        import yaml
+        data = yaml.safe_load(text)
+    except Exception:
+        data = None
+    if not isinstance(data, dict):
+        try:
+            data = _mini_yaml(text)
+        except Exception:
+            return {}
+    return data if isinstance(data, dict) else {}
+
+
 def load_config(path: Optional[str]) -> Config:
     cfg = Config()
     if not path:
@@ -105,6 +131,12 @@ def load_config(path: Optional[str]) -> Config:
     an = data.get("anthropic") or {}
     cfg.anthropic_api_key = an.get("api_key") or cfg.anthropic_api_key
     cfg.anthropic_model = an.get("model", cfg.anthropic_model)
+
+    # Merge secret keys from a sibling api_key.yaml (git-ignored), if present.
+    secrets = _load_secrets(os.path.join(os.path.dirname(path), "api_key.yaml"))
+    if secrets:
+        cfg.openai_api_key = (secrets.get("openai") or {}).get("api_key") or cfg.openai_api_key
+        cfg.anthropic_api_key = (secrets.get("anthropic") or {}).get("api_key") or cfg.anthropic_api_key
 
     gen = data.get("generation") or {}
     cfg.temperature = float(gen.get("temperature", cfg.temperature))

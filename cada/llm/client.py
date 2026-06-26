@@ -41,6 +41,26 @@ class LLMClient:
     def available(self) -> bool:
         return self._client is not None
 
+    def _openai_complete(self, model, max_tokens, temperature, messages):
+        """Call OpenAI, falling back for models that reject legacy params.
+
+        Newer models (gpt-5, o-series) require max_completion_tokens and
+        do not accept temperature; retry once with both fixes applied.
+        """
+        kwargs = dict(model=model, messages=messages, temperature=temperature,
+                      max_tokens=max_tokens)
+        try:
+            return self._client.chat.completions.create(**kwargs)
+        except Exception as e:
+            err = str(e)
+            if "max_tokens" not in err and "temperature" not in err:
+                raise
+            # Apply all known fixes at once before the single retry
+            if "max_tokens" in kwargs:
+                kwargs["max_completion_tokens"] = kwargs.pop("max_tokens")
+            kwargs.pop("temperature", None)
+            return self._client.chat.completions.create(**kwargs)
+
     def complete(self, system: str, user: str) -> Optional[str]:
         if self._client is None:
             return None
@@ -57,13 +77,11 @@ class LLMClient:
                 return "".join(
                     b.text for b in msg.content if getattr(b, "type", "") == "text")
             else:
-                resp = self._client.chat.completions.create(
-                    model=cfg.openai_model,
-                    max_tokens=cfg.max_output_tokens,
-                    temperature=cfg.temperature,
-                    messages=[{"role": "system", "content": system},
-                              {"role": "user", "content": user}],
-                )
+                msgs = [{"role": "system", "content": system},
+                        {"role": "user", "content": user}]
+                resp = self._openai_complete(cfg.openai_model,
+                                             cfg.max_output_tokens,
+                                             cfg.temperature, msgs)
                 return resp.choices[0].message.content
         except Exception:
             return None
