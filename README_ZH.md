@@ -39,7 +39,7 @@ git clone https://github.com/CAD-Contest-2026-ProblemA/Agent.git <資料夾名> 
 bash setup.sh        # 一次性:uv 建立 .venv(內含 Python 3.12,並裝可選相依套件)
 
 # 用跟競賽 harness 一模一樣的方式執行:
-./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
 `cada1125_alpha` 啟動器會優先用 `.venv/bin/python`;若沒有 `.venv` 但機器上有 `uv`,會自動 bootstrap 一次;再不行就退回系統的 `python3`。
@@ -48,7 +48,7 @@ bash setup.sh        # 一次性:uv 建立 .venv(內含 Python 3.12,並裝可選
 
 ```bash
 pip install -r requirements.txt     # 只有要用 LLM fallback 才需要
-./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
 benchmark **完全可離線執行、不需任何第三方套件**——config parser 內建了一個 mini-parser fallback,而 regex router 已涵蓋全部 40 個 testcase(在這些測資上 LLM 完全不會被呼叫)。
@@ -69,20 +69,28 @@ openai/anthropic 的 LLM fallback **預設就會包進去**;加 `WITH_LLM=0` 才
 
 ## 設定檔(`-config`)
 
-格式與競賽題目 Figure 6 相同。把你的 API key 填進 `configs/default.yaml`:
+repo 只附**範本**(`configs/example.*.yaml`);真正的設定檔是 git-ignored。複製範本、填好,**這份複製出來的檔就是你傳給 `-config` 的檔**:
+
+```bash
+cp configs/example.api_key.yaml configs/api_key.yaml   # 再選 provider、貼上你的 key
+```
+
+`configs/api_key.yaml`(git-ignored,格式與競賽 Figure 6 相同):
 
 ```yaml
 provider: "openai"          # 或:"anthropic"
 openai:
-  api_key: <YOUR_API_KEY>
+  api_key: sk-...
   model: "gpt-4o-mini"
 anthropic:
-  api_key: <YOUR_API_KEY>
+  api_key: sk-ant-...
   model: "claude-haiku-4-5"
 generation:
   temperature: 0.2
   max_output_tokens: 4096
 ```
+
+然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;要跑不需 key 的純規則模式請加 `--no-llm`(evaluator 就是這樣跑的)。只需填你選用那個 provider 的 key。
 
 ## 環境自檢(doctor)
 
@@ -96,7 +104,11 @@ generation:
 
 ## 指定外部工具位置(不靠 $PATH)
 
-在 **`configs/tools.yaml`**(會自動載入)裡指定 `abc`/`yosys`(或其他工具)的絕對路徑,就不必把它們放進 `$PATH`:
+在 **`configs/tools.yaml`**(會自動載入、git-ignored 讓每台機器各自保留路徑)裡指定 `abc`/`yosys` 的絕對路徑,就不必把它們放進 `$PATH`。從範本複製一份再改:
+
+```bash
+cp configs/example.tools.yaml configs/tools.yaml   # 再把 abc 設成這台機器的路徑
+```
 
 ```yaml
 tools:

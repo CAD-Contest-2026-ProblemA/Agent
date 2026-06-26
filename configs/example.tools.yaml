@@ -1,7 +1,10 @@
-# External EDA tool locations — edit these per machine so the agent does not
-# rely on $PATH.  This file is auto-loaded from configs/tools.yaml.
+# Template for configs/tools.yaml (git-ignored — per-machine external tool paths,
+# so the agent does not rely on $PATH).
 #
-# Each entry is  <tool-name>: <absolute path to the executable>.
+# Usage:
+#     cp configs/example.tools.yaml configs/tools.yaml
+#     # then edit configs/tools.yaml and set `abc` to THIS machine's abc binary
+#
 # If a path is missing/wrong, the agent falls back to env vars
 # (ABC_BIN / YOSYS_BIN / CADA_<NAME>_BIN), then built-in candidates, then $PATH.
 #
@@ -10,9 +13,7 @@
 
 tools:
   # abc is required (equivalence + optimization). Set it to YOUR abc binary:
-  abc: /work/abc
-
-  # /project/cad11/cada1125/abc/abc
+  abc: /path/to/abc/abc
 
   # yosys is an optional fallback that the benchmark never actually invokes,
   # so you can leave it commented out. Uncomment and set a path if you have it:

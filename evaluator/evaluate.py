@@ -119,7 +119,7 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
 
     # run the executable in the current (sandbox) cwd; out.v lands here
     try:
-        proc = subprocess.run([os.path.abspath(exe), "-config", config_path],
+        proc = subprocess.run([os.path.abspath(exe), "-config", config_path, "--no-llm"],
                               input="\n".join(raw) + "\n",
                               capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout
@@ -291,7 +291,7 @@ def _enter_sandbox():
 def main(argv=None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("cases", nargs="*", help="testcase names (default: all)")
-    ap.add_argument("--config", default=os.path.join(ROOT, "configs", "default.yaml"))
+    ap.add_argument("--config", default=os.path.join(ROOT, "configs", "api_key.yaml"))
     ap.add_argument("--update-golden", action="store_true")
     ap.add_argument("--verbose", action="store_true")
     ap.add_argument("--no-sandbox", action="store_true",

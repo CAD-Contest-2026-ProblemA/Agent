@@ -73,10 +73,10 @@ def _mini_yaml(text: str) -> dict:
 
 
 def _load_secrets(path: Optional[str]) -> dict:
-    """Parse a sibling api_key.yaml (same two-level shape as default.yaml).
+    """Parse a sibling api_key.yaml (same two-level shape as the config file).
 
     Returns {} if the file is missing/unparseable so the agent still runs
-    (e.g. on machines where keys live only in default.yaml or env)."""
+    (e.g. on machines where keys live only in the config file or env)."""
     if not path or not os.path.exists(path):
         return {}
     try:

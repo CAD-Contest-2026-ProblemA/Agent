@@ -1,0 +1,26 @@
+# ── The agent's configuration file (TEMPLATE) ───────────────────────────────
+# The repo ships only this template.  Copy it to the real, git-ignored file and
+# edit it — that copy is what you pass to -config:
+#
+#     cp configs/example.api_key.yaml configs/api_key.yaml
+#     # then set `provider` and paste your real key under that provider
+#     ./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
+#
+# Shape matches the contest's Figure 6.  The agent ERRORS OUT (non-zero exit) if
+# -config is missing, the file does not exist, or no api_key is set for the
+# chosen `provider`.  Pass --no-llm to run the deterministic rules only, with no
+# key required (this is what the evaluator uses).
+
+provider: "openai"          # or: "anthropic"
+
+openai:
+  api_key: <YOUR_OPENAI_API_KEY>
+  model: "gpt-4o-mini"
+
+anthropic:
+  api_key: <YOUR_ANTHROPIC_API_KEY>
+  model: "claude-haiku-4-5"
+
+generation:
+  temperature: 0.2
+  max_output_tokens: 4096

@@ -4,7 +4,7 @@
 Usage:
     python3 scripts/run_local.py testcase/test01            # one case
     python3 scripts/run_local.py --all                      # every case
-    python3 scripts/run_local.py testcase/test22 --config configs/default.yaml
+    python3 scripts/run_local.py testcase/test22 --config configs/api_key.yaml
 """
 
 from __future__ import annotations
@@ -40,7 +40,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("case", nargs="?", help="path to a testcase directory")
     ap.add_argument("--all", action="store_true")
-    ap.add_argument("--config", default="configs/default.yaml")
+    ap.add_argument("--config", default="configs/api_key.yaml")
     ap.add_argument("--out-dir", default=".")
     ap.add_argument("--testcase-root", default="testcase")
     args = ap.parse_args()

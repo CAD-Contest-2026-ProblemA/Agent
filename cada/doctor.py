@@ -147,7 +147,7 @@ def _configure_tool_registry():
     for cand in (os.path.join(ROOT, "configs", "tools.yaml"),
                  os.path.join(ROOT, "configs", "tools.yml")):
         toolpaths.register_many(load_tools_file(cand))
-    cfg = load_config(os.path.join(ROOT, "configs", "default.yaml"))
+    cfg = load_config(os.path.join(ROOT, "configs", "api_key.yaml"))
     toolpaths.register_many(getattr(cfg, "tools", {}) or {})
     return cfg
 
@@ -230,24 +230,30 @@ def check_tools(rep: Report):
 
 def check_config(rep: Report):
     rep.section("Configuration files")
-    for rel in ("configs/default.yaml", "configs/tools.yaml"):
-        p = os.path.join(ROOT, rel)
-        if os.path.exists(p):
-            rep.ok(f"{rel} present")
-        else:
-            rep.warn(f"{rel} missing")
+    p = os.path.join(ROOT, "configs", "api_key.yaml")
+    if os.path.exists(p):
+        rep.ok("configs/api_key.yaml present")
+    else:
+        rep.warn("configs/api_key.yaml missing (the -config file; git-ignored)",
+                 "copy the template: cp configs/example.api_key.yaml configs/api_key.yaml")
+    pt = os.path.join(ROOT, "configs", "tools.yaml")
+    if os.path.exists(pt):
+        rep.ok("configs/tools.yaml present")
+    else:
+        rep.warn("configs/tools.yaml missing (git-ignored per-machine file)",
+                 "copy the template: cp configs/example.tools.yaml configs/tools.yaml")
     try:
         from .io_.config import load_config
-        cfg = load_config(os.path.join(ROOT, "configs", "default.yaml"))
+        cfg = load_config(p)
         if cfg.tools:
             rep.ok("tool paths configured", ", ".join(f"{k}={v}" for k, v in cfg.tools.items()))
         if cfg.api_key:
             rep.ok(f"LLM api_key set for provider '{cfg.provider}'")
         else:
-            rep.warn("no LLM api_key set (fine — benchmark uses rules only; LLM fallback disabled)",
-                     "add your key under configs/default.yaml to enable the fallback")
+            rep.warn("no LLM api_key set (rules-only works; the agent errors without --no-llm)",
+                     "paste your real key into configs/api_key.yaml")
     except Exception as exc:
-        rep.warn(f"could not parse configs/default.yaml ({exc})")
+        rep.warn(f"could not parse configs/api_key.yaml ({exc})")
 
 
 def check_package(rep: Report):

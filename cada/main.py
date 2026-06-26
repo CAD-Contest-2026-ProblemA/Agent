@@ -27,6 +27,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Directory for <case_name>.log files")
     p.add_argument("--doctor", dest="doctor", action="store_true",
                    help="Run environment pre-flight checks and exit")
+    p.add_argument("--no-llm", dest="no_llm", action="store_true",
+                   help="Rules-only mode: do not require an API key (no LLM fallback)")
     return p
 
 
@@ -67,7 +69,20 @@ def main(argv=None) -> int:
     if args.doctor:
         from .doctor import main as doctor_main
         return doctor_main()
+
+    # Fail loud on misconfiguration instead of silently degrading to defaults.
+    if not args.config:
+        sys.stderr.write("error: -config <file> is required (path to the LLM config YAML)\n")
+        return 2
+    if not os.path.isfile(args.config):
+        sys.stderr.write(f"error: -config file not found: {args.config}\n")
+        return 2
     config = load_config(args.config)
+    if not args.no_llm and not config.api_key:
+        sys.stderr.write(
+            f"error: no API key for provider '{config.provider}' in {args.config}\n"
+            f"       set {config.provider}.api_key, or pass --no-llm for rules-only mode\n")
+        return 2
     _configure_tools(config, args.tools)
     agent = Agent(config)
 

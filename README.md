@@ -61,7 +61,7 @@ old contest machines too) independent of the system Python:
 bash setup.sh        # one-time: uv creates .venv with Python 3.12 (+ optional deps)
 
 # run exactly like the contest harness:
-./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
 The `cada1125_alpha` launcher prefers `.venv/bin/python`; if `.venv` is absent
@@ -72,7 +72,7 @@ but `uv` is present it bootstraps once; otherwise it falls back to the system
 
 ```bash
 pip install -r requirements.txt     # only needed for the LLM fallback
-./cada1125_alpha -config configs/default.yaml < testcase/test01/prompt.txt
+./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
 The benchmark runs fully **offline** with no third-party packages — the config
@@ -101,21 +101,34 @@ a smaller binary (the 40 public testcases never invoke the LLM either way).
 
 ## Configuration (`-config`)
 
-Same shape as the contest's Figure 6.  Drop your key into
-`configs/default.yaml`:
+The repo ships only **templates** (`configs/example.*.yaml`); the real config is
+git-ignored.  Copy the template and fill it in — that copy is the file you pass
+to `-config`:
+
+```bash
+cp configs/example.api_key.yaml configs/api_key.yaml   # then set provider + paste your key
+```
+
+`configs/api_key.yaml` (git-ignored — same shape as the contest's Figure 6):
 
 ```yaml
 provider: "openai"          # or: "anthropic"
 openai:
-  api_key: <YOUR_API_KEY>
+  api_key: sk-...
   model: "gpt-4o-mini"
 anthropic:
-  api_key: <YOUR_API_KEY>
+  api_key: sk-ant-...
   model: "claude-haiku-4-5"
 generation:
   temperature: 0.2
   max_output_tokens: 4096
 ```
+
+Then run with `-config configs/api_key.yaml`.  The agent **errors out** (non-zero
+exit) if `-config` is missing, the file does not exist, or no `api_key` is set
+for the chosen `provider` — pass `--no-llm` for the deterministic rules-only mode
+(no key required; this is what the evaluator uses).  You only need the key for the
+provider you select.
 
 ## Pre-flight check (doctor)
 
@@ -135,8 +148,12 @@ testcase).  Exit code is non-zero on hard failures.
 
 ## External tool locations (avoid relying on $PATH)
 
-Pin `abc`/`yosys` (and any other tool) in **`configs/tools.yaml`**, which is
-auto-loaded — no need to put them on `$PATH`:
+Pin `abc`/`yosys` (and any other tool) in **`configs/tools.yaml`** (auto-loaded,
+git-ignored so each machine keeps its own paths).  Copy the template and edit it:
+
+```bash
+cp configs/example.tools.yaml configs/tools.yaml   # then set abc for THIS machine
+```
 
 ```yaml
 tools:

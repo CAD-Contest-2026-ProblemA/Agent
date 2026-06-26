@@ -33,4 +33,5 @@ uv pip install --python .venv/bin/python -r requirements.txt || \
 
 echo ""
 echo "Setup complete. Test with:"
-echo "  ./cada0001_alpha -config configs/default.yaml < testcase/test01/prompt.txt"
+echo "  cp configs/example.api_key.yaml configs/api_key.yaml   # then paste your key (or use --no-llm)"
+echo "  ./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt"
