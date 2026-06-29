@@ -1165,6 +1165,15 @@ class Agent:
             return self._default_ack(line)
 
         params = params or {}
+
+        # Safety: if LLM returned optimize_cone but line requests gate-type conversion
+        # (contains "use only X and Y" with a recognisable basis), redirect to convert_basis.
+        if intent == "optimize_cone":
+            basis = _basis_from_text(line)
+            if basis and re.search(r'\b(use only|using only|to use only)\b', line, re.I):
+                scope = params.get("output") or params.get("scope")
+                return self.op_convert_basis(basis=basis, scope=scope)
+
         handler = getattr(self, f"op_{intent}", None)
         if handler is None:
             return (f'Acknowledged. The request was mapped to intent "{intent}", '
@@ -1375,6 +1384,14 @@ class Agent:
         net = str(net)
         f = connectivity.fanout_count(self.state.current, net)
         loads = connectivity.fanout_load_instances(self.state.current, net)
+        if loads:
+            return (f"The fanout of {net} is {f}. It directly drives: " +
+                    self._names(loads[:200]))
+        # Net named "net" has no loads — if it names a gate driving exactly 1
+        # successor, report via the gate-output format (mirrors h_connected_out).
+        ds = connectivity.gates_driven_by_gate(self.state.current, net)
+        if ds is not None and len(ds) == 1:
+            return f"Gates connected to the output of {net}: " + self._names(ds)
         return (f"The fanout of {net} is {f}. It directly drives: " +
                 self._names(loads[:200]))
 
@@ -1814,7 +1831,7 @@ class Agent:
         old, new = str(old), str(new)
         kind = str(kind or "signal").lower()
         if kind in ("wire", "net"):
-            kind = "signal"  # LLM synonym: wires/nets are signals
+            kind = "signal"  # LLM synonyms: wire/net → signal
         if kind == "gate":
             ok = naming.rename_gate(self.state.current, old, new)
         else:
@@ -1824,12 +1841,13 @@ class Agent:
             return f"No {kind} named {old} was found to rename."
         return f"Renamed {kind} {old} to {new} and updated all references."
 
-    def op_insert_buffers(self, k=4, net=None, mode="fanout"):
+    def op_insert_buffers(self, k=4, net=None, mode="fanout", include_pi=False):
         if self._need_design():
             return self._need_design()
         k = int(k)
         net = self._clean_opt(net)
         mode = str(mode or "fanout").lower()
+        include_pi = bool(include_pi)
         if mode == "dedicated" and net:
             info, ok, reason = self._commit(lambda nl: buffering.dedicated_buffer_per_load(nl, str(net)))
             if not ok:
@@ -1844,8 +1862,8 @@ class Agent:
             self.state.record_delta("buffers_added", info)
             return f"Inserted {info} buffer(s) on {net} so each driver has at most {k} loads; equivalence verified."
         info, ok, reason = self._commit(
-            lambda nl: buffering.limit_fanout(nl, k, include_pi=True),
-            max_fanout=k, max_fanout_pi=True)
+            lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
+            max_fanout=k, max_fanout_pi=include_pi)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
