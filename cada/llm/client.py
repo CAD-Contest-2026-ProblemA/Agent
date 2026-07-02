@@ -18,6 +18,10 @@ class LLMClient:
         self.config = config
         self._client = None
         self._kind = None
+        # Cumulative token usage across all complete() calls this session.
+        self.total_input_tokens: int = 0
+        self.total_output_tokens: int = 0
+        self.total_calls: int = 0
         self._init()
 
     def _init(self):
@@ -65,6 +69,7 @@ class LLMClient:
         if self._client is None:
             return None
         cfg = self.config
+        self.total_calls += 1
         try:
             if self._kind == "anthropic":
                 msg = self._client.messages.create(
@@ -74,6 +79,9 @@ class LLMClient:
                     system=system,
                     messages=[{"role": "user", "content": user}],
                 )
+                if hasattr(msg, "usage") and msg.usage:
+                    self.total_input_tokens += getattr(msg.usage, "input_tokens", 0)
+                    self.total_output_tokens += getattr(msg.usage, "output_tokens", 0)
                 return "".join(
                     b.text for b in msg.content if getattr(b, "type", "") == "text")
             else:
@@ -82,6 +90,9 @@ class LLMClient:
                 resp = self._openai_complete(cfg.openai_model,
                                              cfg.max_output_tokens,
                                              cfg.temperature, msgs)
+                if hasattr(resp, "usage") and resp.usage:
+                    self.total_input_tokens += getattr(resp.usage, "prompt_tokens", 0)
+                    self.total_output_tokens += getattr(resp.usage, "completion_tokens", 0)
                 return resp.choices[0].message.content
         except Exception:
             return None

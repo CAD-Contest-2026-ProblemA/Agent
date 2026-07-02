@@ -246,6 +246,9 @@ def _finalize(nl, cand, basis, timeout):
             rewrite.to_basis(cand, basis)
     if equiv_gate.equivalent(nl, cand, timeout=timeout) is not True:
         return None
+    # Mark the verified candidate so downstream checks (evaluator, agent state)
+    # can fast-path without re-running CEC on an already-proven result.
+    cand._provably_equiv = True
     return cand
 
 

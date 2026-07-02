@@ -85,123 +85,123 @@ class Agent:
     # ===================================================================
     def _build_rules(self) -> List[Tuple[re.Pattern, Callable]]:
         R = lambda p: re.compile(p, re.IGNORECASE)
-        rules = [
-            (R(r"beginning of (a new )?testcase|case name is"), self.h_begin),
-            (R(r"\b(load|read)\b.*design|design from (the )?file"), self.h_load),
-            (R(r"\bwrite\b.*(design|netlist).*\b(file|to)\b|write out"), self.h_write),
+        rules = []
+            # (R(r"beginning of (a new )?testcase|case name is"), self.h_begin),
+            # (R(r"\b(load|read)\b.*design|design from (the )?file"), self.h_load),
+            # (R(r"\bwrite\b.*(design|netlist).*\b(file|to)\b|write out"), self.h_write),
 
-            # optimize rules first: they mention "depth/cone" but must not be
-            # captured by the depth/cone *query* rules.
-            (R(r"optimize the depth of the cone of (%s)" % NET), self.h_opt_cone),
-            (R(r"optimize the (logic )?cone of (?:output )?(%s)" % NET), self.h_opt_cone),
-            (R(r"(reduce|minimize|minimise).*(critical path|maximum|max|critical).*depth"), self.h_opt_depth),
-            (R(r"(depth optimization|perform depth optimization|reduce critical path)"), self.h_opt_depth),
-            (R(r"minimize the maximum logic depth|minimize maximum (logic |path )?depth"), self.h_opt_depth),
+            # # optimize rules first: they mention "depth/cone" but must not be
+            # # captured by the depth/cone *query* rules.
+            # (R(r"optimize the depth of the cone of (%s)" % NET), self.h_opt_cone),
+            # (R(r"optimize the (logic )?cone of (?:output )?(%s)" % NET), self.h_opt_cone),
+            # (R(r"(reduce|minimize|minimise).*(critical path|maximum|max|critical).*depth"), self.h_opt_depth),
+            # (R(r"(depth optimization|perform depth optimization|reduce critical path)"), self.h_opt_depth),
+            # (R(r"minimize the maximum logic depth|minimize maximum (logic |path )?depth"), self.h_opt_depth),
 
-            # transforms (imperative actions) — matched BEFORE analysis queries
-            # so cost-function / "gates in the cone of" phrasing in a transform
-            # request is never captured by a query rule.
-            (R(r"(remap|reconstruct|convert|restructure|replace).*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
-            (R(r"replace.*XNOR.*(NOR-only|NOR only|equivalent NOR)"), self.h_xnor_nor),
-            (R(r"convert every XNOR.*NOR"), self.h_xnor_nor),
-            (R(r"(replace|convert).*XOR.*(NAND-only|4 ?NAND|4-NAND|NAND)"), self.h_xor_nand),
-            (R(r"decompose all XOR.*(AND, OR, and NOT|AND.*OR.*NOT)"), self.h_xor_aoi),
-            (R(r"convert every XOR.*4-?NAND"), self.h_xor_nand),
-            (R(r"replace all 2-input NAND.*constant 1.*inverter"), self.h_nand_inv),
-            (R(r"simplify the reported (\w+) gates|simplify the reported|propagating .*constant"), self.h_constprop),
-            (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
-            (R(r"(remove|delete|trim|sweep|prune|eliminate).*(dangling|unused|floating|redundant)"), self.h_dangling),
-            (R(r"(delete|remove|eliminate|prune).*gates?.*(do not|don't|not) (contribute|affect|connected)"), self.h_dangling),
-            (R(r"are there any redundant gates"), self.h_dangling),
-            (R(r"check.*dangling gates|check if there are any floating"), self.h_check_dangling),
-            (R(r"(merge|find and merge).*(functionally equivalent|same function|structural duplicate|duplicate)"), self.h_merge),
-            (R(r"(rename|change the identifier of|update the name of|change the name).*(gate|wire|signal)\s+(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename),
-            (R(r"list all gates.*connect.*to the renamed signal (%s)" % NET), self.h_connected_renamed),
-            (R(r"insert.*buffers?.*no (gate|signal) (drives|has fanout).*?(\d+)"), self.h_buffers_fanout),
-            (R(r"insert a BUF gate on signal (%s).*dedicated buffer" % NET), self.h_buffers_dedicated),
-            (R(r"insert.*buffers? on (?:the )?(?:reset )?signal (%s).*?(\d+) loads" % NET), self.h_buffers_signal),
-            (R(r"buffers on the reset signal (%s)" % NET), self.h_buffers_reset),
-            (R(r"(rename|update the name of|change the identifier of).*?(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename2),
+            # # transforms (imperative actions) — matched BEFORE analysis queries
+            # # so cost-function / "gates in the cone of" phrasing in a transform
+            # # request is never captured by a query rule.
+            # (R(r"(remap|reconstruct|convert|restructure|replace).*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
+            # (R(r"replace.*XNOR.*(NOR-only|NOR only|equivalent NOR)"), self.h_xnor_nor),
+            # (R(r"convert every XNOR.*NOR"), self.h_xnor_nor),
+            # (R(r"(replace|convert).*XOR.*(NAND-only|4 ?NAND|4-NAND|NAND)"), self.h_xor_nand),
+            # (R(r"decompose all XOR.*(AND, OR, and NOT|AND.*OR.*NOT)"), self.h_xor_aoi),
+            # (R(r"convert every XOR.*4-?NAND"), self.h_xor_nand),
+            # (R(r"replace all 2-input NAND.*constant 1.*inverter"), self.h_nand_inv),
+            # (R(r"simplify the reported (\w+) gates|simplify the reported|propagating .*constant"), self.h_constprop),
+            # (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
+            # (R(r"(remove|delete|trim|sweep|prune|eliminate).*(dangling|unused|floating|redundant)"), self.h_dangling),
+            # (R(r"(delete|remove|eliminate|prune).*gates?.*(do not|don't|not) (contribute|affect|connected)"), self.h_dangling),
+            # (R(r"are there any redundant gates"), self.h_dangling),
+            # (R(r"check.*dangling gates|check if there are any floating"), self.h_check_dangling),
+            # (R(r"(merge|find and merge).*(functionally equivalent|same function|structural duplicate|duplicate)"), self.h_merge),
+            # (R(r"(rename|change the identifier of|update the name of|change the name).*(gate|wire|signal)\s+(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename),
+            # (R(r"list all gates.*connect.*to the renamed signal (%s)" % NET), self.h_connected_renamed),
+            # (R(r"insert.*buffers?.*no (gate|signal) (drives|has fanout).*?(\d+)"), self.h_buffers_fanout),
+            # (R(r"insert a BUF gate on signal (%s).*dedicated buffer" % NET), self.h_buffers_dedicated),
+            # (R(r"insert.*buffers? on (?:the )?(?:reset )?signal (%s).*?(\d+) loads" % NET), self.h_buffers_signal),
+            # (R(r"buffers on the reset signal (%s)" % NET), self.h_buffers_reset),
+            # (R(r"(rename|update the name of|change the identifier of).*?(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename2),
 
-            # equivalence verification (imperative)
-            (R(r"(verify|prove|confirm|check).*(equivalen|equivalent).*(original|pre-transformation|last loaded|as last loaded|loaded netlist)"), self.h_verify),
-            (R(r"(verify|prove).*(transformed|current).*(equivalent|equivalence)"), self.h_verify),
+            # # equivalence verification (imperative)
+            # (R(r"(verify|prove|confirm|check).*(equivalen|equivalent).*(original|pre-transformation|last loaded|as last loaded|loaded netlist)"), self.h_verify),
+            # (R(r"(verify|prove).*(transformed|current).*(equivalent|equivalence)"), self.h_verify),
 
-            (R(r"count all the gates|broken down by gate type"), self.h_count_all),
-            (R(r"total gate count|compute the total gate count"), self.h_total),
-            (R(r"report the number of each gate type in the cone of (%s)" % NET), self.h_cone_type),
-            (R(r"how many (\w+) gates? (are|were|is)"), self.h_count_or_delta),
-            (R(r"how many (\w+) (were|gates were)? ?(added|removed|eliminated|merged|collapsed|inserted|found)"), self.h_delta),
-            (R(r"how many (dangling|redundant|floating|duplicate|structural duplicate).*(removed|merged|found)"), self.h_delta),
-            (R(r"how many (buf|buffer) gates were added"), self.h_delta),
-            (R(r"how many flip-?flops .*enable or hold"), self.h_enable_hold_count),
+            # (R(r"count all the gates|broken down by gate type"), self.h_count_all),
+            # (R(r"total gate count|compute the total gate count"), self.h_total),
+            # (R(r"report the number of each gate type in the cone of (%s)" % NET), self.h_cone_type),
+            # (R(r"how many (\w+) gates? (are|were|is)"), self.h_count_or_delta),
+            # (R(r"how many (\w+) (were|gates were)? ?(added|removed|eliminated|merged|collapsed|inserted|found)"), self.h_delta),
+            # (R(r"how many (dangling|redundant|floating|duplicate|structural duplicate).*(removed|merged|found)"), self.h_delta),
+            # (R(r"how many (buf|buffer) gates were added"), self.h_delta),
+            # (R(r"how many flip-?flops .*enable or hold"), self.h_enable_hold_count),
 
-            (R(r"what type of gate is (%s)" % NET), self.h_gate_info),
-            (R(r"list all (\w+) gates? in this design"), self.h_list_type),
-            (R(r"list all XOR gates"), self.h_list_xor),
-            (R(r"list (all|every).*primary inputs?.*bit widths?"), self.h_list_pi),
-            (R(r"list all primary outputs?.*bit widths?"), self.h_list_po),
-            (R(r"(number of|how many) primary inputs? and (primary )?outputs?"), self.h_count_ports),
-            (R(r"determine the number of primary inputs and outputs"), self.h_count_ports),
-            (R(r"gates? (are )?in the (fanin |logic )?cone of (primary output |output )?(%s)" % NET), self.h_cone_gate_count),
-            (R(r"list all gates.*tied to 1'b1|inputs tied to 1'b1"), self.h_const1_gates),
-            (R(r"report any (\w+) gates? with (a )?constant"), self.h_report_const),
-            (R(r"report any (\w+) gates? with constant inputs"), self.h_report_const),
+            # (R(r"what type of gate is (%s)" % NET), self.h_gate_info),
+            # (R(r"list all (\w+) gates? in this design"), self.h_list_type),
+            # (R(r"list all XOR gates"), self.h_list_xor),
+            # (R(r"list (all|every).*primary inputs?.*bit widths?"), self.h_list_pi),
+            # (R(r"list all primary outputs?.*bit widths?"), self.h_list_po),
+            # (R(r"(number of|how many) primary inputs? and (primary )?outputs?"), self.h_count_ports),
+            # (R(r"determine the number of primary inputs and outputs"), self.h_count_ports),
+            # (R(r"gates? (are )?in the (fanin |logic )?cone of (primary output |output )?(%s)" % NET), self.h_cone_gate_count),
+            # (R(r"list all gates.*tied to 1'b1|inputs tied to 1'b1"), self.h_const1_gates),
+            # (R(r"report any (\w+) gates? with (a )?constant"), self.h_report_const),
+            # (R(r"report any (\w+) gates? with constant inputs"), self.h_report_const),
 
-            # paths
-            (R(r"path.*from (%s) to (%s).*(?:does not traverse|avoid\w*|without)\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid),
-            (R(r"path connecting (?:input )?(%s) to (?:output )?(%s).*avoiding\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid2),
-            (R(r"combinational path.*from (%s) to (%s).*avoids?\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid3),
-            (R(r"(does|is there|whether).*combinational path exist.*from (?:primary input )?(%s) to (?:primary output )?(%s)" % (NET, NET)), self.h_path_plain),
-            (R(r"path.*from (?:primary input )?(%s) to (?:primary output )?(%s)\??\s*(?:report)?.*exist" % (NET, NET)), self.h_path_plain),
-            (R(r"(complete enumeration|list every path|find all combinational paths|enumerat).*?(%s).*?(%s)" % (NET, NET)), self.h_enum_paths),
-            (R(r"paths? of length 0|direct wire connections from PI to PO"), self.h_len0),
-            (R(r"does every path from (?:input )?(%s) to (?:output )?(%s) pass through (?:gate )?(%s)" % (NET, NET, NET)), self.h_dominator),
-            (R(r"articulation points.*between (%s) and (%s)" % (NET, NET)), self.h_articulation),
-            (R(r"(is |whether )?wire (%s) is a cut" % NET), self.h_cut),
+            # # paths
+            # (R(r"path.*from (%s) to (%s).*(?:does not traverse|avoid\w*|without)\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid),
+            # (R(r"path connecting (?:input )?(%s) to (?:output )?(%s).*avoiding\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid2),
+            # (R(r"combinational path.*from (%s) to (%s).*avoids?\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid3),
+            # (R(r"(does|is there|whether).*combinational path exist.*from (?:primary input )?(%s) to (?:primary output )?(%s)" % (NET, NET)), self.h_path_plain),
+            # (R(r"path.*from (?:primary input )?(%s) to (?:primary output )?(%s)\??\s*(?:report)?.*exist" % (NET, NET)), self.h_path_plain),
+            # (R(r"(complete enumeration|list every path|find all combinational paths|enumerat).*?(%s).*?(%s)" % (NET, NET)), self.h_enum_paths),
+            # (R(r"paths? of length 0|direct wire connections from PI to PO"), self.h_len0),
+            # (R(r"does every path from (?:input )?(%s) to (?:output )?(%s) pass through (?:gate )?(%s)" % (NET, NET, NET)), self.h_dominator),
+            # (R(r"articulation points.*between (%s) and (%s)" % (NET, NET)), self.h_articulation),
+            # (R(r"(is |whether )?wire (%s) is a cut" % NET), self.h_cut),
 
-            # depth
-            (R(r"(maximum|max).*depth from (?:input )?(%s) to (?:output )?(%s)" % (NET, NET)), self.h_depth_ab),
-            (R(r"longest combinational path depth from (%s) to (%s)" % (NET, NET)), self.h_depth_ab2),
-            (R(r"critical path depth between (%s) and (%s)" % (NET, NET)), self.h_depth_ab3),
-            (R(r"(maximum|max).*depth.*cone of (?:output )?(%s)|depth of the cone of (%s)" % (NET, NET)), self.h_cone_depth),
-            (R(r"max(imum)? combinational (logic )?depth on any register-to-register path"), self.h_reg2reg_depth),
-            (R(r"max(imum)? (combinational )?(logic )?depth from any primary input to any (DFF )?D-?pin"), self.h_pi2d_depth),
-            (R(r"max(imum)? combinational (logic )?depth.*(entire design|in the design|primary input to any primary output)"), self.h_global_depth),
-            (R(r"max(imum)? (combinational )?logic depth in the design now"), self.h_global_depth),
-            (R(r"how many outputs have a logic depth greater than (\d+)"), self.h_depth_gt),
-            (R(r"which output (bit )?has the (deepest|largest) (fanin )?(logic )?cone"), self.h_deepest),
-            (R(r"(does|whether) gate (%s) lies? on any maximum-depth path" % NET), self.h_on_maxpath),
+            # # depth
+            # (R(r"(maximum|max).*depth from (?:input )?(%s) to (?:output )?(%s)" % (NET, NET)), self.h_depth_ab),
+            # (R(r"longest combinational path depth from (%s) to (%s)" % (NET, NET)), self.h_depth_ab2),
+            # (R(r"critical path depth between (%s) and (%s)" % (NET, NET)), self.h_depth_ab3),
+            # (R(r"(maximum|max).*depth.*cone of (?:output )?(%s)|depth of the cone of (%s)" % (NET, NET)), self.h_cone_depth),
+            # (R(r"max(imum)? combinational (logic )?depth on any register-to-register path"), self.h_reg2reg_depth),
+            # (R(r"max(imum)? (combinational )?(logic )?depth from any primary input to any (DFF )?D-?pin"), self.h_pi2d_depth),
+            # (R(r"max(imum)? combinational (logic )?depth.*(entire design|in the design|primary input to any primary output)"), self.h_global_depth),
+            # (R(r"max(imum)? (combinational )?logic depth in the design now"), self.h_global_depth),
+            # (R(r"how many outputs have a logic depth greater than (\d+)"), self.h_depth_gt),
+            # (R(r"which output (bit )?has the (deepest|largest) (fanin )?(logic )?cone"), self.h_deepest),
+            # (R(r"(does|whether) gate (%s) lies? on any maximum-depth path" % NET), self.h_on_maxpath),
 
-            # connectivity
-            (R(r"fanout of (?:primary input )?(%s).*list (all|every) gate" % NET), self.h_fanout),
-            (R(r"(number of gates driven by|gates? driven by) (%s)" % NET), self.h_driven_by),
-            (R(r"immediate successors of (?:gate )?(%s)" % NET), self.h_successors),
-            (R(r"transitive fanin cone of (?:output )?(%s)" % NET), self.h_tfanin),
-            (R(r"transitive fanout (cone )?of (?:input |primary input )?(%s)" % NET), self.h_tfanout),
-            (R(r"(all gates reachable from|determine all gates reachable from|reachable from) (%s)" % NET), self.h_reachable),
-            (R(r"which primary input has the highest fanout|highest fanout in this design"), self.h_highest_fanout),
-            (R(r"(maximum|max) fanout of (%s) now" % NET), self.h_max_fanout),
-            (R(r"gates shared between the fanin cones of (%s) and (%s)" % (NET, NET)), self.h_shared),
-            (R(r"(every gate|report every gate) connected to the output of (%s)" % NET), self.h_connected_out),
-            (R(r"compute the fanin (logic )?cone of (?:output )?(%s)" % NET), self.h_cone_gate_count),
+            # # connectivity
+            # (R(r"fanout of (?:primary input )?(%s).*list (all|every) gate" % NET), self.h_fanout),
+            # (R(r"(number of gates driven by|gates? driven by) (%s)" % NET), self.h_driven_by),
+            # (R(r"immediate successors of (?:gate )?(%s)" % NET), self.h_successors),
+            # (R(r"transitive fanin cone of (?:output )?(%s)" % NET), self.h_tfanin),
+            # (R(r"transitive fanout (cone )?of (?:input |primary input )?(%s)" % NET), self.h_tfanout),
+            # (R(r"(all gates reachable from|determine all gates reachable from|reachable from) (%s)" % NET), self.h_reachable),
+            # (R(r"which primary input has the highest fanout|highest fanout in this design"), self.h_highest_fanout),
+            # (R(r"(maximum|max) fanout of (%s) now" % NET), self.h_max_fanout),
+            # (R(r"gates shared between the fanin cones of (%s) and (%s)" % (NET, NET)), self.h_shared),
+            # (R(r"(every gate|report every gate) connected to the output of (%s)" % NET), self.h_connected_out),
+            # (R(r"compute the fanin (logic )?cone of (?:output )?(%s)" % NET), self.h_cone_gate_count),
 
-            # functional
-            (R(r"(functionally equivalent|identical logic values|functional equivalence between internal signals|equivalent for all input).*?(%s).*?(%s)" % (NET, NET)), self.h_sig_equiv),
-            (R(r"signals? (%s) and (%s) are functionally equivalent" % (NET, NET)), self.h_sig_equiv2),
-            (R(r"output (%s) (always 0|is always 0|恒)" % NET), self.h_const_out),
-            (R(r"does output (%s) depend on input (%s)" % (NET, NET)), self.h_depends),
-            (R(r"(boolean equation|logic expression|boolean function).*?(%s)" % NET), self.h_boolean),
-            (R(r"symmetric with respect to inputs (%s) and (%s)" % (NET, NET)), self.h_symmetric),
-            (R(r"exist.*\(?(%s)?,?\s*\)?.*NAND\(.*\).*equivalent to (%s)" % (NET, NET)), self.h_nand_pair),
-            (R(r"NAND\(a, ?b\) is equivalent to (%s)" % NET), self.h_nand_pair2),
+            # # functional
+            # (R(r"(functionally equivalent|identical logic values|functional equivalence between internal signals|equivalent for all input).*?(%s).*?(%s)" % (NET, NET)), self.h_sig_equiv),
+            # (R(r"signals? (%s) and (%s) are functionally equivalent" % (NET, NET)), self.h_sig_equiv2),
+            # (R(r"output (%s) (always 0|is always 0|恒)" % NET), self.h_const_out),
+            # (R(r"does output (%s) depend on input (%s)" % (NET, NET)), self.h_depends),
+            # (R(r"(boolean equation|logic expression|boolean function).*?(%s)" % NET), self.h_boolean),
+            # (R(r"symmetric with respect to inputs (%s) and (%s)" % (NET, NET)), self.h_symmetric),
+            # (R(r"exist.*\(?(%s)?,?\s*\)?.*NAND\(.*\).*equivalent to (%s)" % (NET, NET)), self.h_nand_pair),
+            # (R(r"NAND\(a, ?b\) is equivalent to (%s)" % NET), self.h_nand_pair2),
 
-            # sequential
-            (R(r"flip-?flops driven by clock (%s)" % NET), self.h_ffs_clock),
-            (R(r"(dff\w*|flip-?flop\w*).*same clock domain"), self.h_same_clock),
-            (R(r"register-to-register paths"), self.h_reg2reg_paths),
-            (R(r"D input logic.*enable or hold|enable or hold structures"), self.h_enable_hold),
-        ]
+            # # sequential
+            # (R(r"flip-?flops driven by clock (%s)" % NET), self.h_ffs_clock),
+            # (R(r"(dff\w*|flip-?flop\w*).*same clock domain"), self.h_same_clock),
+            # (R(r"register-to-register paths"), self.h_reg2reg_paths),
+            # (R(r"D input logic.*enable or hold|enable or hold structures"), self.h_enable_hold),
+        # ]
         return rules
 
     # ===================================================================
@@ -217,7 +217,8 @@ class Agent:
         return None
 
     def _commit(self, mutate, *, basis=None, max_fanout=None,
-                max_fanout_pi=True, verify=True) -> Tuple[object, bool, str]:
+                max_fanout_pi=True, verify=True,
+                provably_equiv: bool = False) -> Tuple[object, bool, str]:
         st = self.state
         st.begin_transform()
         info = mutate(st.current)
@@ -229,6 +230,9 @@ class Agent:
         if not ok:
             st.rollback()
             return info, False, reason
+        if not provably_equiv:
+            st.provably_equiv = False
+        st.current._provably_equiv = st.provably_equiv
         return info, True, "ok"
 
     @staticmethod
@@ -949,7 +953,8 @@ class Agent:
     def h_nand_inv(self, m, line):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: rewrite.nand_const1_to_inv(nl))
+        info, ok, reason = self._commit(lambda nl: rewrite.nand_const1_to_inv(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The NAND(const-1)->INV conversion was reverted: {reason}."
         self.state.record_delta("nand_to_inv", info)
@@ -968,7 +973,8 @@ class Agent:
         # if absent (simplify without a prior report), detect now
         extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
         info, ok, reason = self._commit(
-            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
+            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra),
+            provably_equiv=True)
         if not ok:
             return f"The constant propagation was reverted: {reason}."
         self.state.record_delta("const_eliminated", info)
@@ -978,7 +984,8 @@ class Agent:
     def h_collapse(self, m, line):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.collapse_double_inverters(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.collapse_double_inverters(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The inverter collapse was reverted: {reason}."
         self.state.record_delta("collapsed", info)
@@ -987,7 +994,8 @@ class Agent:
     def h_dangling(self, m, line):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.remove_dangling(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.remove_dangling(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The dangling-gate removal was reverted: {reason}."
         self.state.record_delta("removed", info)
@@ -1002,7 +1010,8 @@ class Agent:
     def h_merge(self, m, line):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.merge_structural_duplicates(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.merge_structural_duplicates(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The duplicate merge was reverted: {reason}."
         self.state.record_delta("merged", info)
@@ -1020,6 +1029,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No {kind} named {old} was found to rename."
+        self.state.current._provably_equiv = self.state.provably_equiv
         return f"Renamed {kind} {old} to {new} and updated all references."
 
     def h_rename2(self, m, line):
@@ -1034,6 +1044,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No object named {old} was found to rename."
+        self.state.current._provably_equiv = self.state.provably_equiv
         return f"Renamed {kind} {old} to {new} and updated all references."
 
     def h_connected_renamed(self, m, line):
@@ -1050,7 +1061,7 @@ class Agent:
         include_pi = "signal" in line.lower()
         info, ok, reason = self._commit(
             lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
-            max_fanout=k, max_fanout_pi=include_pi)
+            max_fanout=k, max_fanout_pi=include_pi, provably_equiv=True)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
@@ -1063,7 +1074,8 @@ class Agent:
         net = m.group(1)
         k = int(m.group(2))
         info, ok, reason = self._commit(
-            lambda nl: buffering.limit_fanout(nl, k, only_nets={net}), max_fanout=None)
+            lambda nl: buffering.limit_fanout(nl, k, only_nets={net}),
+            max_fanout=None, provably_equiv=True)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
@@ -1074,7 +1086,8 @@ class Agent:
             return self._need_design()
         net = m.group(1)
         info, ok, reason = self._commit(
-            lambda nl: buffering.dedicated_buffer_per_load(nl, net))
+            lambda nl: buffering.dedicated_buffer_per_load(nl, net),
+            provably_equiv=True)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
@@ -1087,7 +1100,8 @@ class Agent:
         km = re.findall(r"(\d+)", line)
         k = int(km[-1]) if km else 4
         info, ok, reason = self._commit(
-            lambda nl: buffering.limit_fanout(nl, k, only_nets={net}))
+            lambda nl: buffering.limit_fanout(nl, k, only_nets={net}),
+            provably_equiv=True)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
@@ -1104,6 +1118,8 @@ class Agent:
         before = depth.depth_of_cone(self.state.current, out)
         res, imp = abc_opt.optimize_cone_depth(self.state.current, out, basis=basis)
         self.state.current = res
+        if imp:
+            self.state.provably_equiv = getattr(res, '_provably_equiv', False)
         after = depth.depth_of_cone(res, out)
         if imp:
             return (f"Optimized the cone of {out}: depth reduced from {before} "
@@ -1118,6 +1134,8 @@ class Agent:
         before = depth.global_max_depth(self.state.current)
         res, imp = abc_opt.minimize_depth(self.state.current, basis=basis)
         self.state.current = res
+        if imp:
+            self.state.provably_equiv = getattr(res, '_provably_equiv', False)
         after = depth.global_max_depth(res)
         if imp:
             return (f"Reduced the maximum logic depth from {before} to {after}"
@@ -1709,7 +1727,8 @@ class Agent:
         scope_gates = self._scope_from_param(scope)
         info, ok, reason = self._commit(
             lambda nl: rewrite.to_basis(nl, basis, scope_gates),
-            basis=(None if scope_gates is not None else basis))
+            basis=(None if scope_gates is not None else basis),
+            provably_equiv=True)
         if not ok:
             return f"The basis remap was reverted: {reason}."
         self.state.record_delta("basis_remap", info)
@@ -1722,7 +1741,8 @@ class Agent:
             return self._need_design()
         scope_gates = self._scope_from_param(scope)
         before = counts.count_of_type(self.state.current, "nand")
-        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_nand(nl, scope_gates))
+        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_nand(nl, scope_gates),
+                                         provably_equiv=True)
         if not ok:
             return f"The XOR->NAND conversion was reverted: {reason}."
         added = counts.count_of_type(self.state.current, "nand") - before
@@ -1736,7 +1756,8 @@ class Agent:
             return self._need_design()
         scope_gates = self._scope_from_param(scope)
         before = counts.count_of_type(self.state.current, "nor")
-        info, ok, reason = self._commit(lambda nl: rewrite.xnor_to_nor(nl, scope_gates))
+        info, ok, reason = self._commit(lambda nl: rewrite.xnor_to_nor(nl, scope_gates),
+                                         provably_equiv=True)
         if not ok:
             return f"The XNOR->NOR conversion was reverted: {reason}."
         added = counts.count_of_type(self.state.current, "nor") - before
@@ -1749,7 +1770,8 @@ class Agent:
         if self._need_design():
             return self._need_design()
         scope_gates = self._scope_from_param(scope)
-        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_aoi(nl, scope_gates))
+        info, ok, reason = self._commit(lambda nl: rewrite.xor_to_aoi(nl, scope_gates),
+                                         provably_equiv=True)
         if not ok:
             return f"The XOR decomposition was reverted: {reason}."
         self.state.record_delta("xor_converted", info)
@@ -1758,7 +1780,8 @@ class Agent:
     def op_nand_const1_to_inv(self):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: rewrite.nand_const1_to_inv(nl))
+        info, ok, reason = self._commit(lambda nl: rewrite.nand_const1_to_inv(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The NAND(const-1)->INV conversion was reverted: {reason}."
         self.state.record_delta("nand_to_inv", info)
@@ -1791,7 +1814,8 @@ class Agent:
         rtype = self._norm_gate_type(type) if type else self.state.last_report_kind
         extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
         info, ok, reason = self._commit(
-            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
+            lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra),
+            provably_equiv=True)
         if not ok:
             return f"The constant propagation was reverted: {reason}."
         self.state.record_delta("const_eliminated", info)
@@ -1801,7 +1825,8 @@ class Agent:
     def op_collapse_inverters(self):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.collapse_double_inverters(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.collapse_double_inverters(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The inverter collapse was reverted: {reason}."
         self.state.record_delta("collapsed", info)
@@ -1810,7 +1835,8 @@ class Agent:
     def op_remove_dangling(self):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.remove_dangling(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.remove_dangling(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The dangling-gate removal was reverted: {reason}."
         self.state.record_delta("removed", info)
@@ -1819,7 +1845,8 @@ class Agent:
     def op_merge_duplicates(self):
         if self._need_design():
             return self._need_design()
-        info, ok, reason = self._commit(lambda nl: cleanup.merge_structural_duplicates(nl))
+        info, ok, reason = self._commit(lambda nl: cleanup.merge_structural_duplicates(nl),
+                                         provably_equiv=True)
         if not ok:
             return f"The duplicate merge was reverted: {reason}."
         self.state.record_delta("merged", info)
@@ -1839,6 +1866,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No {kind} named {old} was found to rename."
+        self.state.current._provably_equiv = self.state.provably_equiv
         return f"Renamed {kind} {old} to {new} and updated all references."
 
     def op_insert_buffers(self, k=4, net=None, mode="fanout", include_pi=False):
@@ -1849,21 +1877,24 @@ class Agent:
         mode = str(mode or "fanout").lower()
         include_pi = bool(include_pi)
         if mode == "dedicated" and net:
-            info, ok, reason = self._commit(lambda nl: buffering.dedicated_buffer_per_load(nl, str(net)))
+            info, ok, reason = self._commit(
+                lambda nl: buffering.dedicated_buffer_per_load(nl, str(net)),
+                provably_equiv=True)
             if not ok:
                 return f"The buffer insertion was reverted: {reason}."
             self.state.record_delta("buffers_added", info)
             return f"Inserted {info} dedicated buffer(s), one per load of {net}; equivalence verified."
         if net:
             info, ok, reason = self._commit(
-                lambda nl: buffering.limit_fanout(nl, k, only_nets={str(net)}), max_fanout=None)
+                lambda nl: buffering.limit_fanout(nl, k, only_nets={str(net)}),
+                max_fanout=None, provably_equiv=True)
             if not ok:
                 return f"The buffer insertion was reverted: {reason}."
             self.state.record_delta("buffers_added", info)
             return f"Inserted {info} buffer(s) on {net} so each driver has at most {k} loads; equivalence verified."
         info, ok, reason = self._commit(
             lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
-            max_fanout=k, max_fanout_pi=include_pi)
+            max_fanout=k, max_fanout_pi=include_pi, provably_equiv=True)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)
@@ -1878,6 +1909,8 @@ class Agent:
         before = depth.global_max_depth(self.state.current)
         res, imp = abc_opt.minimize_depth(self.state.current, basis=basis)
         self.state.current = res
+        if imp:
+            self.state.provably_equiv = getattr(res, '_provably_equiv', False)
         after = depth.global_max_depth(res)
         if imp:
             return (f"Reduced the maximum logic depth from {before} to {after}"
@@ -1894,6 +1927,7 @@ class Agent:
         before = len(self.state.current.gates)
         res, imp = abc_opt.minimize_area(self.state.current, basis=basis)
         self.state.current = res
+        self.state.provably_equiv = False
         after = len(res.gates)
         if imp:
             return (f"Reduced the gate count from {before} to {after}"
@@ -1909,6 +1943,8 @@ class Agent:
         before = depth.depth_of_cone(self.state.current, out)
         res, imp = abc_opt.optimize_cone_depth(self.state.current, out, basis=basis)
         self.state.current = res
+        if imp:
+            self.state.provably_equiv = getattr(res, '_provably_equiv', False)
         after = depth.depth_of_cone(res, out)
         if imp:
             return (f"Optimized the cone of {out}: depth reduced from {before} "

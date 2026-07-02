@@ -1,0 +1,1140 @@
+{
+  "This is the beginning of a new testcase. The case name is test21.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test21"
+    }
+  },
+  "Please load the design from the file test21.v located in the directory testcase/test21/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test21.v",
+      "dir": "testcase/test21"
+    }
+  },
+  "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).": {
+    "intent": "count_gates",
+    "params": {}
+  },
+  "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.": {
+    "intent": "insert_buffers",
+    "params": {
+      "k": 4
+    }
+  },
+  "Please write the current design to the output file test21_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test21_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test22.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test22"
+    }
+  },
+  "Please load the design from the file test22.v located in the directory testcase/test22/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test22.v",
+      "dir": "testcase/test22"
+    }
+  },
+  "Reduce the critical path depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {}
+  },
+  "Please write the current design to the output file test22_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test22_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test23.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test23"
+    }
+  },
+  "Please load the design from the file test23.v located in the directory testcase/test23/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test23.v",
+      "dir": "testcase/test23"
+    }
+  },
+  "Trim unused wires and gates. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Please write the current design to the output file test23_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test23_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test24.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test24"
+    }
+  },
+  "Please load the design from the file test24.v located in the directory testcase/test24/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test24.v",
+      "dir": "testcase/test24"
+    }
+  },
+  "Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Rename gate g0 to renamed_gate. Ensure functional equivalence is preserved.": {
+    "intent": "rename",
+    "params": {
+      "kind": "gate",
+      "old": "g0",
+      "new": "renamed_gate"
+    }
+  },
+  "Optimize the logic to minimize maximum path depth. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {}
+  },
+  "Please write the current design to the output file test24_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test24_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test25.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test25"
+    }
+  },
+  "Please load the design from the file test25.v located in the directory testcase/test25/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test25.v",
+      "dir": "testcase/test25"
+    }
+  },
+  "Replace all 2-input OR gates in the cone of n11[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "NAND_NOT",
+      "scope": "n11[0]"
+    }
+  },
+  "Eliminate unused logic gates from the netlist. Ensure functional equivalence is preserved.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Change the identifier of gate g0 to renamed_gate and update all references. Ensure the design functionality does not change.": {
+    "intent": "rename",
+    "params": {
+      "kind": "gate",
+      "old": "g0",
+      "new": "renamed_gate"
+    }
+  },
+  "Change the identifier of wire n74 to renamed_wire and update all references. Ensure the design functionality does not change.": {
+    "intent": "rename",
+    "params": {
+      "kind": "wire",
+      "old": "n74",
+      "new": "renamed_wire"
+    }
+  },
+  "Perform depth optimization on the combinational logic while ensuring the cone of n11[0] continues to use only NAND and NOT gates. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {
+      "basis": "NAND_NOT"
+    }
+  },
+  "Please write the current design to the output file test25_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test25_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test26.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test26"
+    }
+  },
+  "Please load the design from the file test26.v located in the directory testcase/test26/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test26.v",
+      "dir": "testcase/test26"
+    }
+  },
+  "Convert the logic cone of n10 to use only NOR and NOT gates while preserving functional equivalence.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "NOR_NOT",
+      "scope": "n10"
+    }
+  },
+  "Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.": {
+    "intent": "collapse_inverters",
+    "params": {}
+  },
+  "Remove all dangling gates and nets not connected to any primary output. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Reduce critical path depth through logic restructuring, ensuring the cone of n10 maintains only NOR and NOT gates. Preserve functional equivalence. Report original if already optimal. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {
+      "basis": "NOR_NOT"
+    }
+  },
+  "Please write the current design to the output file test26_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test26_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test27.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test27"
+    }
+  },
+  "Please load the design from the file test27.v located in the directory testcase/test27/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test27.v",
+      "dir": "testcase/test27"
+    }
+  },
+  "Decompose all XOR gates in the fanin cone of n15 into AND, OR, and NOT gates without changing functionality.": {
+    "intent": "xor_to_aoi",
+    "params": {
+      "scope": "n15"
+    }
+  },
+  "Find all back-to-back inverter pairs and collapse them into a wire. Make sure nothing changes functionally.": {
+    "intent": "collapse_inverters",
+    "params": {}
+  },
+  "Delete all gates that do not contribute to any primary output. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Optimize the logic to minimize maximum path depth, ensuring the cone of n15 contains only AND, OR, and NOT gates. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {
+      "basis": "AND_OR_NOT"
+    }
+  },
+  "Please write the current design to the output file test27_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test27_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test28.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test28"
+    }
+  },
+  "Please load the design from the file test28.v located in the directory testcase/test28/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test28.v",
+      "dir": "testcase/test28"
+    }
+  },
+  "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "AND_NOT"
+    }
+  },
+  "Sweep out dangling gates. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Minimize the maximum logic depth of the design, ensuring the netlist remains AND and NOT only. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {
+      "basis": "AND_NOT"
+    }
+  },
+  "Please write the current design to the output file test28_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test28_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test29.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test29"
+    }
+  },
+  "Please load the design from the file test29.v located in the directory testcase/test29/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test29.v",
+      "dir": "testcase/test29"
+    }
+  },
+  "Prune the netlist of unused gates. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Find and merge all gate pairs in the design that are functionally equivalent (produce the same function). Make sure nothing changes functionally.": {
+    "intent": "merge_duplicates",
+    "params": {}
+  },
+  "Minimize the critical path depth of the design, ensuring the netlist remains AND and NOT only. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.": {
+    "intent": "minimize_depth",
+    "params": {
+      "basis": "AND_NOT"
+    }
+  },
+  "Please write the current design to the output file test29_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test29_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test30.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test30"
+    }
+  },
+  "Please load the design from the file test30.v located in the directory testcase/test30/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test30.v",
+      "dir": "testcase/test30"
+    }
+  },
+  "Remove floating nodes that do not affect outputs. Make sure nothing changes functionally.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "Please write the current design to the output file test30_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test30_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test31.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test31"
+    }
+  },
+  "Please load the design from the file test31.v located in the directory testcase/test31/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test31.v",
+      "dir": "testcase/test31"
+    }
+  },
+  "Determine all gates reachable from n2.": {
+    "intent": "reachable_from",
+    "params": {
+      "net": "n2"
+    }
+  },
+  "Prove that the transformed design is equivalent to the pre-transformation netlist.": {
+    "intent": "verify_equivalence",
+    "params": {
+      "against": "pre"
+    }
+  },
+  "What is the fanout of primary input n0? List every gate that n0 drives directly.": {
+    "intent": "fanout",
+    "params": {
+      "net": "n0"
+    }
+  },
+  "Is output n16 always 0 regardless of all inputs? Report yes or no.": {
+    "intent": "output_constant",
+    "params": {
+      "output": "n16"
+    }
+  },
+  "Report all gates shared between the fanin cones of n16 and n17.": {
+    "intent": "shared_cone",
+    "params": {
+      "a": "n16",
+      "b": "n17"
+    }
+  },
+  "Derive the Boolean equation for output n16 in terms of its primary inputs.": {
+    "intent": "boolean_equation",
+    "params": {
+      "output": "n16"
+    }
+  },
+  "Report every gate connected to the output of g0.": {
+    "intent": "connected_to_output",
+    "params": {
+      "gate": "g0"
+    }
+  },
+  "Try to rename internal signal n1289 to renamed_sig and update all references to it. Ensure the design functionality does not change.": {
+    "intent": "rename",
+    "params": {
+      "kind": "signal",
+      "old": "n1289",
+      "new": "renamed_sig"
+    }
+  },
+  "List all gates that now connect to the renamed signal renamed_sig.": {
+    "intent": "fanout",
+    "params": {
+      "net": "renamed_sig"
+    }
+  },
+  "Please insert a BUF gate on signal n2 so that each load of n2 is driven through a dedicated buffer. Ensure the design functionality does not change.": {
+    "intent": "insert_buffers",
+    "params": {
+      "k": 4,
+      "mode": "dedicated",
+      "net": "n2"
+    }
+  },
+  "How many BUF gates were added by the buffer insertion just performed?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "buf"
+    }
+  },
+  "What is the maximum logic depth from any primary input to any DFF D-pin in this design?": {
+    "intent": "pi_to_dff_depth",
+    "params": {}
+  },
+  "How many outputs have a logic depth greater than 4?": {
+    "intent": "outputs_depth_gt",
+    "params": {
+      "k": 4
+    }
+  },
+  "What type of gate is g0? Report its gate type and pin connections.": {
+    "intent": "gate_info",
+    "params": {
+      "gate": "g0"
+    }
+  },
+  "Check functional equivalence between internal signals n1287 and n2404.": {
+    "intent": "signals_equivalent",
+    "params": {
+      "a": "n1287",
+      "b": "n2404"
+    }
+  },
+  "Please write the current design to the output file test31_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test31_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test32.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test32"
+    }
+  },
+  "Please load the design from the file test32.v located in the directory testcase/test32/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test32.v",
+      "dir": "testcase/test32"
+    }
+  },
+  "Determine whether gate g0 lies on any maximum-depth path of the design. Report yes or no.": {
+    "intent": "gate_on_max_path",
+    "params": {
+      "gate": "g0"
+    }
+  },
+  "Determine the number of primary inputs and outputs.": {
+    "intent": "count_ports",
+    "params": {}
+  },
+  "List all register-to-register paths in this design through combinational logic.": {
+    "intent": "reg_to_reg_paths",
+    "params": {}
+  },
+  "Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.": {
+    "intent": "nand_const1_to_inv",
+    "params": {}
+  },
+  "How many NOT gates are currently in the design?": {
+    "intent": "count_type",
+    "params": {
+      "type": "not"
+    }
+  },
+  "Does every path from input n2 to output n12 pass through gate g0? Report yes or no.": {
+    "intent": "dominator",
+    "params": {
+      "a": "n2",
+      "gate": "g0",
+      "b": "n12"
+    }
+  },
+  "Rename wire n1214 to renamed_wire. Ensure functional equivalence is preserved.": {
+    "intent": "rename",
+    "params": {
+      "kind": "wire",
+      "old": "n1214",
+      "new": "renamed_wire"
+    }
+  },
+  "Verify functional equivalence between the current design and the original loaded netlist.": {
+    "intent": "verify_equivalence",
+    "params": {
+      "against": "original"
+    }
+  },
+  "What is the transitive fanout of primary input n0? List all gates reachable from n0.": {
+    "intent": "transitive_fanout",
+    "params": {
+      "net": "n0"
+    }
+  },
+  "How many gates are in the logic cone of output n12?": {
+    "intent": "cone_gate_count",
+    "params": {
+      "output": "n12"
+    }
+  },
+  "Check if there are any dangling gates in this design that do not contribute to any primary output. Remove them if found. Ensure the design functionality does not change.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "How many dangling gates were removed?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "dangling"
+    }
+  },
+  "Report any NAND gates with constant inputs (0 or 1) in this design.": {
+    "intent": "report_const_gates",
+    "params": {
+      "type": "nand"
+    }
+  },
+  "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.": {
+    "intent": "const_propagate",
+    "params": {
+      "type": "nand"
+    }
+  },
+  "How many NAND gates were eliminated by constant propagation?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "nand"
+    }
+  },
+  "Find all combinational paths from primary input n2 to primary output n12 and list each path showing the gates traversed.": {
+    "intent": "enumerate_paths",
+    "params": {
+      "a": "n2",
+      "b": "n12"
+    }
+  },
+  "Please write the current design to the output file test32_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test32_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test33.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test33"
+    }
+  },
+  "Please load the design from the file test33.v located in the directory testcase/test33/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test33.v",
+      "dir": "testcase/test33"
+    }
+  },
+  "Find all paths of length 0 (direct wire connections from PI to PO).": {
+    "intent": "length_zero_paths",
+    "params": {}
+  },
+  "Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change.": {
+    "intent": "xnor_to_nor",
+    "params": {}
+  },
+  "How many NOR gates are now in the design after the XNOR-to-NOR conversion?": {
+    "intent": "count_type",
+    "params": {
+      "type": "nor"
+    }
+  },
+  "Try to restructure the logic cone of output n8 using only NAND and NOT gates while preserving functional equivalence. Ensure the design functionality does not change.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "NAND_NOT",
+      "scope": "n8"
+    }
+  },
+  "How many NAND gates are now in the restructured cone of output n8?": {
+    "intent": "count_type",
+    "params": {
+      "type": "nand"
+    }
+  },
+  "Check whether internal signals n55146 and n55104 are functionally equivalent for all input combinations. Report yes or no.": {
+    "intent": "signals_equivalent",
+    "params": {
+      "a": "n55146",
+      "b": "n55104"
+    }
+  },
+  "List every path originating at primary input n3 and terminating at primary output n9.": {
+    "intent": "enumerate_paths",
+    "params": {
+      "a": "n3",
+      "b": "n9"
+    }
+  },
+  "Does output n8 depend on input n1? Report yes or no.": {
+    "intent": "depends_on",
+    "params": {
+      "output": "n8",
+      "input": "n1"
+    }
+  },
+  "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.": {
+    "intent": "verify_equivalence",
+    "params": {
+      "against": "last_loaded"
+    }
+  },
+  "Determine whether wire n55104 is a cut between any primary input and any primary output. Report yes or no.": {
+    "intent": "is_cut",
+    "params": {
+      "wire": "n55104"
+    }
+  },
+  "Please list all the primary inputs of this design with their bit widths.": {
+    "intent": "list_ports",
+    "params": {
+      "dir": "input"
+    }
+  },
+  "Try to merge any pairs of gates in this design that compute the same Boolean function on the same inputs (structural duplicates). Ensure the design functionality does not change.": {
+    "intent": "merge_duplicates",
+    "params": {}
+  },
+  "How many gates were merged as structural duplicates?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "duplicate"
+    }
+  },
+  "Optimize the depth of the cone of n8 while ensuring the cone of n8 maintains only NAND and NOT gates. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n8; smaller is better.": {
+    "intent": "optimize_cone",
+    "params": {
+      "output": "n8",
+      "basis": "NAND_NOT"
+    }
+  },
+  "Please write the current design to the output file test33_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test33_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test34.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test34"
+    }
+  },
+  "Please load the design from the file test34.v located in the directory testcase/test34/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test34.v",
+      "dir": "testcase/test34"
+    }
+  },
+  "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence. Ensure the design functionality does not change.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "AND_NOT"
+    }
+  },
+  "How many AND gates are now in the reconstructed netlist?": {
+    "intent": "count_type",
+    "params": {
+      "type": "and"
+    }
+  },
+  "Write the logic expression for n30 using only the primary input names.": {
+    "intent": "boolean_equation",
+    "params": {
+      "output": "n30"
+    }
+  },
+  "Does a combinational path from n2 to n30 exist that avoids n4552?": {
+    "intent": "path_exists",
+    "params": {
+      "avoid": "n4552",
+      "a": "n2",
+      "b": "n30"
+    }
+  },
+  "What is the maximum combinational depth from any primary input to any primary output in the entire design?": {
+    "intent": "pi_to_dff_depth",
+    "params": {}
+  },
+  "Which output bit has the deepest fanin logic cone?": {
+    "intent": "deepest_output",
+    "params": {}
+  },
+  "Please write the current design to the output file test34_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test34_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test35.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test35"
+    }
+  },
+  "Please load the design from the file test35.v located in the directory testcase/test35/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test35.v",
+      "dir": "testcase/test35"
+    }
+  },
+  "Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.": {
+    "intent": "xnor_to_nor",
+    "params": {}
+  },
+  "How many NOR gates were added by replacing the XNOR gates?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "nor"
+    }
+  },
+  "Does a combinational path exist from primary input n2 to primary output n25? Report yes or no.": {
+    "intent": "path_exists",
+    "params": {
+      "a": "n2",
+      "b": "n25"
+    }
+  },
+  "List all NAND gates in this design with their input and output signals.": {
+    "intent": "list_type",
+    "params": {
+      "type": "nand"
+    }
+  },
+  "Update the name of signal n7431 to renamed_wire throughout the netlist. Ensure the design functionality does not change.": {
+    "intent": "rename",
+    "params": {
+      "kind": "signal",
+      "old": "n7431",
+      "new": "renamed_wire"
+    }
+  },
+  "Check whether internal signals n29498 and n29471 are functionally equivalent for all input combinations. Report yes or no.": {
+    "intent": "signals_equivalent",
+    "params": {
+      "a": "n29498",
+      "b": "n29471"
+    }
+  },
+  "Does there exist any pair of internal signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n25?": {
+    "intent": "exists_nand_pair",
+    "params": {
+      "target": "n25"
+    }
+  },
+  "Find all pairs of back-to-back inverters (NOT followed by NOT) in this design and collapse them into direct wire connections. Ensure the design functionality does not change.": {
+    "intent": "collapse_inverters",
+    "params": {}
+  },
+  "What is the maximum combinational logic depth in the design now?": {
+    "intent": "global_max_depth",
+    "params": {}
+  },
+  "What Boolean function does output n25 compute? Express it in terms of the primary inputs.": {
+    "intent": "boolean_equation",
+    "params": {
+      "output": "n25"
+    }
+  },
+  "List all flip-flops driven by clock n0.": {
+    "intent": "ffs_on_clock",
+    "params": {
+      "clk": "n0"
+    }
+  },
+  "Try to replace all XOR gates in this design with equivalent NAND-only implementations. Each 2-input XOR can be realized with 4 NAND gates. Ensure the design functionality does not change.": {
+    "intent": "xor_to_nand",
+    "params": {}
+  },
+  "How many NAND gates were added by replacing the XOR gates?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "nand"
+    }
+  },
+  "Please write the current design to the output file test35_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test35_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test36.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test36"
+    }
+  },
+  "Please load the design from the file test36.v located in the directory testcase/test36/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test36.v",
+      "dir": "testcase/test36"
+    }
+  },
+  "Determine whether wire n10239 is a cut between any primary input and any primary output. Report yes or no.": {
+    "intent": "is_cut",
+    "params": {
+      "wire": "n10239"
+    }
+  },
+  "Report any AND gates with a constant 0 input in this design.": {
+    "intent": "report_const_gates",
+    "params": {
+      "type": "and",
+      "value": "1'b0"
+    }
+  },
+  "Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.": {
+    "intent": "const_propagate",
+    "params": {
+      "type": "and"
+    }
+  },
+  "How many AND gates were eliminated by constant-0 propagation?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "and"
+    }
+  },
+  "Check whether the function at n11 is symmetric with respect to inputs n3 and n9[0].": {
+    "intent": "symmetric",
+    "params": {
+      "output": "n11",
+      "a": "n3",
+      "b": "n9[0]"
+    }
+  },
+  "Which primary input has the highest fanout in this design?": {
+    "intent": "highest_fanout_pi",
+    "params": {}
+  },
+  "Insert buffers wherever needed so that no signal drives more than 16 loads. Make sure nothing changes functionally. The cost function is the total gate count of the final design; smaller is better.": {
+    "intent": "insert_buffers",
+    "params": {
+      "k": 16,
+      "include_pi": true
+    }
+  },
+  "What is the maximum fanout of n1 now?": {
+    "intent": "max_fanout_of",
+    "params": {
+      "net": "n1"
+    }
+  },
+  "Please write the current design to the output file test36_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test36_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test37.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test37"
+    }
+  },
+  "Please load the design from the file test37.v located in the directory testcase/test37/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test37.v",
+      "dir": "testcase/test37"
+    }
+  },
+  "Report the number of each gate type in the cone of n8.": {
+    "intent": "cone_type_counts",
+    "params": {
+      "output": "n8"
+    }
+  },
+  "How many primary inputs and primary outputs does this design have?": {
+    "intent": "count_ports",
+    "params": {}
+  },
+  "List all primary outputs of this design with their bit widths.": {
+    "intent": "list_ports",
+    "params": {
+      "dir": "output"
+    }
+  },
+  "List all gates with one or more inputs tied to 1'b1.": {
+    "intent": "report_const_gates",
+    "params": {}
+  },
+  "What Boolean function does output n8 compute? Express it in terms of the primary inputs.": {
+    "intent": "boolean_equation",
+    "params": {
+      "output": "n8"
+    }
+  },
+  "Check if there are any floating inputs or unconnected output ports in this design.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "How many floating signals were found?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "dangling"
+    }
+  },
+  "Check whether the function at n8 is symmetric with respect to inputs n3 and n4[0].": {
+    "intent": "symmetric",
+    "params": {
+      "output": "n8",
+      "a": "n3",
+      "b": "n4[0]"
+    }
+  },
+  "Please write the current design to the output file test37_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test37_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test38.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test38"
+    }
+  },
+  "Please load the design from the file test38.v located in the directory testcase/test38/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test38.v",
+      "dir": "testcase/test38"
+    }
+  },
+  "Try to insert buffers on the reset signal n1 to reduce its fanout to at most 4 loads per driver. Ensure the design functionality does not change.": {
+    "intent": "insert_buffers",
+    "params": {
+      "k": 4,
+      "net": "n1"
+    }
+  },
+  "Are there any redundant gates in this design that can be removed without changing functionality? Remove them if found. Ensure the design functionality does not change.": {
+    "intent": "remove_dangling",
+    "params": {}
+  },
+  "How many redundant gates were removed?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "redundant"
+    }
+  },
+  "Find all articulation points in the combinational graph between n2 and n14.": {
+    "intent": "articulation",
+    "params": {
+      "a": "n2",
+      "b": "n14"
+    }
+  },
+  "Update the name of signal n440 to renamed_wire throughout the netlist. Ensure the design functionality does not change.": {
+    "intent": "rename",
+    "params": {
+      "kind": "signal",
+      "old": "n440",
+      "new": "renamed_wire"
+    }
+  },
+  "Confirm that the design is still functionally equivalent to the original.": {
+    "intent": "verify_equivalence",
+    "params": {
+      "against": "original"
+    }
+  },
+  "Report the number of each gate type in the cone of n14.": {
+    "intent": "cone_type_counts",
+    "params": {
+      "output": "n14"
+    }
+  },
+  "Compute the fanin logic cone of output n14 and list all gates that contribute to this output.": {
+    "intent": "cone_gate_count",
+    "params": {
+      "output": "n14"
+    }
+  },
+  "Please write the current design to the output file test38_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test38_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test39.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test39"
+    }
+  },
+  "Please load the design from the file test39.v located in the directory testcase/test39/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test39.v",
+      "dir": "testcase/test39"
+    }
+  },
+  "Report any OR gates with a constant 1 input in this design.": {
+    "intent": "report_const_gates",
+    "params": {
+      "type": "or",
+      "value": "1'b1"
+    }
+  },
+  "Simplify the reported OR gates by propagating their constant 1 input. Ensure the design functionality does not change.": {
+    "intent": "const_propagate",
+    "params": {
+      "type": "or"
+    }
+  },
+  "How many OR gates were eliminated by constant-1 propagation?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "or"
+    }
+  },
+  "List all XOR gates in this design.": {
+    "intent": "list_type",
+    "params": {
+      "type": "xor"
+    }
+  },
+  "Derive the Boolean equation for output n12 in terms of its primary inputs.": {
+    "intent": "boolean_equation",
+    "params": {
+      "output": "n12"
+    }
+  },
+  "Report any NOR gates with constant inputs in this design.": {
+    "intent": "report_const_gates",
+    "params": {
+      "type": "nor"
+    }
+  },
+  "Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.": {
+    "intent": "const_propagate",
+    "params": {
+      "type": "nor"
+    }
+  },
+  "How many NOR gates were eliminated by constant propagation?": {
+    "intent": "delta_count",
+    "params": {
+      "kind": "nor"
+    }
+  },
+  "Convert every XOR gate in this design to an equivalent 4-NAND circuit. Ensure the design functionality does not change.": {
+    "intent": "xor_to_nand",
+    "params": {}
+  },
+  "How many NAND gates are now in the design after the XOR-to-NAND conversion?": {
+    "intent": "count_type",
+    "params": {
+      "type": "nand"
+    }
+  },
+  "Please write the current design to the output file test39_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test39_out.v"
+    }
+  },
+  "This is the beginning of a new testcase. The case name is test40.": {
+    "intent": "begin_case",
+    "params": {
+      "name": "test40"
+    }
+  },
+  "Please load the design from the file test40.v located in the directory testcase/test40/.": {
+    "intent": "load_design",
+    "params": {
+      "file": "test40.v",
+      "dir": "testcase/test40"
+    }
+  },
+  "Remap the entire design to use only NAND and NOT gates. Make sure nothing changes functionally.": {
+    "intent": "convert_basis",
+    "params": {
+      "basis": "NAND_NOT"
+    }
+  },
+  "What is the maximum combinational depth on any register-to-register path in this design?": {
+    "intent": "reg_to_reg_depth",
+    "params": {}
+  },
+  "Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates.": {
+    "intent": "enable_hold_report",
+    "params": {}
+  },
+  "How many flip-flops were found to have enable or hold structures in their D input logic?": {
+    "intent": "enable_hold_count",
+    "params": {}
+  },
+  "Which output has the largest fanin cone?": {
+    "intent": "deepest_output",
+    "params": {}
+  },
+  "Optimize the logic cone of output n14 while ensuring the netlist remains NAND and NOT only. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n14; smaller is better.": {
+    "intent": "optimize_cone",
+    "params": {
+      "output": "n14",
+      "basis": "NAND_NOT"
+    }
+  },
+  "What is the depth of the cone of n14 now?": {
+    "intent": "cone_depth",
+    "params": {
+      "output": "n14"
+    }
+  },
+  "Please write the current design to the output file test40_out.v.": {
+    "intent": "write_design",
+    "params": {
+      "file": "test40_out.v"
+    }
+  }
+}

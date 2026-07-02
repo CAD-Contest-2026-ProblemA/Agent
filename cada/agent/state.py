@@ -27,6 +27,11 @@ class State:
         # a following "simplify the reported ..." instruction.
         self.last_report: List[str] = []
         self.last_report_kind: Optional[str] = None
+        # True iff every structural op since the last load is provably equivalent
+        # by construction (buf insertion, rename, dangling removal, const_prop,
+        # collapse_inverters, nand_const1_to_inv, merge_duplicates).
+        # Cleared to False by any resynthesis op (basis remap, minimize_depth, etc.).
+        self.provably_equiv: bool = True
 
     # ----- snapshots -----------------------------------------------------
     def set_loaded(self, nl: Netlist):
@@ -34,6 +39,7 @@ class State:
         self.original = nl.snapshot()
         self.last_loaded = nl.snapshot()
         self.pre = None
+        self.provably_equiv = True
 
     def begin_transform(self):
         """Snapshot the current design before a structural edit (for rollback

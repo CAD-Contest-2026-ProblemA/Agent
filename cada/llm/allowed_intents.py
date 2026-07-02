@@ -133,15 +133,32 @@ OPERATION SYNONYMS:
   Use "max_fanout_of {net}" when the request asks only for a PEAK NUMBER after buffering,
   e.g. "peak load count on n1", "maximum fanout value of n1 now", "highest load on n1".
 
-▸ count_gates vs delta_count
-  "count_gates" → current gate inventory broken down by type.
+▸ count_gates vs count_type vs delta_count
+  "count_gates" → current gate inventory broken down by ALL types (full histogram).
     Triggers: "count all gates", "primitive count per logic family", "audit gate types",
               "how many gates in total", "breakdown by gate type".
+  "count_type {type}" → current count of ONE specific gate type in the ENTIRE design.
+    Triggers: "how many NAND gates are now in the design?",
+              "how many NOT gates are currently in the design?",
+              "how many X gates are now in the [translated/restructured] cone of Y?" ← IMPORTANT:
+                even when the prompt says "in the cone of Y", use count_type (total design count),
+                because the operation just done applies to the whole design or the count reflects
+                the current full-design state. cone_type_counts would give a sub-cone breakdown.
+              "how many X gates are now in the design after the Y transformation?" ← IMPORTANT:
+                "now in the design" + "after transformation" → count_type (current total count).
+                NOT delta_count — delta_count only when "added", "removed", "excised", "inserted".
+    Examples:
+      "How many NAND gates are now in the restructured cone of output n8?" → count_type {type:"nand"}
+      "How many NOT gates are currently in the design?" → count_type {type:"not"}
+      "How many NOR gates are now in the design after the XNOR-to-NOR transformation?" → count_type {type:"nor"}
+      "How many NAND gates are now in the design after the XOR-to-NAND conversion?" → count_type {type:"nand"}
   "delta_count {kind}" → change from the PREVIOUS operation (added/removed count).
     Triggers: "how many were excised/absorbed/swept/collapsed/eliminated/deleted/removed",
-              "tally of X gates absorbed", "gates removed in last step".
+              "how many X gates were ADDED/REMOVED by Y", "tally of X gates absorbed",
+              "gates removed in last step", "how many were pruned/merged/inserted/found".
   KEY RULE: if the request contains a past-tense verb referring to the last action
-  (excised, absorbed, swept, folded, eliminated, inserted), use delta_count, not count_gates.
+  (excised, absorbed, swept, folded, eliminated, inserted, added, pruned, merged, found),
+  use delta_count. If the request says "are now" or "currently", use count_type.
 
 ▸ enumerate_paths vs articulation
   "enumerate_paths {a, b}" → list all combinational signal paths between two net names.
@@ -335,11 +352,27 @@ OPERATION SYNONYMS:
     • "no gate/net/cell drives more than X loads"   → include_pi omitted (defaults to false)
     • "no signal/wire/connection drives more than X" → include_pi: true
       (The word "signal" implies primary inputs are also treated as drivers to buffer.)
+  CRITICAL: k comes from the number in the request — extract it correctly.
+    "more than 4 loads" → k:4    "more than 16 loads" → k:16
   Do NOT use mode:"dedicated" for global fanout-limit requests.
     "Add buffer gates so no net drives more than 4 loads"      → {k:4}
     "Insert buffers so that no gate drives more than 4 loads"  → {k:4}
     "Ensure no signal drives more than 4 loads"                → {k:4, include_pi:true}
+    "Insert buffers so that no signal drives more than 16 loads" → {k:16, include_pi:true}
     "Apply fanout-reduction buffers to net n1 until fanout ≤ 4" → {k:4, net:"n1", mode:"fanout"}
+
+▸ count_ports (combined PI/PO count query)
+  "count_ports {}" → report how many primary inputs AND primary outputs the design has.
+  Triggers: "How many primary inputs and primary outputs does this design have?",
+            "determine the number of primary inputs and outputs",
+            "report the PI and PO counts", "how many inputs and outputs?".
+  KEY RULE: use count_ports (not list_ports) when the request asks HOW MANY inputs and outputs,
+  not for a listing of their names. count_ports returns a single combined count line.
+  Examples:
+    "How many primary inputs and primary outputs does this design have?"
+    → {"intent":"count_ports","params":{}}
+    "How many primary inputs and outputs are in this circuit?"
+    → {"intent":"count_ports","params":{}}
 
 ▸ xor_to_aoi parameter extraction
   "xor_to_aoi {scope}" — decompose XOR gates into AND/OR/NOT within a scope.
@@ -382,7 +415,17 @@ OPERATION SYNONYMS:
 ▸ deepest_output
   "deepest_output {}" → which primary output has the deepest (longest) fanin cone.
   Triggers: "which output has the deepest fanin cone?", "which output bit has the largest logic depth?",
-            "which output has the largest fanin cone?", "output bit with the deepest fanin logic cone".
+            "which output has the largest fanin cone?", "output bit with the deepest fanin logic cone",
+            "which output has the largest fan-in cone?", "which primary output has the most logic levels?".
+  KEY RULE: use deepest_output when the question asks WHICH output (not how many).
+
+▸ outputs_depth_gt
+  "outputs_depth_gt {k}" → count of primary outputs whose fanin depth EXCEEDS k logic levels.
+  Triggers: "how many outputs have a logic depth greater than N?",
+            "how many output bits have a fan-in depth exceeding N levels?",
+            "how many primary outputs have depth > N?".
+  Extract k as the integer threshold value.
+  Example: "How many outputs have a logic depth greater than 4?" → outputs_depth_gt {k: 4}
 
 ▸ exists_nand_pair
   "exists_nand_pair {target}" → does any existing NAND(a,b) pair in the netlist compute the same
@@ -394,6 +437,17 @@ OPERATION SYNONYMS:
   "shared_cone {a, b}" → list all gates shared between the fanin cones of two outputs.
   Triggers: "gates shared between the fanin cones of A and B", "gates in both the cone of A and cone of B",
             "identify gates in the intersection of the cones of A and B".
+
+▸ renamed signal → fanout (not connected_to_output)
+  When a signal has been renamed and the request asks to list gates connected to it,
+  the renamed name is a NET name. Use fanout {net: renamed_name}.
+  "List all gates that now connect to the renamed signal X" → fanout {net: X}
+  "Which gates are connected to renamed signal X?" → fanout {net: X}
+  KEY RULE: if the prompt says "renamed signal X" or "renamed wire X" → fanout {net: X}.
+  Do NOT use connected_to_output here (that is for gate instances, not renamed nets).
+  Example:
+    "List all gates that now connect to the renamed signal renamed_sig."
+    → {"intent":"fanout","params":{"net":"renamed_sig"}}
 
 ▸ connected_to_output vs fanout (output-net queries)
   CRITICAL RULE: when the request says "output net of gate X" (explicit "net" keyword) →
@@ -431,6 +485,36 @@ OPERATION SYNONYMS:
   "For signal N, insert a dedicated repeater for each fanout load" → {k:4, net:"N", mode:"dedicated"}
   "Insert one dedicated buffer per load on net N"                 → {k:4, net:"N", mode:"dedicated"}
 
+▸ boolean_equation (derive symbolic logic expression)
+  "boolean_equation {output}" → express the Boolean function at output X entirely in terms
+  of primary inputs as a symbolic logic expression.
+  Triggers: "What Boolean function does output X compute? Express it in terms of the primary inputs.",
+            "Express the Boolean function computed at output X entirely in terms of its primary inputs.",
+            "Express the Boolean function at output X in terms of its primary inputs.",
+            "Derive the Boolean equation for output X in terms of its primary inputs.",
+            "What is the Boolean equation for output X?".
+  Extract the output net name (e.g., n8, n16, n30, n12) into the "output" param.
+  KEY RULES:
+    • boolean_equation: asks for a SYMBOLIC EXPRESSION for an output — not a yes/no, not a count.
+    • NOT output_constant (which checks if output is always 0 or always 1 for all inputs).
+    • NOT depends_on (which checks whether output X uses/depends on input Y at all).
+  Example: "What Boolean function does output n8 compute? Express it in terms of the primary inputs."
+  → {"intent":"boolean_equation","params":{"output":"n8"}}
+
+▸ list_ports (with bit widths phrasing)
+  "list_ports {dir}" → list the primary inputs or outputs of the design, including bit widths.
+  dir = "input" for primary inputs, "output" for primary outputs.
+  Triggers: "List all primary inputs of this design with their bit widths.",
+            "Please list all the primary inputs of this design with their bit widths.",
+            "List all primary outputs of this design with their bit widths.",
+            "Enumerate all primary inputs/outputs with bus widths.",
+            "What are the primary inputs/outputs and their widths?".
+  Examples:
+    "List all primary inputs of this design with their bit widths."
+    → {"intent":"list_ports","params":{"dir":"input"}}
+    "List all primary outputs of this design with their bit widths."
+    → {"intent":"list_ports","params":{"dir":"output"}}
+
 ▸ verify_equivalence vs noop
   "verify_equivalence" covers: verify, prove, assert, confirm, check, validate that the
   current design is (combinationally/functionally) equivalent to the original or a snapshot.
@@ -465,6 +549,15 @@ OPERATION SYNONYMS:
 → {"intent":"remove_dangling","params":{}}
 
 "How many gates were excised in the previous step?"
+→ {"intent":"delta_count","params":{"kind":"dangling"}}
+
+"How many logic cells were excised in the previous step?"
+→ {"intent":"delta_count","params":{"kind":"dangling"}}
+
+"How many cells were pruned in the previous step?"
+→ {"intent":"delta_count","params":{"kind":"dangling"}}
+
+"How many floating signals were found?"
 → {"intent":"delta_count","params":{"kind":"dangling"}}
 
 "Give the tally of NAND gates absorbed by constant folding."
@@ -745,6 +838,75 @@ OPERATION SYNONYMS:
 
 "Which gates are directly driven by the output of gate g0?"
 → {"intent":"connected_to_output","params":{"gate":"g0"}}
+
+"How many NAND gates are now in the restructured cone of output n8?"
+→ {"intent":"count_type","params":{"type":"nand"}}
+
+"How many NOT gates are currently in the design?"
+→ {"intent":"count_type","params":{"type":"not"}}
+
+"List all gates that now connect to the renamed signal renamed_sig."
+→ {"intent":"fanout","params":{"net":"renamed_sig"}}
+
+"Which gates are connected to the renamed signal renamed_wire?"
+→ {"intent":"fanout","params":{"net":"renamed_wire"}}
+
+"How many outputs have a logic depth greater than 4?"
+→ {"intent":"outputs_depth_gt","params":{"k":4}}
+
+"How many primary output bits have a fan-in depth exceeding 6 levels?"
+→ {"intent":"outputs_depth_gt","params":{"k":6}}
+
+"Which output has the largest fanin cone?"
+→ {"intent":"deepest_output","params":{}}
+
+"Which output has the largest fan-in cone?"
+→ {"intent":"deepest_output","params":{}}
+
+"List every path originating at primary input n24[1] and terminating at primary output n26[1]."
+→ {"intent":"enumerate_paths","params":{"a":"n24[1]","b":"n26[1]"}}
+
+"Provide a complete enumeration of paths between n24[2] and n26[0]."
+→ {"intent":"enumerate_paths","params":{"a":"n24[2]","b":"n26[0]"}}
+
+"What Boolean function does output n8 compute? Express it in terms of the primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n8"}}
+
+"What Boolean function does output n25 compute? Express it in terms of the primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n25"}}
+
+"Express the Boolean function at output n30 in terms of its primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n30"}}
+
+"Express the Boolean function computed at output n16 entirely in terms of its primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n16"}}
+
+"Express the Boolean function at output n12 in terms of its primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n12"}}
+
+"Derive the Boolean equation for output n12 in terms of its primary inputs."
+→ {"intent":"boolean_equation","params":{"output":"n12"}}
+
+"List all primary inputs of this design with their bit widths."
+→ {"intent":"list_ports","params":{"dir":"input"}}
+
+"Please list all the primary inputs of this design with their bit widths."
+→ {"intent":"list_ports","params":{"dir":"input"}}
+
+"List all primary outputs of this design with their bit widths."
+→ {"intent":"list_ports","params":{"dir":"output"}}
+
+"How many NOR gates are now in the design after the XNOR-to-NOR transformation?"
+→ {"intent":"count_type","params":{"type":"nor"}}
+
+"How many NAND gates are now in the design after the XOR-to-NAND conversion?"
+→ {"intent":"count_type","params":{"type":"nand"}}
+
+"How many primary inputs and primary outputs does this design have?"
+→ {"intent":"count_ports","params":{}}
+
+"Insert buffers so that no signal drives more than 16 loads. Ensure functional equivalence is preserved."
+→ {"intent":"insert_buffers","params":{"k":16,"include_pi":true}}
 
 ━━━ AVAILABLE INTENTS ━━━
 - begin_case {name}
