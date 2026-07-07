@@ -1,0 +1,6 @@
+New testcase starting. The case name is test63.
+Read the design file test63.v from the directory testcase/test63/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Excise all cells that are logically inert and drive no output. Ensure functional equivalence is preserved.
+Shorten the worst-case combinational path by restructuring the logic. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test63_out.v.

@@ -1,0 +1,4 @@
+Start a new testcase. The case name is test44.
+Load the design file test44.v from the directory testcase/test44/.
+What is the maximum logic depth of the fanin cone rooted at output n3?
+Write the resulting design to the output file test44_out.v.

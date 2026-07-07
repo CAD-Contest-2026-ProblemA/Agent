@@ -1,0 +1,5 @@
+New testcase starting. The case name is test62.
+Read the design file test62.v from the directory testcase/test62/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Shorten the worst-case combinational path by restructuring the logic. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test62_out.v.

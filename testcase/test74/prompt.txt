@@ -1,0 +1,12 @@
+New testcase starting. The case name is test74.
+Import the circuit from the netlist file test74.v located in directory testcase/test74/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Rebuild the entire netlist using only AND and NOT primitives while preserving functional equivalence.
+How many AND gates are now in the rebuilt netlist?
+Confirm that the current netlist is equivalent to the original loaded design.
+Express the Boolean function at output n30 in terms of its primary inputs.
+Is there a combinational path from n2 to n30 that bypasses node n4552? Report yes or no.
+What is the deepest combinational path anywhere in the entire design?
+Which output bit has the deepest fanin logic cone?
+Which gates does primary input n0 directly drive? List every gate n0 feeds immediately.
+Save the current netlist to the file test74_out.v.

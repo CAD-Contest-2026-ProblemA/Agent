@@ -1,0 +1,20 @@
+New testcase starting. The case name is test71.
+Import the circuit from the netlist file test71.v located in directory testcase/test71/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+List all gates reachable from n2.
+Eliminate all back-to-back NOT-NOT pairs by replacing each pair with a direct wire connection. Ensure functional equivalence is preserved.
+Assert that the current netlist is combinationally equivalent to the pre-transformation snapshot.
+What is the fanout of primary input n0? List all gates that n0 drives directly.
+Does primary output n16 evaluate to a constant-0 function for all possible input assignments? Report yes or no.
+Identify all logic gates that appear in both the fanin cone of n16 and the fanin cone of n17.
+Express the Boolean function computed at output n16 entirely in terms of its primary inputs.
+List every gate connected to the output of g0.
+Relabel the internal wire n1289 as renamed_sig throughout the netlist. Ensure the design functionality does not change.
+List all gates connected to the renamed signal renamed_sig.
+Insert a dedicated buffer for each load of signal n2. Verify the design functionality does not change.
+How many buffer gates were inserted in the previous buffering step?
+What is the worst-case combinational depth from any primary input to any flip-flop D-pin in this design?
+How many primary output bits have a fanin logic depth exceeding 4 levels?
+What type of gate is g0? Report its gate type and pin connections.
+Are internal nets n1287 and n2404 logically equivalent for all possible input valuations? Report yes or no.
+Save the current netlist to the file test71_out.v.

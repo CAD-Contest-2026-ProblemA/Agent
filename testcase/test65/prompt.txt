@@ -1,0 +1,9 @@
+New testcase starting. The case name is test65.
+Read the design file test65.v from the directory testcase/test65/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Translate all OR gates in the cone of n11[0] into equivalent circuits using only NAND and NOT gates. Ensure the design functionality does not change.
+Excise all cells that are logically inert and drive no output. Ensure functional equivalence is preserved.
+Relabel gate g0 as renamed_gate throughout the netlist. Ensure the design functionality does not change.
+Relabel wire n74 as renamed_wire throughout the netlist. Ensure the design functionality does not change.
+Rebalance the logic depth with the constraint that the cone of n11[0] uses only NAND and NOT gates. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test65_out.v.

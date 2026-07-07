@@ -1,0 +1,20 @@
+New testcase starting. The case name is test79.
+Import the circuit from the netlist file test79.v located in directory testcase/test79/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Identify OR gates in this design that have a constant-1 input pin.
+Simplify the OR gates identified above by folding their constant-1 inputs. Ensure functional equivalence is preserved.
+How many OR gates were removed by constant-1 propagation?
+How many primary output bits have a fanin logic depth exceeding 4 levels?
+Dissolve all back-to-back NOT-NOT pairs into direct wire connections. Ensure functional equivalence is preserved.
+What is the maximum combinational logic depth in the design now?
+List all XOR gates in this design with their input and output signal names.
+Express the Boolean function at output n12 in terms of its primary inputs.
+Insert a dedicated buffer for each load of signal n2. Verify the design functionality does not change.
+How many buffer gates were inserted in the previous buffering step?
+Identify NOR gates in this design that have a constant-valued input pin.
+Simplify the NOR gates identified above by propagating their constant inputs. Ensure functional equivalence is preserved.
+How many NOR gates were removed by constant propagation?
+List all primary inputs of this design with their bit widths.
+Replace every XOR gate in this design with an equivalent 4-NAND circuit. Ensure functional equivalence is preserved.
+How many NAND gates are now in the design after the XOR-to-NAND conversion?
+Save the current netlist to the file test79_out.v.

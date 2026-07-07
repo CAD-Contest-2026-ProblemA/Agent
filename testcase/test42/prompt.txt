@@ -1,0 +1,4 @@
+Start a new testcase. The case name is test42.
+Load the design file test42.v from the directory testcase/test42/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Write the resulting design to the output file test42_out.v.

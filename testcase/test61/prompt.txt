@@ -1,0 +1,5 @@
+New testcase starting. The case name is test61.
+Read the design file test61.v from the directory testcase/test61/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Add buffer gates so no net drives more than 4 loads. Ensure functional equivalence is preserved.
+Write out the netlist to test61_out.v.

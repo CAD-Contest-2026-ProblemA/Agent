@@ -1,0 +1,9 @@
+Start a new testcase. The case name is test50.
+Load the design file test50.v from the directory testcase/test50/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Check if there is a combinational path from n12 to n25[0] that bypasses node n1127.
+Check if there is a path from input n13 to output n25[1] that avoids n4156.
+Enumerate all paths from primary input n13 to primary output n25[1].
+List all paths between n14 and n25[0].
+What is the maximum logic depth from input n12 to output n25[0]?
+Write the resulting design to the output file test50_out.v.

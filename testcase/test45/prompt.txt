@@ -1,0 +1,4 @@
+Start a new testcase. The case name is test45.
+Load the design file test45.v from the directory testcase/test45/.
+What gates does primary input n5 directly drive? List all fanout gates of n5.
+Write the resulting design to the output file test45_out.v.

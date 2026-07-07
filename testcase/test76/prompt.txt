@@ -1,0 +1,17 @@
+New testcase starting. The case name is test76.
+Import the circuit from the netlist file test76.v located in directory testcase/test76/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Is wire n10239 a structural cut vertex between any primary input and any primary output? Report yes or no.
+Confirm that the current design is combinationally equivalent to the original loaded netlist.
+Identify AND gates in this design that have a constant-0 input pin.
+Simplify the AND gates identified above by folding their constant-0 inputs. Ensure functional equivalence is preserved.
+How many AND gates were removed by constant-0 propagation?
+What type of gate is g0? Report its gate type and pin connections.
+What is the worst-case combinational depth from any primary input to any flip-flop D-pin in this design?
+Is the function at output n11 symmetric with respect to inputs n3 and n9[0]? Report yes or no.
+List all flip-flops driven by clock signal n0.
+Which primary input has the highest fanout in this design?
+Insert buffers so that no signal drives more than 16 loads. Ensure functional equivalence is preserved.
+What is the maximum fanout of n1 now?
+Which gates does primary input n0 directly drive? List every gate n0 feeds immediately.
+Save the current netlist to the file test76_out.v.

@@ -1,0 +1,20 @@
+New testcase starting. The case name is test75.
+Import the circuit from the netlist file test75.v located in directory testcase/test75/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Transform every XNOR gate in this design into an equivalent NOR-only sub-circuit. Ensure functional equivalence is preserved.
+How many NOR gates were added by the XNOR-to-NOR transformation?
+Is there a combinational path from primary input n2 to primary output n25? Report yes or no.
+List all cells connected to the output net of gate g0.
+Which output bit has the deepest fanin logic cone?
+List all NAND gates in this design with their input and output signal names.
+Change the name of signal n7431 to renamed_wire throughout the netlist. Ensure functional equivalence is preserved.
+Assert that the transformed design is equivalent to the pre-transformation snapshot.
+Are signals n29498 and n29471 logically equivalent for all input combinations? Report yes or no.
+Does any existing NAND gate pair (a, b) in the netlist compute the same function as primary output n25? Report yes or no.
+Dissolve all back-to-back NOT-NOT pairs into direct wire connections. Ensure functional equivalence is preserved.
+What is the maximum combinational logic depth in the design now?
+What Boolean function does output n25 compute? Express it in terms of the primary inputs.
+List all flip-flops driven by clock signal n0.
+Replace every XOR gate in this design with a NAND-only circuit, using only NAND and NOT gates. Ensure functional equivalence is not violated.
+How many NAND gates were added by replacing the XOR gates?
+Save the current netlist to the file test75_out.v.

@@ -1,0 +1,20 @@
+New testcase starting. The case name is test78.
+Import the circuit from the netlist file test78.v located in directory testcase/test78/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Limit the fanout of signal n1 to at most 4 loads per driver by inserting buffer stages. Ensure functional equivalence is preserved.
+What is the maximum fanout of n1 now?
+Which primary input has the highest fanout in this design?
+Dissolve all back-to-back NOT-NOT pairs into direct wire connections. Ensure functional equivalence is preserved.
+What is the maximum combinational logic depth in the design now?
+Excise all redundant gates that can be removed without altering functionality. Ensure functional equivalence is preserved.
+How many redundant gates were removed in the previous step?
+Locate all zero-hop direct wire connections from primary inputs to primary outputs.
+Find all articulation points in the combinational graph between n2 and n14.
+Relabel signal n440 as renamed_wire throughout the netlist. Ensure functional equivalence is preserved.
+Assert that the current design is still equivalent to the original loaded netlist.
+Identify NAND gates in this design that have a constant-valued input pin.
+Apply constant folding to the NAND gates identified above. Ensure functional equivalence is preserved.
+How many NAND gates were eliminated by constant propagation?
+Report the primitive-type distribution within the fanin cone of output n14.
+Enumerate all gates that contribute to the fanin logic cone of output n14.
+Save the current netlist to the file test78_out.v.

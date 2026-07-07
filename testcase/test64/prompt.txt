@@ -1,0 +1,7 @@
+New testcase starting. The case name is test64.
+Read the design file test64.v from the directory testcase/test64/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Excise all cells that are logically inert and drive no primary output. Ensure functional equivalence is preserved.
+Relabel gate g0 as renamed_gate throughout the netlist. Ensure functional equivalence is preserved.
+Rebalance the logic depth to minimize the maximum combinational path. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test64_out.v.

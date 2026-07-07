@@ -1,0 +1,8 @@
+New testcase starting. The case name is test67.
+Read the design file test67.v from the directory testcase/test67/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Break down all XOR cells in the fanin cone of n15 into AND, OR, and NOT primitives without changing functionality.
+Dissolve all back-to-back inverter chains into a wire. Ensure functional equivalence is preserved.
+Excise all cells that are logically inert and drive no primary output. Ensure functional equivalence is preserved.
+Rebalance the logic depth, keeping the cone of n15 in AND, OR, and NOT only. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test67_out.v.

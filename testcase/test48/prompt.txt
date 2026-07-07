@@ -1,0 +1,7 @@
+Start a new testcase. The case name is test48.
+Load the design file test48.v from the directory testcase/test48/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Check if there is a combinational path from n0[0] to n9 that bypasses node n14.
+Check if there is a path from input n0[1] to output n10 that avoids n14.
+Enumerate all paths from primary input n0[1] to primary output n10.
+Write the resulting design to the output file test48_out.v.

@@ -1,0 +1,15 @@
+New testcase starting. The case name is test56.
+Read the design file test56.v from the directory testcase/test56/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Is there a combinational path from n6 to n33[0] that skips n16010?
+Is there a path from input n7 to output n33[1] that avoids n15819?
+Enumerate all paths from primary input n7 to primary output n33[1].
+List all paths between n8 and n33[0].
+What is the maximum logic depth from n6 to n33[0]?
+Find the longest combinational path from n7 to n33[1].
+What is the maximum path depth between n8 and n33[0]?
+How many logic gates does g0 directly drive?
+List the direct output gates of g0.
+Find all gates in the transitive fanin of n33[0].
+Find all gates in the transitive fanout of n6.
+Write out the netlist to test56_out.v.

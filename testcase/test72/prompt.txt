@@ -1,0 +1,20 @@
+New testcase starting. The case name is test72.
+Import the circuit from the netlist file test72.v located in directory testcase/test72/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Does gate g0 lie on any maximum-depth path of the design? Report yes or no.
+How many primary inputs and primary outputs does this design have?
+List all register-to-register combinational paths in this design.
+Substitute all 2-input NAND gates whose one input is hardwired to logic-1 with inverter gates. Ensure functional equivalence is preserved.
+How many inverter cells are currently in the design?
+Does every combinational path from input n2 to output n12 pass through gate g0? Report yes or no.
+Reassign the identifier n1214 to renamed_wire across all netlist references. Ensure functional equivalence is preserved.
+Confirm that the current design is combinationally equivalent to the original loaded netlist.
+List all logic cells transitively reachable from primary input n0.
+How many logic gates are in the fanin cone of output n12?
+Excise all logic cells that do not contribute to any primary output. Ensure functional equivalence is preserved.
+How many logic cells were excised in the previous step?
+Identify NAND gates in this design that have a constant-valued input pin.
+Apply constant folding to the NAND gates identified above. Ensure functional equivalence is preserved.
+How many NAND gates were removed by constant folding?
+List all combinational paths from primary input n2 to primary output n12, showing each gate traversed.
+Save the current netlist to the file test72_out.v.

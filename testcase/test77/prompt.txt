@@ -1,0 +1,18 @@
+New testcase starting. The case name is test77.
+Import the circuit from the netlist file test77.v located in directory testcase/test77/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Report the primitive-type distribution within the fanin cone of output n8.
+Translate the logic in the cone of output n8 to use only NAND and NOT primitives while preserving functional equivalence.
+How many NAND gates are now in the translated cone of output n8?
+Excise all logic cells that do not contribute to any primary output. Ensure functional equivalence is preserved.
+Confirm that the current netlist is equivalent to the design as last saved to disk.
+List all register-to-register combinational paths in this design.
+How many primary inputs and primary outputs does this design have?
+List all primary outputs of this design with their bit widths.
+Identify all gates in this design that have at least one input pin hardwired to logic-1.
+What Boolean function does output n8 compute? Express it in terms of the primary inputs.
+Does this design have any undriven input pins or unloaded output ports? Report yes or no.
+How many floating signals were found?
+List all cells connected to the output net of gate g0.
+Is the function at output n8 symmetric with respect to inputs n3 and n4[0]? Report yes or no.
+Save the current netlist to the file test77_out.v.

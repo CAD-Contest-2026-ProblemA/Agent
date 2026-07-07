@@ -1,0 +1,9 @@
+New testcase starting. The case name is test70.
+Read the design file test70.v from the directory testcase/test70/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Rebuild the entire netlist using only AND and NOT primitives while preserving functional equivalence.
+Excise floating logic nodes that have no connection to primary outputs. Ensure functional equivalence is preserved.
+Dissolve all back-to-back inverter chains into a wire. Ensure functional equivalence is preserved.
+Identify and combine all structurally or functionally duplicate gate pairs. Ensure functional equivalence is preserved.
+Rebalance the logic depth, keeping the netlist in AND and NOT only. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Write out the netlist to test70_out.v.

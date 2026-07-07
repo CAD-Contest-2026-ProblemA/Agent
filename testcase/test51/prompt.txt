@@ -1,0 +1,10 @@
+New testcase starting. The case name is test51.
+Read the design file test51.v from the directory testcase/test51/.
+Report the total gate count for this design, broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Is there a combinational path from n29 to n31[0] that skips n1552?
+Is there a path from input n30 to output n31[1] that avoids n1592?
+Enumerate all paths from primary input n30 to primary output n31[1].
+List all paths between n0[0] and n31[0].
+What is the maximum logic depth from n29 to n31[0]?
+Find the longest combinational path from n30 to n31[1].
+Write out the netlist to test51_out.v.

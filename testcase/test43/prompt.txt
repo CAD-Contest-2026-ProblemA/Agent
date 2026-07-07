@@ -1,0 +1,4 @@
+Start a new testcase. The case name is test43.
+Load the design file test43.v from the directory testcase/test43/.
+How many gates belong to the fanin cone of primary output n15?
+Write the resulting design to the output file test43_out.v.

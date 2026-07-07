@@ -1,0 +1,3 @@
+Start a new testcase. The case name is test41.
+Load the design file test41.v from the directory testcase/test41/.
+Write the resulting design to the output file test41_out.v.

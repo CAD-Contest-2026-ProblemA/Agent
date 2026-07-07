@@ -1,0 +1,19 @@
+New testcase starting. The case name is test80.
+Import the circuit from the netlist file test80.v located in directory testcase/test80/.
+Report a breakdown of gate primitives by cell type: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Translate the entire netlist to use only NAND and NOT primitives while preserving functional equivalence.
+Substitute all 2-input NAND gates whose one input is hardwired to logic-1 with inverter gates. Ensure functional equivalence is preserved.
+How many inverter cells are currently in the design?
+Dissolve all back-to-back NOT-NOT pairs into direct wire connections. Ensure functional equivalence is preserved.
+Confirm that the current design is combinationally equivalent to the original loaded netlist.
+List all primary outputs of this design with their bit widths.
+List all XOR gates in this design with their input and output signal names.
+What is the maximum combinational depth on any register-to-register path in this design?
+Report the D-input logic of the flip-flops to identify any enable or hold structures implemented through multiplexers or AND gates.
+How many flip-flops were found to have enable or hold structures in their D-input logic?
+What cell type is gate g0, and which input/output nets does it connect to?
+Which output has the largest fanin cone?
+Minimize the depth of the logic cone of output n14 while keeping the netlist in NAND and NOT basis only. Preserve functional equivalence. Report "original" if already optimal. The cost function is the depth of the cone of n14; smaller is better.
+What is the current depth of the cone of n14?
+What is the maximum combinational logic depth in the design now?
+Save the current netlist to the file test80_out.v.
