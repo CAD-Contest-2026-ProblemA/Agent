@@ -438,16 +438,20 @@ OPERATION SYNONYMS:
   Triggers: "gates shared between the fanin cones of A and B", "gates in both the cone of A and cone of B",
             "identify gates in the intersection of the cones of A and B".
 
-▸ renamed signal → fanout (not connected_to_output)
-  When a signal has been renamed and the request asks to list gates connected to it,
-  the renamed name is a NET name. Use fanout {net: renamed_name}.
-  "List all gates that now connect to the renamed signal X" → fanout {net: X}
-  "Which gates are connected to renamed signal X?" → fanout {net: X}
-  KEY RULE: if the prompt says "renamed signal X" or "renamed wire X" → fanout {net: X}.
-  Do NOT use connected_to_output here (that is for gate instances, not renamed nets).
+▸ "gates connected to a signal/net" → connected_to_net (driver ∪ loads, NOT fanout)
+  "gates connected to signal/wire/net X" means EVERY gate touching net X — the gate
+  that DRIVES X plus all gates that read X as a load. That is connected_to_net {net: X}.
+  This differs from fanout {net: X}, which lists only the loads X drives (it omits the
+  driver). Use connected_to_net whenever the request says "gates connected to" a NET —
+  including a renamed net (a rename makes the new name a NET name).
+  "List all gates that now connect to the renamed signal X" → connected_to_net {net: X}
+  "Which gates are connected to renamed signal X?" → connected_to_net {net: X}
+  KEY RULE: "gates connected to signal/wire/net X" (X is a net) → connected_to_net {net: X}.
+  Do NOT use fanout here (fanout omits the driver); do NOT use connected_to_output
+  (that is for the output of a gate INSTANCE, not a net).
   Example:
     "List all gates that now connect to the renamed signal renamed_sig."
-    → {"intent":"fanout","params":{"net":"renamed_sig"}}
+    → {"intent":"connected_to_net","params":{"net":"renamed_sig"}}
 
 ▸ connected_to_output vs fanout (output-net queries)
   CRITICAL RULE: when the request says "output net of gate X" (explicit "net" keyword) →
@@ -846,10 +850,10 @@ OPERATION SYNONYMS:
 → {"intent":"count_type","params":{"type":"not"}}
 
 "List all gates that now connect to the renamed signal renamed_sig."
-→ {"intent":"fanout","params":{"net":"renamed_sig"}}
+→ {"intent":"connected_to_net","params":{"net":"renamed_sig"}}
 
 "Which gates are connected to the renamed signal renamed_wire?"
-→ {"intent":"fanout","params":{"net":"renamed_wire"}}
+→ {"intent":"connected_to_net","params":{"net":"renamed_wire"}}
 
 "How many outputs have a logic depth greater than 4?"
 → {"intent":"outputs_depth_gt","params":{"k":4}}
@@ -932,6 +936,7 @@ OPERATION SYNONYMS:
 - highest_fanout_pi {}
 - shared_cone {a, b}
 - connected_to_output {gate}
+- connected_to_net {net}        # driver ∪ loads of a net (gates connected to signal X)
 - path_exists {a, b, avoid}
 - enumerate_paths {a, b}
 - length_zero_paths {}
@@ -983,7 +988,8 @@ ALLOWED_INTENTS: Set[str] = {
     "cone_gate_count", "cone_type_counts", "list_ports", "count_ports",
     "fanout", "gates_driven_by", "successors", "transitive_fanin",
     "transitive_fanout", "reachable_from", "highest_fanout_pi",
-    "max_fanout_of", "shared_cone", "connected_to_output", "path_exists",
+    "max_fanout_of", "shared_cone", "connected_to_output", "connected_to_net",
+    "path_exists",
     "enumerate_paths", "length_zero_paths", "dominator", "articulation",
     "is_cut", "max_depth_between", "cone_depth", "global_max_depth",
     "pi_to_dff_depth", "reg_to_reg_depth", "outputs_depth_gt",
@@ -1019,6 +1025,7 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
     "max_fanout_of": {"net"},
     "shared_cone": {"a", "b"},
     "connected_to_output": {"gate"},
+    "connected_to_net": {"net"},
     "path_exists": {"a", "b"},
     "enumerate_paths": {"a", "b"},
     "dominator": {"a", "b", "gate"},

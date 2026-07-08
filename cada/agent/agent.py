@@ -1482,6 +1482,18 @@ class Agent:
             return f"No gate named {g} exists."
         return f"Gates connected to the output of {g}: " + self._names(ds[:200])
 
+    def op_connected_to_net(self, net):
+        """Every gate touching a NET: its driver plus all of its loads.
+
+        Distinct from op_fanout (loads only): "gates that connect to signal X"
+        includes the gate that DRIVES X, so this returns driver ∪ loads.
+        """
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        gs = naming.gates_connected_to_net(self.state.current, net)
+        return f"Gates connected to {net}: " + self._names(gs[:200])
+
     # ----- paths ---------------------------------------------------------
     def op_path_exists(self, a, b, avoid=None):
         if self._need_design():
