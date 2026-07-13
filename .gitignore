@@ -1,5 +1,6 @@
 # ---- real configs (copy from configs/example.*.yaml; may hold secrets) ----
 configs/api_key.yaml
+configs/api_key*.yaml
 configs/default.yaml
 
 # ---- per-machine tool paths (copy configs/example.tools.yaml) ----
