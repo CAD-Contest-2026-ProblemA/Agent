@@ -117,9 +117,17 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
         if s.is_transform:
             seen = True
 
-    # run the executable in the current (sandbox) cwd; out.v lands here
+    # run the executable in the current (sandbox) cwd; out.v lands here.
+    # Only force --no-llm (deterministic rules-only) when the config has no key;
+    # with a key, drive the real LLM routing exactly as the contest harness does.
+    cmd = [os.path.abspath(exe), "-config", config_path]
     try:
-        proc = subprocess.run([os.path.abspath(exe), "-config", config_path, "--no-llm"],
+        if not getattr(load_config(config_path), "api_key", None):
+            cmd.append("--no-llm")
+    except Exception:
+        cmd.append("--no-llm")
+    try:
+        proc = subprocess.run(cmd,
                               input="\n".join(raw) + "\n",
                               capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout

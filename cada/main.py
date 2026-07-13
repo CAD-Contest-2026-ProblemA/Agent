@@ -84,7 +84,7 @@ def main(argv=None) -> int:
             f"       set {config.provider}.api_key, or pass --no-llm for rules-only mode\n")
         return 2
     _configure_tools(config, args.tools)
-    agent = Agent(config)
+    agent = Agent(config, enable_llm=not args.no_llm)
 
     def on_case_name(name: str):
         agent.state.case_name = name

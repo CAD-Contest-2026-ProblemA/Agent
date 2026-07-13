@@ -47,10 +47,13 @@ def _basis_from_text(text: str) -> Optional[str]:
 
 
 class Agent:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, enable_llm: bool = True):
         self.config = config
         self.state = State()
-        self.llm = LLMClient(config)
+        # enable_llm=False (e.g. --no-llm) forces the deterministic path: no LLM
+        # client is built, so the fallback translator returns None and unmatched
+        # lines become safe no-ops instead of silently calling the provider.
+        self.llm = LLMClient(config) if enable_llm else None
         self.fallback = Fallback(self.llm)
         self.rules = self._build_rules()
         self.const_nets = {}     # functionally-constant nets (from last report)
