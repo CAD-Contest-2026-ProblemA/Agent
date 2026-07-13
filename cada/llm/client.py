@@ -8,9 +8,17 @@ deterministic engine keeps working offline.
 
 from __future__ import annotations
 
+import sys
 from typing import Optional
 
 from ..io_.config import Config
+
+
+def _log_err(msg: str) -> None:
+    """Surface an LLM failure on stderr (stdout carries the #RESPONSE protocol,
+    so diagnostics must never go there). Keeps the graceful-degradation return
+    value intact — this only makes the swallowed error visible."""
+    print(f"[LLM] {msg}", file=sys.stderr, flush=True)
 
 
 class LLMClient:
@@ -22,6 +30,8 @@ class LLMClient:
         self.total_input_tokens: int = 0
         self.total_output_tokens: int = 0
         self.total_calls: int = 0
+        self.total_errors: int = 0
+        self.last_error: Optional[str] = None
         self._init()
 
     def _init(self):
@@ -31,15 +41,19 @@ class LLMClient:
                 import anthropic
                 self._client = anthropic.Anthropic(api_key=cfg.anthropic_api_key)
                 self._kind = "anthropic"
-            except Exception:
+            except Exception as e:
                 self._client = None
+                _log_err(f"anthropic client init failed ({type(e).__name__}: {e}); "
+                         "falling back to rules-only (unmatched lines become no-ops)")
         elif cfg.provider == "openai" and cfg.openai_api_key:
             try:
                 from openai import OpenAI
                 self._client = OpenAI(api_key=cfg.openai_api_key)
                 self._kind = "openai"
-            except Exception:
+            except Exception as e:
                 self._client = None
+                _log_err(f"openai client init failed ({type(e).__name__}: {e}); "
+                         "falling back to rules-only (unmatched lines become no-ops)")
 
     @property
     def available(self) -> bool:
@@ -94,5 +108,12 @@ class LLMClient:
                     self.total_input_tokens += getattr(resp.usage, "prompt_tokens", 0)
                     self.total_output_tokens += getattr(resp.usage, "completion_tokens", 0)
                 return resp.choices[0].message.content
-        except Exception:
+        except Exception as e:
+            # Graceful degradation (return None so the REPL keeps running), but
+            # make the failure VISIBLE — a swallowed billing/auth/model/rate-limit
+            # error otherwise looks identical to "the model couldn't route this
+            # line", which silently no-ops an entire run.
+            self.total_errors += 1
+            self.last_error = f"{type(e).__name__}: {e}"
+            _log_err(f"{self._kind} call failed ({self.last_error})")
             return None

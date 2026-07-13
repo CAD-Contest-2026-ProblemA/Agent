@@ -315,6 +315,16 @@ def main(argv=None) -> int:
     if args.config:
         args.config = os.path.abspath(args.config)
 
+    # Register external tools (abc/yosys) for THIS process's own oracle checks
+    # (checks.equiv shells out to abc). The in-process path does this per-case,
+    # but the --exe path never did — so abc was unresolved and every equivalence
+    # check silently fell through to a (broken) yosys and reported false
+    # "NOT EQUIVALENT". Do it once here, before any chdir into the sandbox.
+    try:
+        _configure_tools(load_config(args.config), None)
+    except Exception:
+        pass
+
     cases = args.cases or sorted(d for d in os.listdir(TC_ROOT)
                                  if os.path.isdir(os.path.join(TC_ROOT, d)))
 

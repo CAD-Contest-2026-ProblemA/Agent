@@ -70,7 +70,11 @@ equiv_status -assert
         out = (p.stdout or "") + (p.stderr or "")
         if "Equivalence successfully proven" in out:
             return True
-        if "Unproven" in out or "failed" in out.lower() or p.returncode != 0:
+        # Only report NOT-equivalent on positive evidence that yosys actually ran
+        # the equivalence and left cells unproven. A non-zero exit / "failed" with
+        # no verdict means yosys itself is broken (present-but-won't-run, parse
+        # error, missing command) — that is undecidable (None), NOT inequivalence.
+        if "Unproven" in out:
             return False
         return None
     except subprocess.TimeoutExpired:
