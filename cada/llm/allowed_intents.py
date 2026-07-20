@@ -236,8 +236,14 @@ OPERATION SYNONYMS:
               "maximum path depth between X and Y", "critical path depth between X and Y",
               "depth from X to Y", any phrasing naming TWO specific nets for depth.
   "global_max_depth {}" → maximum depth anywhere in the ENTIRE design (no specific nets).
+    Triggers: "maximum combinational logic depth in the design", "deepest combinational path in the
+              entire design", "maximum logic depth from any primary input to any primary output",
+              "max combinational depth from PIs to POs", "worst-case combinational depth of the design".
   KEY RULE: if TWO nets are named, use max_depth_between {a, b}. If no nets (or "in the design"),
   use global_max_depth.
+  KEY RULE: a GENERIC endpoint "any primary output" / "the primary outputs" (not a named net) means the
+  whole design → global_max_depth. Only route to pi_to_dff_depth when the endpoint is explicitly a DFF /
+  flip-flop / register D-pin (data input); "primary output" is NEVER a DFF D-pin.
 
 ▸ gates_driven_by vs successors vs fanout
   "gates_driven_by {gate}" → returns the COUNT of gates driven by a gate.
@@ -411,6 +417,9 @@ OPERATION SYNONYMS:
   "pi_to_dff_depth {}" → worst-case combinational depth from any primary input to any DFF D-pin.
   Triggers: "maximum depth from primary input to DFF D-pin", "worst-case combinational depth from any
              primary input to any flip-flop D-pin", "maximum logic depth from PI to DFF data input".
+  KEY RULE: use ONLY when the endpoint is explicitly a DFF / flip-flop / register D-pin (data input).
+  If the endpoint is a PRIMARY OUTPUT (e.g. "from any primary input to any primary output"), this is
+  NOT pi_to_dff_depth → use global_max_depth instead.
 
 ▸ deepest_output
   "deepest_output {}" → which primary output has the deepest (longest) fanin cone.
@@ -547,6 +556,9 @@ OPERATION SYNONYMS:
 → {"intent":"collapse_inverters","params":{}}
 
 "Quantify the critical-path gate depth of the design."
+→ {"intent":"global_max_depth","params":{}}
+
+"What is the maximum combinational logic depth from any primary input to any primary output in this design?"
 → {"intent":"global_max_depth","params":{}}
 
 "Excise all logically inert gates from the netlist."
