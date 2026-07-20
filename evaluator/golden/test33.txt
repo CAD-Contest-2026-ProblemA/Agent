@@ -12,7 +12,7 @@ No. Signals n55146 and n55104 are not functionally equivalent.
 There are no combinational paths from n3 to n9.
 No. Output n8 does not depend on input n1.
 Verified: the current design is functionally equivalent to the netlist as last loaded from disk.
-No. Wire whether is not a cut between a primary input and a primary output.
+No. Wire n55104 is not a cut between a primary input and a primary output.
 Primary inputs: n0 [1-bit] n1 [1-bit] n5 [8-bit] n2 [1-bit] n3 [1-bit] n4 [1-bit] n6 [6-bit] n7 [32-bit]
 Merged 2894 structurally-duplicate gate(s); equivalence verified.
 Merged 0 structurally-duplicate gate(s); equivalence verified.

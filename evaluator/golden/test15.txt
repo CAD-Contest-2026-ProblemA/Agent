@@ -8,7 +8,7 @@ There are no combinational paths from n0[2] to n3.
 There is no combinational path from n0[0] to n3 (depth 0).
 The maximum combinational logic depth from n0[1] to n4 is 17.
 Gate g0 drives 0 gate(s): (none)
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: (none)
 The transitive fan-in cone of n3 contains 0 gates.
 The transitive fan-out cone of n0[0] contains 189 gates.
 Wrote the current netlist to "testcase/test15/test15_out.v" successfully.

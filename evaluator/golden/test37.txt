@@ -7,7 +7,7 @@ There are currently 24182 NAND gates in the design.
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 Verified: the current design is functionally equivalent to the netlist as last loaded from disk.
 There are 192848 register-to-register connections through combinational logic. Examples: g2198->g5, g2199->g5, g2200->g5, g5->g5, g454->g5, g2198->g6, g2199->g6, g2200->g6, g5->g6, g6->g6, g454->g6, g2198->g7, g2199->g7, g2200->g7, g5->g7, g6->g7, g7->g7, g454->g7, g2198->g8, g2199->g8, g2200->g8, g5->g8, g6->g8, g7->g8, g8->g8, g454->g8, g2198->g9, g2199->g9, g2200->g9, g5->g9
-The design has 7 primary input ports (168 bits) and 6 primary output ports (164 bits).
+The design has 168 primary inputs and 164 primary outputs (across 7 input port(s) and 6 output port(s)).
 Primary outputs: n7 [128-bit] n8 [1-bit] n9 [1-bit] n12 [32-bit] n10 [1-bit] n11 [1-bit]
 0 gate(s) have an input tied to 1'b1: (none)
 n8 = n8

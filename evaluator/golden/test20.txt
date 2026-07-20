@@ -9,7 +9,7 @@ The maximum combinational logic depth from n13 to n25[0] is 8.
 There is no combinational path from n14 to n25[1] (depth 0).
 The maximum combinational logic depth from n15 to n25[0] is 9.
 Gate g0 drives 1 gate(s): g59
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: g59
 The transitive fan-in cone of n25[0] contains 49 gates.
 The transitive fan-out cone of n13 contains 1878 gates.
 No. Signals n13082 and n13083 are not functionally equivalent.

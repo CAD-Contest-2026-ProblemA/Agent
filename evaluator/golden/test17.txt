@@ -9,7 +9,7 @@ The maximum combinational logic depth from n7 to n42[0] is 20.
 There is no combinational path from n8 to n42[1] (depth 0).
 There is no combinational path from n9 to n42[0] (depth 0).
 Gate g0 drives 3 gate(s): g868, g1193, g1239
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: g868, g1193, g1239
 The transitive fan-in cone of n42[0] contains 194 gates.
 The transitive fan-out cone of n7 contains 1261 gates.
 No. Signals n2122 and n2116 are not functionally equivalent.

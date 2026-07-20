@@ -8,7 +8,7 @@ There are no combinational paths from n0[2] to n12.
 There is no combinational path from n0[0] to n12 (depth 0).
 The maximum combinational logic depth from n0[1] to n13 is 55.
 Gate g0 drives 2 gate(s): g1642, g4124
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: g1642, g4124
 The transitive fan-in cone of n12 contains 3752 gates.
 The transitive fan-out cone of n0[0] contains 567 gates.
 No. Signals n848 and n1080 are not functionally equivalent.

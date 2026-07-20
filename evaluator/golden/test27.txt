@@ -1,8 +1,8 @@
 Acknowledged. Initialized testcase "test27". All subsequent responses will be recorded to test27.log. Design state is empty and ready for commands.
-Loaded gate-level Verilog from "testcase/test27/test27.v" successfully. Detected a single top module (flat netlist) with 4831 combinational gates and 879 flip-flops. Design state has been updated.
-Total gate count: 5710 AND: 0 OR: 127 NOT: 242 NAND: 4116 NOR: 300 XOR: 7 XNOR: 39 BUF: 0 DFF: 879
+Loaded gate-level Verilog from "testcase/test27/test27.v" successfully. Detected a single top module (flat netlist) with 4833 combinational gates and 847 flip-flops. Design state has been updated.
+Total gate count: 5680 AND: 0 OR: 130 NOT: 276 NAND: 4073 NOR: 308 XOR: 7 XNOR: 39 BUF: 0 DFF: 847
 Decomposed 0 XOR gate(s) into AND/OR/NOT logic; equivalence verified.
-Collapsed 5 back-to-back inverter pair(s) into direct wires; equivalence verified.
-Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
+Collapsed 6 back-to-back inverter pair(s) into direct wires; equivalence verified.
+Removed 1 dangling gate(s) that do not affect any primary output; equivalence verified.
 Reduced the maximum logic depth from 35 to 27 (basis preserved); equivalence verified.
 Wrote the current netlist to "testcase/test27/test27_out.v" successfully.

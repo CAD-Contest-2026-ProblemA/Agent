@@ -9,7 +9,7 @@ There is no combinational path from n6 to n33[0] (depth 0).
 There is no combinational path from n7 to n33[1] (depth 0).
 There is no combinational path from n8 to n33[0] (depth 0).
 Gate g0 drives 1 gate(s): g24
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: g24
 The transitive fan-in cone of n33[0] contains 388 gates.
 The transitive fan-out cone of n6 contains 165 gates.
 Wrote the current netlist to "testcase/test16/test16_out.v" successfully.

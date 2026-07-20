@@ -9,5 +9,5 @@ The maximum combinational logic depth from n61 to n63[0] is 5.
 The maximum combinational logic depth from n0[0] to n63[1] is 54.
 The maximum combinational logic depth from n0[1] to n63[0] is 51.
 Gate g0 drives 1 gate(s): g13209
-Could not identify the two endpoints for path enumeration.
+Immediate successors of g0: g13209
 Wrote the current netlist to "testcase/test14/test14_out.v" successfully.
