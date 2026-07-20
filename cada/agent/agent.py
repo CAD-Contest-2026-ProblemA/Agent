@@ -154,6 +154,10 @@ class Agent:
             (R(r"combinational path.*from (%s) to (%s).*avoids?\s+(?:node\s+)?(%s)" % (NET, NET, NET)), self.h_path_avoid3),
             (R(r"(does|is there|whether).*combinational path exist.*from (?:primary input )?(%s) to (?:primary output )?(%s)" % (NET, NET)), self.h_path_plain),
             (R(r"path.*from (?:primary input )?(%s) to (?:primary output )?(%s)\??\s*(?:report)?.*exist" % (NET, NET)), self.h_path_plain),
+            # "immediate successors of gate X" must win before the enumerate-paths
+            # rule below (whose 'enumerat' branch would otherwise capture the "e"
+            # and "the" in "Enumerate the ..." as two path endpoints).
+            (R(r"immediate successors of (?:gate )?(%s)" % NET), self.h_successors),
             (R(r"(complete enumeration|list every path|find all combinational paths|enumerat).*?(%s).*?(%s)" % (NET, NET)), self.h_enum_paths),
             (R(r"paths? of length 0|direct wire connections from PI to PO"), self.h_len0),
             (R(r"does every path from (?:input )?(%s) to (?:output )?(%s) pass through (?:gate )?(%s)" % (NET, NET, NET)), self.h_dominator),
@@ -167,7 +171,8 @@ class Agent:
             (R(r"(maximum|max).*depth.*cone of (?:output )?(%s)|depth of the cone of (%s)" % (NET, NET)), self.h_cone_depth),
             (R(r"max(imum)? combinational (logic )?depth on any register-to-register path"), self.h_reg2reg_depth),
             (R(r"max(imum)? (combinational )?(logic )?depth from any primary input to any (DFF )?D-?pin"), self.h_pi2d_depth),
-            (R(r"max(imum)? combinational (logic )?depth.*(entire design|in the design|primary input to any primary output)"), self.h_global_depth),
+            (R(r"max(imum)? combinational (logic )?depth.*primary input to any primary output"), self.h_pi2po_depth),
+            (R(r"max(imum)? combinational (logic )?depth.*(entire design|in the design)"), self.h_global_depth),
             (R(r"max(imum)? (combinational )?logic depth in the design now"), self.h_global_depth),
             (R(r"how many outputs have a logic depth greater than (\d+)"), self.h_depth_gt),
             (R(r"which output (bit )?has the (deepest|largest) (fanin )?(logic )?cone"), self.h_deepest),
@@ -176,7 +181,6 @@ class Agent:
             # connectivity
             (R(r"fanout of (?:primary input )?(%s).*list (all|every) gate" % NET), self.h_fanout),
             (R(r"(number of gates driven by|gates? driven by) (%s)" % NET), self.h_driven_by),
-            (R(r"immediate successors of (?:gate )?(%s)" % NET), self.h_successors),
             (R(r"transitive fanin cone of (?:output )?(%s)" % NET), self.h_tfanin),
             (R(r"transitive fanout (cone )?of (?:input |primary input )?(%s)" % NET), self.h_tfanout),
             (R(r"(all gates reachable from|determine all gates reachable from|reachable from) (%s)" % NET), self.h_reachable),
@@ -440,8 +444,8 @@ class Agent:
         no = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "output")
         bi = len(nl.pi)
         bo = len(nl.po)
-        return (f"The design has {ni} primary input ports ({bi} bits) and "
-                f"{no} primary output ports ({bo} bits).")
+        return (f"The design has {bi} primary inputs and {bo} primary outputs "
+                f"(across {ni} input port(s) and {no} output port(s)).")
 
     def h_cone_gate_count(self, m, line):
         if self._need_design():
@@ -591,7 +595,9 @@ class Agent:
     def h_cut(self, m, line):
         if self._need_design():
             return self._need_design()
-        w = m.group(1)
+        # group(1) is the optional "is |whether " prefix; the wire name is the
+        # last capture group (taking group 1 printed "Wire whether ...").
+        w = m.group(m.lastindex)
         res = paths.is_cut_pi_po(self.state.current, w)
         return ("Yes." if res else "No.") + \
                f" Wire {w} {'is' if res else 'is not'} a cut between a primary input and a primary output."
@@ -637,6 +643,17 @@ class Agent:
         d = depth.pi_to_dff_d_max_depth(self.state.current)
         return f"The maximum logic depth from any primary input to any DFF D-pin is {max(d,0)}."
 
+    def h_pi2po_depth(self, m, line):
+        if self._need_design():
+            return self._need_design()
+        d = depth.pi_to_po_max_depth(self.state.current)
+        if d < 0:
+            return ("The maximum combinational logic depth from any primary input "
+                    "to any primary output is 0 (no primary output is reachable "
+                    "from a primary input by a purely combinational path).")
+        return ("The maximum combinational logic depth from any primary input to "
+                f"any primary output is {d}.")
+
     def h_global_depth(self, m, line):
         if self._need_design():
             return self._need_design()
@@ -663,7 +680,9 @@ class Agent:
     def h_on_maxpath(self, m, line):
         if self._need_design():
             return self._need_design()
-        g = m.group(1)
+        # group(1) is the "does|whether" lead-in; the gate name is group 2
+        # (taking group 1 answered "No gate named whether exists").
+        g = m.group(2)
         res = depth.gate_on_max_depth_path(self.state.current, g)
         if res is None:
             return f"No gate named {g} exists."
@@ -1365,8 +1384,8 @@ class Agent:
         no = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "output")
         bi = len(nl.pi)
         bo = len(nl.po)
-        return (f"The design has {ni} primary input ports ({bi} bits) and "
-                f"{no} primary output ports ({bo} bits).")
+        return (f"The design has {bi} primary inputs and {bo} primary outputs "
+                f"(across {ni} input port(s) and {no} output port(s)).")
 
     # ----- connectivity --------------------------------------------------
     def op_fanout(self, net):
