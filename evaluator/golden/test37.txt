@@ -11,8 +11,8 @@ The design has 168 primary inputs and 164 primary outputs (across 7 input port(s
 Primary outputs: n7 [128-bit] n8 [1-bit] n9 [1-bit] n12 [32-bit] n10 [1-bit] n11 [1-bit]
 0 gate(s) have an input tied to 1'b1: (none)
 n8 = n8
-Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
-0
+No. There are no floating inputs or unconnected output ports in this design.
+No. There are no floating inputs or unconnected output ports in this design.
 Gates connected to the output of g0: g44798
 Yes. The function at n8 is symmetric in n3 and n4[0].
 Wrote the current netlist to "testcase/test37/test37_out.v" successfully.
