@@ -378,7 +378,8 @@ def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
     """Sample-match every target word against the function bank."""
     ops, scalars = operand_words(nl)
     targets = target_words(nl)
-    if not ops or not targets or len(targets) > MAX_TARGET_BUSES:
+    n_bus_targets = sum(1 for t in targets if t.width > 1)
+    if not ops or not targets or n_bus_targets > MAX_TARGET_BUSES:
         return []
 
     op_samples: Dict[str, List[int]] = {}
