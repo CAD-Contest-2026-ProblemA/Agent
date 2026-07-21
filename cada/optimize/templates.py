@@ -445,6 +445,43 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
                                          [cand_ops[i], cand_ops[j],
                                           cand_ops[k], cand_ops[l]])
 
+    # ---- select family: max/min/absdiff, word mux, variable shifts ----
+    for i, a in enumerate(cand_ops):
+        av = op_samples[a.name]
+        for j in range(i + 1, len(cand_ops)):
+            b = cand_ops[j]
+            bv = op_samples[b.name]
+            if all((max(x, y) & mk) == t for x, y, t in zip(av, bv, tgt_s)):
+                return Match(tgt, "max", [a, b])
+            if all((min(x, y) & mk) == t for x, y, t in zip(av, bv, tgt_s)):
+                return Match(tgt, "min", [a, b])
+            if all((abs(x - y) & mk) == t for x, y, t in zip(av, bv, tgt_s)):
+                return Match(tgt, "absdiff", [a, b])
+            for sel in cand_cins:
+                sv = sc_samples[sel]
+                if all(((x if s else y) & mk) == t
+                       for x, y, s, t in zip(av, bv, sv, tgt_s)):
+                    return Match(tgt, "mux", [a, b], cin=sel)
+                if all(((y if s else x) & mk) == t
+                       for x, y, s, t in zip(av, bv, sv, tgt_s)):
+                    return Match(tgt, "mux", [b, a], cin=sel)
+    for a in cand_ops:
+        av = op_samples[a.name]
+        for s in cand_ops:
+            if s is a or s.width > 6:
+                continue
+            sv = op_samples[s.name]
+            if all(((x << z) & mk) == t for x, z, t in zip(av, sv, tgt_s)):
+                return Match(tgt, "shl", [a, s])
+            if all(((x >> z) & mk) == t for x, z, t in zip(av, sv, tgt_s)):
+                return Match(tgt, "shr", [a, s])
+        for sc in cand_cins:
+            sv = sc_samples[sc]
+            if all(((x << z) & mk) == t for x, z, t in zip(av, sv, tgt_s)):
+                return Match(tgt, "shl", [a], cin=sc)
+            if all(((x >> z) & mk) == t for x, z, t in zip(av, sv, tgt_s)):
+                return Match(tgt, "shr", [a], cin=sc)
+
     # single-bit comparisons (unsigned, zero-extended)
     if w == 1:
         for i, a in enumerate(cand_ops):
@@ -537,6 +574,19 @@ def _addsub_bits(em: Emitter, a: List[str], b: List[str],
 
 def _extend(em: Emitter, bits: List[str], w: int) -> List[str]:
     return list(bits[:w]) + ["1'b0"] * max(0, w - len(bits))
+
+
+def _mux_bits(em: Emitter, sel: str, when1: Sequence[str],
+              when0: Sequence[str], outs: Sequence[str]):
+    """Per-bit 2:1 select: out = sel ? when1 : when0 (one shared inverter)."""
+    nsel = _w(em)
+    em.not_(nsel, sel)
+    for x1, x0, o in zip(when1, when0, outs):
+        t1 = _w(em)
+        em.and_(t1, x1, sel)
+        t0 = _w(em)
+        em.and_(t0, x0, nsel)
+        em.or_(o, t1, t0)
 
 
 def _balanced(em: Emitter, op: str, xs: List[str]) -> str:
@@ -692,6 +742,35 @@ def build_match(em: Emitter, m: Match):
                                cin="1'b1" if f == "avgc" else None)
         for s, o in zip(sums[1:w + 1], tgt):
             em.emit("buf", o, [s])
+    elif f in ("max", "min", "absdiff"):
+        wc = max(m.ops[0].width, m.ops[1].width, w)
+        A = _extend(em, m.ops[0].bits, wc)
+        B = _extend(em, m.ops[1].bits, wc)
+        d_ab, cout = _addsub_bits(em, A, B, sub=True, cin=None)  # cout=1 iff a>=b
+        if f == "absdiff":
+            d_ba, _ = _addsub_bits(em, B, A, sub=True, cin=None)
+            _mux_bits(em, cout, d_ab[:w], d_ba[:w], tgt)
+        elif f == "max":
+            _mux_bits(em, cout, A[:w], B[:w], tgt)
+        else:
+            _mux_bits(em, cout, B[:w], A[:w], tgt)
+    elif f == "mux":
+        _mux_bits(em, m.cin, _extend(em, m.ops[0].bits, w),
+                  _extend(em, m.ops[1].bits, w), tgt)
+    elif f in ("shl", "shr"):
+        s_bits = m.ops[1].bits if len(m.ops) > 1 else [m.cin]
+        cur = _extend(em, m.ops[0].bits, w)
+        for idx, sbit in enumerate(s_bits):
+            k = 1 << idx
+            if f == "shl":
+                shifted = ["1'b0"] * min(k, w) + cur[:max(0, w - k)]
+            else:
+                shifted = cur[k:] + ["1'b0"] * min(k, w)
+            nxt = [_w(em) for _ in range(w)]
+            _mux_bits(em, sbit, shifted, cur, nxt)
+            cur = nxt
+        for x, o in zip(cur, tgt):
+            em.emit("buf", o, [x])
     elif f in FUNCS_CMP:
         wc = max(m.ops[0].width, m.ops[1].width)
         a = _extend(em, m.ops[0].bits, wc)
