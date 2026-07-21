@@ -74,10 +74,15 @@ cada/agent/agent.py : handle(line)
 2. **產生 seeds**:
    - `base`:目前的設計本身。
    - `tpl`(`templates.py`,**逆向工程模板**):對整個組合核心做 512 筆隨機模擬,
-     把 PI bus / 暫存器組(Q bus 對應的 D 向量)當「字」,猜每個目標字是不是已知函數
-     (add/sub/inc/mul/比較器/bitwise…)。猜中的先對該 cone 做 ABC `cec` **證明**,
-     再用深度最優結構重建(Sklansky prefix adder、Wallace tree、平衡比較樹)。
-     沒猜中就沒有這個 seed——純加分項,錯誤的猜測到不了下一步。
+     把 PI bus / 暫存器組(Q bus 對應的 D 向量)當「字」,猜每個目標字是不是已知函數。
+     函數庫涵蓋:純接線置換(const shift/rotate/byteswap/bitreverse/shift-register,
+     逐 bit 欄位雜湊比對,深度 ≤1)、二元算術(add/sub/±1/neg/帶 carry-in 加法)、
+     乘法與 MAC(a*b+c)、多運算元加法樹(a+b+c、a+b+c+d)、平均((a+b)>>1 含
+     floor/ceil)、bitwise 全家、比較器(eq/ne/lt/le/gt/ge)、max/min/absdiff、
+     字級 mux(sel ? a : b)、變動 shift(barrel)。猜中的先對該 cone 做 ABC `cec`
+     **證明**,再用深度最優結構重建(Sklansky prefix adder、3:2 壓縮 + Wallace tree、
+     prefix borrow 比較、log 層 mux barrel)。沒猜中就沒有這個 seed——純加分項,
+     錯誤的猜測到不了下一步。
    - `ys`(`yosys_synth.py`):把 BLIF 丟給 yosys `opt -full; techmap; aigmap` 重新合成,
      當作結構不同的第三個起點(yosys 不在就自動略過)。
 3. **ABC recipe portfolio**:每個 seed 各跑數條 recipe。深度用 `dch -f; if -g -K 6` 的
