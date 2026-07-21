@@ -21,9 +21,23 @@ from typing import Iterable, Optional
 _REGISTRY: dict = {}
 
 
+def _exedir() -> str:
+    """Directory the running program lives in: the executable's directory for
+    a frozen (PyInstaller) binary, the project root when running from source.
+    Lets tools.yaml reference tools shipped *next to the binary* via
+    ``${EXEDIR}`` — the whole submission folder can then be copied anywhere."""
+    import sys
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(os.path.abspath(sys.executable))
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def register(name: str, path: Optional[str]) -> None:
     if path:
-        _REGISTRY[name] = os.path.expanduser(str(path))
+        p = str(path)
+        if "${EXEDIR}" in p:
+            p = p.replace("${EXEDIR}", _exedir())
+        _REGISTRY[name] = os.path.expanduser(p)
 
 
 def register_many(mapping: dict) -> None:

@@ -14,8 +14,11 @@
 # `abc` at the real binary, not a wrapper, so resyn2/dc2 aliases resolve.
 
 tools:
-  # abc is required (equivalence + optimization). Set it to YOUR abc binary:
-  abc: /path/to/abc/abc
+  # abc is required (equivalence + optimization). Set it to YOUR abc binary.
+  # ${EXEDIR} expands to the executable's directory (frozen binary) or the
+  # project root (source) — ship abc next to the binary and the whole folder
+  # stays relocatable:
+  abc: ${EXEDIR}/abc/abc
 
   # yosys is optional but recommended: the resynthesis engine
   # (cada/optimize/resynth.py) uses it as an extra optimization seed (it won
