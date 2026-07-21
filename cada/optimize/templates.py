@@ -405,6 +405,45 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
                 if all(((x + y + c) & mk) == t
                        for x, y, c, t in zip(av, bv, cv, tgt_s)):
                     return Match(tgt, "addcin", [a, b], cin=cin)
+            # averages (floor / ceil rounding)
+            if all((((x + y) >> 1) & mk) == t for x, y, t in zip(av, bv, tgt_s)):
+                return Match(tgt, "avg", [a, b])
+            if all((((x + y + 1) >> 1) & mk) == t
+                   for x, y, t in zip(av, bv, tgt_s)):
+                return Match(tgt, "avgc", [a, b])
+
+    # ---- 3/4-operand arithmetic: MAC and adder trees ----
+    n = len(cand_ops)
+    if 2 <= n <= 10:
+        for i in range(n):
+            av = op_samples[cand_ops[i].name]
+            for j in range(i, n):
+                bv = op_samples[cand_ops[j].name]
+                prod = [x * y for x, y in zip(av, bv)]
+                for c in cand_ops:              # c may repeat a factor
+                    cv = op_samples[c.name]
+                    if all(((p + z) & mk) == t
+                           for p, z, t in zip(prod, cv, tgt_s)):
+                        return Match(tgt, "mac",
+                                     [cand_ops[i], cand_ops[j], c])
+        for i in range(n):
+            av = op_samples[cand_ops[i].name]
+            for j in range(i + 1, n):
+                ab = [x + y for x, y in
+                      zip(av, op_samples[cand_ops[j].name])]
+                for k in range(j + 1, n):
+                    cv = op_samples[cand_ops[k].name]
+                    if all(((s + z) & mk) == t
+                           for s, z, t in zip(ab, cv, tgt_s)):
+                        return Match(tgt, "add3",
+                                     [cand_ops[i], cand_ops[j], cand_ops[k]])
+                    for l in range(k + 1, n):
+                        dv = op_samples[cand_ops[l].name]
+                        if all(((s + z + u) & mk) == t
+                               for s, z, u, t in zip(ab, cv, dv, tgt_s)):
+                            return Match(tgt, "add4",
+                                         [cand_ops[i], cand_ops[j],
+                                          cand_ops[k], cand_ops[l]])
 
     # single-bit comparisons (unsigned, zero-extended)
     if w == 1:
@@ -515,21 +554,11 @@ def _balanced(em: Emitter, op: str, xs: List[str]) -> str:
     return layer[0]
 
 
-def _build_mul(em: Emitter, a: List[str], b: List[str], outs: List[str]):
-    """Wallace-tree multiplier truncated to len(outs) bits."""
+def _reduce_columns_add(em: Emitter, cols: List[List[str]], outs: List[str]):
+    """3:2 (full-adder) compression of per-bit addend columns until <= 2 rows
+    remain, then one carry-propagate (prefix) add.  Shared by the multiplier,
+    MAC and N-operand adder builders."""
     w = len(outs)
-    cols: List[List[str]] = [[] for _ in range(w)]
-    for i, x in enumerate(a):
-        if i >= w:
-            break
-        for j, y in enumerate(b):
-            if i + j >= w:
-                break
-            t = _w(em)
-            em.and_(t, x, y)
-            cols[i + j].append(t)
-    # pure 3:2 (full-adder) reduction until every column has <= 2 entries;
-    # leftovers pass through, so each round strictly shrinks any column >= 3
     while any(len(c) > 2 for c in cols):
         nxt: List[List[str]] = [[] for _ in range(w)]
         for i, col in enumerate(cols):
@@ -552,12 +581,45 @@ def _build_mul(em: Emitter, a: List[str], b: List[str], outs: List[str]):
                     nxt[i + 1].append(c)
             nxt[i].extend(col[k:])
         cols = nxt
-    # final carry-propagate add of the two remaining rows
     row_a = [c[0] if len(c) > 0 else "1'b0" for c in cols]
     row_b = [c[1] if len(c) > 1 else "1'b0" for c in cols]
     sums, _ = _addsub_bits(em, row_a, row_b, sub=False, cin=None)
     for s, o in zip(sums, outs):
         em.emit("buf", o, [s])
+
+
+def _push_row(cols: List[List[str]], row: Sequence[str]):
+    for i, bit in enumerate(row[:len(cols)]):
+        if bit != "1'b0":
+            cols[i].append(bit)
+
+
+def _build_mul(em: Emitter, a: List[str], b: List[str], outs: List[str],
+               addend_rows: Sequence[Sequence[str]] = ()):
+    """Wallace-tree multiplier truncated to len(outs) bits; extra addend rows
+    are fused into the compression tree (MAC)."""
+    w = len(outs)
+    cols: List[List[str]] = [[] for _ in range(w)]
+    for i, x in enumerate(a):
+        if i >= w:
+            break
+        for j, y in enumerate(b):
+            if i + j >= w:
+                break
+            t = _w(em)
+            em.and_(t, x, y)
+            cols[i + j].append(t)
+    for row in addend_rows:
+        _push_row(cols, row)
+    _reduce_columns_add(em, cols, outs)
+
+
+def _build_addn(em: Emitter, rows: Sequence[Sequence[str]], outs: List[str]):
+    """Sum of N words: 3:2 compression + a single prefix adder."""
+    cols: List[List[str]] = [[] for _ in range(len(outs))]
+    for row in rows:
+        _push_row(cols, row)
+    _reduce_columns_add(em, cols, outs)
 
 
 def build_match(em: Emitter, m: Match):
@@ -618,6 +680,18 @@ def build_match(em: Emitter, m: Match):
             em.emit(op, o, [x, y])
     elif f == "mul":
         _build_mul(em, m.ops[0].bits, m.ops[1].bits, tgt)
+    elif f == "mac":
+        _build_mul(em, m.ops[0].bits, m.ops[1].bits, tgt,
+                   addend_rows=[_extend(em, m.ops[2].bits, w)])
+    elif f in ("add3", "add4"):
+        _build_addn(em, [_extend(em, o.bits, w) for o in m.ops], tgt)
+    elif f in ("avg", "avgc"):
+        a = _extend(em, m.ops[0].bits, w + 1)
+        b = _extend(em, m.ops[1].bits, w + 1)
+        sums, _ = _addsub_bits(em, a, b, sub=False,
+                               cin="1'b1" if f == "avgc" else None)
+        for s, o in zip(sums[1:w + 1], tgt):
+            em.emit("buf", o, [s])
     elif f in FUNCS_CMP:
         wc = max(m.ops[0].width, m.ops[1].width)
         a = _extend(em, m.ops[0].bits, wc)
