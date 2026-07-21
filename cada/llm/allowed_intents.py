@@ -140,6 +140,15 @@ OPERATION SYNONYMS:
 "Quantify the critical-path gate depth of the design."
 → {"intent":"global_max_depth","params":{}}
 
+"Shorten the worst-case combinational path by restructuring the logic. The cost function is the maximum logic depth of the final design."
+→ {"intent":"minimize_depth","params":{}}
+
+"Minimize the total number of gates in the design. The cost function is the total gate count of the final design; smaller is better."
+→ {"intent":"minimize_area","params":{}}
+
+"Rebuild the entire netlist using only AND and NOT primitives while preserving functional equivalence."
+→ {"intent":"convert_basis","params":{"basis":"AND_NOT"}}
+
 "Excise all logically inert gates from the netlist."
 → {"intent":"remove_dangling","params":{}}
 

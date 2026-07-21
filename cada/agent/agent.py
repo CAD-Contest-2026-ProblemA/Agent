@@ -100,7 +100,7 @@ class Agent:
             # the transform rules, or "were merged as structural duplicates"
             # re-runs the merge instead of answering the recorded delta.
             (R(r"how many flip-?flops .*enable or hold"), self.h_enable_hold_count),
-            (R(r"how many .*\b(?:was|were)\b.*\b(?:added|removed|eliminated|merged|collapsed|inserted|found|excised|swept|deleted|absorbed)\b"), self.h_delta),
+            (R(r"how many (?!.*\b(?:floating|unconnected|undriven)\b).*\b(?:was|were)\b.*\b(?:added|removed|eliminated|merged|collapsed|inserted|found|excised|swept|deleted|absorbed)\b"), self.h_delta),
 
             # the load rule requires from/file context in the same sentence so
             # a noun "load" ("each load of n2") can never trigger it.
@@ -114,6 +114,12 @@ class Agent:
             (R(r"(reduce|minimize|minimise).*(critical path|maximum|max|critical).*depth"), self.h_opt_depth),
             (R(r"(depth optimization|perform depth optimization|reduce critical path)"), self.h_opt_depth),
             (R(r"minimize the maximum logic depth|minimize maximum (logic |path )?depth"), self.h_opt_depth),
+            # broader verbs + the cost-function sentence itself; the buffer
+            # rules above already claimed lines whose cost is gate count but
+            # whose action is buffering (test36-style).
+            (R(r"(shorten|reduce|minimi[sz]e|decrease|lower).*(worst-?case|critical|maximum|max).*(path|depth)"), self.h_opt_depth),
+            (R(r"cost function is the maximum logic depth"), self.h_opt_depth),
+            (R(r"minimi[sz]e the total (number of gates|gate count)|(minimi[sz]e|reduce).*(number of gates|gate count).*without changing|cost function is the total gate count"), self.h_opt_area),
 
             # transforms (imperative actions) — matched BEFORE analysis queries
             # so cost-function / "gates in the cone of" phrasing in a transform
@@ -126,7 +132,7 @@ class Agent:
             (R(r"(replace|convert).*XOR.*(NAND-only|4 ?NAND|4-NAND|NAND)"), self.h_xor_nand),
             (R(r"decompose all XOR.*(AND, OR, and NOT|AND.*OR.*NOT)"), self.h_xor_aoi),
             (R(r"convert every XOR.*4-?NAND"), self.h_xor_nand),
-            (R(r"(remap|reconstruct|convert|restructure|replace).*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
+            (R(r"(remap|reconstruct|convert|restructure|replace|rebuild|rewrite|re-?implement|re-?express)\b.*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
             (R(r"replace all 2-input NAND.*constant 1.*inverter"), self.h_nand_inv),
             (R(r"simplify the reported (\w+) gates|simplify the reported|propagating .*constant"), self.h_constprop),
             (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
@@ -1213,6 +1219,22 @@ class Agent:
         return (f"The design is already optimal at depth {before}; reported the "
                 "original (equivalence preserved).")
 
+    def h_opt_area(self, m, line):
+        if self._need_design():
+            return self._need_design()
+        basis = _basis_from_text(line)
+        before = len(self.state.current.gates)
+        res, imp = abc_opt.minimize_area(self.state.current, basis=basis)
+        self.state.current = res
+        if imp:
+            self.state.provably_equiv = getattr(res, '_provably_equiv', False)
+        after = len(res.gates)
+        if imp:
+            return (f"Reduced the total gate count from {before} to {after}"
+                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+        return (f"The design is already optimal at {before} gates; reported the "
+                "original (equivalence preserved).")
+
     # ===================================================================
     # equivalence
     # ===================================================================
@@ -1253,6 +1275,18 @@ class Agent:
             return self._default_ack(line)
 
         params = params or {}
+
+        # Guard against LLM misclassification: a basis-remap request ("rebuild
+        # the netlist using only AND and NOT primitives") carries a basis and
+        # "only" phrasing but no cost-function sentence — it is a conversion,
+        # not an optimization, whatever the model chose.
+        if intent in ("minimize_area", "minimize_depth", "optimize_cone"):
+            basis = _basis_from_text(line)
+            if (basis and re.search(r"\b(only|use only|using only)\b", line, re.I)
+                    and not re.search(r"cost function|smaller is better", line, re.I)):
+                return self.op_convert_basis(basis=basis,
+                                             scope=params.get("scope") or params.get("output"))
+
         handler = getattr(self, f"op_{intent}", None)
         if handler is None:
             return (f'Acknowledged. The request was mapped to intent "{intent}", '
