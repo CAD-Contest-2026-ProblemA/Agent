@@ -60,6 +60,17 @@ else
   echo "         (run scripts/build_static_abc.sh first for a self-contained build)"
 fi
 
+# Embed a statically-linked yosys (+ its share/ tree, found via yosys's
+# binary-relative lookup).  Optional: an extra resynthesis seed — the agent
+# degrades gracefully without it.  Produce with scripts/build_static_yosys.sh.
+if [ -f "$repo/dist/yosys_static/yosys" ]; then
+  echo ">> embedding statically-linked yosys into the binary"
+  extra+=(--add-binary "$repo/dist/yosys_static/yosys:yosys"
+          --add-data "$repo/dist/yosys_static/share:yosys/share")
+else
+  echo ">> NOTE: dist/yosys_static/yosys not found — yosys will NOT be embedded"
+fi
+
 echo ">> running PyInstaller (name: $NAME) ..."
 "$bvenv/bin/pyinstaller" --onefile --clean --noconfirm \
   --name "$NAME" \

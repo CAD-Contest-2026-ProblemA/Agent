@@ -30,9 +30,13 @@ endmodule
 
 
 def find_yosys() -> Optional[str]:
-    from ..toolpaths import resolve
+    from ..toolpaths import resolve, _bundledir, _exedir
+    # embedded copy (inside the one-file bundle) and next-to-binary copy first
+    local = [os.path.join(_bundledir(), "yosys", "yosys"),
+             os.path.join(_exedir(), "yosys", "yosys")]
     return resolve("yosys", env_var="YOSYS_BIN",
-                   candidates=["/usr/local/bin/yosys", "/usr/bin/yosys"])
+                   candidates=local + ["/usr/local/bin/yosys",
+                                       "/usr/bin/yosys"])
 
 
 def equivalent(before: Netlist, after: Netlist,
