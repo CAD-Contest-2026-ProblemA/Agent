@@ -132,7 +132,10 @@ class Agent:
             (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
             (R(r"(remove|delete|trim|sweep|prune|eliminate).*(dangling|unused|floating|redundant)"), self.h_dangling),
             (R(r"(delete|remove|eliminate|prune).*gates?.*(do not|don't|not) (contribute|affect|connected)"), self.h_dangling),
-            (R(r"are there any redundant gates"), self.h_dangling),
+            # port-level floating/unconnected questions must win before the
+            # dangling-*gate* rules — different concept, query only (no mutation)
+            (R(r"floating (inputs?|signals?)|unconnected (output )?ports?|undriven (inputs?|pins?|ports?)|unloaded output"), self.h_check_floating_ports),
+            (R(r"are there any (redundant|dangling) gates"), self.h_check_dangling),
             (R(r"check.*dangling gates|check if there are any floating"), self.h_check_dangling),
             (R(r"(merge|find and merge).*(functionally equivalent|same function|structural duplicate|duplicate)"), self.h_merge),
             (R(r"(rename|change the identifier of|update the name of|change the name).*(gate|wire|signal)\s+(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename),
@@ -1049,10 +1052,40 @@ class Agent:
         return f"Removed {info} dangling gate(s) that do not affect any primary output; equivalence verified."
 
     def h_check_dangling(self, m, line):
+        """Pure query: report dangling gates without touching the design.
+        Only when the request itself asks for removal ("Remove them if
+        found") delegate to the removal transform."""
         if self._need_design():
             return self._need_design()
-        # count without removing first, then remove
-        return self.h_dangling(m, line)
+        if re.search(r"remove|delete|excise|prune|eliminate", line, re.I):
+            return self.h_dangling(m, line)
+        dead_g, dead_ff = cleanup.find_dangling(self.state.current)
+        total = len(dead_g) + len(dead_ff)
+        if not total:
+            return ("No dangling gates were found; every gate contributes to a "
+                    "primary output.")
+        return (f"Found {total} dangling instance(s) that do not affect any "
+                "primary output: " + self._names((dead_g + dead_ff)[:200]))
+
+    def h_check_floating_ports(self, m, line):
+        """Pure query: undriven input bits and unconnected output bits.
+        Port-level question — distinct from dangling *gates*."""
+        if self._need_design():
+            return self._need_design()
+        nl = self.state.current
+        und_in = [b for b in sorted(nl.pi) if not nl.loads(b) and b not in nl.po]
+        unc_out = [b for b in sorted(nl.po) if nl.driver(b)[0] == "undriven"]
+        if not und_in and not unc_out:
+            return ("No. There are no floating inputs or unconnected output "
+                    "ports in this design.")
+        parts = ["Yes."]
+        if und_in:
+            parts.append(f"{len(und_in)} floating input bit(s): "
+                         + self._names(und_in[:100]))
+        if unc_out:
+            parts.append(f"{len(unc_out)} unconnected output bit(s): "
+                         + self._names(unc_out[:100]))
+        return " ".join(parts)
 
     def h_merge(self, m, line):
         if self._need_design():

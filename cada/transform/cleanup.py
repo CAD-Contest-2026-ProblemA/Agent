@@ -15,16 +15,9 @@ from ..analysis import graph
 
 
 # ---- dangling / unused removal -----------------------------------------
-def remove_dangling(nl: Netlist) -> int:
-    """Remove gates (and flip-flops) that cannot affect any primary output.
-
-    A net is *live* iff it is reachable backward from a primary output.  A gate
-    is kept iff its output is live; a flip-flop is kept iff its Q is live.
-    Multi-driver Q nets (several flip-flops sharing a Q) are handled atomically:
-    all flip-flops on a live Q are kept, all on a dead Q dropped.
-
-    Returns the number of combinational gates removed.
-    """
+def _live_set(nl: Netlist) -> Set[str]:
+    """Nets reachable backward from a primary output (the liveness rule shared
+    by find_dangling and remove_dangling — keep them in lock-step)."""
     # map net -> flip-flops driving it (handles multi-driver Q)
     q_to_dffs: Dict[str, List] = {}
     for ff in nl.dffs:
@@ -47,7 +40,30 @@ def remove_dangling(nl: Netlist) -> int:
             for i in (ff.d, ff.clk, ff.rn, ff.sn):
                 if i not in live:
                     stack.append(i)
+    return live
 
+
+def find_dangling(nl: Netlist):
+    """Query only: names of gates / flip-flops that cannot affect any primary
+    output.  Same liveness rule as remove_dangling, but the netlist is NOT
+    modified — use this for 'check/are there any dangling' questions."""
+    live = _live_set(nl)
+    dead_gates = [g.name for g in nl.gates if g.out not in live]
+    dead_dffs = [ff.name for ff in nl.dffs if ff.q not in live]
+    return dead_gates, dead_dffs
+
+
+def remove_dangling(nl: Netlist) -> int:
+    """Remove gates (and flip-flops) that cannot affect any primary output.
+
+    A net is *live* iff it is reachable backward from a primary output.  A gate
+    is kept iff its output is live; a flip-flop is kept iff its Q is live.
+    Multi-driver Q nets (several flip-flops sharing a Q) are handled atomically:
+    all flip-flops on a live Q are kept, all on a dead Q dropped.
+
+    Returns the number of combinational gates removed.
+    """
+    live = _live_set(nl)
     new_gates = [g for g in nl.gates if g.out in live]
     removed = len(nl.gates) - len(new_gates)
     nl.gates = new_gates
