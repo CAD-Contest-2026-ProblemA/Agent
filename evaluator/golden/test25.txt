@@ -5,5 +5,5 @@ Remapped the cone to NAND+NOT gates (0 gates rewritten); functional equivalence 
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 Renamed gate g0 to renamed_gate and updated all references.
 Renamed wire n74 to renamed_wire and updated all references.
-Reduced the maximum logic depth from 49 to 43 (basis preserved); equivalence verified.
+Reduced the maximum logic depth from 49 to 23 (basis preserved); equivalence verified.
 Wrote the current netlist to "testcase/test25/test25_out.v" successfully.

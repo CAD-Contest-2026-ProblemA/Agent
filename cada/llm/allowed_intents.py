@@ -146,6 +146,12 @@ OPERATION SYNONYMS:
 "Minimize the total number of gates in the design. The cost function is the total gate count of the final design; smaller is better."
 → {"intent":"minimize_area","params":{}}
 
+"Resynthesize the design to reduce the logic depth as much as possible."
+→ {"intent":"minimize_depth","params":{}}
+
+"Re-synthesize the cone of n9 for minimum depth while keeping it NAND and NOT only."
+→ {"intent":"optimize_cone","params":{"output":"n9","basis":"NAND_NOT"}}
+
 "Rebuild the entire netlist using only AND and NOT primitives while preserving functional equivalence."
 → {"intent":"convert_basis","params":{"basis":"AND_NOT"}}
 

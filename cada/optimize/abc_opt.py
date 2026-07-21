@@ -21,13 +21,12 @@ from typing import Dict, List, Optional, Tuple
 
 from ..netlist.ir import Gate, Netlist, is_const
 from ..netlist.blif_export import _TT, _live_registers
-from ..analysis import depth as depth_mod
 from ..transform import rewrite
 from ..transform.base import Emitter
 from ..equiv import abc_bridge, gate as equiv_gate
 
-DEPTH_RECIPE = ["resyn2", "resyn2"]
-AREA_RECIPE = ["resyn2", "dc2", "resyn2"]
+# The recipe portfolios live in .resynth (DEPTH_PORTFOLIO / AREA_PORTFOLIO);
+# minimize_* below delegate there and this module provides the ABC plumbing.
 
 _CONST_BUF_INV = ("GATE zero 0 O=CONST0;\n"
                   "GATE one 0 O=CONST1;\n"
@@ -165,8 +164,20 @@ def _parse_gate_blif(text: str):
 
 
 def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
-                  timeout: int = 280) -> Optional[Netlist]:
-    blif, po_out, d_out = _opt_blif(nl)
+                  timeout: int = 280,
+                  prepared: Optional[Tuple[str, Dict[str, str], Dict[str, str]]] = None,
+                  ) -> Optional[Netlist]:
+    """Optimise the comb core of ``nl`` with an ABC ``recipe`` and map it onto
+    the unit-delay library of ``basis``.
+
+    ``prepared`` may carry a pre-computed ``(blif_text, po_out, d_out)``
+    export — e.g. reused across the recipe portfolio, or a yosys-resynthesised
+    variant of the same export (the labels must be those of ``_opt_blif(nl)``).
+    """
+    if prepared is not None:
+        blif, po_out, d_out = prepared
+    else:
+        blif, po_out, d_out = _opt_blif(nl)
     d = tempfile.mkdtemp(prefix="cada_opt_")
     pin = os.path.join(d, "in.blif")
     pout = os.path.join(d, "out.blif")
@@ -251,31 +262,26 @@ def _finalize(nl, cand, basis, timeout):
 
 def minimize_depth(nl: Netlist, basis: Optional[str] = None,
                    timeout: int = 280) -> Tuple[Netlist, bool]:
-    before = depth_mod.global_max_depth(nl)
-    cand = _finalize(nl, optimize_comb(nl, DEPTH_RECIPE, basis=basis,
-                                       timeout=timeout), basis, timeout)
-    if cand is not None and depth_mod.global_max_depth(cand) < before:
-        return cand, True
-    return nl, False
+    from . import resynth
+    res, improved, _info = resynth.resynthesize(
+        nl, objective="depth", basis=basis, timeout=timeout)
+    return res, improved
 
 
 def minimize_area(nl: Netlist, basis: Optional[str] = None,
                   timeout: int = 280) -> Tuple[Netlist, bool]:
-    before = len(nl.gates)
-    cand = _finalize(nl, optimize_comb(nl, AREA_RECIPE, basis=basis,
-                                       timeout=timeout), basis, timeout)
-    if cand is not None and len(cand.gates) < before:
-        return cand, True
-    return nl, False
+    from . import resynth
+    res, improved, _info = resynth.resynthesize(
+        nl, objective="area", basis=basis, timeout=timeout)
+    return res, improved
 
 
 def optimize_cone_depth(nl: Netlist, output: str, basis: Optional[str] = None,
                         timeout: int = 280) -> Tuple[Netlist, bool]:
     """Depth-optimise the comb block and keep it only if the cone of ``output``
     got shallower (and the design stays equivalent / in basis)."""
-    before = depth_mod.depth_of_cone(nl, output)
-    cand = _finalize(nl, optimize_comb(nl, DEPTH_RECIPE, basis=basis,
-                                       timeout=timeout), basis, timeout)
-    if cand is not None and depth_mod.depth_of_cone(cand, output) < before:
-        return cand, True
-    return nl, False
+    from . import resynth
+    res, improved, _info = resynth.resynthesize(
+        nl, objective="cone_depth", output=output, basis=basis,
+        timeout=timeout)
+    return res, improved

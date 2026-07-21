@@ -4,5 +4,5 @@ Total gate count: 5680 AND: 0 OR: 130 NOT: 276 NAND: 4073 NOR: 308 XOR: 7 XNOR: 
 Decomposed 0 XOR gate(s) into AND/OR/NOT logic; equivalence verified.
 Collapsed 6 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Removed 1 dangling gate(s) that do not affect any primary output; equivalence verified.
-Reduced the maximum logic depth from 35 to 27 (basis preserved); equivalence verified.
+Reduced the maximum logic depth from 35 to 13 (basis preserved); equivalence verified.
 Wrote the current netlist to "testcase/test27/test27_out.v" successfully.

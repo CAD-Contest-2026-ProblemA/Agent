@@ -2,5 +2,5 @@ Acknowledged. Initialized testcase "test23". All subsequent responses will be re
 Loaded gate-level Verilog from "testcase/test23/test23.v" successfully. Detected a single top module (flat netlist) with 597 combinational gates and 86 flip-flops. Design state has been updated.
 Total gate count: 683 AND: 0 OR: 20 NOT: 126 NAND: 259 NOR: 160 XOR: 2 XNOR: 30 BUF: 0 DFF: 86
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
-Reduced the maximum logic depth from 33 to 20; equivalence verified.
+Reduced the maximum logic depth from 33 to 9; equivalence verified.
 Wrote the current netlist to "testcase/test23/test23_out.v" successfully.

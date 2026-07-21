@@ -52,7 +52,7 @@ cada/agent/agent.py : handle(line)
 |------|----------|--------|--------------|
 | **分析** | 「count gates」「max depth A→B」「path 存不存在」「cone 有幾個 gate」 | 在 IR 上跑圖演算法算出答案,格式化成文字 | 否 |
 | **轉換** | 「remap 成 NAND+NOT」「插 buffer 讓 fanout≤4」「移除 dangling」「合併重複」「改名」 | 先 snapshot → 改 IR → **過 guards** → 過了 commit、沒過 rollback | 是 |
-| **最佳化** | 「minimize depth」「optimize cone of X」 | 丟給 ABC 做深度/面積最小化 → cec 驗證 → 有改善才採用,否則回原圖 | 是(只在更好時) |
+| **最佳化** | 「minimize depth」「optimize cone of X」「resynthesize」 | 進 **resynth 引擎**(見下節):多 seed × 多 recipe 的組合最佳化 → 依真實成本排名 → cec 驗證 → 有改善才採用,否則回原圖 | 是(只在更好時) |
 
 ### 「轉換」為什麼安全(防 0 分的關鍵)
 
@@ -64,6 +64,33 @@ cada/agent/agent.py : handle(line)
 任何一關沒過 → **rollback** 回轉換前的 snapshot(寧可不做,也不交出功能被改壞的設計)。
 另外,每個轉換會把「改了幾個」記成 delta,後面那種「How many X were added?」的問題就直接讀這個 delta。
 
+### 「最佳化」怎麼跑(resynth 引擎,ALS_Final_Project 方法論移植)
+
+`cada/optimize/resynth.py` 是所有 depth / cone-depth / gate-count 最佳化的引擎,
+流程是「多個 seed × 多個 recipe → 依真實成本排名 → cec 把關」:
+
+1. **切 register boundary**:DFF 的 Q 當虛擬 PI、D 當虛擬 PO,把組合核心投影成 BLIF
+   (`abc_opt._opt_blif`,DFF 本體完全不動)。
+2. **產生 seeds**:
+   - `base`:目前的設計本身。
+   - `tpl`(`templates.py`,**逆向工程模板**):對整個組合核心做 512 筆隨機模擬,
+     把 PI bus / 暫存器組(Q bus 對應的 D 向量)當「字」,猜每個目標字是不是已知函數
+     (add/sub/inc/mul/比較器/bitwise…)。猜中的先對該 cone 做 ABC `cec` **證明**,
+     再用深度最優結構重建(Sklansky prefix adder、Wallace tree、平衡比較樹)。
+     沒猜中就沒有這個 seed——純加分項,錯誤的猜測到不了下一步。
+   - `ys`(`yosys_synth.py`):把 BLIF 丟給 yosys `opt -full; techmap; aigmap` 重新合成,
+     當作結構不同的第三個起點(yosys 不在就自動略過)。
+3. **ABC recipe portfolio**:每個 seed 各跑數條 recipe。深度用 `dch -f; if -g -K 6` 的
+   choice-mapping 迴圈(實測比 `resyn2` 淺 2~4 倍),面積用 `compress2rs` 家族;
+   最後都 `map` 到**單位延遲 genlib**(可依 basis 限制只給 NAND+NOT 等 cell),
+   所以 ABC 最小化的就是比賽計的成本(1 gate = 1 level,含 inverter)。
+4. **單調選擇**:所有候選解析回 IR、重算**真實成本**(不信 ABC 的數字)、由小到大排序,
+   第一個「嚴格更好 + 全設計 `cec` 等價 + basis 純度成立」的候選才會取代目前設計;
+   一個都沒有就回報 already optimal,原圖不動。
+
+這套設計的重點:**模板逆向是通用的**(靠抽樣猜 + cec 證,不靠特定電路長相),
+沒看過的電路只要含有已知函數家族的子結構就接得住;接不住也還有 portfolio 保底。
+
 ---
 
 ## 三、用到的關鍵零件
@@ -74,7 +101,10 @@ cada/agent/agent.py : handle(line)
 | `cada/netlist/reader.py` `writer.py` | 自寫 Verilog parser / canonical 結構 writer(可完整 round-trip) |
 | `cada/analysis/*` | 計數、cone、深度、連通性、path(DP 計數不列舉)、functional、sequential |
 | `cada/transform/*` | basis 轉換、XOR/XNOR 分解、常數傳遞、dangling 移除、重複合併、buffer 樹、改名 |
-| `cada/optimize/abc_opt.py` | 用 ABC + 單位延遲 genlib 做深度/面積最小化,保 basis,過 cec |
+| `cada/optimize/resynth.py` | 最佳化引擎:多 seed × recipe portfolio → 真實成本排名 → cec 把關 |
+| `cada/optimize/templates.py` | 逆向工程模板:抽樣猜 word-level 函數 → cec 證明 → 深度最優重建 |
+| `cada/optimize/yosys_synth.py` | yosys 重合成 seed(`opt -full; techmap; aigmap`,沒裝就略過) |
+| `cada/optimize/abc_opt.py` | ABC 底層:register-cut BLIF 匯出、單位延遲 genlib 映射、解析回 IR |
 | `cada/equiv/*` | 等價閘:IR→BLIF→ABC cec(主);yosys 當備援 |
 | `cada/agent/*` | 規則 router、狀態(snapshot / delta / case name / frame id) |
 

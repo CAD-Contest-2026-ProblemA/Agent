@@ -120,6 +120,13 @@ class Agent:
             (R(r"(shorten|reduce|minimi[sz]e|decrease|lower).*(worst-?case|critical|maximum|max).*(path|depth)"), self.h_opt_depth),
             (R(r"cost function is the maximum logic depth"), self.h_opt_depth),
             (R(r"minimi[sz]e the total (number of gates|gate count)|(minimi[sz]e|reduce).*(number of gates|gate count).*without changing|cost function is the total gate count"), self.h_opt_area),
+            # explicit resynthesis requests (the reverse-to-RTL/yosys/ABC
+            # rebuild tool): scoped cone first, then area wording, then the
+            # depth default.  "Reconstruct ... using only X" stays with the
+            # basis-conversion rules below (different verb set).
+            (R(r"re-?synthesi[sz]e.*cone of (?:output )?(%s)" % NET), self.h_opt_cone),
+            (R(r"re-?synthesi[sz]e.*(area|gate count|number of gates)"), self.h_opt_area),
+            (R(r"re-?synthesi[sz]e|resynthesis"), self.h_opt_depth),
 
             # transforms (imperative actions) — matched BEFORE analysis queries
             # so cost-function / "gates in the cone of" phrasing in a transform
