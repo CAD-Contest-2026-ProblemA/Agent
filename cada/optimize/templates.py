@@ -277,20 +277,55 @@ FUNCS_CMP = {
 
 
 class Match:
-    __slots__ = ("target", "func", "ops", "cin", "note")
+    __slots__ = ("target", "func", "ops", "cin", "extra", "note")
 
     def __init__(self, target: Word, func: str, ops: List[Word],
-                 cin: Optional[str] = None):
+                 cin: Optional[str] = None, extra=None):
         self.target = target
         self.func = func
         self.ops = ops
-        self.cin = cin
+        self.cin = cin          # scalar operand: carry-in / select / shift...
+        self.extra = extra      # per-bit wiring plan for "perm"
         self.note = (f"{target.name} = {func}(" +
                      ", ".join(o.name for o in ops) +
-                     (f", cin={cin}" if cin else "") + ")")
+                     (f", s={cin}" if cin else "") + ")")
 
     def __repr__(self):
         return f"<Match {self.note}>"
+
+
+def _match_projection(tgt: Word, val: Dict[str, List[int]],
+                      sup: Set[str]) -> Optional[Match]:
+    """Pure rewiring: every target bit equals a support-source bit, its
+    complement, or a constant.  Subsumes constant shifts, rotates, byteswap,
+    bitreverse, shift-register D vectors, zero/sign fills — depth <= 1."""
+    zero = tuple([0] * SIM_WORDS)
+    ones = tuple([_M64] * SIM_WORDS)
+    src_cols: Dict[tuple, str] = {}
+    inv_cols: Dict[tuple, str] = {}
+    for s in sup:
+        v = val.get(s)
+        if v is None or is_const(s):
+            continue
+        src_cols.setdefault(tuple(v), s)
+        inv_cols.setdefault(tuple(~x & _M64 for x in v), s)
+    plan = []
+    for b in tgt.bits:
+        v = val.get(b)
+        if v is None:
+            return None
+        col = tuple(v)
+        if col == zero:
+            plan.append(("const", "1'b0"))
+        elif col == ones:
+            plan.append(("const", "1'b1"))
+        elif col in src_cols:
+            plan.append(("wire", src_cols[col], False))
+        elif col in inv_cols:
+            plan.append(("wire", inv_cols[col], True))
+        else:
+            return None
+    return Match(tgt, "perm", [], extra=plan)
 
 
 def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
@@ -319,14 +354,17 @@ def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
         sup = _support_sources(nl, tgt.bits)
         if sup is None:
             continue
-        # operand words whose bits intersect the target's support
-        cand_ops = [o for o in ops if o.name in op_samples
-                    and not sup.isdisjoint(o.bits)
-                    and set(o.bits) != set(tgt.bits)]
-        cand_cins = [s for s in scalars if s in sup and s in sc_samples]
-        w = tgt.width
-        m = _match_target(tgt, tgt_s, w, cand_ops, op_samples,
-                          cand_cins, sc_samples)
+        # pure rewiring first: strictly the shallowest possible rebuild
+        m = _match_projection(tgt, val, sup)
+        if m is None:
+            # operand words whose bits intersect the target's support
+            cand_ops = [o for o in ops if o.name in op_samples
+                        and not sup.isdisjoint(o.bits)
+                        and set(o.bits) != set(tgt.bits)]
+            cand_cins = [s for s in scalars if s in sup and s in sc_samples]
+            w = tgt.width
+            m = _match_target(tgt, tgt_s, w, cand_ops, op_samples,
+                              cand_cins, sc_samples)
         if m is not None:
             matches.append(m)
     return matches
@@ -531,7 +569,17 @@ def build_match(em: Emitter, m: Match):
     def opbits(i: int) -> List[str]:
         return _extend(em, m.ops[i].bits, w)
 
-    if f in ("add", "addc1", "sub", "rsub", "addcin"):
+    if f == "perm":
+        for plan, o in zip(m.extra, tgt):
+            if plan[0] == "const":
+                em.emit("buf", o, [plan[1]])
+            else:
+                _kind, src, inv = plan
+                if inv:
+                    em.not_(o, src)
+                else:
+                    em.emit("buf", o, [src])
+    elif f in ("add", "addc1", "sub", "rsub", "addcin"):
         a, b = opbits(0), opbits(1)
         if f == "rsub":
             a, b = b, a
