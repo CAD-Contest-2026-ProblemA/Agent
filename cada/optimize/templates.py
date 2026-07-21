@@ -43,6 +43,8 @@ from ..equiv import abc_bridge
 MAX_GATES = 120_000
 MAX_TARGET_BUSES = 96
 MAX_CONE_GATES = 40_000       # per-target cone bound for support DFS
+MAX_SCALAR_TARGETS = 128      # 1-bit targets (comparators, hold bits, wires)
+MAX_SCALAR_CONE = 3_000       # scalar cones are control logic: keep them small
 SIM_WORDS = 8                 # 8 x 64 = 512 random samples
 _M64 = (1 << 64) - 1
 
@@ -51,21 +53,45 @@ _M64 = (1 << 64) - 1
 # 1. sampling simulation (bit-packed, whole comb core in one pass)
 # ---------------------------------------------------------------------------
 
+ECHO_WORDS = 2   # trailing sample words where same-index bus bits are echoed
+
+
 def simulate(nl: Netlist, words: int = SIM_WORDS, seed: int = 2026,
+             echo_bits: Optional[Dict[str, int]] = None,
              ) -> Optional[Dict[str, List[int]]]:
     """Random-vector simulation of the combinational core.
 
     Returns net -> list of ``words`` 64-bit packed sample words, or None if the
     netlist contains an unexpected gate type / combinational cycle.
+
+    ``echo_bits`` maps operand-word bit nets to their bit index; in the last
+    ``ECHO_WORDS`` sample words those nets share one random stream per bit
+    index, so every pair of operand words is bitwise-equal there.  Rare-event
+    functions (eq/ne, ult vs ule boundaries) are invisible to purely
+    independent sampling — a wide ``a == b`` is almost never true, which would
+    misread the target as constant 0 — but fire on the echoed samples.
     """
     rng = random.Random(seed)
     val: Dict[str, List[int]] = {
         "1'b0": [0] * words,
         "1'b1": [_M64] * words,
     }
+    echo_stream: Dict[Tuple[int, int], int] = {}
+
+    def _echo(widx: int, bidx: int) -> int:
+        key = (widx, bidx)
+        if key not in echo_stream:
+            echo_stream[key] = rng.getrandbits(64)
+        return echo_stream[key]
+
+    n_echo = min(ECHO_WORDS, words - 1) if echo_bits else 0
     for src in graph.comb_sources(nl):
         if src not in val:
-            val[src] = [rng.getrandbits(64) for _ in range(words)]
+            v = [rng.getrandbits(64) for _ in range(words)]
+            if echo_bits and src in echo_bits:
+                for k in range(n_echo):
+                    v[words - 1 - k] = _echo(k, echo_bits[src])
+            val[src] = v
 
     order = graph.topo_nets(nl)
     nl.driver("__force_build__")
@@ -189,7 +215,9 @@ def target_words(nl: Netlist) -> List[Word]:
         return all((driver.get(b) or ("undriven",))[0] == "gate" for b in bits)
 
     out: List[Word] = []
+    grouped_po_bits: Set[str] = set()
     for base, bits in _group_bits(sorted(nl.po)):
+        grouped_po_bits.update(bits)
         if all_gate_driven(bits):
             out.append(Word(base, bits, "po"))
 
@@ -199,12 +227,30 @@ def target_words(nl: Netlist) -> List[Word]:
         m = _BIT_RE.match(ff.q)
         if m:
             d_by_q.setdefault(m.group(1), {})[int(m.group(2))] = ff.d
+    grouped_q = set()
     for base, idx in sorted(d_by_q.items()):
         w = len(idx)
         if w >= 2 and set(idx) == set(range(w)):
+            grouped_q.update(f"{base}[{i}]" for i in range(w))
             bits = [idx[i] for i in range(w)]
             if all_gate_driven(bits) and len(set(bits)) == w:
                 out.append(Word(base + "$D", bits, "d"))
+
+    # 1-bit targets: scalar POs and scalar-register D nets (comparator
+    # outputs, hold/enable bits, plain rewires).  Capped — control bits are
+    # numerous on big designs and their cones are meant to be small.
+    scalars: List[Word] = []
+    for p in sorted(nl.po):
+        if p not in grouped_po_bits and all_gate_driven([p]):
+            scalars.append(Word(p, [p], "po"))
+    seen_q: Set[str] = set()
+    for ff in nl.dffs:
+        if ff.q in grouped_q or ff.q in seen_q:
+            continue
+        seen_q.add(ff.q)
+        if all_gate_driven([ff.d]):
+            scalars.append(Word(ff.q + "$D", [ff.d], "d"))
+    out.extend(scalars[:MAX_SCALAR_TARGETS])
     return out
 
 
@@ -351,7 +397,9 @@ def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
         tgt_s = _word_samples(val, tgt.bits)
         if tgt_s is None:
             continue
-        sup = _support_sources(nl, tgt.bits)
+        sup = _support_sources(
+            nl, tgt.bits,
+            max_gates=MAX_SCALAR_CONE if tgt.width == 1 else MAX_CONE_GATES)
         if sup is None:
             continue
         # pure rewiring first: strictly the shallowest possible rebuild
@@ -874,7 +922,12 @@ def rebuild_via_templates(nl: Netlist, timeout: int = 120,
     nothing matched."""
     if len(nl.gates) > MAX_GATES:
         return None
-    val = simulate(nl)
+    ops, _scalars = operand_words(nl)
+    echo_bits: Dict[str, int] = {}
+    for o in ops:
+        for idx, bit in enumerate(o.bits):
+            echo_bits.setdefault(bit, idx)
+    val = simulate(nl, echo_bits=echo_bits)
     if val is None:
         return None
     matches = detect(nl, val)
