@@ -87,7 +87,24 @@ class Agent:
         R = lambda p: re.compile(p, re.IGNORECASE)
         rules = [
             (R(r"beginning of (a new )?testcase|case name is"), self.h_begin),
-            (R(r"\b(load|read)\b.*design|design from (the )?file"), self.h_load),
+
+            # buffer-insertion rules must precede the load rule: "each load of
+            # n2" + "the design functionality" otherwise false-positives the
+            # load-design regex (the historic test31/test39 misroute).
+            (R(r"insert a BUF gate on signal (%s).*dedicated buffer" % NET), self.h_buffers_dedicated),
+            (R(r"insert.*buffers?.*no (gate|signal) (drives|has fanout).*?(\d+)"), self.h_buffers_fanout),
+            (R(r"insert.*buffers? on (?:the )?(?:reset )?signal (%s).*?(\d+) loads" % NET), self.h_buffers_signal),
+            (R(r"buffers on the reset signal (%s)" % NET), self.h_buffers_reset),
+
+            # delta questions ("how many X were merged/added/...") must precede
+            # the transform rules, or "were merged as structural duplicates"
+            # re-runs the merge instead of answering the recorded delta.
+            (R(r"how many flip-?flops .*enable or hold"), self.h_enable_hold_count),
+            (R(r"how many .*\b(?:was|were)\b.*\b(?:added|removed|eliminated|merged|collapsed|inserted|found|excised|swept|deleted|absorbed)\b"), self.h_delta),
+
+            # the load rule requires from/file context in the same sentence so
+            # a noun "load" ("each load of n2") can never trigger it.
+            (R(r"\b(load|read)\b[^.]*\bdesign\b[^.]*\b(from|file)\b|design from (the )?file"), self.h_load),
             (R(r"\bwrite\b.*(design|netlist).*\b(file|to)\b|write out"), self.h_write),
 
             # optimize rules first: they mention "depth/cone" but must not be
@@ -101,12 +118,15 @@ class Agent:
             # transforms (imperative actions) — matched BEFORE analysis queries
             # so cost-function / "gates in the cone of" phrasing in a transform
             # request is never captured by a query rule.
-            (R(r"(remap|reconstruct|convert|restructure|replace).*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
+            # XOR/XNOR-specific conversions must precede the generic basis rule:
+            # "replace all XOR gates ... NAND-only implementations" is an
+            # XOR->NAND request, not a whole-design NAND+NOT remap.
             (R(r"replace.*XNOR.*(NOR-only|NOR only|equivalent NOR)"), self.h_xnor_nor),
             (R(r"convert every XNOR.*NOR"), self.h_xnor_nor),
             (R(r"(replace|convert).*XOR.*(NAND-only|4 ?NAND|4-NAND|NAND)"), self.h_xor_nand),
             (R(r"decompose all XOR.*(AND, OR, and NOT|AND.*OR.*NOT)"), self.h_xor_aoi),
             (R(r"convert every XOR.*4-?NAND"), self.h_xor_nand),
+            (R(r"(remap|reconstruct|convert|restructure|replace).*(only|use only|using only).*(nand|nor|and).*(not|nand|nor)"), self.h_basis),
             (R(r"replace all 2-input NAND.*constant 1.*inverter"), self.h_nand_inv),
             (R(r"simplify the reported (\w+) gates|simplify the reported|propagating .*constant"), self.h_constprop),
             (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
@@ -117,10 +137,6 @@ class Agent:
             (R(r"(merge|find and merge).*(functionally equivalent|same function|structural duplicate|duplicate)"), self.h_merge),
             (R(r"(rename|change the identifier of|update the name of|change the name).*(gate|wire|signal)\s+(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename),
             (R(r"list all gates.*connect.*to the renamed signal (%s)" % NET), self.h_connected_renamed),
-            (R(r"insert.*buffers?.*no (gate|signal) (drives|has fanout).*?(\d+)"), self.h_buffers_fanout),
-            (R(r"insert a BUF gate on signal (%s).*dedicated buffer" % NET), self.h_buffers_dedicated),
-            (R(r"insert.*buffers? on (?:the )?(?:reset )?signal (%s).*?(\d+) loads" % NET), self.h_buffers_signal),
-            (R(r"buffers on the reset signal (%s)" % NET), self.h_buffers_reset),
             (R(r"(rename|update the name of|change the identifier of).*?(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename2),
 
             # equivalence verification (imperative)
@@ -134,7 +150,6 @@ class Agent:
             (R(r"how many (\w+) (were|gates were)? ?(added|removed|eliminated|merged|collapsed|inserted|found)"), self.h_delta),
             (R(r"how many (dangling|redundant|floating|duplicate|structural duplicate).*(removed|merged|found)"), self.h_delta),
             (R(r"how many (buf|buffer) gates were added"), self.h_delta),
-            (R(r"how many flip-?flops .*enable or hold"), self.h_enable_hold_count),
 
             (R(r"what type of gate is (%s)" % NET), self.h_gate_info),
             (R(r"list all (\w+) gates? in this design"), self.h_list_type),
@@ -334,6 +349,16 @@ class Agent:
         if gtype in ("and", "or", "not", "nand", "nor", "xor", "xnor", "buf", "dff"):
             if self._need_design():
                 return self._need_design()
+            # "in the (restructured) cone of X" scopes the count to X's fanin
+            # cone; the whole-design number answers a different question.
+            mm = re.search(r"cone of (?:primary output |output )?(%s)" % NET,
+                           line, re.IGNORECASE)
+            if mm:
+                out = mm.group(1)
+                gs = cones.fanin_cone_gates(self.state.current, out)
+                n = sum(1 for g in gs if g.type == gtype)
+                return (f"There are currently {n} {gtype.upper()} gates in "
+                        f"the cone of {out}.")
             n = counts.count_of_type(self.state.current, gtype)
             return f"There are currently {n} {gtype.upper()} gates in the design."
         return self.h_delta(m, line)
@@ -695,10 +720,21 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
+        return self._fanout_answer(net)
+
+    def _fanout_answer(self, net: str) -> str:
+        """'List every gate' must be complete: inline up to LIST_INLINE loads,
+        else write the full list to a file and answer with its path (A16)."""
         f = connectivity.fanout_count(self.state.current, net)
         loads = connectivity.fanout_load_instances(self.state.current, net)
+        if len(loads) > self.LIST_INLINE:
+            fname = f"{self.state.case_name or 'case'}_{self._san_name(net)}_fanout.txt"
+            path = self._list_to_file(fname, loads)
+            if path:
+                return (f"The fanout of {net} is {f}. The complete list of "
+                        f"driven gates has been written to {path}.")
         return (f"The fanout of {net} is {f}. It directly drives: " +
-                self._names(loads[:200]))
+                self._names(loads))
 
     def h_driven_by(self, m, line):
         if self._need_design():
@@ -924,7 +960,7 @@ class Agent:
             return f"The basis remap was reverted: {reason}."
         self.state.record_delta("basis_remap", info)
         b = basis.replace("_", "+")
-        return (f"Remapped {'the cone' if scope else 'the entire design'} to "
+        return (f"Remapped {'the cone' if scope is not None else 'the entire design'} to "
                 f"{b} gates ({info} gates rewritten); functional equivalence verified.")
 
     def h_xnor_nor(self, m, line):
@@ -1289,10 +1325,17 @@ class Agent:
         n = counts.total_gate_count(self.state.current)
         return f"The total gate count of the design is {n}."
 
-    def op_count_type(self, type):
+    def op_count_type(self, type, scope=None):
         if self._need_design():
             return self._need_design()
         gtype = self._norm_gate_type(type)
+        scope = self._clean_opt(scope)
+        if scope is not None:
+            out = str(scope)
+            gs = cones.fanin_cone_gates(self.state.current, out)
+            n = sum(1 for g in gs if g.type == gtype)
+            return (f"There are currently {n} {gtype.upper()} gates in "
+                    f"the cone of {out}.")
         n = counts.count_of_type(self.state.current, gtype)
         return f"There are currently {n} {gtype.upper()} gates in the design."
 
@@ -1391,11 +1434,7 @@ class Agent:
     def op_fanout(self, net):
         if self._need_design():
             return self._need_design()
-        net = str(net)
-        f = connectivity.fanout_count(self.state.current, net)
-        loads = connectivity.fanout_load_instances(self.state.current, net)
-        return (f"The fanout of {net} is {f}. It directly drives: " +
-                self._names(loads[:200]))
+        return self._fanout_answer(str(net))
 
     def op_gates_driven_by(self, gate):
         if self._need_design():
@@ -1716,7 +1755,7 @@ class Agent:
             return f"The basis remap was reverted: {reason}."
         self.state.record_delta("basis_remap", info)
         b = basis.replace("_", "+")
-        return (f"Remapped {'the cone' if scope_gates else 'the entire design'} to "
+        return (f"Remapped {'the cone' if scope_gates is not None else 'the entire design'} to "
                 f"{b} gates ({info} gates rewritten); functional equivalence verified.")
 
     def op_xor_to_nand(self, scope=None):

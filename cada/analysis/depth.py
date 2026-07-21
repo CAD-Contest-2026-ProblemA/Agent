@@ -61,14 +61,14 @@ def pi_to_po_max_depth(nl: Netlist) -> int:
 
 
 def pi_to_dff_d_max_depth(nl: Netlist) -> int:
-    # Per QA A21.2, DFF.Q outputs are treated as primary inputs; constants and
-    # floating nets are 0-depth combinational sources as well.  Use the same
-    # source semantics as global_max_depth (forward_levels), restricted to the
-    # DFF.D sinks — a PI∪Q-only start set undercounts chains whose head gate is
-    # fed by a constant/floating net (off-by-one seen on test36: 121 vs 122).
-    lv = graph.forward_levels(nl)
+    # "From any primary input" is strict: sources are the primary-input bits
+    # only.  DFF.Q-sourced paths belong to the separate register-to-register
+    # query (reg_to_reg_max_depth) — answering this question with Q sources
+    # would just repeat that number.  Every gate on the path (including BUF)
+    # counts one level.
+    dist = longest_from_set(nl, set(nl.pi))
     ds = {ff.d for ff in nl.dffs}
-    return max((lv.get(d, -1) for d in ds), default=-1)
+    return max((dist.get(d, -1) for d in ds), default=-1)
 
 
 def reg_to_reg_max_depth(nl: Netlist) -> int:

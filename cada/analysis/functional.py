@@ -294,4 +294,19 @@ def exists_nand_pair(nl: Netlist, target: str,
         for s2 in cand[i:]:
             if (v1 & val[s2]) == want_and:
                 return (s1, s2)
+    # Extension: signals just OUTSIDE the cone whose function is still fully
+    # determined by it — an external NOT/BUF of a cone net (for example the
+    # netlist's own inverter of the target).  sim_all() already computed their
+    # truth tables correctly because all of their inputs lie inside the cone.
+    base = set(cone) | set(inputs)
+    ext = sorted(
+        g.out for g in nl.gates
+        if g.type in ("not", "buf") and g.out not in base and g.out in val
+        and all(i in base or is_const(i) for i in g.ins))
+    ordered = sorted(inputs) + [s for s in sigs if s in val]
+    for e in ext:
+        ve = val[e]
+        for s1 in ordered:
+            if (val[s1] & ve) == want_and:
+                return (s1, e)
     return None

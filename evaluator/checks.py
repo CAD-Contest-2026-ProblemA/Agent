@@ -67,12 +67,15 @@ def equiv(a: Netlist, b: Netlist, timeout: int = 200) -> Optional[bool]:
 
 
 def max_fanout(nl: Netlist, include_pi: bool = False) -> int:
+    # include_pi = "no signal" phrasing: bounds PIs and DFF Q outputs too.
     mx = 0
     for g in nl.gates:
         mx = max(mx, len(nl.loads(g.out)))
     if include_pi:
         for p in nl.pi:
             mx = max(mx, len(nl.loads(p)))
+        for ff in nl.dffs:
+            mx = max(mx, len(nl.loads(ff.q)))
     return mx
 
 

@@ -182,7 +182,7 @@ OPERATION SYNONYMS:
 - write_design {file}
 - count_gates {}
 - total_gate_count {}
-- count_type {type}
+- count_type {type, scope}      # scope = optional output net: count only inside its fanin cone
 - delta_count {kind}
 - gate_info {gate}
 - list_type {type}
@@ -313,6 +313,7 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
     "load_design": {"dir"},
+    "count_type": {"scope"},
     "path_exists": {"avoid"},
     "convert_basis": {"basis", "scope"},
     "xor_to_nand": {"scope"},

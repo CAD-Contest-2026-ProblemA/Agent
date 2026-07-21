@@ -58,7 +58,13 @@ def _buffer_one_net(nl: Netlist, em: Emitter, source: str, k: int) -> int:
 
 def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
                  only_nets: Optional[Set[str]] = None) -> int:
-    """Ensure no driver fans out to more than ``k`` loads.  Returns #buffers."""
+    """Ensure no driver fans out to more than ``k`` loads.  Returns #buffers.
+
+    ``include_pi`` corresponds to the "no signal drives more than K" phrasing:
+    it additionally bounds primary inputs AND DFF Q outputs (a signal is any
+    net, regardless of what drives it).  The default (gate outputs only) is
+    the "no gate drives more than K" phrasing.  Constants are exempt.
+    """
     em = Emitter(nl)
 
     # snapshot the set of driver nets to process (new buffer nets are <=k by
@@ -71,7 +77,8 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
             targets.append(g.out)
         if include_pi:
             targets.extend(sorted(nl.pi))
-        # PI fanout also matters for "no signal" phrasing
+            seen = set(targets)
+            targets.extend(sorted({ff.q for ff in nl.dffs} - seen))
     total = 0
     for net in targets:
         total += _buffer_one_net(nl, em, net, k)

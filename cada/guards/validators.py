@@ -33,13 +33,15 @@ def check(before: Netlist, after: Netlist, *,
 
     if max_fanout is not None:
         # "no gate drives more than K" bounds gate outputs only; "no signal..."
-        # additionally bounds primary inputs.
+        # additionally bounds primary inputs and DFF Q outputs.
         mx = 0
         for g in after.gates:
             mx = max(mx, connectivity.fanout_count(after, g.out, include_po=False))
         if max_fanout_pi:
             for p in after.pi:
                 mx = max(mx, connectivity.fanout_count(after, p, include_po=False))
+            for ff in after.dffs:
+                mx = max(mx, connectivity.fanout_count(after, ff.q, include_po=False))
         if mx > max_fanout:
             return False, f"max-fanout {mx} exceeds {max_fanout}"
 
