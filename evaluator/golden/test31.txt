@@ -4,16 +4,16 @@ Total gate count: 5442 AND: 0 OR: 144 NOT: 507 NAND: 3214 NOR: 505 XOR: 22 XNOR:
 343 gate(s) are reachable from n2: g1651, g1654, g1655, g1659, g1733, g1734, g1735, g1767, g1873, g1874, g1875, g1877, g1879, g1948, g1949, g1951, g1952, g1955, g1956, g1959, g1963, g1965, g1966, g1967, g1968, g1970, g1971, g1972, g1973, g1975, g1977, g1978, g1979, g1980, g1996, g1997, g2019, g2036, g2063, g2164, g2285, g2286, g2287, g2288, g2289, g2290, g2291, g2292, g2293, g2294, g2295, g2296, g2297, g2298, g2299, g2300, g2439, g2446, g2455, g2456, g2475, g2476, g2477, g2478, g2479, g2480, g2481, g2482, g2483, g2484, g2485, g2486, g2487, g2488, g2489, g2490, g2491, g2492, g2493, g2494, g2495, g2496, g2497, g2498, g2499, g2500, g2501, g2502, g2503, g2504, g2505, g2507, g2508, g2509, g2510, g2511, g2512, g2513, g2514, g2515
 Collapsed 5 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Verified: the current design is functionally equivalent to the pre-transformation netlist.
-The fanout of n0 is 756. It directly drives: g775, g776, g777, g778, g779, g780, g781, g782, g783, g784, g785, g786, g787, g788, g789, g790, g791, g792, g793, g794, g795, g796, g797, g798, g799, g800, g801, g802, g803, g804, g805, g806, g807, g808, g809, g810, g811, g812, g813, g814, g815, g816, g817, g818, g819, g820, g821, g822, g823, g824, g825, g826, g827, g828, g829, g830, g831, g832, g833, g834, g835, g836, g837, g838, g839, g840, g841, g842, g843, g844, g845, g846, g847, g848, g849, g850, g851, g852, g853, g854, g855, g856, g857, g858, g859, g860, g861, g862, g863, g864, g865, g866, g867, g868, g869, g870, g871, g872, g873, g874, g875, g876, g877, g878, g879, g880, g881, g882, g883, g884, g885, g886, g887, g888, g889, g890, g891, g892, g893, g894, g895, g896, g897, g898, g899, g900, g901, g902, g903, g904, g905, g906, g907, g908, g909, g910, g911, g912, g913, g914, g915, g916, g917, g918, g919, g920, g921, g922, g923, g924, g925, g926, g927, g928, g929, g930, g931, g932, g933, g934, g935, g936, g937, g938, g939, g940, g941, g942, g943, g944, g945, g946, g947, g948, g949, g950, g951, g952, g953, g954, g955, g956, g957, g958, g959, g960, g961, g962, g963, g964, g965, g966, g967, g968, g969, g970, g971, g972, g973, g974
+The fanout of n0 is 756. The complete list of driven gates has been written to testcase/test31/test31_n0_fanout.txt.
 No. Output n16 is not constant; it depends on the inputs.
 0 gate(s) are shared between the fan-in cones of n16 and n17: (none)
 n16 = n16
 Gates connected to the output of g0: g708
 Renamed signal n1289 to renamed_sig and updated all references.
 Gates connected to renamed_sig: g3904, g2161
-Could not determine the design file to load.
-5
-The maximum logic depth from any primary input to any DFF D-pin is 58.
+Inserted 2 dedicated buffer(s), one per load of n2; equivalence verified.
+2
+The maximum logic depth from any primary input to any DFF D-pin is 15.
 32 output(s) have a logic depth greater than 4.
 Gate g0 is a NOT gate. Output: n4404; inputs: n4490.
 No. Signals n1287 and n2404 are not functionally equivalent.

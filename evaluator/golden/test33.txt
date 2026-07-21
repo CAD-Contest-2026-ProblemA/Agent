@@ -6,8 +6,8 @@ Converted 7748 XNOR gate(s) to NOR-only logic (30992 NOR gates added); functiona
 There are currently 39364 NOR gates in the design.
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 0
-Remapped the entire design to NAND+NOT gates (0 gates rewritten); functional equivalence verified.
-There are currently 35261 NAND gates in the design.
+Remapped the cone to NAND+NOT gates (0 gates rewritten); functional equivalence verified.
+There are currently 0 NAND gates in the cone of n8.
 No. Signals n55146 and n55104 are not functionally equivalent.
 There are no combinational paths from n3 to n9.
 No. Output n8 does not depend on input n1.
@@ -15,6 +15,6 @@ Verified: the current design is functionally equivalent to the netlist as last l
 No. Wire n55104 is not a cut between a primary input and a primary output.
 Primary inputs: n0 [1-bit] n1 [1-bit] n5 [8-bit] n2 [1-bit] n3 [1-bit] n4 [1-bit] n6 [6-bit] n7 [32-bit]
 Merged 2894 structurally-duplicate gate(s); equivalence verified.
-Merged 0 structurally-duplicate gate(s); equivalence verified.
+2894
 The cone of n8 is already optimal at depth 0; reported the original (equivalence preserved).
 Wrote the current netlist to "testcase/test33/test33_out.v" successfully.
