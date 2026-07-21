@@ -48,6 +48,18 @@ if [ "$WITH_LLM" = 1 ]; then
   extra+=(--collect-all openai --collect-all anthropic)
 fi
 
+# Embed a statically-linked abc (fully self-contained executable).  Produce it
+# once with scripts/build_static_abc.sh; if absent the binary still works but
+# needs an external abc (tools.yaml / ABC_BIN / ~/abc/abc / $PATH).
+if [ -f "$repo/dist/abc_static/abc" ]; then
+  echo ">> embedding statically-linked abc into the binary"
+  extra+=(--add-binary "$repo/dist/abc_static/abc:abc"
+          --add-data "$repo/dist/abc_static/abc.rc:abc")
+else
+  echo ">> NOTE: dist/abc_static/abc not found — abc will NOT be embedded"
+  echo "         (run scripts/build_static_abc.sh first for a self-contained build)"
+fi
+
 echo ">> running PyInstaller (name: $NAME) ..."
 "$bvenv/bin/pyinstaller" --onefile --clean --noconfirm \
   --name "$NAME" \

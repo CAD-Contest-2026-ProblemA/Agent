@@ -26,8 +26,12 @@ EQUIV_NO = "NOT EQUIVALENT"
 
 
 def find_abc() -> Optional[str]:
-    from ..toolpaths import resolve
-    return resolve("abc", env_var="ABC_BIN", candidates=_ABC_CANDIDATES)
+    from ..toolpaths import resolve, _bundledir, _exedir
+    # embedded copy (inside the one-file bundle) and next-to-binary copy first
+    local = [os.path.join(_bundledir(), "abc", "abc"),
+             os.path.join(_exedir(), "abc", "abc")]
+    return resolve("abc", env_var="ABC_BIN",
+                   candidates=local + _ABC_CANDIDATES)
 
 
 def _abc_rc(abc_bin: str) -> Optional[str]:

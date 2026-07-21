@@ -32,12 +32,32 @@ def _exedir() -> str:
     return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+def _bundledir() -> str:
+    """The one-file bundle's extraction dir (sys._MEIPASS) when frozen, the
+    project root otherwise.  ``${BUNDLE}`` lets tools.yaml reference tools
+    *embedded inside the executable itself* (e.g. a statically-linked abc
+    added with --add-binary) — a fully self-contained, zero-install program."""
+    import sys
+    if getattr(sys, "frozen", False):
+        return getattr(sys, "_MEIPASS", _exedir())
+    return os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
 def register(name: str, path: Optional[str]) -> None:
     if path:
         p = str(path)
+        if "${BUNDLE}" in p:
+            p = p.replace("${BUNDLE}", _bundledir())
         if "${EXEDIR}" in p:
             p = p.replace("${EXEDIR}", _exedir())
-        _REGISTRY[name] = os.path.expanduser(p)
+        p = os.path.expanduser(p)
+        # an embedded tool may be extracted without its exec bit — restore it
+        if os.path.isfile(p) and not os.access(p, os.X_OK):
+            try:
+                os.chmod(p, os.stat(p).st_mode | 0o755)
+            except OSError:
+                pass
+        _REGISTRY[name] = p
 
 
 def register_many(mapping: dict) -> None:
