@@ -498,9 +498,16 @@ class Agent:
     def h_const1_gates(self, m, line):
         if self._need_design():
             return self._need_design()
-        gs = [g for g in self.state.current.gates if "1'b1" in g.ins]
-        return (f"{len(gs)} gate(s) have an input tied to 1'b1: " +
-                self._names([g.name for g in gs[:100]]))
+        nl = self.state.current
+        names = [g.name for g in nl.gates if "1'b1" in g.ins]
+        # A flip-flop is a primitive gate too (Q&A A2) and its .SN / .RN are
+        # ordinary inputs (A12), which is where a tied constant actually shows
+        # up in these benchmarks: test37 has 2324 such flip-flops and not one
+        # combinational gate tied to 1'b1.
+        names += [ff.name for ff in nl.dffs
+                  if "1'b1" in (ff.d, ff.clk, ff.rn, ff.sn)]
+        return (f"{len(names)} gate(s) have an input tied to 1'b1: " +
+                self._names(names[:100]))
 
     _GATE_SYNONYMS = {
         "sheffer stroke": "nand", "pierce arrow": "nor",
