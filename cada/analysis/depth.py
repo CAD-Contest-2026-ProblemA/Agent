@@ -61,12 +61,13 @@ def pi_to_po_max_depth(nl: Netlist) -> int:
 
 
 def pi_to_dff_d_max_depth(nl: Netlist) -> int:
-    # "From any primary input" is strict: sources are the primary-input bits
-    # only.  DFF.Q-sourced paths belong to the separate register-to-register
-    # query (reg_to_reg_max_depth) — answering this question with Q sources
-    # would just repeat that number.  Every gate on the path (including BUF)
-    # counts one level.
-    dist = longest_from_set(nl, set(nl.pi))
+    # Q&A A21.2: combinational depth treats DFF.Q outputs *as* primary inputs,
+    # so "from any primary input" sources them too.  This is not a duplicate of
+    # reg_to_reg_max_depth: it is the max over both source sets, and a
+    # PI-sourced path into some D pin can be the deeper one.  Every gate on the
+    # path (including BUF) counts one level.
+    srcs = set(nl.pi) | {ff.q for ff in nl.dffs}
+    dist = longest_from_set(nl, srcs)
     ds = {ff.d for ff in nl.dffs}
     return max((dist.get(d, -1) for d in ds), default=-1)
 
