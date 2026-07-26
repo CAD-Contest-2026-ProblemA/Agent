@@ -138,6 +138,122 @@ def output_always_constant(nl: Netlist, out: str) -> Optional[int]:
     return None
 
 
+def _cofactor_blif(nl: Netlist, sig: str, var: str, inputs: List[str],
+                   cone: set, combine: str) -> str:
+    """BLIF for a function of the two Shannon cofactors of ``sig`` about ``var``.
+
+    The cone is emitted twice, with ``var`` tied to 0 in one copy and 1 in the
+    other, so the two copies compute sig|var=0 and sig|var=1 over the same
+    inputs.  ``combine`` selects the property being asked about:
+
+      "viol"  ->  sig|0 AND NOT sig|1   -- non-empty exactly when raising var
+                                          can lower sig, i.e. NOT positive-unate
+      "diff"  ->  sig|0 XOR sig|1       -- non-empty exactly when sig really
+                                          depends on var
+    """
+    # Only gate-driven nets are duplicated.  The cone set also contains the
+    # leaves (primary inputs, other flip-flops' Q); those must keep one shared
+    # name, or the two copies would be fed by independent inputs and the miter
+    # would answer a different question entirely.
+    internal = {g.out for g in nl.gates if g.out in cone}
+
+    def ref(n, k):
+        if n == var:
+            return "__const0" if k == 0 else "__const1"
+        if n in ("1'b0", "1'b1"):
+            return "__const0" if n == "1'b0" else "__const1"
+        return f"{n}${k}" if n in internal else n
+
+    lines = [".model m", ".inputs " + " ".join(i for i in inputs if i != var),
+             ".outputs O", ".names __const0", ".names __const1", "1"]
+    for k in (0, 1):
+        emitted = set()
+        for g in nl.gates:
+            if g.out in cone and g.out not in emitted:
+                tt = _TT.get(g.type)
+                if tt:
+                    lines.append(".names " + " ".join(
+                        [ref(i, k) for i in g.ins] + [ref(g.out, k)]))
+                    lines.extend(tt)
+                    emitted.add(g.out)
+    a, b = ref(sig, 0), ref(sig, 1)
+    lines.append(f".names {a} {b} O")
+    lines.extend(["10 1"] if combine == "viol" else ["10 1", "01 1"])
+    lines.append(".end")
+    return "\n".join(lines) + "\n"
+
+
+def _cofactor_is_empty(nl: Netlist, sig: str, var: str, combine: str):
+    """Is the combined cofactor function identically 0?  None if undecidable."""
+    cone = graph.fanin_cone_nets(nl, [sig])
+    if var not in cone:
+        return True if combine == "viol" else True   # var absent: no viol, no dep
+    inputs = _cone_inputs(nl, [sig])
+    blif = _cofactor_blif(nl, sig, var, inputs, cone, combine)
+    const0 = (".model m\n.inputs " + " ".join(i for i in inputs if i != var) +
+              "\n.outputs O\n.names O\n.end\n")
+    return abc_bridge.cec_blif(blif, const0)
+
+
+def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256):
+    """Batched form of :func:`_cofactor_is_empty` over ``(sig, var, combine)``.
+
+    One ABC process per chunk rather than per query.  Solving these cofactor
+    miters is nearly free; it is process startup (~24 ms) that dominates, so
+    batching is what makes a per-flip-flop exact test affordable at all.
+
+    ``sat`` reports UNSATISFIABLE when the single output can never be 1, which
+    is exactly "this cofactor function is identically 0".  Verdict lines come
+    back in command order; if the count does not line up (a BLIF ABC refused,
+    say) the chunk is redone one query at a time so a single bad entry cannot
+    shift every later answer.
+    """
+    out = [None] * len(queries)
+    tmp = tempfile.mkdtemp(prefix="cada_cof_")
+    try:
+        for start in range(0, len(queries), chunk):
+            batch = queries[start:start + chunk]
+            cmds, idx = [], []
+            for j, (sig, var, combine) in enumerate(batch):
+                cone = graph.fanin_cone_nets(nl, [sig])
+                if var not in cone:
+                    out[start + j] = True          # var absent: nothing to find
+                    continue
+                inputs = _cone_inputs(nl, [sig])
+                blif = _cofactor_blif(nl, sig, var, inputs, cone, combine)
+                p = os.path.join(tmp, f"q{start + j}.blif")
+                with open(p, "w") as fh:
+                    fh.write(blif)
+                cmds.extend([f'read_blif "{p}"', "strash", "sat"])
+                idx.append(start + j)
+            if not idx:
+                continue
+            ok, txt = abc_bridge.run_abc(cmds)
+            verdicts = [ln for ln in txt.splitlines()
+                        if "SATISFIABLE" in ln or "UNSATISFIABLE" in ln]
+            if ok and len(verdicts) == len(idx):
+                for k, ln in zip(idx, verdicts):
+                    out[k] = ln.lstrip().startswith("UNSAT")
+            else:
+                for k in idx:                      # realign by going one by one
+                    sig, var, combine = queries[k]
+                    out[k] = _cofactor_is_empty(nl, sig, var, combine)
+    finally:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return out
+
+
+def positive_unate_in(nl: Netlist, sig: str, var: str):
+    """Exact: is ``sig`` monotonically non-decreasing in ``var``?  None if unknown."""
+    return _cofactor_is_empty(nl, sig, var, "viol")
+
+
+def truly_depends_on(nl: Netlist, sig: str, var: str):
+    """Exact: does ``sig`` functionally depend on ``var``?  None if unknown."""
+    r = _cofactor_is_empty(nl, sig, var, "diff")
+    return None if r is None else (not r)
+
+
 def depends_on(nl: Netlist, out: str, inp: str) -> bool:
     """Structural dependence: is ``inp`` in the fan-in cone of ``out``?"""
     cone = cones.fanin_cone_nets(nl, out)
