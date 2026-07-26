@@ -77,21 +77,12 @@ def count_paths(nl: Netlist, a: str, b: str) -> int:
 
 
 def mandatory_gates(nl: Netlist, a: str, b: str) -> List[str]:
-    """Gate instances whose output is on *every* A->B path (dominators)."""
-    topo = graph.topo_nets(nl)
-    fwd = _forward_counts(nl, a, topo)
-    bwd = _backward_counts(nl, b, topo)
-    total = fwd.get(b, 0)
-    if total == 0:
-        return []
-    out = []
-    for g in nl.gates:
-        x = g.out
-        if x in (a, b):
-            continue
-        if fwd.get(x, 0) * bwd.get(x, 0) == total and fwd.get(x, 0) > 0:
-            out.append(g.name)
-    return out
+    """Gate instances whose output is on *every* A->B path (dominators).
+
+    Same set as :func:`articulation_points`; kept as a name for the "does every
+    path go through ...?" phrasing.
+    """
+    return articulation_points(nl, a, b)
 
 
 def every_path_passes_through(nl: Netlist, a: str, b: str,
@@ -105,21 +96,39 @@ def every_path_passes_through(nl: Netlist, a: str, b: str,
 
 
 def articulation_points(nl: Netlist, a: str, b: str) -> List[str]:
-    """Nets whose removal disconnects A from B (cut vertices)."""
+    """Gate instances whose removal disconnects A from B, in topological order.
+
+    Q&A A51 fixes the directed, pair-local reading: a cut is one whose removal
+    breaks *this* A->B pair, not all PI-PO connectivity in the design.  A52
+    excludes the endpoints themselves and A53 makes an unconnected pair report
+    nothing.  The prompts ask which *gates* are articulation points, so the
+    answer is gate instances -- reporting the nets instead names the wrong kind
+    of object and misses one gate (see below).
+
+    A gate's output net has a single driver, so exactly
+    ``fwd[g.out] * bwd[g.out]`` of the A->B paths run through the gate, and it
+    is an articulation point iff that equals the total path count.  Endpoint
+    handling falls out of this: the gate driving B is traversed by every path
+    and counts, while the gate driving A sits upstream of A and is traversed by
+    none, so it is skipped explicitly.
+    """
     topo = graph.topo_nets(nl)
     fwd = _forward_counts(nl, a, topo)
     bwd = _backward_counts(nl, b, topo)
     total = fwd.get(b, 0)
     if total == 0:
-        return []
+        return []                      # A53: no path -> no articulation points
+    driver = nl._driver
     pts = []
-    # consider every net on some A->B path
     for net in topo:
-        if net in (a, b):
+        if net == a:                   # paths start at A; its driver is not on one
+            continue
+        drv = driver.get(net)
+        if drv is None or drv[0] != "gate":
             continue
         f = fwd.get(net, 0)
         if f and f * bwd.get(net, 0) == total:
-            pts.append(net)
+            pts.append(drv[1].name)
     return pts
 
 
