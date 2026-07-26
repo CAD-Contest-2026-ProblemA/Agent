@@ -73,9 +73,20 @@ def max_fanout_of(nl: Netlist, base_or_net: str) -> int:
 
 
 def reachable_gates_from(nl: Netlist, net: str) -> List[str]:
+    """Instances reachable downstream of ``net``.
+
+    Flip-flops count: a DFF is one of the nine primitive gate types (Q&A A2)
+    and its D/CK/RN/SN pins are ordinary loads (Q&A A29), so a flip-flop is
+    reached as soon as the traversal lands on any of its input pins.  The
+    search itself still stops there -- it does not continue out of Q, which
+    would cross the combinational boundary (Q&A A21.2).
+    """
     nets = graph.reachable_forward(nl, [net])
     out = []
     for g in nl.gates:
         if g.out in nets:
             out.append(g.name)
+    for ff in nl.dffs:
+        if ff.d in nets or ff.clk in nets or ff.rn in nets or ff.sn in nets:
+            out.append(ff.name)
     return out

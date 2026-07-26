@@ -371,8 +371,8 @@ class Agent:
                            line, re.IGNORECASE)
             if mm:
                 out = mm.group(1)
-                gs = cones.fanin_cone_gates(self.state.current, out)
-                n = sum(1 for g in gs if g.type == gtype)
+                gs = cones.fanin_cone_instances(self.state.current, out)
+                n = sum(1 for g in gs if getattr(g, "type", "dff") == gtype)
                 return (f"There are currently {n} {gtype.upper()} gates in "
                         f"the cone of {out}.")
             n = counts.count_of_type(self.state.current, gtype)
@@ -774,7 +774,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
-        gs = cones.fanin_cone_gates(self.state.current, net)
+        gs = cones.fanin_cone_instances(self.state.current, net)
         return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
 
     def h_tfanout(self, m, line):
@@ -1406,8 +1406,8 @@ class Agent:
         scope = self._clean_opt(scope)
         if scope is not None:
             out = str(scope)
-            gs = cones.fanin_cone_gates(self.state.current, out)
-            n = sum(1 for g in gs if g.type == gtype)
+            gs = cones.fanin_cone_instances(self.state.current, out)
+            n = sum(1 for g in gs if getattr(g, "type", "dff") == gtype)
             return (f"There are currently {n} {gtype.upper()} gates in "
                     f"the cone of {out}.")
         n = counts.count_of_type(self.state.current, gtype)
@@ -1532,7 +1532,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = str(net)
-        gs = cones.fanin_cone_gates(self.state.current, net)
+        gs = cones.fanin_cone_instances(self.state.current, net)
         return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
 
     def op_transitive_fanout(self, net):

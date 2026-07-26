@@ -32,8 +32,36 @@ def fanin_cone_nets(nl: Netlist, net: str, redirect_q: bool = False) -> Set[str]
 
 
 def fanin_cone_gates(nl: Netlist, net: str, redirect_q: bool = False):
+    """Combinational gates in the cone.
+
+    Deliberately excludes flip-flops: callers that scope a *rewrite* to a cone
+    use this, and a transform must never restructure a DFF.  Use
+    :func:`fanin_cone_instances` for questions that count what is in the cone.
+    """
     nets = fanin_cone_nets(nl, net, redirect_q)
     return [g for g in nl.gates if g.out in nets]
+
+
+def fanin_cone_dffs(nl: Netlist, net: str, redirect_q: bool = False):
+    """Flip-flops bounding the cone -- those whose Q feeds it.
+
+    A flip-flop whose Q *is* the queried net is excluded: per Q&A A65 the cone
+    of a register output is empty, that register being the boundary itself
+    rather than something inside the cone.
+    """
+    nets = fanin_cone_nets(nl, net, redirect_q)
+    sinks = set(effective_sinks(nl, net, redirect_q))
+    return [ff for ff in nl.dffs if ff.q in nets and ff.q not in sinks]
+
+
+def fanin_cone_instances(nl: Netlist, net: str, redirect_q: bool = False):
+    """Every instance in the cone: combinational gates plus the boundary DFFs.
+
+    This is what "how many gates are in the fan-in cone of X" asks for -- a
+    flip-flop is one of the nine primitive gate types (Q&A A2), so it counts.
+    """
+    return (fanin_cone_gates(nl, net, redirect_q)
+            + fanin_cone_dffs(nl, net, redirect_q))
 
 
 def transitive_fanin(nl: Netlist, net: str) -> Set[str]:
@@ -50,17 +78,16 @@ def fanout_cone_gates(nl: Netlist, net: str):
 
 
 def shared_fanin_gates(nl: Netlist, a: str, b: str):
-    ga = {g.name for g in fanin_cone_gates(nl, a)}
-    gb = {g.name for g in fanin_cone_gates(nl, b)}
-    shared = ga & gb
-    return [g for g in nl.gates if g.name in shared]
+    ia = {inst.name: inst for inst in fanin_cone_instances(nl, a)}
+    ib = {inst.name for inst in fanin_cone_instances(nl, b)}
+    return [inst for name, inst in ia.items() if name in ib]
 
 
 def largest_fanin_output(nl: Netlist, redirect_q: bool = False):
     """Return (output_net, gate_count) for the PO with the biggest fan-in cone."""
     best = None
     for po in sorted(nl.po):
-        n = len(fanin_cone_gates(nl, po, redirect_q))
+        n = len(fanin_cone_instances(nl, po, redirect_q))
         if best is None or n > best[1]:
             best = (po, n)
     return best if best else (None, 0)
