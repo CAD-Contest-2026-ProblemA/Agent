@@ -145,6 +145,11 @@ class Agent:
             (R(r"(back-to-back|back to back).*(invert|NOT).*collapse|collapse them into.*wire|pairs of.*inverters"), self.h_collapse),
             (R(r"(remove|delete|trim|sweep|prune|eliminate).*(dangling|unused|floating|redundant)"), self.h_dangling),
             (R(r"(delete|remove|eliminate|prune).*gates?.*(do not|don't|not) (contribute|affect|connected)"), self.h_dangling),
+            # "how many ... floating/unconnected" asks for the count, not a
+            # re-run of the check -- it must win over the query rule below.
+            # Removal phrasings are left to the delta rule further down.
+            (R(r"how many (?!.*\b(?:removed|merged|deleted|swept|excised)\b)"
+               r".*\b(?:floating|unconnected|undriven)\b"), self.h_floating_count),
             # port-level floating/unconnected questions must win before the
             # dangling-*gate* rules — different concept, query only (no mutation)
             (R(r"floating (inputs?|signals?)|unconnected (output )?ports?|undriven (inputs?|pins?|ports?)|unloaded output"), self.h_check_floating_ports),
@@ -1119,6 +1124,22 @@ class Agent:
         return (f"Found {total} dangling instance(s) that do not affect any "
                 "primary output: " + self._names_or_file(dead_g + dead_ff, "dangling"))
 
+    def h_floating_count(self, m, line):
+        """"How many floating signals were found?" wants the number.
+
+        Re-running the check and repeating its yes/no sentence answers a
+        different question and leaves the count unstated.  Uses the figure
+        recorded by the preceding check, or computes it if asked cold.
+        """
+        if self._need_design():
+            return self._need_design()
+        n = self.state.deltas.get("floating")
+        if n is None:
+            nl = self.state.current
+            n = (len([b for b in nl.pi if not nl.loads(b) and b not in nl.po])
+                 + len([b for b in nl.po if nl.driver(b)[0] == "undriven"]))
+        return f"{n} floating signal(s) were found."
+
     def h_check_floating_ports(self, m, line):
         """Pure query: undriven input bits and unconnected output bits.
         Port-level question — distinct from dangling *gates*."""
@@ -1127,6 +1148,7 @@ class Agent:
         nl = self.state.current
         und_in = [b for b in sorted(nl.pi) if not nl.loads(b) and b not in nl.po]
         unc_out = [b for b in sorted(nl.po) if nl.driver(b)[0] == "undriven"]
+        self.state.record_delta("floating", len(und_in) + len(unc_out))
         if not und_in and not unc_out:
             return ("No. There are no floating inputs or unconnected output "
                     "ports in this design.")
