@@ -49,8 +49,14 @@ def _simplify_one(gtype: str, ins: List[str]) -> Optional[str]:
     a constant net, a single net (wire/inverter handled by caller), or one of
     the markers ('NOT', x).  Returns None if no simplification applies.
     """
-    if gtype in ("buf",):
-        return ins[0]
+    if gtype == "buf":
+        # Only a *constant* input is constant propagation.  Dropping a buffer
+        # that carries an ordinary net is buffer removal -- a different
+        # transform, and one that silently undoes an earlier "insert buffers so
+        # that <net> drives at most K loads" request.  Per Q&A A63 that earlier
+        # structural constraint still binds the final netlist, so a buffer may
+        # only disappear here when it is genuinely folding a constant.
+        return ins[0] if is_const(ins[0]) else None
     if gtype == "not":
         if ins[0] == C0:
             return C1
@@ -115,6 +121,12 @@ def const_propagate(nl: Netlist, restrict_type: Optional[str] = None,
     """Propagate constants to a fixpoint.  Returns the number of gates
     eliminated (output became a constant or a direct wire).
 
+    ``restrict_type`` scopes the rewrite to one gate type: only gates of that
+    type are eliminated, and the returned count is that type's.  It constrains
+    the *mutation*, not just the reported number -- a request naming one gate
+    type must leave every other gate standing, or it would quietly undo the
+    structural constraints of earlier requests (Q&A A63).
+
     ``extra_const`` maps functionally-constant nets to their literal value;
     those references are replaced by the literal first (equivalence-preserving,
     since the net provably equals that constant), then the fixpoint runs."""
@@ -144,6 +156,13 @@ def const_propagate(nl: Netlist, restrict_type: Optional[str] = None,
             if idx in removed:
                 continue
             rins = [resolve(i) for i in g.ins]
+            if restrict_type is not None and g.type != restrict_type:
+                # "Simplify the reported NAND gates" must touch NAND gates only.
+                # Constants still propagate *through* this gate's inputs (the
+                # substitution above), but the gate itself is left standing.
+                if rins != g.ins:
+                    g.ins = rins
+                continue
             res = _simplify_one(g.type, rins)
             if res is None:
                 # update gate inputs in case substitution changed them
