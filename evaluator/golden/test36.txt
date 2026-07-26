@@ -7,11 +7,11 @@ No AND gates with constant inputs were found.
 Constant propagation eliminated 0 AND gate(s); equivalence verified.
 0
 Gate g0 is a NOT gate. Output: n10231; inputs: n10232.
-The maximum logic depth from any primary input to any DFF D-pin is 19.
+The maximum logic depth from any primary input to any DFF D-pin is 122.
 Yes. The function at n11 is symmetric in n3 and n9[0].
-690 flip-flop(s) are driven by clock n0: g2432, g2433, g2434, g2435, g2436, g2437, g2438, g2439, g2440, g2441, g2442, g2443, g2444, g2445, g2446, g2447, g2448, g2449, g2450, g2451, g2452, g2453, g2454, g2455, g2456, g2457, g2458, g2459, g2460, g2461, g2462, g2463, g2464, g2465, g2466, g2467, g2468, g2469, g2470, g2471, g2472, g2473, g2474, g2475, g2476, g2477, g2478, g2479, g2480, g2481, g2482, g2483, g2484, g2485, g2486, g2487, g2488, g2489, g2490, g2491, g2492, g2493, g2494, g2495, g2496, g2497, g2498, g2499, g2500, g2501, g2502, g2503, g2504, g2505, g2506, g2507, g2508, g2509, g2510, g2511, g2512, g2513, g2514, g2515, g2516, g2517, g2518, g2519, g2520, g2521, g2522, g2523, g2524, g2525, g2526, g2527, g2528, g2529, g2530, g2531
+690 flip-flop(s) are driven by clock n0: the complete list has been written to testcase/test36/test36_ffs_clock_n0.txt
 Primary input n0 has the highest fanout (690).
-Inserted 286 buffer(s) so that no driver exceeds 16 loads; max-fanout bound and equivalence verified.
+Inserted 285 buffer(s) so that no driver exceeds 16 loads; max-fanout bound and equivalence verified.
 The maximum fanout of n1 is now 15.
-The fanout of n0 is 15. It directly drives: cg370, cg372, cg374, cg376, cg378, cg380, cg382, cg384, cg386, cg388, cg390, cg392, cg394, cg396, cg398
+The fanout of n0 is 15. It directly drives: cg452, cg454, cg456, cg458, cg460, cg462, cg464, cg466, cg468, cg470, cg472, cg474, cg476, cg478, cg480
 Wrote the current netlist to "testcase/test36/test36_out.v" successfully.

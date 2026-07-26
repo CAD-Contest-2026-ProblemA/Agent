@@ -14,7 +14,7 @@ Yes. NAND(n987, n6359) is functionally equivalent to n25.
 Collapsed 51 back-to-back inverter pair(s) into direct wires; equivalence verified.
 The maximum combinational logic depth in the design is 127.
 n25 = !n990 + !n987 + n989 + n988 + n985 + n986
-4028 flip-flop(s) are driven by clock n0: g6527, g6528, g6529, g6530, g6531, g6532, g6533, g6534, g6535, g6536, g6537, g6538, g6539, g6540, g6541, g6542, g6543, g6544, g6545, g6546, g6547, g6548, g6549, g6550, g6551, g6552, g6553, g6554, g6555, g6556, g6557, g6558, g6559, g6560, g6561, g6562, g6563, g6564, g6565, g6566, g6567, g6568, g6569, g6570, g6571, g6572, g6573, g6574, g6575, g6576, g6577, g6578, g6579, g6580, g6581, g6582, g6583, g6584, g6585, g6586, g6587, g6588, g6589, g6590, g6591, g6592, g6593, g6594, g6595, g6596, g6597, g6598, g6599, g6600, g6601, g6602, g6603, g6604, g6605, g6606, g6607, g6608, g6609, g6610, g6611, g6612, g6613, g6614, g6615, g6616, g6617, g6618, g6619, g6620, g6621, g6622, g6623, g6624, g6625, g6626
+4028 flip-flop(s) are driven by clock n0: the complete list has been written to testcase/test35/test35_ffs_clock_n0.txt
 Converted 138 XOR gate(s) to 4-NAND logic (552 NAND gates added); functional equivalence verified.
 552
 Wrote the current netlist to "testcase/test35/test35_out.v" successfully.

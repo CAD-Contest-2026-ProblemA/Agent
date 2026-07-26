@@ -5,5 +5,5 @@ Remapped the entire design to AND+NOT gates (2067 gates rewritten); functional e
 Removed 0 dangling gate(s) that do not affect any primary output; equivalence verified.
 Collapsed 1216 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Merged 43 structurally-duplicate gate(s); equivalence verified.
-Reduced the maximum logic depth from 317 to 122 (basis preserved); equivalence verified.
+Reduced the maximum logic depth from 317 to 120 (basis preserved); equivalence verified.
 Wrote the current netlist to "testcase/test29/test29_out.v" successfully.
