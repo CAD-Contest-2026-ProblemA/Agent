@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import List, Optional, Tuple
+from typing import List, Optional, Set, Tuple
 
 from ..netlist.ir import Netlist
 from . import graph
@@ -87,6 +87,30 @@ def max_fanout_of(nl: Netlist, base_or_net: str) -> int:
     if p is not None and p.is_bus:
         return max((fanout_count(nl, b) for b in p.bits()), default=0)
     return fanout_count(nl, base_or_net)
+
+
+def gates_within_hops(nl: Netlist, net: str, hops: int) -> List[str]:
+    """Instances at most ``hops`` gate levels downstream of ``net``.
+
+    ``hops=1`` is the immediate fanout.  Works from any net, primary inputs
+    included -- the question is asked about a signal, not about a gate
+    instance.  A flip-flop reached on the way is reported, but the walk does
+    not continue out of its Q (Q&A A21.2 keeps the traversal combinational).
+    """
+    frontier = {net}
+    names: List[str] = []
+    seen: Set[str] = set()
+    for _ in range(max(0, hops)):
+        nxt: Set[str] = set()
+        for n in frontier:
+            for kind, inst, _pin in nl.loads(n):
+                if inst.name not in seen:
+                    seen.add(inst.name)
+                    names.append(inst.name)
+                if kind == "gate":
+                    nxt.add(inst.out)
+        frontier = nxt
+    return names
 
 
 def reachable_gates_from(nl: Netlist, net: str) -> List[str]:

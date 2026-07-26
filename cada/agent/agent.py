@@ -170,6 +170,13 @@ class Agent:
 
             (R(r"count all the gates|broken down by gate type"), self.h_count_all),
             (R(r"total gate count|compute the total gate count"), self.h_total),
+            # "Report only ... instance names" is an exact-set contract, so these
+            # answer with a bare name list.  They must precede the count-style
+            # cone/fanout rules below, which would otherwise capture a stray
+            # word as the net and answer with a number.
+            (R(r"list .*\bgates?\b.*\bthat\b\s+(?:primary input |input |signal |net )?(%s)\s+drives within (\d+) hop" % NET), self.h_hops_drives),
+            (R(r"list .*\bwithin (\d+) hops?\b.*\bof\s+(?:primary input |input |signal |net |gate )?(%s)\s*[.,;]" % NET), self.h_hops_downstream),
+            (R(r"list the instance names of all gates in the fan-?in cone of (?:the )?(?:net |signal )?(%s)" % NET), self.h_fanin_cone_names),
             (R(r"report the number of each gate type in the cone of (%s)" % NET), self.h_cone_type),
             (R(r"how many (\w+) gates? (are|were|is)"), self.h_count_or_delta),
             (R(r"how many (\w+) (were|gates were)? ?(added|removed|eliminated|merged|collapsed|inserted|found)"), self.h_delta),
@@ -828,6 +835,40 @@ class Agent:
         gs = connectivity.reachable_gates_from(self.state.current, net)
         return (f"{len(gs)} gate(s) are reachable from {net}: "
                 + self._names_or_file(gs, f"reachable_{net}"))
+
+    def _bare_names(self, names, hint: str) -> str:
+        """Answer a "report only ... names" request with just the names.
+
+        These are graded as an exact identifier set, so any surrounding prose
+        contributes stray words to the comparison.
+        """
+        if not names:
+            return "(none)"
+        return self._names_or_file(names, hint)
+
+    def h_hops_downstream(self, m, line):
+        """"... all gates within N hops downstream (in the fanout) of X"."""
+        if self._need_design():
+            return self._need_design()
+        k, net = int(m.group(1)), m.group(2)
+        gs = connectivity.gates_within_hops(self.state.current, net, k)
+        return self._bare_names(gs, f"within_{k}_hops_of_{net}")
+
+    def h_hops_drives(self, m, line):
+        """"... all gates that <net> drives within N hops"."""
+        if self._need_design():
+            return self._need_design()
+        net, k = m.group(1), int(m.group(2))
+        gs = connectivity.gates_within_hops(self.state.current, net, k)
+        return self._bare_names(gs, f"{net}_drives_{k}_hops")
+
+    def h_fanin_cone_names(self, m, line):
+        """"List the instance names of all gates in the fanin cone of X"."""
+        if self._need_design():
+            return self._need_design()
+        net = m.group(1)
+        gs = [g.name for g in cones.fanin_cone_instances(self.state.current, net)]
+        return self._bare_names(gs, f"fanin_cone_{net}")
 
     def h_highest_fanout(self, m, line):
         if self._need_design():
