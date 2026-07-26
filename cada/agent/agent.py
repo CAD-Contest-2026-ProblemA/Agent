@@ -136,6 +136,10 @@ class Agent:
             # XOR->NAND request, not a whole-design NAND+NOT remap.
             (R(r"replace.*XNOR.*(NOR-only|NOR only|equivalent NOR)"), self.h_xnor_nor),
             (R(r"convert every XNOR.*NOR"), self.h_xnor_nor),
+            # XNOR->NAND is its own targeted decomposition: without it the
+            # request falls through to the whole-design basis remap, which
+            # rewrites gates the prompt never named.
+            (R(r"(replace|convert|rewrite|re-?implement)\b.*\bXNOR\b.*\bNAND\b"), self.h_xnor_nand),
             (R(r"(replace|convert).*XOR.*(NAND-only|4 ?NAND|4-NAND|NAND)"), self.h_xor_nand),
             (R(r"decompose all XOR.*(AND, OR, and NOT|AND.*OR.*NOT)"), self.h_xor_aoi),
             (R(r"convert every XOR.*4-?NAND"), self.h_xor_nand),
@@ -1036,6 +1040,20 @@ class Agent:
         self.state.record_delta("xnor_converted", info)
         return (f"Converted {info} XNOR gate(s) to NOR-only logic "
                 f"({added} NOR gates added); functional equivalence verified.")
+
+    def h_xnor_nand(self, m, line):
+        if self._need_design():
+            return self._need_design()
+        scope = self._scope_gates(line)
+        before = counts.count_of_type(self.state.current, "nand")
+        info, ok, reason = self._commit(lambda nl: rewrite.xnor_to_nand(nl, scope))
+        if not ok:
+            return f"The XNOR->NAND conversion was reverted: {reason}."
+        added = counts.count_of_type(self.state.current, "nand") - before
+        self.state.record_delta("nand_added", added)
+        self.state.record_delta("xnor_converted", info)
+        return (f"Converted {info} XNOR gate(s) to NAND-based logic "
+                f"({added} NAND gates added); functional equivalence verified.")
 
     def h_xor_nand(self, m, line):
         if self._need_design():

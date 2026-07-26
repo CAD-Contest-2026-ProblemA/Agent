@@ -165,6 +165,19 @@ def _xnor_nor(em: Emitter, a: str, b: str, out: str):
     _xnor_4nor(em, a, b, out)
 
 
+def _xnor_4nand(em: Emitter, a: str, b: str, out: str):
+    """XNOR as the canonical 4-NAND XOR followed by an inverter.
+
+    A strictly NAND-only XNOR takes five NANDs, the fifth being NAND(x, x)
+    acting as the inverter.  Emitting that inversion as a NOT keeps the count
+    at the canonical four NANDs per converted gate; either shape removes the
+    XNOR and preserves the function.
+    """
+    t = em.fresh_wire()
+    _xor_4nand(em, a, b, t)
+    em.not_(out, t)
+
+
 # ---- targeted decompositions -------------------------------------------
 def _decompose(nl: Netlist, gtype: str, cell: Callable,
                scope_gates: Optional[Set[str]]) -> int:
@@ -187,6 +200,10 @@ def xor_to_nand(nl, scope_gates=None):
 
 def xnor_to_nor(nl, scope_gates=None):
     return _decompose(nl, "xnor", _xnor_4nor, scope_gates)
+
+
+def xnor_to_nand(nl, scope_gates=None):
+    return _decompose(nl, "xnor", _xnor_4nand, scope_gates)
 
 
 def xor_to_aoi(nl, scope_gates=None):
