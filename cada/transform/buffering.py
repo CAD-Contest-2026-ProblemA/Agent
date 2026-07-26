@@ -60,10 +60,13 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
                  only_nets: Optional[Set[str]] = None) -> int:
     """Ensure no driver fans out to more than ``k`` loads.  Returns #buffers.
 
-    ``include_pi`` corresponds to the "no signal drives more than K" phrasing:
-    it additionally bounds primary inputs AND DFF Q outputs (a signal is any
-    net, regardless of what drives it).  The default (gate outputs only) is
-    the "no gate drives more than K" phrasing.  Constants are exempt.
+    Gate outputs and DFF Q outputs are always bounded: a flip-flop is one of
+    the nine primitive gate types (Q&A A2), so "no gate drives more than K
+    loads" covers its Q just as it covers an AND's output.
+
+    ``include_pi`` additionally bounds primary inputs, which is the broader
+    "no signal/net drives more than K" phrasing -- a PI is a net but not a
+    gate, so it is in scope only there.  Constants are exempt.
     """
     em = Emitter(nl)
 
@@ -73,12 +76,20 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
     if only_nets is not None:
         targets = [n for n in only_nets if not is_const(n)]
     else:
+        seen: Set[str] = set()
+
+        def add(net: str) -> None:
+            if net not in seen and not is_const(net):
+                seen.add(net)
+                targets.append(net)
+
         for g in nl.gates:
-            targets.append(g.out)
+            add(g.out)
+        for q in sorted({ff.q for ff in nl.dffs}):
+            add(q)
         if include_pi:
-            targets.extend(sorted(nl.pi))
-            seen = set(targets)
-            targets.extend(sorted({ff.q for ff in nl.dffs} - seen))
+            for p in sorted(nl.pi):
+                add(p)
     total = 0
     for net in targets:
         total += _buffer_one_net(nl, em, net, k)

@@ -92,7 +92,7 @@ class Agent:
             # n2" + "the design functionality" otherwise false-positives the
             # load-design regex (the historic test31/test39 misroute).
             (R(r"insert a BUF gate on signal (%s).*dedicated buffer" % NET), self.h_buffers_dedicated),
-            (R(r"insert.*buffers?.*no (gate|signal) (drives|has fanout).*?(\d+)"), self.h_buffers_fanout),
+            (R(r"insert.*buffers?.*no (gate|signal|net)\b.*?(drives|drive|has fanout).*?(\d+)"), self.h_buffers_fanout),
             (R(r"insert.*buffers? on (?:the )?(?:reset )?signal (%s).*?(\d+) loads" % NET), self.h_buffers_signal),
             (R(r"buffers on the reset signal (%s)" % NET), self.h_buffers_reset),
 
@@ -1166,7 +1166,10 @@ class Agent:
         if self._need_design():
             return self._need_design()
         k = int(re.findall(r"(\d+)", line)[-1])
-        include_pi = "signal" in line.lower()
+        # "no gate ..." bounds gate outputs and DFF.Q (a flip-flop is a gate,
+        # Q&A A2).  "no signal/net ..." is broader and adds primary inputs.
+        low = line.lower()
+        include_pi = "signal" in low or "net" in low
         info, ok, reason = self._commit(
             lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
             max_fanout=k, max_fanout_pi=include_pi)
