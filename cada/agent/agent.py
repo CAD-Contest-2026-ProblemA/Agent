@@ -215,7 +215,9 @@ class Agent:
             (R(r"transitive fanin cone of (?:output )?(%s)" % NET), self.h_tfanin),
             (R(r"transitive fanout (cone )?of (?:input |primary input )?(%s)" % NET), self.h_tfanout),
             (R(r"(all gates reachable from|determine all gates reachable from|reachable from) (%s)" % NET), self.h_reachable),
-            (R(r"which primary input has the highest fanout|highest fanout in this design"), self.h_highest_fanout),
+            (R(r"which primary input (has the highest fanout|drives the largest number of loads)"
+               r"|highest fanout (in this design|over all nets)"
+               r"|which (signal|net)\b.*(highest fanout|largest number of loads)"), self.h_highest_fanout),
             (R(r"(maximum|max) fanout of (%s) now" % NET), self.h_max_fanout),
             (R(r"gates shared between the fanin cones of (%s) and (%s)" % (NET, NET)), self.h_shared),
             (R(r"(every gate|report every gate) connected to the output of (%s)" % NET), self.h_connected_out),
@@ -801,8 +803,17 @@ class Agent:
     def h_highest_fanout(self, m, line):
         if self._need_design():
             return self._need_design()
-        name, f = connectivity.highest_fanout_pi(self.state.current)
-        return f"Primary input {name} has the highest fanout ({f})."
+        # "which primary input ..." is PI-scoped; "which signal ..." / "over all
+        # nets" ranges over every driven net, where the winner is usually an
+        # internal one.  Answering the second with the PI-only maximum silently
+        # reports a smaller number for a different net.
+        if "primary input" in line.lower():
+            name, f = connectivity.highest_fanout_pi(self.state.current)
+            return f"Primary input {name} has the highest fanout ({f})."
+        name, f = connectivity.highest_fanout_net(self.state.current)
+        drv = self.state.current.driver(name)
+        by = f", driven by {drv[1].name}" if drv and drv[0] == "gate" else ""
+        return f"Signal {name} drives the largest number of loads ({f}){by}."
 
     def h_max_fanout(self, m, line):
         if self._need_design():

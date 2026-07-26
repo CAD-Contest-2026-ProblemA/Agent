@@ -56,11 +56,28 @@ def immediate_successors(nl: Netlist, inst_name: str) -> Optional[List[str]]:
 
 
 def highest_fanout_pi(nl: Netlist) -> Tuple[Optional[str], int]:
+    """Highest-fanout *primary input* -- for "which PI has the highest fanout"."""
     best = None
     for p in sorted(nl.pi):
         f = fanout_count(nl, p)
         if best is None or f > best[1]:
             best = (p, f)
+    return best if best else (None, 0)
+
+
+def highest_fanout_net(nl: Netlist) -> Tuple[Optional[str], int]:
+    """Highest-fanout net anywhere in the design.
+
+    "Which signal drives the largest number of loads" ranges over every driven
+    net -- gate outputs and DFF.Q as well as primary inputs -- and the winner is
+    usually an internal net, not a PI.
+    """
+    nets = {g.out for g in nl.gates} | set(nl.pi) | {ff.q for ff in nl.dffs}
+    best = None
+    for n in sorted(nets):
+        f = fanout_count(nl, n)
+        if best is None or f > best[1]:
+            best = (n, f)
     return best if best else (None, 0)
 
 
