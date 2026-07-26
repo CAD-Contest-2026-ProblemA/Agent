@@ -272,6 +272,23 @@ class Agent:
     def _names(insts) -> str:
         return ", ".join(insts) if insts else "(none)"
 
+    def _names_or_file(self, names, hint: str) -> str:
+        """Render a name list for an answer.
+
+        Inline while it is short enough, otherwise write the *complete* list to
+        a file and point at it.  Q&A A16 requires full enumeration -- a
+        truncated list is simply wrong, and one truncated silently is worse,
+        because it reads as if it were complete.
+        """
+        names = list(names)
+        if len(names) <= self.LIST_INLINE:
+            return self._names(names)
+        fname = f"{self.state.case_name or 'case'}_{self._san_name(hint)}.txt"
+        path = self._list_to_file(fname, names)
+        if path is None:
+            return self._names(names)   # inline everything rather than mislead
+        return f"the complete list has been written to {path}"
+
     # ===================================================================
     # IO / basic
     # ===================================================================
@@ -509,7 +526,7 @@ class Agent:
         names += [ff.name for ff in nl.dffs
                   if "1'b1" in (ff.d, ff.clk, ff.rn, ff.sn)]
         return (f"{len(names)} gate(s) have an input tied to 1'b1: " +
-                self._names(names[:100]))
+                self._names_or_file(names, "gates_tied_1b1"))
 
     _GATE_SYNONYMS = {
         "sheffer stroke": "nand", "pierce arrow": "nor",
@@ -537,7 +554,7 @@ class Agent:
         if not gs:
             return f"No {gtype.upper()} gates with constant inputs were found."
         return (f"Found {len(gs)} {gtype.upper()} gate(s) with constant inputs: " +
-                self._names([g.name for g in gs[:100]]))
+                self._names_or_file([g.name for g in gs], f"{gtype}_const_inputs"))
 
     def h_report_const_synonym(self, m, line):
         """Handle patterns with non-standard gate synonyms (Sheffer stroke→NAND, etc.)."""
@@ -640,7 +657,7 @@ class Agent:
         if not pts:
             return f"There are no articulation points between {a} and {b}."
         return (f"{len(pts)} articulation point(s) between {a} and {b}: " +
-                self._names(pts[:100]))
+                self._names_or_file(pts, f"articulation_{a}_{b}"))
 
     def h_cut(self, m, line):
         if self._need_design():
@@ -768,7 +785,8 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return f"Gate {g} drives {len(ds)} gate(s): " + self._names(ds[:200])
+        return (f"Gate {g} drives {len(ds)} gate(s): "
+                + self._names_or_file(ds, f"driven_by_{g}"))
 
     def h_successors(self, m, line):
         if self._need_design():
@@ -777,7 +795,8 @@ class Agent:
         ds = connectivity.immediate_successors(self.state.current, g)
         if ds is None:
             return f"No instance named {g} exists."
-        return f"Immediate successors of {g}: " + self._names(ds[:200])
+        return ("Immediate successors of %s: " % g
+                + self._names_or_file(ds, f"successors_{g}"))
 
     def h_tfanin(self, m, line):
         if self._need_design():
@@ -798,7 +817,8 @@ class Agent:
             return self._need_design()
         net = m.group(2)
         gs = connectivity.reachable_gates_from(self.state.current, net)
-        return f"{len(gs)} gate(s) are reachable from {net}: " + self._names(gs[:100])
+        return (f"{len(gs)} gate(s) are reachable from {net}: "
+                + self._names_or_file(gs, f"reachable_{net}"))
 
     def h_highest_fanout(self, m, line):
         if self._need_design():
@@ -828,7 +848,7 @@ class Agent:
         a, b = m.group(1), m.group(2)
         gs = cones.shared_fanin_gates(self.state.current, a, b)
         return (f"{len(gs)} gate(s) are shared between the fan-in cones of "
-                f"{a} and {b}: " + self._names([g.name for g in gs[:100]]))
+                f"{a} and {b}: " + self._names_or_file([g.name for g in gs], f"shared_{a}_{b}"))
 
     def h_connected_out(self, m, line):
         if self._need_design():
@@ -837,7 +857,8 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return f"Gates connected to the output of {g}: " + self._names(ds[:200])
+        return (f"Gates connected to the output of {g}: "
+                + self._names_or_file(ds, f"connected_out_{g}"))
 
     # ===================================================================
     # functional
@@ -924,7 +945,7 @@ class Agent:
         clk = m.group(1)
         ff = sequential.ffs_on_clock(self.state.current, clk)
         return (f"{len(ff)} flip-flop(s) are driven by clock {clk}: " +
-                self._names([f.name for f in ff[:100]]))
+                self._names_or_file([f.name for f in ff], f"ffs_clock_{clk}"))
 
     def h_same_clock(self, m, line):
         if self._need_design():
@@ -1096,7 +1117,7 @@ class Agent:
             return ("No dangling gates were found; every gate contributes to a "
                     "primary output.")
         return (f"Found {total} dangling instance(s) that do not affect any "
-                "primary output: " + self._names((dead_g + dead_ff)[:200]))
+                "primary output: " + self._names_or_file(dead_g + dead_ff, "dangling"))
 
     def h_check_floating_ports(self, m, line):
         """Pure query: undriven input bits and unconnected output bits.
@@ -1112,10 +1133,10 @@ class Agent:
         parts = ["Yes."]
         if und_in:
             parts.append(f"{len(und_in)} floating input bit(s): "
-                         + self._names(und_in[:100]))
+                         + self._names_or_file(und_in, "floating_inputs"))
         if unc_out:
             parts.append(f"{len(unc_out)} unconnected output bit(s): "
-                         + self._names(unc_out[:100]))
+                         + self._names_or_file(unc_out, "unconnected_outputs"))
         return " ".join(parts)
 
     def h_merge(self, m, line):
@@ -1160,7 +1181,8 @@ class Agent:
             return self._need_design()
         net = m.group(1)
         gs = naming.gates_connected_to_net(self.state.current, net)
-        return f"Gates connected to {net}: " + self._names(gs[:200])
+        return (f"Gates connected to {net}: "
+                + self._names_or_file(gs, f"connected_{net}"))
 
     def h_buffers_fanout(self, m, line):
         if self._need_design():
@@ -1538,7 +1560,8 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return f"Gate {g} drives {len(ds)} gate(s): " + self._names(ds[:200])
+        return (f"Gate {g} drives {len(ds)} gate(s): "
+                + self._names_or_file(ds, f"driven_by_{g}"))
 
     def op_successors(self, gate):
         if self._need_design():
@@ -1547,7 +1570,8 @@ class Agent:
         ds = connectivity.immediate_successors(self.state.current, g)
         if ds is None:
             return f"No instance named {g} exists."
-        return f"Immediate successors of {g}: " + self._names(ds[:200])
+        return ("Immediate successors of %s: " % g
+                + self._names_or_file(ds, f"successors_{g}"))
 
     def op_transitive_fanin(self, net):
         if self._need_design():
@@ -1568,7 +1592,8 @@ class Agent:
             return self._need_design()
         net = str(net)
         gs = connectivity.reachable_gates_from(self.state.current, net)
-        return f"{len(gs)} gate(s) are reachable from {net}: " + self._names(gs[:100])
+        return (f"{len(gs)} gate(s) are reachable from {net}: "
+                + self._names_or_file(gs, f"reachable_{net}"))
 
     def op_highest_fanout_pi(self):
         if self._need_design():
@@ -1589,7 +1614,7 @@ class Agent:
         a, b = str(a), str(b)
         gs = cones.shared_fanin_gates(self.state.current, a, b)
         return (f"{len(gs)} gate(s) are shared between the fan-in cones of "
-                f"{a} and {b}: " + self._names([g.name for g in gs[:100]]))
+                f"{a} and {b}: " + self._names_or_file([g.name for g in gs], f"shared_{a}_{b}"))
 
     def op_connected_to_output(self, gate):
         if self._need_design():
@@ -1598,7 +1623,8 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return f"Gates connected to the output of {g}: " + self._names(ds[:200])
+        return (f"Gates connected to the output of {g}: "
+                + self._names_or_file(ds, f"connected_out_{g}"))
 
     # ----- paths ---------------------------------------------------------
     def op_path_exists(self, a, b, avoid=None):
@@ -1671,7 +1697,7 @@ class Agent:
         if not pts:
             return f"There are no articulation points between {a} and {b}."
         return (f"{len(pts)} articulation point(s) between {a} and {b}: " +
-                self._names(pts[:100]))
+                self._names_or_file(pts, f"articulation_{a}_{b}"))
 
     def op_is_cut(self, wire):
         if self._need_design():
@@ -1797,7 +1823,7 @@ class Agent:
         clk = str(clk)
         ff = sequential.ffs_on_clock(self.state.current, clk)
         return (f"{len(ff)} flip-flop(s) are driven by clock {clk}: " +
-                self._names([f.name for f in ff[:100]]))
+                self._names_or_file([f.name for f in ff], f"ffs_clock_{clk}"))
 
     def op_same_clock(self, a, b):
         if self._need_design():
@@ -1919,7 +1945,7 @@ class Agent:
         if not gs:
             return f"No {gtype.upper()} gates with constant inputs were found."
         return (f"Found {len(gs)} {gtype.upper()} gate(s) with constant inputs: " +
-                self._names([g.name for g in gs[:100]]))
+                self._names_or_file([g.name for g in gs], f"{gtype}_const_inputs"))
 
     def op_const_propagate(self, type=None):
         if self._need_design():
