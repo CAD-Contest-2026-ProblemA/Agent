@@ -130,12 +130,20 @@ def derive(line: str) -> LineSpec:
 
     # ---- optimize cost metric ----
     if "cost function" in low or re.search(r"\b(optimi[sz]e|minimi[sz]e|reduce)\b", low):
-        if "total gate count" in low or "gate count" in low and "cost" in low:
+        # Read the metric off the clause that *states* the cost, not the whole
+        # line.  These prompts routinely also name a cone as a structural
+        # constraint ("... ensuring the cone of n15 contains only AND, OR and
+        # NOT gates") while costing the whole design, and matching "cone"
+        # anywhere would scope the cost to that cone instead.
+        mc = re.search(r"cost(?: function)?\s+is\s+(.*?)(?:;|\.\s|$)", low)
+        clause = mc.group(1) if mc else low
+        if "gate count" in clause:
             spec.optimize = OptimizeInfo(metric="gate_count")
-        elif "depth of the cone" in low or ("cone" in low and "depth" in low and "cost" in low):
-            spec.optimize = OptimizeInfo(metric="cone_depth", output=_scope_output(line))
-        elif "maximum logic depth" in low or "critical path" in low or \
-                "maximum path depth" in low or "max" in low and "depth" in low:
+        elif "cone" in clause:
+            spec.optimize = OptimizeInfo(
+                metric="cone_depth",
+                output=_scope_output(clause) or _scope_output(line))
+        elif "depth" in clause:
             spec.optimize = OptimizeInfo(metric="depth")
 
     return spec
