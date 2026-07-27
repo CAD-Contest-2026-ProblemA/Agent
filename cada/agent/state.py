@@ -48,6 +48,10 @@ class State:
 
     # ----- deltas --------------------------------------------------------
     def record_delta(self, tag: str, n: int):
+        # Re-assignment keeps a dict key at its FIRST-insertion position, but
+        # h_delta/op_delta_count read list(deltas)[-1] as "the most recent
+        # transform" — pop first so recency and iteration order agree.
+        self.deltas.pop(tag, None)
         self.deltas[tag] = n
 
     def get_delta(self, tag: str, default: int = 0) -> int:
