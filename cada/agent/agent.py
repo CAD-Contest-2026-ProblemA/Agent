@@ -1457,6 +1457,24 @@ class Agent:
                 return self.op_convert_basis(basis=basis,
                                              scope=params.get("scope") or params.get("output"))
 
+        # "maximum depth from any primary input to any primary output" WITHOUT
+        # the word "combinational": per Q&A A21.2 the graded value is the
+        # design-wide maximum (DFF Q-pins count as PIs, D-pins as POs).  Answer
+        # with that number but say what it actually measures — labelling it the
+        # PI->PO combinational depth would be wrong whenever the critical
+        # segment is register-bounded.
+        if (intent in ("pi_to_po_depth", "global_max_depth")
+                and re.search(r"primary inputs?\b.*\bprimary outputs?", line, re.I)
+                and "combinational" not in line.lower()):
+            if self._need_design():
+                return self._need_design()
+            d = depth.global_max_depth(self.state.current)
+            return ("The maximum logic depth from any primary input to any "
+                    f"primary output is {d} (per the contest Q&A, DFF outputs "
+                    "count as primary inputs and DFF D-pins as primary outputs, "
+                    "so this design-wide maximum includes register-bounded "
+                    "paths).")
+
         # A conversion that names the gate type to replace is targeted, never a
         # whole-design remap — remapping every gate answers a different request
         # and poisons every later response in the case.
