@@ -250,7 +250,7 @@ def check_config(rep: Report):
         if cfg.api_key:
             rep.ok(f"LLM api_key set for provider '{cfg.provider}'")
         else:
-            rep.warn("no LLM api_key set (rules-only works; the agent errors without --no-llm)",
+            rep.warn("no LLM api_key set (the agent errors out at startup)",
                      "paste your real key into configs/api_key.yaml")
     except Exception as exc:
         rep.warn(f"could not parse configs/api_key.yaml ({exc})")

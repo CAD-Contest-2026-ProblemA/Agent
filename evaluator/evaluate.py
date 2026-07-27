@@ -54,12 +54,12 @@ BOLD = lambda s: _c("1", s)
 
 
 # ----- run one case, capturing per-step responses and snapshots ----------
-def run_case(case: str, config_path):
+def run_case(case: str, config_path, use_rules: bool = True):
     case_dir = os.path.join(TC_ROOT, case)
     prompt = os.path.join(case_dir, "prompt.txt")
     cfg = load_config(config_path)
     _configure_tools(cfg, None)
-    agent = Agent(cfg)
+    agent = Agent(cfg, use_rules=use_rules)
 
     lines, responses, specs, snaps = [], [], [], {}
     transform_seen_before = []  # whether a transform happened before line i
@@ -98,7 +98,8 @@ def _parse_frames(stdout: str, n: int):
     return [bodies.get(i, "") for i in range(1, n + 1)], len(bodies)
 
 
-def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
+def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
+                 use_rules: bool = True):
     """Drive the REAL executable (the PyInstaller binary or the wrapper) as a
     subprocess and evaluate its actual stdout + written netlist.
 
@@ -119,7 +120,10 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320):
 
     # run the executable in the current (sandbox) cwd; out.v lands here
     try:
-        proc = subprocess.run([os.path.abspath(exe), "-config", config_path, "--no-llm"],
+        cmd = [os.path.abspath(exe), "-config", config_path]
+        if not use_rules:
+            cmd.append("--no-rules")
+        proc = subprocess.run(cmd,
                               input="\n".join(raw) + "\n",
                               capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout
@@ -299,6 +303,8 @@ def main(argv=None) -> int:
     ap.add_argument("--exe", default=None,
                     help="run this executable (e.g. dist/cada1125_alpha or "
                          "./cada1125_alpha) as a subprocess instead of in-process")
+    ap.add_argument("--no-rules", dest="no_rules", action="store_true",
+                    help="route every request through the LLM (skip the regex rules)")
     args = ap.parse_args(argv)
     if args.exe:
         args.exe = os.path.abspath(args.exe)
@@ -327,9 +333,10 @@ def _run_cases(args, cases) -> int:
     for case in cases:
         try:
             if args.exe:
-                run = run_case_exe(case, args.exe, args.config)
+                run = run_case_exe(case, args.exe, args.config,
+                                   use_rules=not args.no_rules)
             else:
-                run = run_case(case, args.config)
+                run = run_case(case, args.config, use_rules=not args.no_rules)
             results = evaluate_case(run, GOLDEN_DIR, args.update_golden)
         except Exception as exc:
             print(f"{BOLD(case)}  {RED('ERROR')} {exc}")

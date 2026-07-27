@@ -8,8 +8,8 @@
 #
 # Shape matches the contest's Figure 6.  The agent ERRORS OUT (non-zero exit) if
 # -config is missing, the file does not exist, or no api_key is set for the
-# chosen `provider`.  Pass --no-llm to run the deterministic rules only, with no
-# key required (this is what the evaluator uses).
+# chosen `provider` — an API key is always required.  Pass --no-rules to skip
+# the deterministic regex rules and route every request through the LLM.
 
 provider: "openai"          # or: "anthropic"
 

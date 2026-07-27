@@ -27,8 +27,9 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Directory for <case_name>.log files")
     p.add_argument("--doctor", dest="doctor", action="store_true",
                    help="Run environment pre-flight checks and exit")
-    p.add_argument("--no-llm", dest="no_llm", action="store_true",
-                   help="Rules-only mode: do not require an API key (no LLM fallback)")
+    p.add_argument("--no-rules", dest="no_rules", action="store_true",
+                   help="Skip the deterministic regex rules and route every "
+                        "request through the LLM (for testing LLM coverage)")
     return p
 
 
@@ -78,13 +79,13 @@ def main(argv=None) -> int:
         sys.stderr.write(f"error: -config file not found: {args.config}\n")
         return 2
     config = load_config(args.config)
-    if not args.no_llm and not config.api_key:
+    if not config.api_key:
         sys.stderr.write(
             f"error: no API key for provider '{config.provider}' in {args.config}\n"
-            f"       set {config.provider}.api_key, or pass --no-llm for rules-only mode\n")
+            f"       set {config.provider}.api_key\n")
         return 2
     _configure_tools(config, args.tools)
-    agent = Agent(config)
+    agent = Agent(config, use_rules=not args.no_rules)
 
     def on_case_name(name: str):
         agent.state.case_name = name

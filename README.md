@@ -126,9 +126,10 @@ generation:
 
 Then run with `-config configs/api_key.yaml`.  The agent **errors out** (non-zero
 exit) if `-config` is missing, the file does not exist, or no `api_key` is set
-for the chosen `provider` — pass `--no-llm` for the deterministic rules-only mode
-(no key required; this is what the evaluator uses).  You only need the key for the
-provider you select.
+for the chosen `provider` — an API key is always required.  You only need the key
+for the provider you select.  Pass `--no-rules` to skip the deterministic regex
+rules and route every request through the LLM (useful for testing LLM coverage;
+by default the rules run first and the LLM only handles unmatched lines).
 
 ## Pre-flight check (doctor)
 

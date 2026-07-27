@@ -47,11 +47,12 @@ def _basis_from_text(text: str) -> Optional[str]:
 
 
 class Agent:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config, use_rules: bool = True):
         self.config = config
         self.state = State()
         self.llm = LLMClient(config)
         self.fallback = Fallback(self.llm)
+        self.use_rules = use_rules
         self.rules = self._build_rules()
         self.const_nets = {}     # functionally-constant nets (from last report)
 
@@ -60,13 +61,14 @@ class Agent:
     # ===================================================================
     def handle(self, line: str, ident: int) -> str:
         line = line.strip()
-        for rx, fn in self.rules:
-            m = rx.search(line)
-            if m:
-                try:
-                    return fn(m, line)
-                except Exception as exc:
-                    return f"Could not complete the request ({exc})."
+        if self.use_rules:
+            for rx, fn in self.rules:
+                m = rx.search(line)
+                if m:
+                    try:
+                        return fn(m, line)
+                    except Exception as exc:
+                        return f"Could not complete the request ({exc})."
         # LLM fallback
         obj = self.fallback.translate(line)
         if obj is not None:

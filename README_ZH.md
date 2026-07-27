@@ -90,7 +90,7 @@ generation:
   max_output_tokens: 4096
 ```
 
-然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;要跑不需 key 的純規則模式請加 `--no-llm`(evaluator 就是這樣跑的)。只需填你選用那個 provider 的 key。
+然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;API key 一律必填。只需填你選用那個 provider 的 key。加 `--no-rules` 可跳過確定性 regex 規則、讓每一行請求都走 LLM(用來測試 LLM 覆蓋率;預設是規則優先、沒命中的才交給 LLM)。
 
 ## 環境自檢(doctor)
 
