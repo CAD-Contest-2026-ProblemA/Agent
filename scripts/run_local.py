@@ -19,6 +19,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from cada.io_.config import load_config
 from cada.io_.protocol import Protocol
 from cada.agent.agent import Agent
+from cada.main import _configure_tools
 
 
 def run_case(case_dir: str, config_path: str, out_dir: str) -> str:
@@ -26,6 +27,7 @@ def run_case(case_dir: str, config_path: str, out_dir: str) -> str:
     if not os.path.exists(prompt):
         return f"(no prompt.txt in {case_dir})"
     cfg = load_config(config_path)
+    _configure_tools(cfg, None)
     agent = Agent(cfg)
     buf = io.StringIO()
     proto = Protocol(handler=agent.handle,

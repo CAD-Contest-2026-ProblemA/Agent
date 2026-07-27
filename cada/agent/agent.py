@@ -70,11 +70,50 @@ class Agent:
         # LLM fallback
         obj = self.fallback.translate(line)
         if obj is not None:
+            # Semantic gate: params that must name a real net/instance but
+            # don't (e.g. {"a":"primary_input"}) are sent back with the error
+            # so the model can pick a class-level intent instead.
+            bad = self._invalid_name_params(obj)
+            if bad:
+                obj2 = self.fallback.retranslate(line, bad)
+                if obj2 is not None and not self._invalid_name_params(obj2):
+                    obj = obj2
             try:
                 return self._dispatch_intent(obj.get("intent"), obj.get("params", {}), line)
             except Exception as exc:
                 return f"Could not complete the request ({exc})."
         return self._default_ack(line)
+
+    # params that must refer to an existing net or instance name
+    _NAME_PARAM_KEYS = ("a", "b", "net", "gate", "output", "wire", "input",
+                        "target", "clk", "old")
+
+    def _invalid_name_params(self, obj) -> str:
+        """Error text if a name-typed param doesn't exist in the design."""
+        nl = self.state.current
+        if nl is None:
+            return ""
+        params = obj.get("params") or {}
+        names = self._known_names(nl)
+        bad = [f'{k}="{params[k]}"' for k in self._NAME_PARAM_KEYS
+               if isinstance(params.get(k), str) and params[k] not in names]
+        if not bad:
+            return ""
+        return (f'intent "{obj.get("intent")}" has param(s) {", ".join(bad)} '
+                "that name no net, gate, or flip-flop in the current design.")
+
+    def _known_names(self, nl):
+        # Rebuilt per call: transforms and renames mutate the netlist in
+        # place, so a cached name set would go stale and misreport fresh
+        # identifiers (e.g. a just-renamed signal) as unknown.
+        names = {"1'b0", "1'b1"}
+        names.update(nl.pi); names.update(nl.po)
+        for g in nl.gates:
+            names.add(g.name); names.add(g.out); names.update(g.ins)
+        for ff in nl.dffs:
+            names.update((ff.name, ff.d, ff.q, ff.clk, ff.rn, ff.sn))
+        names.discard(None)
+        return names
 
     def _default_ack(self, line: str) -> str:
         return ("Acknowledged. The request was not mapped to a specific EDA "
@@ -1418,6 +1457,18 @@ class Agent:
                 return self.op_convert_basis(basis=basis,
                                              scope=params.get("scope") or params.get("output"))
 
+        # A conversion that names the gate type to replace is targeted, never a
+        # whole-design remap — remapping every gate answers a different request
+        # and poisons every later response in the case.
+        if intent == "convert_basis":
+            scope = params.get("scope")
+            if re.search(r"\bXNOR\b", line, re.I) and re.search(r"\bNOR\b", line, re.I):
+                return self.op_xnor_to_nor(scope=scope)
+            if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bNAND\b", line, re.I):
+                return self.op_xor_to_nand(scope=scope)
+            if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bAND\b.*\bOR\b.*\bNOT\b", line, re.I):
+                return self.op_xor_to_aoi(scope=scope)
+
         handler = getattr(self, f"op_{intent}", None)
         if handler is None:
             return (f'Acknowledged. The request was mapped to intent "{intent}", '
@@ -1541,8 +1592,15 @@ class Agent:
         low = str(kind or "").lower()
         d = self.state.deltas
         val = None
-        if "buf" in low or "buffer" in low:
+        if low in d:
+            # exact delta key ("nor_added", "xor_converted", ...)
+            val = d[low]
+        elif "buf" in low or "buffer" in low:
             val = d.get("buffers_added")
+        elif "nand" in low and "added" in low:
+            val = d.get("nand_added")
+        elif "nor" in low and "xnor" not in low and "added" in low:
+            val = d.get("nor_added")
         elif "const" in low or "eliminated" in low or "propagation" in low:
             val = d.get("const_eliminated")
         elif "merge" in low or "duplicate" in low:
@@ -1666,6 +1724,10 @@ class Agent:
             return self._need_design()
         net = str(net)
         gs = cones.fanout_cone_gates(self.state.current, net)
+        if not gs and self.state.current.loads(net):
+            # The net feeds only sequential pins (e.g. a clock): the gate cone
+            # is empty but the question means the instances it drives.
+            return self._fanout_answer(net)
         return f"The transitive fan-out cone of {net} contains {len(gs)} gates."
 
     def op_reachable_from(self, net):
@@ -1831,6 +1893,40 @@ class Agent:
         k = int(k)
         outs = depth.outputs_depth_greater_than(self.state.current, k)
         return f"{len(outs)} output(s) have a logic depth greater than {k}."
+
+    def op_pi_to_po_depth(self):
+        if self._need_design():
+            return self._need_design()
+        d = depth.pi_to_po_max_depth(self.state.current)
+        if d < 0:
+            return ("The maximum combinational logic depth from any primary input "
+                    "to any primary output is 0 (no primary output is reachable "
+                    "from a primary input by a purely combinational path).")
+        return ("The maximum combinational logic depth from any primary input to "
+                f"any primary output is {d}.")
+
+    def op_largest_fanin_cone(self):
+        if self._need_design():
+            return self._need_design()
+        name, n = cones.largest_fanin_output(self.state.current)
+        return f"Output {name} has the largest fan-in cone ({n} gates)."
+
+    def op_check_floating(self):
+        return self.h_check_floating_ports(None, "")
+
+    def op_floating_count(self):
+        return self.h_floating_count(None, "")
+
+    def op_const1_gates(self):
+        return self.h_const1_gates(None, "")
+
+    def op_connected_to_net(self, net):
+        if self._need_design():
+            return self._need_design()
+        net = str(net)
+        gs = naming.gates_connected_to_net(self.state.current, net)
+        return (f"Gates connected to {net}: "
+                + self._names_or_file(gs, f"connected_{net}"))
 
     def op_deepest_output(self):
         if self._need_design():
@@ -2073,23 +2169,26 @@ class Agent:
             return self._need_design()
         old, new = str(old), str(new)
         kind = str(kind or "signal").lower()
-        if kind in ("wire", "net"):
-            kind = "signal"  # LLM synonym: wires/nets are signals
+        # wires/nets rename like signals, but the reply echoes the caller's noun
+        word = kind if kind in ("gate", "wire", "signal") else "signal"
         if kind == "gate":
             ok = naming.rename_gate(self.state.current, old, new)
         else:
             ok = naming.rename_net(self.state.current, old, new)
         self.state.current.touch()
         if not ok:
-            return f"No {kind} named {old} was found to rename."
-        return f"Renamed {kind} {old} to {new} and updated all references."
+            return f"No {word} named {old} was found to rename."
+        return f"Renamed {word} {old} to {new} and updated all references."
 
-    def op_insert_buffers(self, k=4, net=None, mode="fanout"):
+    def op_insert_buffers(self, k=4, net=None, mode="fanout", scope=None):
         if self._need_design():
             return self._need_design()
         k = int(k)
         net = self._clean_opt(net)
         mode = str(mode or "fanout").lower()
+        # "no gate drives more than k" bounds gate outputs and DFF.Q (a
+        # flip-flop is a gate, Q&A A2); "no signal/net" also bounds PIs.
+        include_pi = str(scope or "gate").lower() == "signal"
         if mode == "dedicated" and net:
             info, ok, reason = self._commit(lambda nl: buffering.dedicated_buffer_per_load(nl, str(net)))
             if not ok:
@@ -2104,8 +2203,8 @@ class Agent:
             self.state.record_delta("buffers_added", info)
             return f"Inserted {info} buffer(s) on {net} so each driver has at most {k} loads; equivalence verified."
         info, ok, reason = self._commit(
-            lambda nl: buffering.limit_fanout(nl, k, include_pi=True),
-            max_fanout=k, max_fanout_pi=True)
+            lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
+            max_fanout=k, max_fanout_pi=include_pi)
         if not ok:
             return f"The buffer insertion was reverted: {reason}."
         self.state.record_delta("buffers_added", info)

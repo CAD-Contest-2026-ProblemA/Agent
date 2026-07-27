@@ -8,9 +8,13 @@ deterministic engine keeps working offline.
 
 from __future__ import annotations
 
+import time
 from typing import Optional
 
 from ..io_.config import Config
+
+# Error signatures that never recover on retry (bad key, bad request).
+_FATAL_MARKERS = ("api_key", "authentication", "invalid_request", "not_found")
 
 
 class LLMClient:
@@ -65,23 +69,30 @@ class LLMClient:
         if self._client is None:
             return None
         cfg = self.config
-        try:
-            if self._kind == "anthropic":
-                msg = self._client.messages.create(
-                    model=cfg.anthropic_model,
-                    max_tokens=cfg.max_output_tokens,
-                    temperature=cfg.temperature,
-                    system=system,
-                    messages=[{"role": "user", "content": user}],
-                )
-                return "".join(
-                    b.text for b in msg.content if getattr(b, "type", "") == "text")
-            else:
-                msgs = [{"role": "system", "content": system},
-                        {"role": "user", "content": user}]
-                resp = self._openai_complete(cfg.openai_model,
-                                             cfg.max_output_tokens,
-                                             cfg.temperature, msgs)
-                return resp.choices[0].message.content
-        except Exception:
-            return None
+        # Transient failures (rate limits, timeouts, 5xx) must not silently
+        # turn one request line into a no-op — retry with backoff first.
+        for attempt in range(3):
+            try:
+                if self._kind == "anthropic":
+                    msg = self._client.messages.create(
+                        model=cfg.anthropic_model,
+                        max_tokens=cfg.max_output_tokens,
+                        temperature=cfg.temperature,
+                        system=system,
+                        messages=[{"role": "user", "content": user}],
+                    )
+                    return "".join(
+                        b.text for b in msg.content if getattr(b, "type", "") == "text")
+                else:
+                    msgs = [{"role": "system", "content": system},
+                            {"role": "user", "content": user}]
+                    resp = self._openai_complete(cfg.openai_model,
+                                                 cfg.max_output_tokens,
+                                                 cfg.temperature, msgs)
+                    return resp.choices[0].message.content
+            except Exception as e:
+                low = str(e).lower()
+                if attempt == 2 or any(m in low for m in _FATAL_MARKERS):
+                    return None
+                time.sleep(2 * (attempt + 1))
+        return None

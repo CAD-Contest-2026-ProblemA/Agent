@@ -49,16 +49,46 @@ class Fallback:
         if self.client is None or not self.client.available:
             return None
 
-        out = self.client.complete(INTENT_CATALOG, key)
-        obj = parse_json_object(out or "")
-        if obj is None:
-            self.last_error = "LLM did not return a valid JSON intent object."
-            return None
-
-        obj, err = validate_intent_object(obj)
+        obj, err = self._ask(key)
+        if err:
+            # One corrective round-trip: the model sees why its first attempt
+            # was rejected (unknown intent name, missing param, ...) and picks
+            # again from the catalog.
+            obj, err = self._ask(key, feedback=err)
         if err:
             self.last_error = err
             return None
 
         self.cache[key] = obj
         return obj
+
+    def retranslate(self, line: str, feedback: str) -> Optional[dict]:
+        """Re-classify a line whose first intent failed a semantic check
+        downstream (e.g. a param names a net that does not exist).  The
+        corrected object replaces the cached one on success."""
+        key = line.strip()
+        self.last_error = None
+        if self.client is None or not self.client.available:
+            return None
+        obj, err = self._ask(key, feedback=feedback)
+        if err:
+            self.last_error = err
+            return None
+        self.cache[key] = obj
+        return obj
+
+    def _ask(self, key: str, feedback: Optional[str] = None):
+        user = key
+        if feedback:
+            user = (key + "\n\nNOTE: a previous attempt to classify this request "
+                    "was rejected: " + feedback +
+                    "\nChoose again from the catalog. If the request refers to "
+                    "endpoint CLASSES (any primary input, any primary output, "
+                    "any DFF/register D-pin) rather than concrete net names, "
+                    "use the class-level intent (pi_to_po_depth, pi_to_dff_depth, "
+                    "reg_to_reg_depth, global_max_depth) with empty params.")
+        out = self.client.complete(INTENT_CATALOG, user)
+        obj = parse_json_object(out or "")
+        if obj is None:
+            return None, "LLM did not return a valid JSON intent object."
+        return validate_intent_object(obj)

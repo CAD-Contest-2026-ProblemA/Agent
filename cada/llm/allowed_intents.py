@@ -114,6 +114,62 @@ OPERATION SYNONYMS:
   "verify_equivalence" covers: verify, prove, assert, confirm, check, validate that the
   current design is (combinationally/functionally) equivalent to the original or a snapshot.
 
+▸ DEPTH PATH GROUPS — class endpoints vs concrete nets
+  Four class-level depth queries take NO params:
+    "from any primary input to any primary output"          → pi_to_po_depth {}
+    "from any primary input to any DFF D-pin / register input" → pi_to_dff_depth {}
+    "on any register-to-register path"                      → reg_to_reg_depth {}
+    "maximum combinational logic depth in the design (now)" → global_max_depth {}
+  Use "max_depth_between {a, b}" ONLY when BOTH endpoints are concrete net names
+  that literally appear in the request (n24[0], n26, ...).
+  KEY RULE: "any primary input", "any DFF", "any output" are CLASSES, never param
+  values — never emit params like {"a":"primary_input"} or {"b":"DFF"}.
+  KEY RULE: bracket indices are part of the name: n31[1] and n31 are different nets.
+  Copy the index if the request has one.
+
+▸ targeted gate-type conversion vs convert_basis
+  If the request names a SPECIFIC gate type to replace (XOR, XNOR, NAND-with-constant),
+  use the targeted intent — xor_to_nand, xnor_to_nor, xor_to_aoi, nand_const1_to_inv —
+  NOT convert_basis.  convert_basis rewrites EVERY gate and is only correct when the
+  request says to rebuild the whole netlist (or a cone) using only the basis gates.
+
+▸ minimize_depth vs optimize_cone
+  "optimize_cone {output}" only when the CONE ITSELF is the thing being optimized
+  ("optimize/re-synthesize the cone of n9").
+  If the cost function is the DESIGN-level maximum logic depth and a cone is mentioned
+  only as a side constraint ("...while ensuring the cone of n11[0] continues to use only
+  NAND and NOT gates"), use minimize_depth with that basis: {"basis":"NAND_NOT"}.
+
+▸ fanout vs transitive_fanout vs connected_to_net
+  "fanout {net}"            → what the net drives DIRECTLY (list of driven gates/loads).
+    Also correct for a clock/reset net: its loads are the flip-flops it clocks.
+  "transitive_fanout {net}" → everything downstream through multiple gate levels.
+  "connected_to_net {net}"  → every gate touching the net (its driver AND its loads),
+    e.g. "list all gates that connect to the renamed signal X".
+
+▸ insert_buffers scope
+  "no GATE drives more than k loads"        → {"k":k, "scope":"gate"}
+  "no SIGNAL/NET drives more than k loads"  → {"k":k, "scope":"signal"}  (also bounds PIs)
+
+▸ enable/hold structures (flip-flop D-input logic)
+  "enable or hold structures", "D input logic ... enable or hold" are NOT net names.
+  Report/list request → enable_hold_report {} ; "how many flip-flops ..." → enable_hold_count {}
+
+▸ count_type vs delta_count after a transform
+  "How many X gates are NOW in the design (after the conversion)?" → count_type {type}
+  (present-tense inventory).  delta_count only for "how many were added/removed/...".
+  For gates ADDED by a conversion, kind is "<added-type>_added":
+  "How many NOR gates were added by replacing the XNOR gates?" → {"kind":"nor_added"}
+
+▸ reachable_from vs transitive_fanout
+  "reachable_from {net}" for "(determine/list/how many) gates reachable from X" —
+  reachability CROSSES flip-flops (Q continues the trace).
+  "transitive_fanout {net}" only when the request literally says "transitive fanout".
+
+▸ rename kind
+  kind echoes the noun used in the request: "rename wire X" → "wire",
+  "rename (internal) signal X" → "signal", "rename gate X" → "gate".
+
 ━━━ FEW-SHOT EXAMPLES ━━━
 
 "Establish a new test environment. Benchmark name: test38."
@@ -191,6 +247,87 @@ OPERATION SYNONYMS:
 "Emit the modified netlist to the output file test38_out.v."
 → {"intent":"write_design","params":{"file":"test38_out.v"}}
 
+"What is the maximum combinational depth from any primary input to any primary output in the entire design?"
+→ {"intent":"pi_to_po_depth","params":{}}
+
+"What is the maximum logic depth from any primary input to any DFF D-pin in this design?"
+→ {"intent":"pi_to_dff_depth","params":{}}
+
+"Determine the longest combinational path depth from n30 to n31[1]."
+→ {"intent":"max_depth_between","params":{"a":"n30","b":"n31[1]"}}
+
+"Determine whether gate g0 lies on any maximum-depth path of the design. Report yes or no."
+→ {"intent":"gate_on_max_path","params":{"gate":"g0"}}
+
+"Is output n16 always 0 regardless of all inputs? Report yes or no."
+→ {"intent":"output_constant","params":{"output":"n16"}}
+
+"Write the logic expression for n30 using only the primary input names."
+→ {"intent":"boolean_equation","params":{"output":"n30"}}
+
+"Report the number of each gate type in the cone of n8."
+→ {"intent":"cone_type_counts","params":{"output":"n8"}}
+
+"List all gates with one or more inputs tied to 1'b1."
+→ {"intent":"const1_gates","params":{}}
+
+"Check if there are any floating inputs or unconnected output ports in this design."
+→ {"intent":"check_floating","params":{}}
+
+"How many floating signals were found?"
+→ {"intent":"floating_count","params":{}}
+
+"Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates."
+→ {"intent":"enable_hold_report","params":{}}
+
+"How many flip-flops were found to have enable or hold structures in their D input logic?"
+→ {"intent":"enable_hold_count","params":{}}
+
+"Which output has the largest fanin cone?"
+→ {"intent":"largest_fanin_cone","params":{}}
+
+"Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change."
+→ {"intent":"xnor_to_nor","params":{}}
+
+"Try to replace all XOR gates in this design with equivalent NAND-only implementations. Each 2-input XOR can be realized with 4 NAND gates."
+→ {"intent":"xor_to_nand","params":{}}
+
+"Decompose all XOR gates in the fanin cone of n15 into AND, OR, and NOT gates without changing functionality."
+→ {"intent":"xor_to_aoi","params":{"scope":"n15"}}
+
+"Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters."
+→ {"intent":"nand_const1_to_inv","params":{}}
+
+"Perform depth optimization on the combinational logic while ensuring the cone of n11[0] continues to use only NAND and NOT gates. The cost function is the maximum logic depth of the final design; smaller is better."
+→ {"intent":"minimize_depth","params":{"basis":"NAND_NOT"}}
+
+"Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally."
+→ {"intent":"insert_buffers","params":{"k":4,"scope":"gate"}}
+
+"List all gates that now connect to the renamed signal renamed_sig."
+→ {"intent":"connected_to_net","params":{"net":"renamed_sig"}}
+
+"What is the transitive fanout of primary input n0? List all gates reachable from n0."
+→ {"intent":"fanout","params":{"net":"n0"}}
+
+"How many NAND gates are now in the design after the XOR-to-NAND conversion?"
+→ {"intent":"count_type","params":{"type":"nand"}}
+
+"How many NOR gates were added by replacing the XNOR gates?"
+→ {"intent":"delta_count","params":{"kind":"nor_added"}}
+
+"Determine all gates reachable from n2."
+→ {"intent":"reachable_from","params":{"net":"n2"}}
+
+"Does every path from input n2 to output n12 pass through gate g0? Report yes or no."
+→ {"intent":"dominator","params":{"a":"n2","b":"n12","gate":"g0"}}
+
+"Does there exist any pair of internal signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n25?"
+→ {"intent":"exists_nand_pair","params":{"target":"n25"}}
+
+"Change the identifier of wire n74 to renamed_wire and update all references."
+→ {"intent":"rename","params":{"kind":"wire","old":"n74","new":"renamed_wire"}}
+
 ━━━ AVAILABLE INTENTS ━━━
 - begin_case {name}
 - load_design {file, dir}
@@ -207,6 +344,7 @@ OPERATION SYNONYMS:
 - count_ports {}
 - fanout {net}
 - max_fanout_of {net}
+- connected_to_net {net}        # driver AND loads of a net (e.g. a renamed signal)
 - gates_driven_by {gate}
 - successors {gate}
 - transitive_fanin {net}
@@ -221,13 +359,15 @@ OPERATION SYNONYMS:
 - dominator {a, b, gate}
 - articulation {a, b}
 - is_cut {wire}
-- max_depth_between {a, b}
+- max_depth_between {a, b}      # both endpoints must be concrete net names
 - cone_depth {output}
 - global_max_depth {}
-- pi_to_dff_depth {}
-- reg_to_reg_depth {}
+- pi_to_po_depth {}             # any primary input -> any primary output
+- pi_to_dff_depth {}            # any primary input -> any DFF D-pin
+- reg_to_reg_depth {}           # any register output -> any register input
 - outputs_depth_gt {k}
-- deepest_output {}
+- deepest_output {}             # deepest cone (by depth)
+- largest_fanin_cone {}         # largest cone (by gate count)
 - gate_on_max_path {gate}
 - signals_equivalent {a, b}
 - output_constant {output}
@@ -246,12 +386,15 @@ OPERATION SYNONYMS:
 - xor_to_aoi {scope}
 - nand_const1_to_inv {}
 - report_const_gates {type, value}
+- const1_gates {}               # list ALL gates (any type, incl. DFF pins) tied to 1'b1
+- check_floating {}             # floating inputs / unconnected output ports?
+- floating_count {}             # how many floating signals were found
 - const_propagate {type}
 - collapse_inverters {}
 - remove_dangling {}
 - merge_duplicates {}
 - rename {kind, old, new}       # kind = gate|wire|signal
-- insert_buffers {k, net, mode} # mode = fanout|dedicated
+- insert_buffers {k, net, mode, scope} # mode = fanout|dedicated; scope = gate|signal
 - minimize_depth {basis}
 - minimize_area {basis}
 - optimize_cone {output, basis}
@@ -270,7 +413,9 @@ ALLOWED_INTENTS: Set[str] = {
     "enumerate_paths", "length_zero_paths", "dominator", "articulation",
     "is_cut", "max_depth_between", "cone_depth", "global_max_depth",
     "pi_to_dff_depth", "reg_to_reg_depth", "outputs_depth_gt",
-    "deepest_output", "gate_on_max_path", "signals_equivalent",
+    "deepest_output", "largest_fanin_cone", "gate_on_max_path",
+    "pi_to_po_depth", "check_floating", "floating_count", "const1_gates",
+    "connected_to_net", "signals_equivalent",
     "output_constant", "depends_on", "boolean_equation", "symmetric",
     "exists_nand_pair", "ffs_on_clock", "same_clock", "reg_to_reg_paths",
     "enable_hold_report", "enable_hold_count", "convert_basis",
@@ -302,6 +447,7 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
     "max_fanout_of": {"net"},
     "shared_cone": {"a", "b"},
     "connected_to_output": {"gate"},
+    "connected_to_net": {"net"},
     "path_exists": {"a", "b"},
     "enumerate_paths": {"a", "b"},
     "dominator": {"a", "b", "gate"},
@@ -337,7 +483,7 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
     "report_const_gates": {"type", "value"},
     "const_propagate": {"type"},
     "rename": {"kind"},
-    "insert_buffers": {"net", "mode"},
+    "insert_buffers": {"net", "mode", "scope"},
     "minimize_depth": {"basis"},
     "minimize_area": {"basis"},
     "optimize_cone": {"basis"},
@@ -414,7 +560,7 @@ def _normalize_param(intent: str, key: str, value: Any) -> Any:
         return value.lower()
     if intent == "rename" and key == "kind" and isinstance(value, str):
         return value.lower()
-    if intent == "insert_buffers" and key == "mode" and isinstance(value, str):
+    if intent == "insert_buffers" and key in ("mode", "scope") and isinstance(value, str):
         return value.lower()
     if intent == "verify_equivalence" and key == "against" and isinstance(value, str):
         return value.lower()
@@ -453,6 +599,11 @@ def _validate_param_values(intent: str, params: Dict[str, Any]) -> Optional[str]
         mode = params["mode"]
         if mode not in BUFFER_MODES:
             return f'Invalid buffer mode "{mode}". Expected fanout or dedicated.'
+
+    if intent == "insert_buffers" and "scope" in params:
+        scope = params["scope"]
+        if scope not in ("gate", "signal"):
+            return f'Invalid buffer scope "{scope}". Expected gate or signal.'
 
     if intent == "verify_equivalence" and "against" in params:
         against = params["against"]
