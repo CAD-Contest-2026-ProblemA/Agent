@@ -11,9 +11,9 @@ The maximum combinational logic depth in the design is 77.
 n12 = n12
 Inserted 1 dedicated buffer(s), one per load of n2; equivalence verified.
 1
-Found 4 NOR gate(s) with constant inputs: g69917, g70050, g70946, g71846
-Constant propagation eliminated 4 NOR gate(s); equivalence verified.
-4
+Found 6 NOR gate(s) with constant inputs: g69917, g70050, g70815, g70946, g71713, g71846
+Constant propagation eliminated 6 NOR gate(s); equivalence verified.
+6
 Primary inputs: n0 [1-bit] n1 [1-bit] n2 [1-bit] n5 [6-bit] n6 [32-bit] n3 [1-bit] n7 [32-bit] n4 [1-bit] n8 [32-bit] n9 [16-bit]
 Converted 86 XOR gate(s) to 4-NAND logic (344 NAND gates added); functional equivalence verified.
 There are currently 78342 NAND gates in the design.

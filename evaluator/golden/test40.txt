@@ -9,7 +9,7 @@ Verified: the current design is functionally equivalent to the original loaded n
 Primary outputs: n9 [32-bit] n10 [32-bit] n11 [32-bit] n13 [1-bit] n15 [4-bit] n14 [1-bit] n12 [32-bit]
 There are 0 XOR gates in the design.
 The maximum combinational depth on any register-to-register path is 131.
-1796 flip-flop(s) implement an enable/hold structure in their D-input logic (next state depends on the register's own current state). Examples: g1258, g1259, g1260, g1261, g1262, g1263, g1264, g1265, g1266, g1267, g1268, g1269, g1270, g1271, g1272, g1273, g1274, g1275, g1276, g1277, g1278, g1279, g1280, g1281, g1282, g1283, g1284, g1285, g1286, g1287
+1796 flip-flop(s) implement an enable/hold structure in their D-input logic (next state depends on the register's own current state). Examples: g1259, g1261, g1263, g1265, g1267, g1269, g1271, g1273, g1274, g1275, g1276, g1277, g1278, g1279, g1280, g1281, g1282, g1283, g1284, g1285, g1286, g1287, g1288, g1289, g1290, g1291, g1292, g1293, g1294, g1295
 1796 flip-flops were found to have enable or hold structures in their D-input logic.
 Gate g0 is a NOT gate. Output: n11[7]; inputs: n18413.
 Output n11[16] has the largest fan-in cone (44 gates).
