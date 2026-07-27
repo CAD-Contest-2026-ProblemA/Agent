@@ -1905,6 +1905,18 @@ class Agent:
         return ("The maximum combinational logic depth from any primary input to "
                 f"any primary output is {d}.")
 
+    def op_reg_to_po_depth(self):
+        if self._need_design():
+            return self._need_design()
+        d = depth.reg_to_po_max_depth(self.state.current)
+        if d < 0:
+            return ("The maximum combinational logic depth from any register "
+                    "output to any primary output is 0 (no primary output is "
+                    "reachable from a register output by a purely combinational "
+                    "path).")
+        return ("The maximum combinational logic depth from any register output "
+                f"to any primary output is {d}.")
+
     def op_largest_fanin_cone(self):
         if self._need_design():
             return self._need_design()

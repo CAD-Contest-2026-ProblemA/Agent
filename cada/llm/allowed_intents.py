@@ -115,10 +115,11 @@ OPERATION SYNONYMS:
   current design is (combinationally/functionally) equivalent to the original or a snapshot.
 
 ▸ DEPTH PATH GROUPS — class endpoints vs concrete nets
-  Four class-level depth queries take NO params:
+  Five class-level depth queries take NO params:
     "from any primary input to any primary output"          → pi_to_po_depth {}
     "from any primary input to any DFF D-pin / register input" → pi_to_dff_depth {}
     "on any register-to-register path"                      → reg_to_reg_depth {}
+    "from any register/DFF/flip-flop output to any primary output" → reg_to_po_depth {}
     "maximum combinational logic depth in the design (now)" → global_max_depth {}
   Use "max_depth_between {a, b}" ONLY when BOTH endpoints are concrete net names
   that literally appear in the request (n24[0], n26, ...).
@@ -253,6 +254,9 @@ OPERATION SYNONYMS:
 "What is the maximum logic depth from any primary input to any DFF D-pin in this design?"
 → {"intent":"pi_to_dff_depth","params":{}}
 
+"What is the maximum combinational depth from any DFF output to any primary output in this design?"
+→ {"intent":"reg_to_po_depth","params":{}}
+
 "Determine the longest combinational path depth from n30 to n31[1]."
 → {"intent":"max_depth_between","params":{"a":"n30","b":"n31[1]"}}
 
@@ -365,6 +369,7 @@ OPERATION SYNONYMS:
 - pi_to_po_depth {}             # any primary input -> any primary output
 - pi_to_dff_depth {}            # any primary input -> any DFF D-pin
 - reg_to_reg_depth {}           # any register output -> any register input
+- reg_to_po_depth {}            # any register/DFF output -> any primary output
 - outputs_depth_gt {k}
 - deepest_output {}             # deepest cone (by depth)
 - largest_fanin_cone {}         # largest cone (by gate count)
@@ -414,8 +419,8 @@ ALLOWED_INTENTS: Set[str] = {
     "is_cut", "max_depth_between", "cone_depth", "global_max_depth",
     "pi_to_dff_depth", "reg_to_reg_depth", "outputs_depth_gt",
     "deepest_output", "largest_fanin_cone", "gate_on_max_path",
-    "pi_to_po_depth", "check_floating", "floating_count", "const1_gates",
-    "connected_to_net", "signals_equivalent",
+    "pi_to_po_depth", "reg_to_po_depth", "check_floating", "floating_count",
+    "const1_gates", "connected_to_net", "signals_equivalent",
     "output_constant", "depends_on", "boolean_equation", "symmetric",
     "exists_nand_pair", "ffs_on_clock", "same_clock", "reg_to_reg_paths",
     "enable_hold_report", "enable_hold_count", "convert_basis",

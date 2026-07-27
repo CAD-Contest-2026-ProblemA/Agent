@@ -72,6 +72,16 @@ def pi_to_dff_d_max_depth(nl: Netlist) -> int:
     return max((dist.get(d, -1) for d in ds), default=-1)
 
 
+def reg_to_po_max_depth(nl: Netlist) -> int:
+    """Longest combinational path from a register output (Q) to a primary
+    output.  Completes the four STA path groups (PI->PO, PI->D, Q->D, Q->PO)."""
+    qs = {ff.q for ff in nl.dffs}
+    if not qs:
+        return -1
+    dist = longest_from_set(nl, qs)
+    return max((dist.get(p, -1) for p in nl.po), default=-1)
+
+
 def reg_to_reg_max_depth(nl: Netlist) -> int:
     """Longest combinational path from a register output (Q) to a register
     input (D)."""
