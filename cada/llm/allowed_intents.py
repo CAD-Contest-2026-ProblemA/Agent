@@ -126,13 +126,15 @@ OPERATION SYNONYMS:
     "on any register-to-register path"                      → reg_to_reg_depth {}
     "from any register/DFF/flip-flop output to any primary output" → reg_to_po_depth {}
     "maximum combinational logic depth in the design (now)" → global_max_depth {}
-  KEY RULE: ANY question about the maximum depth between primary inputs and
-  primary outputs ("from any PI to any PO", "between the PIs and POs", "PI-to-PO
-  depth", any phrasing) that does NOT contain the word "combinational"
-  → global_max_depth {}.  Per the contest Q&A (A21.2) the graded value treats
-  DFF.Q pins as primary inputs and DFF.D pins as primary outputs, so the
-  design-wide maximum is the expected answer.  Use pi_to_po_depth ONLY when the
-  request explicitly says "combinational".
+  KEY RULE: pi_to_po_depth requires BOTH conditions at once — (a) the word
+  "combinational" AND (b) explicit primary-input/primary-output endpoints in
+  the request.  Everything else is global_max_depth {}:
+    - "maximum combinational logic depth in the design (now)" — endpoints NOT
+      mentioned → global_max_depth.  The word "combinational" alone does NOT
+      select pi_to_po_depth; global_max_depth IS a combinational measure.
+    - "maximum logic depth from any PI to any PO" / "between the PIs and POs"
+      — endpoints but no "combinational" → global_max_depth (per Q&A A21.2
+      the graded value treats DFF.Q as PIs and DFF.D as POs).
   Use "max_depth_between {a, b}" ONLY when BOTH endpoints are concrete net names
   that literally appear in the request (n24[0], n26, ...).
   KEY RULE: "any primary input", "any DFF", "any output" are CLASSES, never param
@@ -152,6 +154,10 @@ OPERATION SYNONYMS:
   If the cost function is the DESIGN-level maximum logic depth and a cone is mentioned
   only as a side constraint ("...while ensuring the cone of n11[0] continues to use only
   NAND and NOT gates"), use minimize_depth with that basis: {"basis":"NAND_NOT"}.
+  KEY RULE: "minimize (maximum) path depth, ensuring the cone of X continues to
+  use only <basis>" — the TARGET is the whole design, the cone is only the
+  constraint → minimize_depth {"basis":<basis>}, NOT optimize_cone.  Choosing
+  optimize_cone here silently skips the requested design-level optimization.
 
 ▸ cone CONVERSION vs cone OPTIMIZATION
   KEY RULE: "replace/convert/restructure/rebuild the (logic) cone of X using only
@@ -173,6 +179,20 @@ OPERATION SYNONYMS:
 ▸ insert_buffers scope
   "no GATE drives more than k loads"        → {"k":k, "scope":"gate"}
   "no SIGNAL/NET drives more than k loads"  → {"k":k, "scope":"signal"}  (also bounds PIs)
+  KEY RULE: a "no ... drives more than k loads" bound ALWAYS carries BOTH k and
+  scope — never omit scope, and never emit mode for these.  Omitting
+  scope:"signal" silently exempts primary inputs from the bound and fails the
+  request.
+  "insert a BUF on signal X so each load is driven through a DEDICATED buffer"
+  (one buffer per load, no numeric bound stated) → {"net":X, "mode":"dedicated"}.
+  mode is ONLY for this dedicated-per-load form.  Either way this is ALWAYS
+  insert_buffers, never noop — it is a structural transform.
+
+▸ deepest_output vs largest_fanin_cone
+  "DEEPEST fan-in cone / deepest logic cone" (by logic DEPTH) → deepest_output {}
+  "LARGEST/BIGGEST fan-in cone" (by GATE COUNT)               → largest_fanin_cone {}
+  KEY RULE: "deepest" asks about depth, not size — never answer it with
+  largest_fanin_cone.
 
 ▸ enable/hold structures (flip-flop D-input logic)
   "enable or hold structures", "D input logic ... enable or hold" are NOT net names.
@@ -185,9 +205,13 @@ OPERATION SYNONYMS:
   "How many NOR gates were added by replacing the XNOR gates?" → {"kind":"nor_added"}
 
 ▸ reachable_from vs transitive_fanout
-  "reachable_from {net}" for "(determine/list/how many) gates reachable from X" —
-  reachability CROSSES flip-flops (Q continues the trace).
-  "transitive_fanout {net}" only when the request literally says "transitive fanout".
+  Both walk downstream from the net and return the SAME instance set: a
+  flip-flop counts as soon as the walk lands on any of its input pins
+  (D/CK/RN/SN), and the walk STOPS at the register boundary — it does not
+  continue out of Q (Q&A A21.2).  The net's own driver is not downstream.
+  "reachable_from {net}" for "(determine/list/how many) gates reachable from X"
+  (answers with the name list); "transitive_fanout {net}" when the request says
+  "transitive fanout (cone)" (answers with the count).
 
 ▸ rename kind
   kind echoes the noun used in the request: "rename wire X" → "wire",
@@ -205,7 +229,10 @@ OPERATION SYNONYMS:
 → {"intent":"count_gates","params":{}}
 
 "Apply fanout-reduction buffers to net n1 until no driver fanout exceeds 4."
-→ {"intent":"insert_buffers","params":{"k":4,"net":"n1","mode":"fanout"}}
+→ {"intent":"insert_buffers","params":{"k":4,"net":"n1"}}
+
+"Insert buffers wherever needed so that no signal drives more than 16 loads. Make sure nothing changes functionally. The cost function is the total gate count of the final design; smaller is better."
+→ {"intent":"insert_buffers","params":{"k":16,"scope":"signal"}}
 
 "What is the current peak load count on signal n1?"
 → {"intent":"max_fanout_of","params":{"net":"n1"}}
@@ -288,6 +315,15 @@ OPERATION SYNONYMS:
 "Trace back from n14 and enumerate every gate in its supply cone."
 → {"intent":"cone_gate_count","params":{"output":"n14"}}
 
+"How many gates are in the logic cone of output n12?"
+→ {"intent":"cone_gate_count","params":{"output":"n12"}}   (plain count; cone_type_counts only when a per-type breakdown is asked)
+
+"Report every gate connected to the output of g0."
+→ {"intent":"connected_to_output","params":{"gate":"g0"}}
+
+"Optimize the logic to minimize maximum path depth, ensuring the cone of n15 continues to use only NAND and NOT gates. Preserve functional equivalence."
+→ {"intent":"minimize_depth","params":{"basis":"NAND_NOT"}}
+
 "Emit the modified netlist to the output file test38_out.v."
 → {"intent":"write_design","params":{"file":"test38_out.v"}}
 
@@ -332,6 +368,15 @@ OPERATION SYNONYMS:
 
 "Which output has the largest fanin cone?"
 → {"intent":"largest_fanin_cone","params":{}}
+
+"Which output bit has the deepest fanin logic cone?"
+→ {"intent":"deepest_output","params":{}}
+
+"What is the maximum combinational logic depth in the design now?"
+→ {"intent":"global_max_depth","params":{}}
+
+"Please insert a BUF gate on signal n2 so that each load of n2 is driven through a dedicated buffer. Ensure the design functionality does not change."
+→ {"intent":"insert_buffers","params":{"net":"n2","mode":"dedicated"}}
 
 "Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change."
 → {"intent":"xnor_to_nor","params":{}}
@@ -575,6 +620,10 @@ def validate_intent_object(obj: Any) -> Tuple[Optional[Dict[str, Any]], Optional
     required = REQUIRED_PARAMS.get(intent, set())
     optional = OPTIONAL_PARAMS.get(intent, set())
     allowed_keys = required | optional
+
+    # k bounds fanout-mode buffering; dedicated-per-load has no bound to name.
+    if intent == "insert_buffers" and raw_params.get("mode") == "dedicated":
+        required = required - {"k"}
 
     missing = [k for k in sorted(required) if _is_missing(raw_params.get(k))]
     if missing:
