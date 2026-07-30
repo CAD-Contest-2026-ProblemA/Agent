@@ -1448,46 +1448,50 @@ class Agent:
 
         params = params or {}
 
-        # Guard against LLM misclassification: a basis-remap request ("rebuild
-        # the netlist using only AND and NOT primitives") carries a basis and
-        # "only" phrasing but no cost-function sentence — it is a conversion,
-        # not an optimization, whatever the model chose.
-        if intent in ("minimize_area", "minimize_depth", "optimize_cone"):
-            basis = _basis_from_text(line)
-            if (basis and re.search(r"\b(only|use only|using only)\b", line, re.I)
-                    and not re.search(r"cost function|smaller is better", line, re.I)):
-                return self.op_convert_basis(basis=basis,
-                                             scope=params.get("scope") or params.get("output"))
+        # Regex guards against known LLM misclassifications.  These read the
+        # raw request text, so they are gated on use_rules: --no-rules must
+        # measure the LLM's own routing, with no text-based patch rescuing it.
+        if self.use_rules:
+            # A basis-remap request ("rebuild the netlist using only AND and
+            # NOT primitives") carries a basis and "only" phrasing but no
+            # cost-function sentence — it is a conversion, not an
+            # optimization, whatever the model chose.
+            if intent in ("minimize_area", "minimize_depth", "optimize_cone"):
+                basis = _basis_from_text(line)
+                if (basis and re.search(r"\b(only|use only|using only)\b", line, re.I)
+                        and not re.search(r"cost function|smaller is better", line, re.I)):
+                    return self.op_convert_basis(basis=basis,
+                                                 scope=params.get("scope") or params.get("output"))
 
-        # "maximum depth from any primary input to any primary output" WITHOUT
-        # the word "combinational": per Q&A A21.2 the graded value is the
-        # design-wide maximum (DFF Q-pins count as PIs, D-pins as POs).  Answer
-        # with that number but say what it actually measures — labelling it the
-        # PI->PO combinational depth would be wrong whenever the critical
-        # segment is register-bounded.
-        if (intent in ("pi_to_po_depth", "global_max_depth")
-                and re.search(r"primary inputs?\b.*\bprimary outputs?", line, re.I)
-                and "combinational" not in line.lower()):
-            if self._need_design():
-                return self._need_design()
-            d = depth.global_max_depth(self.state.current)
-            return ("The maximum logic depth from any primary input to any "
-                    f"primary output is {d} (per the contest Q&A, DFF outputs "
-                    "count as primary inputs and DFF D-pins as primary outputs, "
-                    "so this design-wide maximum includes register-bounded "
-                    "paths).")
+            # "maximum depth from any primary input to any primary output"
+            # WITHOUT the word "combinational": per Q&A A21.2 the graded value
+            # is the design-wide maximum (DFF Q-pins count as PIs, D-pins as
+            # POs).  Answer with that number but say what it actually measures
+            # — labelling it the PI->PO combinational depth would be wrong
+            # whenever the critical segment is register-bounded.
+            if (intent in ("pi_to_po_depth", "global_max_depth")
+                    and re.search(r"primary inputs?\b.*\bprimary outputs?", line, re.I)
+                    and "combinational" not in line.lower()):
+                if self._need_design():
+                    return self._need_design()
+                d = depth.global_max_depth(self.state.current)
+                return ("The maximum logic depth from any primary input to any "
+                        f"primary output is {d} (per the contest Q&A, DFF outputs "
+                        "count as primary inputs and DFF D-pins as primary outputs, "
+                        "so this design-wide maximum includes register-bounded "
+                        "paths).")
 
-        # A conversion that names the gate type to replace is targeted, never a
-        # whole-design remap — remapping every gate answers a different request
-        # and poisons every later response in the case.
-        if intent == "convert_basis":
-            scope = params.get("scope")
-            if re.search(r"\bXNOR\b", line, re.I) and re.search(r"\bNOR\b", line, re.I):
-                return self.op_xnor_to_nor(scope=scope)
-            if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bNAND\b", line, re.I):
-                return self.op_xor_to_nand(scope=scope)
-            if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bAND\b.*\bOR\b.*\bNOT\b", line, re.I):
-                return self.op_xor_to_aoi(scope=scope)
+            # A conversion that names the gate type to replace is targeted,
+            # never a whole-design remap — remapping every gate answers a
+            # different request and poisons every later response in the case.
+            if intent == "convert_basis":
+                scope = params.get("scope")
+                if re.search(r"\bXNOR\b", line, re.I) and re.search(r"\bNOR\b", line, re.I):
+                    return self.op_xnor_to_nor(scope=scope)
+                if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bNAND\b", line, re.I):
+                    return self.op_xor_to_nand(scope=scope)
+                if re.search(r"\bXOR\b", line, re.I) and re.search(r"\bAND\b.*\bOR\b.*\bNOT\b", line, re.I):
+                    return self.op_xor_to_aoi(scope=scope)
 
         handler = getattr(self, f"op_{intent}", None)
         if handler is None:
