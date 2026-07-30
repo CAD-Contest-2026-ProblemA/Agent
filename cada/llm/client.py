@@ -93,6 +93,11 @@ class LLMClient:
             except Exception as e:
                 low = str(e).lower()
                 if attempt == 2 or any(m in low for m in _FATAL_MARKERS):
+                    # Surface the failure: a silent None here turns every
+                    # remaining request into a no-op ack that LOOKS like a
+                    # completed run (e.g. credit exhaustion mid-run).
+                    import sys
+                    sys.stderr.write(f"[llm] API call failed, degrading to no-op: {e}\n")
                     return None
                 time.sleep(2 * (attempt + 1))
         return None
