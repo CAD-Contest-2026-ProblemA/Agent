@@ -1748,10 +1748,6 @@ class Agent:
             return self._need_design()
         net = str(net)
         gs = cones.fanout_cone_gates(self.state.current, net)
-        if not gs and self.state.current.loads(net):
-            # The net feeds only sequential pins (e.g. a clock): the gate cone
-            # is empty but the question means the instances it drives.
-            return self._fanout_answer(net)
         return f"The transitive fan-out cone of {net} contains {len(gs)} gates."
 
     def op_reachable_from(self, net):

@@ -113,21 +113,30 @@ def gates_within_hops(nl: Netlist, net: str, hops: int) -> List[str]:
     return names
 
 
-def reachable_gates_from(nl: Netlist, net: str) -> List[str]:
-    """Instances reachable downstream of ``net``.
+def downstream_instances(nl: Netlist, net: str):
+    """Instances downstream of ``net`` — THE definition of "what do I hit
+    walking forward from this net".  Every downstream-walk answer
+    (reachable_gates_from, cones.fanout_cone_gates) must go through here so
+    the two phrasings can never diverge again.
 
-    Flip-flops count: a DFF is one of the nine primitive gate types (Q&A A2)
-    and its D/CK/RN/SN pins are ordinary loads (Q&A A29), so a flip-flop is
-    reached as soon as the traversal lands on any of its input pins.  The
-    search itself still stops there -- it does not continue out of Q, which
-    would cross the combinational boundary (Q&A A21.2).
+    - A flip-flop counts as soon as the walk lands on any of its input pins
+      (D/CK/RN/SN): a DFF is one of the nine primitive gate types (Q&A A2)
+      and those pins are ordinary loads (Q&A A29).  The walk stops there --
+      it does not continue out of Q, which would cross the combinational
+      boundary (Q&A A21.2).
+    - The driver of ``net`` itself is NOT downstream: a gate cannot lie in
+      the fan-out of its own output, so the seed net is excluded before
+      matching gate outputs.  The seed stays in the set for the flip-flop
+      check -- a DFF whose input pin IS ``net`` is a direct load.
     """
     nets = graph.reachable_forward(nl, [net])
-    out = []
-    for g in nl.gates:
-        if g.out in nets:
-            out.append(g.name)
-    for ff in nl.dffs:
-        if ff.d in nets or ff.clk in nets or ff.rn in nets or ff.sn in nets:
-            out.append(ff.name)
+    gate_outs = nets - {net}
+    out = [g for g in nl.gates if g.out in gate_outs]
+    out += [ff for ff in nl.dffs
+            if ff.d in nets or ff.clk in nets or ff.rn in nets or ff.sn in nets]
     return out
+
+
+def reachable_gates_from(nl: Netlist, net: str) -> List[str]:
+    """Names of the instances reachable downstream of ``net``."""
+    return [i.name for i in downstream_instances(nl, net)]

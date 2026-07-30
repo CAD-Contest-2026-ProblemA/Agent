@@ -204,6 +204,3 @@ def fanin_cone_gates(nl: Netlist, sinks: Iterable[str]):
     return [g for g in nl.gates if g.out in nets]
 
 
-def fanout_cone_gates(nl: Netlist, srcs: Iterable[str]):
-    nets = reachable_forward(nl, srcs)
-    return [g for g in nl.gates if g.out in nets]

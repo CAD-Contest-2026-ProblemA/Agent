@@ -68,13 +68,9 @@ def transitive_fanin(nl: Netlist, net: str) -> Set[str]:
     return graph.fanin_cone_nets(nl, [net])
 
 
-def transitive_fanout(nl: Netlist, net: str) -> Set[str]:
-    return graph.reachable_forward(nl, [net])
-
-
 def fanout_cone_gates(nl: Netlist, net: str):
-    nets = transitive_fanout(nl, net)
-    return [g for g in nl.gates if g.out in nets or any(i == net for i in g.ins)]
+    from . import connectivity
+    return connectivity.downstream_instances(nl, net)
 
 
 def shared_fanin_gates(nl: Netlist, a: str, b: str):
