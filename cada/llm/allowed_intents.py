@@ -84,7 +84,12 @@ OPERATION SYNONYMS:
     Triggers: "how many were excised/absorbed/swept/collapsed/eliminated/deleted/removed",
               "tally of X gates absorbed", "gates removed in last step".
   KEY RULE: if the request contains a past-tense verb referring to the last action
-  (excised, absorbed, swept, folded, eliminated, inserted), use delta_count, not count_gates.
+  (excised, absorbed, swept, folded, eliminated, inserted, removed, merged), use
+  delta_count, not count_gates.  Adjectives like "redundant", "duplicate",
+  "superfluous", "dangling", "floating" describe WHAT was removed, not a new
+  analysis — "How many redundant gates were removed?" → delta_count
+  {"kind":"removed"}.  A "how many ... were <verb>ed" question after a transform
+  is NEVER noop.
 
 ▸ enumerate_paths vs articulation
   "enumerate_paths {a, b}" → list all combinational signal paths between two net names.
@@ -116,11 +121,18 @@ OPERATION SYNONYMS:
 
 ▸ DEPTH PATH GROUPS — class endpoints vs concrete nets
   Five class-level depth queries take NO params:
-    "from any primary input to any primary output"          → pi_to_po_depth {}
+    "COMBINATIONAL depth from any primary input to any primary output" → pi_to_po_depth {}
     "from any primary input to any DFF D-pin / register input" → pi_to_dff_depth {}
     "on any register-to-register path"                      → reg_to_reg_depth {}
     "from any register/DFF/flip-flop output to any primary output" → reg_to_po_depth {}
     "maximum combinational logic depth in the design (now)" → global_max_depth {}
+  KEY RULE: ANY question about the maximum depth between primary inputs and
+  primary outputs ("from any PI to any PO", "between the PIs and POs", "PI-to-PO
+  depth", any phrasing) that does NOT contain the word "combinational"
+  → global_max_depth {}.  Per the contest Q&A (A21.2) the graded value treats
+  DFF.Q pins as primary inputs and DFF.D pins as primary outputs, so the
+  design-wide maximum is the expected answer.  Use pi_to_po_depth ONLY when the
+  request explicitly says "combinational".
   Use "max_depth_between {a, b}" ONLY when BOTH endpoints are concrete net names
   that literally appear in the request (n24[0], n26, ...).
   KEY RULE: "any primary input", "any DFF", "any output" are CLASSES, never param
@@ -140,6 +152,16 @@ OPERATION SYNONYMS:
   If the cost function is the DESIGN-level maximum logic depth and a cone is mentioned
   only as a side constraint ("...while ensuring the cone of n11[0] continues to use only
   NAND and NOT gates"), use minimize_depth with that basis: {"basis":"NAND_NOT"}.
+
+▸ cone CONVERSION vs cone OPTIMIZATION
+  KEY RULE: "replace/convert/restructure/rebuild the (logic) cone of X using only
+  <basis> gates while preserving functional equivalence" with NO cost-function
+  sentence is a CONVERSION, not an optimization:
+    → convert_basis {"basis": <basis>, "scope": X}
+  Route to optimize_cone ONLY when the request states an optimization goal or a
+  cost function ("for minimum depth", "optimize", "the cost function is ...",
+  "smaller is better").  "Try to ..." / "while preserving equivalence" alone do
+  NOT make it an optimization.
 
 ▸ fanout vs transitive_fanout vs connected_to_net
   "fanout {net}"            → what the net drives DIRECTLY (list of driven gates/loads).
@@ -212,11 +234,32 @@ OPERATION SYNONYMS:
 "Rebuild the entire netlist using only AND and NOT primitives while preserving functional equivalence."
 → {"intent":"convert_basis","params":{"basis":"AND_NOT"}}
 
+"Convert the logic cone of n10 to use only NOR and NOT gates while preserving functional equivalence."
+→ {"intent":"convert_basis","params":{"basis":"NOR_NOT","scope":"n10"}}
+
+"Try to restructure the logic cone of output n8 using only NAND and NOT gates while preserving functional equivalence."
+→ {"intent":"convert_basis","params":{"basis":"NAND_NOT","scope":"n8"}}
+
+"Replace all 2-input OR gates in the cone of n11[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change."
+→ {"intent":"convert_basis","params":{"basis":"NAND_NOT","scope":"n11[0]"}}
+
+"What is the maximum logic depth from any primary input to any primary output?"
+→ {"intent":"global_max_depth","params":{}}
+
+"What is the PI-to-PO depth of this design?"
+→ {"intent":"global_max_depth","params":{}}   (no "combinational" → design-wide maximum)
+
+"What is the maximum combinational logic depth from any primary input to any primary output?"
+→ {"intent":"pi_to_po_depth","params":{}}
+
 "Excise all logically inert gates from the netlist."
 → {"intent":"remove_dangling","params":{}}
 
 "How many gates were excised in the previous step?"
 → {"intent":"delta_count","params":{"kind":"dangling"}}
+
+"How many redundant gates were removed?"
+→ {"intent":"delta_count","params":{"kind":"removed"}}
 
 "Give the tally of NAND gates absorbed by constant folding."
 → {"intent":"delta_count","params":{"kind":"nand"}}
