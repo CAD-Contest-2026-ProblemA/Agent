@@ -36,17 +36,41 @@ def _splitmix(i: int) -> int:
 
 
 def constant_nets(nl: Netlist, vectors: int = 256,
-                  max_confirm: int = 64) -> dict:
+                  max_confirm: int = 256) -> dict:
     """Find FUNCTIONALLY-constant nets (provably 0/1 for all inputs), per Q&A
-    A21.1.  Random-vector simulation cheaply nominates candidates (signature all
-    0s or all 1s); each candidate is then confirmed with a SAT/cec check.
+    A21.1.  Vector simulation cheaply nominates candidates (signature all 0s or
+    all 1s); each candidate is then confirmed with a SAT/cec check.
     Returns {net: "1'b0"|"1'b1"} (literal constants are not included).
+
+    Uniform random vectors alone cannot rule out rare-event functions — a wide
+    AND is 0 on virtually every uniform vector, so tens of thousands of false
+    nominees survive and swamp the SAT budget.  The simulation therefore mixes
+    four pattern blocks: uniform, dense-1 (p=7/8), dense-0 (p=1/8), and the two
+    constant patterns (all-0 / all-1 inputs), which kill almost every false
+    nominee before the expensive confirmation step.  Candidates are confirmed
+    in sorted-name order so the result never depends on netlist gate order.
     Fully guarded — returns {} on any problem."""
     try:
         from . import graph
-        mask = (1 << vectors) - 1
+        DB = 64                                # biased-block width
+        width = vectors + 2 * DB + 2
+        mask = (1 << width) - 1
+        uni_words = (vectors + 63) // 64
         srcs = sorted(set(nl.pi) | {ff.q for ff in nl.dffs})
-        val = {name: _splitmix(j) & mask for j, name in enumerate(srcs)}
+        val = {}
+        for j, name in enumerate(srcs):
+            uni = 0
+            for k in range(uni_words):         # fill ALL uniform bits (the old
+                uni |= _splitmix(j * 32 + k) << (64 * k)   # code left bits
+            uni &= (1 << vectors) - 1                      # 64.. always zero)
+            dense, sparse = 0, (1 << DB) - 1
+            for k in range(3):                 # OR of 3 -> p(1)=7/8; AND -> 1/8
+                r = _splitmix(j * 32 + 16 + k) & ((1 << DB) - 1)
+                dense |= r
+                sparse &= r
+            v = uni | (dense << vectors) | (sparse << (vectors + DB))
+            v |= 1 << (width - 1)              # all-1 input pattern
+            val[name] = v                      # bit width-2 stays 0: all-0 pattern
         val["1'b0"] = 0
         val["1'b1"] = mask
         for net in graph.topo_nets(nl):
@@ -77,10 +101,10 @@ def constant_nets(nl: Netlist, vectors: int = 256,
             else:
                 continue
             val[net] = v
-        cand = [(n, 0) for n, v in val.items() if v == 0 and n != "1'b0"]
-        cand += [(n, 1) for n, v in val.items() if v == mask and n != "1'b1"]
+        cand = sorted(n for n, v in val.items() if v == 0 and n != "1'b0")
+        cand += sorted(n for n, v in val.items() if v == mask and n != "1'b1")
         result = {}
-        for net, _guess in cand[:max_confirm]:
+        for net in cand[:max_confirm]:
             c = output_always_constant(nl, net)
             if c is not None:
                 result[net] = "1'b%d" % c
