@@ -1,0 +1,71 @@
+{
+  "case": "test81",
+  "mode": "regex first, LLM fallback",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test81.",
+      "source": "regex",
+      "intent": "h_begin"
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test81.v located in the directory testcase/test81/.",
+      "source": "regex",
+      "intent": "h_load"
+    },
+    {
+      "id": 3,
+      "line": "What is the maximum logic depth measured along the register-to-register paths?",
+      "source": "regex",
+      "intent": "h_reg2reg_paths"
+    },
+    {
+      "id": 4,
+      "line": "Is gate g2 unavoidable for signal flow from n3[0] to n5[0]? Report yes or no.",
+      "source": "unrouted",
+      "intent": null
+    },
+    {
+      "id": 5,
+      "line": "Report only the highest number of loads carried by primary input n0.",
+      "source": "unrouted",
+      "intent": null
+    },
+    {
+      "id": 6,
+      "line": "Does g0 sit on a worst-case timing chain of this design? Report yes or no.",
+      "source": "unrouted",
+      "intent": null
+    },
+    {
+      "id": 7,
+      "line": "Identify any NAND cells in this design whose inputs are held at a static value. Do not modify the design.",
+      "source": "unrouted",
+      "intent": null
+    },
+    {
+      "id": 8,
+      "line": "How many NAND gates lie inside the fan-in cone of output n5[0]?",
+      "source": "unrouted",
+      "intent": null
+    },
+    {
+      "id": 9,
+      "line": "Please write the current design to the output file test81_out.v.",
+      "source": "regex",
+      "intent": "h_write"
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test81\". All subsequent responses will be recorded to test81.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test81/test81.v\" successfully. Detected a single top module (flat netlist) with 1747 combinational gates and 202 flip-flops. Design state has been updated.",
+    "3": "There are 1545 register-to-register connections through combinational logic. Examples: g269->g269, g270->g270, g271->g271, g272->g272, g273->g273, g274->g274, g417->g275, g427->g275, g428->g275, g429->g275, g430->g275, g431->g275, g432->g275, g418->g275, g419->g275, g420->g275, g421->g275, g422->g275, g423->g275, g424->g275, g425->g275, g426->g275, g470->g275, g269->g275, g270->g275, g275->g275, g276->g275, g277->g275, g278->g275, g279->g275",
+    "4": "Acknowledged. The request was not mapped to a specific EDA operation; the current design is unchanged.",
+    "5": "Acknowledged. The request was not mapped to a specific EDA operation; the current design is unchanged.",
+    "6": "Acknowledged. The request was not mapped to a specific EDA operation; the current design is unchanged.",
+    "7": "Acknowledged. The request was not mapped to a specific EDA operation; the current design is unchanged.",
+    "8": "Acknowledged. The request was not mapped to a specific EDA operation; the current design is unchanged.",
+    "9": "Wrote the current netlist to \"testcase/test81/test81_out.v\" successfully."
+  }
+}

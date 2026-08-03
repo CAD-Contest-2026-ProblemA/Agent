@@ -1,0 +1,7 @@
+This is the beginning of a new testcase. The case name is test90.
+Please load the design from the file test90.v located in the directory testcase/test90/.
+How tall is the logic stack behind n8[0]?
+Rebuild just that output's logic so it uses nothing but NAND and NOT cells.
+Leaving the rest of the design untouched, make the logic behind n8[0] as shallow as you can.
+How tall is the logic behind n8[0] now?
+Please write the current design to the output file test90_out.v.

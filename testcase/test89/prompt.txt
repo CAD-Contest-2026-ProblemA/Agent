@@ -1,0 +1,7 @@
+This is the beginning of a new testcase. The case name is test89.
+Please load the design from the file test89.v located in the directory testcase/test89/.
+Just the peak load figure for n0, please.
+Give every load of n0 its own private repeater.
+Taking the netlist as a whole, how deep does the logic that ends at n31 run?
+Now shorten the worst-case path as far as you can without breaking anything.
+Please write the current design to the output file test89_out.v.

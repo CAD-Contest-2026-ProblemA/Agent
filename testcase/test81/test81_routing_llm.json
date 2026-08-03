@@ -1,0 +1,98 @@
+{
+  "case": "test81",
+  "mode": "pure-LLM (--no-rules)",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test81.",
+      "source": "llm",
+      "intent": "begin_case",
+      "params": {
+        "name": "test81"
+      }
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test81.v located in the directory testcase/test81/.",
+      "source": "llm",
+      "intent": "load_design",
+      "params": {
+        "file": "test81.v",
+        "dir": "testcase/test81"
+      }
+    },
+    {
+      "id": 3,
+      "line": "What is the longest gate chain that starts at a register output and ends at a primary output?",
+      "source": "llm",
+      "intent": "reg_to_po_depth",
+      "params": {}
+    },
+    {
+      "id": 4,
+      "line": "How many gates sit downstream of primary input n0? I want the number, not the list.",
+      "source": "llm",
+      "intent": "transitive_fanout",
+      "params": {
+        "net": "n0"
+      }
+    },
+    {
+      "id": 5,
+      "line": "Name every XOR gate in the design.",
+      "source": "llm",
+      "intent": "list_type",
+      "params": {
+        "type": "xor"
+      }
+    },
+    {
+      "id": 6,
+      "line": "Scan the design for NOR cells that have a constant input, and report what you find.",
+      "source": "llm",
+      "intent": "report_const_gates",
+      "params": {
+        "type": "nor"
+      }
+    },
+    {
+      "id": 7,
+      "line": "Now fold the constant inputs of the NOR cells.",
+      "source": "llm",
+      "intent": "const_propagate",
+      "params": {
+        "type": "nor"
+      }
+    },
+    {
+      "id": 8,
+      "line": "Across the design as a whole, how deep does the logic that ends at n5[0] run?",
+      "source": "llm",
+      "intent": "max_depth_between",
+      "params": {
+        "a": "n5[0]",
+        "b": "n5[0]"
+      }
+    },
+    {
+      "id": 9,
+      "line": "Please write the current design to the output file test81_out.v.",
+      "source": "llm",
+      "intent": "write_design",
+      "params": {
+        "file": "test81_out.v"
+      }
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test81\". All subsequent responses will be recorded to test81.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test81/test81.v\" successfully. Detected a single top module (flat netlist) with 1747 combinational gates and 202 flip-flops. Design state has been updated.",
+    "3": "The maximum combinational logic depth from any register output to any primary output is 7.",
+    "4": "The transitive fan-out cone of n0 contains 202 gates.",
+    "5": "11 XOR gate(s):\ng583 (out=n1364, in=n1343, n23)\ng1314 (out=n1746, in=n67, n39)\ng1315 (out=n1745, in=n64, n38)\ng1357 (out=n1758, in=n79, n123)\ng1358 (out=n1757, in=n76, n122)\ng1376 (out=n1765, in=n91, n131)\ng1377 (out=n1764, in=n88, n130)\ng1395 (out=n1768, in=n103, n139)\ng1396 (out=n1767, in=n100, n138)\ng1414 (out=n1775, in=n115, n147)\ng1415 (out=n1774, in=n112, n146)",
+    "6": "No NOR gates with constant inputs were found.",
+    "7": "Constant propagation eliminated 0 NOR gate(s); equivalence verified.",
+    "8": "The maximum combinational logic depth from n5[0] to n5[0] is 0.",
+    "9": "Wrote the current netlist to \"testcase/test81/test81_out.v\" successfully."
+  }
+}

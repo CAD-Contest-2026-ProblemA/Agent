@@ -1,0 +1,81 @@
+{
+  "case": "test82",
+  "circuit": "copy of testcase/test31/test31.v (4686 gates, 756 DFFs, 34 combinational POs)",
+  "purpose": "Intent-routing stress set #2. Where test81 targets picking the wrong INTENT, this one targets picking the right intent with the WRONG PARAMETER -- the failure mode that still returns a confident, plausible number.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {"name": "test82"}
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {"file": "test82.v", "dir": "testcase/test82"}
+    },
+    {
+      "id": 3,
+      "prompt": "Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?",
+      "intent": "pi_to_po_depth",
+      "params": {},
+      "answer": 14,
+      "confusion": "global_max_depth, pi_to_dff_depth, reg_to_reg_depth",
+      "why_correct": "Endpoints are stated as class-level: input pin to output pin. The catalog's DEPTH PATH GROUPS block assigns exactly that pairing to pi_to_po_depth.",
+      "why_hard": "This circuit separates the answers cleanly: PI->PO is 14 while global_max_depth, pi_to_dff_depth and reg_to_reg_depth are all 58. Any endpoint mix-up returns 58 -- a confident, wrong, and plausible number. 'Ignoring the registers' is the only cue that rules the register endpoints out, and the catalog never uses that phrasing."
+    },
+    {
+      "id": 4,
+      "prompt": "How many gate levels deep is the logic feeding output n13[0]?",
+      "intent": "cone_depth",
+      "params": {"output": "n13[0]"},
+      "answer": 14,
+      "confusion": "cone_gate_count, global_max_depth",
+      "why_correct": "Depth of one output's cone is cone_depth {output}.",
+      "why_hard": "cone_gate_count on the same net returns 136 (how many gates, not how deep) -- the near-miss that answers a different question about the same object. 'Gate levels deep' never says the word depth or cone."
+    },
+    {
+      "id": 5,
+      "prompt": "Change the label of the internal wire n1001 to renamed_wire everywhere it appears.",
+      "intent": "rename",
+      "params": {"kind": "wire", "old": "n1001", "new": "renamed_wire"},
+      "confusion": "rename with kind=gate or kind=signal",
+      "why_correct": "n1001 is a net (a gate output), so kind must be wire. The catalog's 'rename kind' block requires the caller to classify the object.",
+      "why_hard": "The intent is easy; the kind parameter is the trap. Routing to rename looks like a success unless the trace is checked -- the wrong kind silently renames nothing or the wrong object class."
+    },
+    {
+      "id": 6,
+      "prompt": "Give every load of n1023 its own private repeater.",
+      "intent": "insert_buffers",
+      "params": {"net": "n1023", "mode": "dedicated"},
+      "answer": 3,
+      "confusion": "insert_buffers with mode=fanout",
+      "why_correct": "One buffer per load is the dedicated mode. n1023 has 3 loads, so 3 buffers.",
+      "why_hard": "mode=fanout builds a minimal balanced tree to satisfy a load LIMIT -- and no limit is stated here, so that reading has no k to work with. 'Repeater' is the industry synonym for buffer that the catalog lists once, and 'private' is the only word carrying the per-load requirement."
+    },
+    {
+      "id": 7,
+      "prompt": "Confirm the netlist still behaves the same as it did immediately before that buffering step.",
+      "intent": "verify_equivalence",
+      "params": {"against": "pre"},
+      "answer": true,
+      "confusion": "verify_equivalence with against=original or against=last_loaded",
+      "why_correct": "'Immediately before that buffering step' is the pre-transform snapshot, which is against=pre.",
+      "why_hard": "A three-way parameter where all three choices return True on this design, because buffering is equivalence-preserving. The answer therefore cannot reveal the mistake -- only the recorded parameter can. This is the clearest case for logging the routed params, not just the intent."
+    },
+    {
+      "id": 8,
+      "category": "write",
+      "intent": "write_design",
+      "params": {"file": "test82_out.v"}
+    }
+  ],
+  "scored_lines": [3, 4, 5, 6, 7],
+  "notes": [
+    "Answers computed from the netlist: pi_to_po_max_depth=14, global_max_depth=58, pi_to_dff_d_max_depth=58, reg_to_reg_max_depth=58, depth_of_cone(n13[0])=14, gates_in_fanin_cone(n13[0])=136, fanout_count(n1023)=3.",
+    "Line 7 cannot be scored from the response text -- every value of `against` yields True here. Score it from the recorded params in the routing trace.",
+    "Lines 5 and 6 mutate the netlist, so they are placed after the two query lines; line 7 depends on line 6 having run.",
+    "Max word overlap with any INTENT_CATALOG few-shot example is 50%, so no line can be answered by recalling a memorised example."
+  ]
+}

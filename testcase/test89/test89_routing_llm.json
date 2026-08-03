@@ -1,0 +1,79 @@
+{
+  "case": "test89",
+  "mode": "pure-LLM (--no-rules)",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test89.",
+      "source": "llm",
+      "intent": "begin_case",
+      "params": {
+        "name": "test89"
+      }
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test89.v located in the directory testcase/test89/.",
+      "source": "llm",
+      "intent": "load_design",
+      "params": {
+        "file": "test89.v",
+        "dir": "testcase/test89"
+      }
+    },
+    {
+      "id": 3,
+      "line": "Just the peak load figure for n0, please.",
+      "source": "llm",
+      "intent": "max_fanout_of",
+      "params": {
+        "net": "n0"
+      }
+    },
+    {
+      "id": 4,
+      "line": "Give every load of n0 its own private repeater.",
+      "source": "llm",
+      "intent": "insert_buffers",
+      "params": {
+        "net": "n0",
+        "mode": "dedicated"
+      }
+    },
+    {
+      "id": 5,
+      "line": "Taking the netlist as a whole, how deep does the logic that ends at n31 run?",
+      "source": "llm",
+      "intent": "max_depth_between",
+      "params": {
+        "b": "n31",
+        "a": "n31"
+      }
+    },
+    {
+      "id": 6,
+      "line": "Now shorten the worst-case path as far as you can without breaking anything.",
+      "source": "llm",
+      "intent": "minimize_depth",
+      "params": {}
+    },
+    {
+      "id": 7,
+      "line": "Please write the current design to the output file test89_out.v.",
+      "source": "llm",
+      "intent": "write_design",
+      "params": {
+        "file": "test89_out.v"
+      }
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test89\". All subsequent responses will be recorded to test89.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test89/test89.v\" successfully. Detected a single top module (flat netlist) with 343 combinational gates and 55 flip-flops. Design state has been updated.",
+    "3": "The maximum fanout of n0 is now 55.",
+    "4": "Inserted 55 dedicated buffer(s), one per load of n0; equivalence verified.",
+    "5": "The maximum combinational logic depth from n31 to n31 is 0.",
+    "6": "Reduced the maximum logic depth from 23 to 11; equivalence verified.",
+    "7": "Wrote the current netlist to \"testcase/test89/test89_out.v\" successfully."
+  }
+}

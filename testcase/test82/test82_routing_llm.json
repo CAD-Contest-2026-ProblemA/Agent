@@ -1,0 +1,90 @@
+{
+  "case": "test82",
+  "mode": "pure-LLM (--no-rules)",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test82.",
+      "source": "llm",
+      "intent": "begin_case",
+      "params": {
+        "name": "test82"
+      }
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test82.v located in the directory testcase/test82/.",
+      "source": "llm",
+      "intent": "load_design",
+      "params": {
+        "file": "test82.v",
+        "dir": "testcase/test82"
+      }
+    },
+    {
+      "id": 3,
+      "line": "Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?",
+      "source": "llm",
+      "intent": "global_max_depth",
+      "params": {}
+    },
+    {
+      "id": 4,
+      "line": "How many gate levels deep is the logic feeding output n13[0]?",
+      "source": "llm",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n13[0]"
+      }
+    },
+    {
+      "id": 5,
+      "line": "Change the label of the internal wire n1001 to renamed_wire everywhere it appears.",
+      "source": "llm",
+      "intent": "rename",
+      "params": {
+        "kind": "wire",
+        "old": "n1001",
+        "new": "renamed_wire"
+      }
+    },
+    {
+      "id": 6,
+      "line": "Give every load of n1023 its own private repeater.",
+      "source": "llm",
+      "intent": "insert_buffers",
+      "params": {
+        "mode": "dedicated",
+        "net": "n1023"
+      }
+    },
+    {
+      "id": 7,
+      "line": "Confirm the netlist still behaves the same as it did immediately before that buffering step.",
+      "source": "llm",
+      "intent": "verify_equivalence",
+      "params": {
+        "against": "last_loaded"
+      }
+    },
+    {
+      "id": 8,
+      "line": "Please write the current design to the output file test82_out.v.",
+      "source": "llm",
+      "intent": "write_design",
+      "params": {
+        "file": "test82_out.v"
+      }
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test82\". All subsequent responses will be recorded to test82.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test82/test82.v\" successfully. Detected a single top module (flat netlist) with 4686 combinational gates and 756 flip-flops. Design state has been updated.",
+    "3": "The maximum combinational logic depth in the design is 58.",
+    "4": "The maximum logic depth of the cone of n13[0] is 14.",
+    "5": "Renamed wire n1001 to renamed_wire and updated all references.",
+    "6": "Inserted 3 dedicated buffer(s), one per load of n1023; equivalence verified.",
+    "7": "Verified: the current design is functionally equivalent to the netlist as last loaded from disk.",
+    "8": "Wrote the current netlist to \"testcase/test82/test82_out.v\" successfully."
+  }
+}

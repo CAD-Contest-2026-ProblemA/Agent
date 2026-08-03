@@ -1,0 +1,112 @@
+{
+  "case": "test85",
+  "circuit": "copy of testcase/test31/test31.v (cone of n13[0]: 136 gates, depth 14, 57 NAND)",
+  "purpose": "Basic single-turn queries over the CONE family. All four lines ask about the same cone, so only the chosen intent separates size, breakdown, one type, and depth.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test85"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test85.v",
+        "dir": "testcase/test85"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "How much logic sits behind output n13[0]?",
+      "intent": "cone_gate_count",
+      "params": {
+        "output": "n13[0]"
+      },
+      "answer": 136,
+      "confusion": "cone_depth, transitive_fanin, cone_type_counts",
+      "why_correct": "'How much logic' is the gate count of the cone.",
+      "why_hard": "'How much' is quantity-neutral -- it could equally be read as depth (14) or as a breakdown. Nothing in the sentence forces size."
+    },
+    {
+      "id": 4,
+      "prompt": "Break the logic behind n13[0] down by cell family for me.",
+      "intent": "cone_type_counts",
+      "params": {
+        "output": "n13[0]"
+      },
+      "answer": {
+        "nand": 57,
+        "nor": 35,
+        "or": 5,
+        "not": 12,
+        "dff": 27
+      },
+      "confusion": "count_gates, cone_gate_count",
+      "why_hard": "count_gates answers with the same nine-type table for the WHOLE design -- a plausible-looking result with entirely different numbers. The net is named, so nothing has to be remembered; the risk is that the cone scope is simply not carried into the params.",
+      "mechanism": "scope stated, easy to drop"
+    },
+    {
+      "id": 5,
+      "prompt": "Within the logic behind n13[0], how many are NAND cells?",
+      "intent": "count_type",
+      "params": {
+        "type": "nand",
+        "scope": "n13[0]"
+      },
+      "answer": 57,
+      "confusion": "count_type without scope, cone_type_counts",
+      "why_hard": "Dropping the scope still routes to count_type and still returns a number -- 3214 instead of 57. The intent looks right and only the params reveal the miss.",
+      "mechanism": "optional scope parameter"
+    },
+    {
+      "id": 6,
+      "prompt": "How tall is the logic stack behind n13[0]?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n13[0]"
+      },
+      "answer": 14,
+      "confusion": "cone_gate_count, global_max_depth",
+      "why_correct": "'How tall' is depth, scoped to this cone.",
+      "why_hard": "Mirrors line 3 on the same net: 136 vs 14. If lines 3 and 6 route to the same intent, one of them is wrong whichever it is."
+    },
+    {
+      "intent": "cone_depth",
+      "params": {
+        "output": "n13[0]"
+      },
+      "answer": 14,
+      "confusion": "global_max_depth",
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "why_hard": "'Taking the whole picture into account' sits in the focus position and pulls hard toward global_max_depth (58 here against the correct 14); the scope survives only in the trailing 'that ends up at n13[0]'. This is the phrasing shape that already beat the router on test83 line 5.",
+      "id": 7,
+      "prompt": "Taking the whole picture into account, what is the longest run of gates that ends up at n13[0]?"
+    },
+    {
+      "id": 8,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test85_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "notes": [
+    "Values: cone_gate_count(n13[0])=136, cone_depth=14, NAND in cone=57, whole-design NAND=3214, breakdown nand:57 nor:35 or:5 not:12 dff:27.",
+    "Line 5 is scored on params: count_type without scope returns 3214 and still looks like a valid answer.",
+    "Lines 3 and 6 are a mirrored size/depth pair on the same net and must be scored together.",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing."
+  ]
+}

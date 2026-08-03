@@ -1,0 +1,115 @@
+{
+  "case": "test86",
+  "circuit": "copy of testcase/test26/test26.v (1629 gates, 205 DFFs, 42 XNOR)",
+  "purpose": "Transform routing: a TARGETED gate-type conversion followed by a WHOLE-DESIGN basis remap, then an optimisation that must respect the basis. The catalog carries a 'targeted gate-type conversion vs convert_basis' block for exactly this pair.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test86"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test86.v",
+        "dir": "testcase/test86"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "How many XNOR cells does this design carry?",
+      "intent": "count_type",
+      "params": {
+        "type": "xnor"
+      },
+      "answer": 42,
+      "confusion": "count_gates, list_type",
+      "why_correct": "A count of one named type.",
+      "why_hard": "Baseline for line 5; count_gates would return the whole breakdown."
+    },
+    {
+      "id": 4,
+      "prompt": "Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.",
+      "intent": "xnor_to_nor",
+      "params": {},
+      "answer": "42 XNOR replaced",
+      "confusion": "convert_basis with basis=NOR_NOT",
+      "why_correct": "Only the XNOR cells are named, so this is the targeted decomposition, not a whole-design remap.",
+      "why_hard": "'Build each one out of NOR logic' reads exactly like a basis instruction; only 'Leave everything else alone' holds the scope down. convert_basis would rewrite all 1629 gates instead of 42."
+    },
+    {
+      "id": 5,
+      "prompt": "How many XNOR cells are left?",
+      "intent": "count_type",
+      "params": {
+        "type": "xnor"
+      },
+      "answer": 0,
+      "confusion": "delta_count",
+      "why_correct": "Current inventory of one type after a transform.",
+      "why_hard": "Catalog 'count_type vs delta_count after a transform': delta_count would report how many were converted (42) rather than how many remain (0). Both are plausible numbers here."
+    },
+    {
+      "id": 6,
+      "prompt": "Now bring the whole thing down to NAND and NOT only.",
+      "intent": "convert_basis",
+      "params": {
+        "basis": "NAND_NOT"
+      },
+      "confusion": "xor_to_nand, xnor_to_nor",
+      "why_correct": "'The whole thing' is a whole-design basis remap.",
+      "why_hard": "The mirror of line 4 on the same design: one is targeted, one is global. A router that treats both the same fails one of them."
+    },
+    {
+      "id": 7,
+      "prompt": "Keeping the netlist NAND and NOT only, squeeze the critical path as short as you can.",
+      "intent": "minimize_depth",
+      "params": {
+        "basis": "NAND_NOT"
+      },
+      "confusion": "minimize_depth without basis, optimize_cone, minimize_area",
+      "why_hard": "The basis is named in the request, so this is not a memory test. Dropping the basis parameter still routes to minimize_depth and still reports an improved depth -- but the netlist leaves NAND/NOT, violating the constraint the sentence states outright (Q&A A63). Only the params reveal it.",
+      "mechanism": "structural constraint stated in-sentence"
+    },
+    {
+      "intent": "cone_depth",
+      "params": {
+        "output": "n8[0]"
+      },
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "why_hard": "'Taking the netlist as a whole' sits in the focus position and pulls toward global_max_depth (58 here against the correct 11); the scope survives only in the trailing 'that ends at n8[0]'. Verified to beat the router on test81 line 8 and, in the same shape, on test82 line 3 and test83 line 5. A mis-route returns a different number, so the error shows up in the answer.",
+      "id": 8,
+      "prompt": "Taking the netlist as a whole, how deep does the logic that ends at n8[0] run?",
+      "confusion": "global_max_depth",
+      "answer": 11
+    },
+    {
+      "id": 9,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test86_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "notes": [
+    "Values: XNOR before=42, after the targeted conversion=0.",
+    "Line 7 is scored on params: minimize_depth without basis=NAND_NOT breaks the constraint set in line 6 while still looking like a success.",
+    "Optimisability was verified on this circuit: after to_basis(NAND_NOT) the depth goes 58 -> 112 and minimize_depth then reaches 21, so line 7 has real headroom.",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing.",
+    "Every scored failure in this case is a DEFINITE routing error: the wrong choice yields a different number, a different answer shape, or a materially different netlist. Parameters whose values are interchangeable in practice (verify_equivalence against=original vs last_loaded on a single load, insert_buffers mode omitted when fanout is the default) were removed, because a mis-route there changes nothing observable."
+  ]
+}

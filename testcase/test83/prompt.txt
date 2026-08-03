@@ -1,0 +1,7 @@
+This is the beginning of a new testcase. The case name is test83.
+Please load the design from the file test83.v located in the directory testcase/test83/.
+Restricting the tally to the cone of n12[0], how many NAND cells are in there?
+Spell out the input ports of this design for me.
+Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?
+Between one flip-flop and the next, how many gate levels does a signal pass through at worst?
+Please write the current design to the output file test83_out.v.

@@ -1,0 +1,92 @@
+{
+  "case": "test89",
+  "circuit": "copy of testcase/test21/test21.v (343 gates, 55 DFFs, n0 fanout 55, depth 23)",
+  "purpose": "Transform routing over BUFFER INSERTION and a following optimisation. insert_buffers carries three parameters (net, k, mode) and the catalog has a dedicated 'insert_buffers scope' block; the request here supplies a limit but no net.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test89"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test89.v",
+        "dir": "testcase/test89"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Just the peak load figure for n0, please.",
+      "intent": "max_fanout_of",
+      "params": {
+        "net": "n0"
+      },
+      "answer": 55,
+      "confusion": "fanout, highest_fanout_pi",
+      "why_correct": "Catalog 'fanout vs max_fanout_of': a peak number for a named net.",
+      "why_hard": "Baseline before buffering; fanout would answer with the 55-name list instead."
+    },
+    {
+      "id": 4,
+      "prompt": "Give every load of n0 its own private repeater.",
+      "intent": "insert_buffers",
+      "params": {
+        "net": "n0",
+        "mode": "dedicated"
+      },
+      "confusion": "insert_buffers with mode=fanout",
+      "why_hard": "dedicated=55 buffers against fanout=10 on this net -- verified. mode defaults to fanout, so omitting it silently builds the other structure.",
+      "answer": 55,
+      "mechanism": "mode changes the built structure"
+    },
+    {
+      "id": 5,
+      "prompt": "Taking the netlist as a whole, how deep does the logic that ends at n31 run?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n31"
+      },
+      "why_hard": "'Taking the netlist as a whole' sits in the focus position and pulls toward global_max_depth (23 here against the correct 2); the scope survives only in the trailing 'that ends at n31'. The gap is deliberately wide so a mis-route is visible in the answer, not just in the params.",
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "answer": 2,
+      "confusion": "global_max_depth"
+    },
+    {
+      "id": 6,
+      "prompt": "Now shorten the worst-case path as far as you can without breaking anything.",
+      "intent": "minimize_depth",
+      "params": {},
+      "confusion": "minimize_area, optimize_cone",
+      "why_correct": "Worst-case path is the depth objective.",
+      "why_hard": "Runs on the buffered netlist, so a wrong objective is doubly costly: buffers inserted for line 4's limit may be optimised away, breaking that constraint (Q&A A63)."
+    },
+    {
+      "id": 7,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test89_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "notes": [
+    "Values: max_fanout_of(n0)=55, depth before=23.",
+    "Line 4 is scored on params: k=6 and mode=fanout. A dedicated-mode read builds one buffer per load instead of a balanced tree.",
+    "After line 6 the delivered netlist should still satisfy line 4's limit of six loads per driver -- check it, since depth optimisation is free to remove buffers.",
+    "Optimisability verified on this circuit: minimize_depth improves it (23 -> 18 after a NAND/NOT remap).",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing.",
+    "Every scored failure in this case is a DEFINITE routing error: the wrong choice yields a different number, a different answer shape, or a materially different netlist. Parameters whose values are interchangeable in practice (verify_equivalence against=original vs last_loaded on a single load, insert_buffers mode omitted when fanout is the default) were removed, because a mis-route there changes nothing observable."
+  ]
+}

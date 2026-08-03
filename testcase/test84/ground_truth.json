@@ -1,0 +1,101 @@
+{
+  "case": "test84",
+  "circuit": "copy of testcase/test36/test36.v (n10[0]: 4 direct loads, 1369 downstream)",
+  "purpose": "Basic single-turn queries over the FANOUT / DOWNSTREAM family. The discriminator is scope (direct vs transitive) and answer shape (count vs name list) -- never semantics, so there is nothing to reason out.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test84"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test84.v",
+        "dir": "testcase/test84"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Which cells does n10[0] hand its value to straight away?",
+      "intent": "fanout",
+      "params": {
+        "net": "n10[0]"
+      },
+      "answer": 4,
+      "confusion": "transitive_fanout, reachable_from, connected_to_net",
+      "why_correct": "'Straight away' is the immediate fanout, and asking WHICH cells means the list.",
+      "why_hard": "Direct is 4 and transitive is 1369 -- a scope slip is a 342x error. 'Straight away' is the only word holding the scope down."
+    },
+    {
+      "id": 4,
+      "prompt": "Counting everything the signal eventually touches, how many cells does n10[0] end up affecting?",
+      "intent": "transitive_fanout",
+      "params": {
+        "net": "n10[0]"
+      },
+      "answer": 1369,
+      "confusion": "reachable_from, fanout",
+      "why_correct": "Transitive scope, and 'how many' asks for the count, which is transitive_fanout's shape.",
+      "why_hard": "reachable_from walks the identical set; per the catalog the only difference is that it answers with names. Pure presentation rule, no semantics."
+    },
+    {
+      "id": 5,
+      "prompt": "Give me the identifiers of everything n10[0] eventually feeds.",
+      "intent": "reachable_from",
+      "params": {
+        "net": "n10[0]"
+      },
+      "answer": 1369,
+      "confusion": "transitive_fanout",
+      "why_correct": "Same walk as line 4 but the request asks for identifiers, which is reachable_from.",
+      "why_hard": "Deliberately the mirror of line 4: a router with a fixed preference for either shape can pass one of them but not both."
+    },
+    {
+      "id": 6,
+      "prompt": "Across the whole design, which input pin is loaded the heaviest?",
+      "intent": "highest_fanout_pi",
+      "params": {},
+      "answer": "n0 with 690 loads",
+      "confusion": "max_fanout_of, fanout",
+      "why_correct": "No net is named -- the request searches across all primary inputs, which is highest_fanout_pi.",
+      "why_hard": "The other two require a net parameter that this sentence never supplies, so a mis-route also has to invent one."
+    },
+    {
+      "id": 7,
+      "prompt": "Just the peak load figure for n10[0], please.",
+      "intent": "max_fanout_of",
+      "params": {
+        "net": "n10[0]"
+      },
+      "answer": 4,
+      "confusion": "fanout, highest_fanout_pi",
+      "why_correct": "Catalog 'fanout vs max_fanout_of': a peak NUMBER for a named net is max_fanout_of.",
+      "why_hard": "Same net and same underlying value as line 3, but line 3 wants the list and this wants the number -- the pair can only both be right if the shape rule is actually applied."
+    },
+    {
+      "id": 8,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test84_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "notes": [
+    "Values: fanout(n10[0])=4, transitive_fanout=1369, reachable_from=1369 names, highest_fanout_pi=(n0,690), max_fanout_of(n10[0])=4.",
+    "Lines 4 and 5 are a mirrored pair, as are lines 3 and 7. Score each pair together: passing one by a fixed shape preference is not the same as applying the rule."
+  ]
+}

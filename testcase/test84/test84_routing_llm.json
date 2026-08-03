@@ -1,0 +1,87 @@
+{
+  "case": "test84",
+  "mode": "pure-LLM (--no-rules)",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test84.",
+      "source": "llm",
+      "intent": "begin_case",
+      "params": {
+        "name": "test84"
+      }
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test84.v located in the directory testcase/test84/.",
+      "source": "llm",
+      "intent": "load_design",
+      "params": {
+        "dir": "testcase/test84",
+        "file": "test84.v"
+      }
+    },
+    {
+      "id": 3,
+      "line": "Which cells does n10[0] hand its value to straight away?",
+      "source": "llm",
+      "intent": "fanout",
+      "params": {
+        "net": "n10[0]"
+      }
+    },
+    {
+      "id": 4,
+      "line": "Counting everything the signal eventually touches, how many cells does n10[0] end up affecting?",
+      "source": "llm",
+      "intent": "transitive_fanout",
+      "params": {
+        "net": "n10[0]"
+      }
+    },
+    {
+      "id": 5,
+      "line": "Give me the identifiers of everything n10[0] eventually feeds.",
+      "source": "llm",
+      "intent": "transitive_fanout",
+      "params": {
+        "net": "n10[0]"
+      }
+    },
+    {
+      "id": 6,
+      "line": "Across the whole design, which input pin is loaded the heaviest?",
+      "source": "llm",
+      "intent": "highest_fanout_pi",
+      "params": {}
+    },
+    {
+      "id": 7,
+      "line": "Just the peak load figure for n10[0], please.",
+      "source": "llm",
+      "intent": "max_fanout_of",
+      "params": {
+        "net": "n10[0]"
+      }
+    },
+    {
+      "id": 8,
+      "line": "Please write the current design to the output file test84_out.v.",
+      "source": "llm",
+      "intent": "write_design",
+      "params": {
+        "file": "test84_out.v"
+      }
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test84\". All subsequent responses will be recorded to test84.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test84/test84.v\" successfully. Detected a single top module (flat netlist) with 11738 combinational gates and 690 flip-flops. Design state has been updated.",
+    "3": "The fanout of n10[0] is 4. It directly drives: g1319, g1424, g1427, g1441",
+    "4": "The transitive fan-out cone of n10[0] contains 1369 gates.",
+    "5": "The transitive fan-out cone of n10[0] contains 1369 gates.",
+    "6": "Primary input n0 has the highest fanout (690).",
+    "7": "The maximum fanout of n10[0] is now 4.",
+    "8": "Wrote the current netlist to \"testcase/test84/test84_out.v\" successfully."
+  }
+}

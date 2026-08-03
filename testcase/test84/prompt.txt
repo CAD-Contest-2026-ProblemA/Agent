@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test84.
+Please load the design from the file test84.v located in the directory testcase/test84/.
+Which cells does n10[0] hand its value to straight away?
+Counting everything the signal eventually touches, how many cells does n10[0] end up affecting?
+Give me the identifiers of everything n10[0] eventually feeds.
+Across the whole design, which input pin is loaded the heaviest?
+Just the peak load figure for n10[0], please.
+Please write the current design to the output file test84_out.v.

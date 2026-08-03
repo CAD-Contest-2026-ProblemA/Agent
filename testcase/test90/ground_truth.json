@@ -1,0 +1,91 @@
+{
+  "case": "test90",
+  "circuit": "copy of testcase/test26/test26.v (cone of n8[0]: depth 11, 63 gates)",
+  "purpose": "Transform routing on a CONE: convert it, then optimise it. The catalog carries a 'cone CONVERSION vs cone OPTIMIZATION' block because the two share both the scope and most of the wording.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test90"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test90.v",
+        "dir": "testcase/test90"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "How tall is the logic stack behind n8[0]?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n8[0]"
+      },
+      "answer": 11,
+      "confusion": "cone_gate_count, global_max_depth",
+      "why_correct": "Depth scoped to one output.",
+      "why_hard": "Baseline for line 6; cone_gate_count returns 63 on the same net."
+    },
+    {
+      "id": 4,
+      "prompt": "Rebuild just that output's logic so it uses nothing but NAND and NOT cells.",
+      "intent": "convert_basis",
+      "params": {
+        "basis": "NAND_NOT",
+        "scope": "n8[0]"
+      },
+      "confusion": "convert_basis without scope, optimize_cone",
+      "why_correct": "A basis remap scoped to one cone: convert_basis carries the optional scope.",
+      "why_hard": "Dropping scope remaps all 1629 gates instead of the 63 in the cone, and still reports success. 'Just that output's logic' is the only thing holding the scope."
+    },
+    {
+      "id": 5,
+      "prompt": "Leaving the rest of the design untouched, make the logic behind n8[0] as shallow as you can.",
+      "intent": "optimize_cone",
+      "params": {
+        "output": "n8[0]",
+        "basis": "NAND_NOT"
+      },
+      "confusion": "minimize_depth, convert_basis",
+      "why_hard": "The net is named and 'leaving the rest of the design untouched' states the scope, so nothing has to be remembered. minimize_depth would still restructure the whole design and still report a better depth; dropping the basis would additionally leave NAND/NOT behind.",
+      "mechanism": "scope and basis, both stated"
+    },
+    {
+      "id": 6,
+      "prompt": "How tall is the logic behind n8[0] now?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n8[0]"
+      },
+      "confusion": "global_max_depth, delta_count",
+      "why_hard": "The net is named. Dropping the scope returns the design-wide depth -- a much larger and still plausible number.",
+      "mechanism": "scope stated, easy to drop"
+    },
+    {
+      "id": 7,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test90_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "notes": [
+    "Values: cone_depth(n8[0])=11, cone_gate_count(n8[0])=63, whole design 1629 gates.",
+    "Lines 4 and 5 are scored on params -- both the scope and the basis. Either dropped still yields a plausible-looking success.",
+    "Line 6 needs the scope carried from line 5; without it the answer is the design-wide depth.",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing."
+  ]
+}

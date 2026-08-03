@@ -1,0 +1,122 @@
+{
+  "case": "test81",
+  "circuit": "copy of testcase/test22/test22.v (1747 gates, 202 DFFs, 16 combinational POs)",
+  "purpose": "Intent-routing stress set #1, redesigned. The first version used lexical traps (paraphrases the catalog never uses) and pure-LLM routing scored 6/6 -- BM25 rank turned out to be a bad proxy for LLM difficulty. Every line here instead uses a mechanism that has actually been observed to fail: a catalog rule exists but does not get applied, or the answer text cannot reveal the mistake.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test81"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test81.v",
+        "dir": "testcase/test81"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "What is the longest gate chain that starts at a register output and ends at a primary output?",
+      "intent": "reg_to_po_depth",
+      "params": {},
+      "answer": 7,
+      "confusion": "global_max_depth, reg_to_reg_depth, pi_to_po_depth",
+      "mechanism": "class endpoints",
+      "why_correct": "Both endpoints are stated as classes -- register output to primary output -- which the catalog's DEPTH PATH GROUPS block assigns to reg_to_po_depth.",
+      "why_hard": "Proven failure mode: the same mechanism beat the router on test82 line 3, where 'from an input pin to an output pin' was answered with global_max_depth. The distractors are numerically far apart here (reg_to_po=7, pi_to_po=12, reg_to_reg=41, global=41), so any endpoint slip yields a confident wrong number. reg_to_po_depth is also the least-used member of the depth family."
+    },
+    {
+      "id": 4,
+      "prompt": "How many gates sit downstream of primary input n0? I want the number, not the list.",
+      "intent": "transitive_fanout",
+      "params": {
+        "net": "n0"
+      },
+      "answer": 202,
+      "confusion": "reachable_from",
+      "mechanism": "output shape, not semantics",
+      "why_correct": "The catalog's 'reachable_from vs transitive_fanout' block states both walk downstream and return the SAME instance set; the only difference is that reachable_from answers with the name list and transitive_fanout answers with the count. 'I want the number, not the list' selects the count.",
+      "why_hard": "Semantically the two intents are identical -- there is nothing to reason about. The choice hinges on a presentation rule buried in one disambiguation block, and the word 'downstream' does not appear in either intent name. Getting it wrong dumps 202 gate names where a single number was asked for."
+    },
+    {
+      "id": 5,
+      "prompt": "Name every XOR gate in the design.",
+      "intent": "list_type",
+      "params": {
+        "type": "xor"
+      },
+      "answer": 11,
+      "confusion": "count_type",
+      "mechanism": "list vs count",
+      "why_correct": "'Name every' asks for the identifiers, which is list_type. count_type would return only how many.",
+      "why_hard": "Same list-vs-count split as line 4 but in the opposite direction, so a router with a blanket bias toward one shape cannot score both. Short, plain wording with no qualifier to lean on."
+    },
+    {
+      "id": 6,
+      "prompt": "Scan the design for NOR cells that have a constant input, and report what you find.",
+      "intent": "report_const_gates",
+      "params": {
+        "type": "nor"
+      },
+      "answer": 0,
+      "confusion": "const_propagate",
+      "mechanism": "report vs transform",
+      "why_correct": "'Scan ... and report' is a query. const_propagate would modify the netlist.",
+      "why_hard": "Sets up line 7: this line must NOT transform and line 7 must. A router that collapses the pair -- transforming here, or re-reporting there -- gets one of them wrong. Choosing const_propagate here also mutates the design, so the cost is not one wrong answer."
+    },
+    {
+      "id": 7,
+      "prompt": "Now fold the constant inputs of the NOR cells.",
+      "intent": "const_propagate",
+      "params": {
+        "type": "nor"
+      },
+      "answer": 0,
+      "confusion": "report_const_gates, const_propagate without type",
+      "mechanism": "self-contained parameter",
+      "why_hard": "The gate type is now stated in the sentence, so this is a pure routing question: report versus transform on the same object. Line 6 must NOT modify the design and this one must. A router that collapses the pair gets one of them wrong, and choosing report_const_gates here silently skips a requested transform."
+    },
+    {
+      "id": 8,
+      "prompt": "Across the design as a whole, how deep does the logic that ends at n5[0] run?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n5[0]"
+      },
+      "answer": 12,
+      "confusion": "global_max_depth",
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "why_hard": "'Across the design as a whole' sits in the focus position and pulls toward global_max_depth (41 here against the correct 12); the scope survives only in the trailing 'that ends at n5[0]'. Picking the design-wide intent returns a different number, so the error is visible in the answer, not merely in the params."
+    },
+    {
+      "id": 9,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test81_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+  ],
+  "notes": [
+    "Values computed from the netlist: reg_to_po depth=7, pi_to_po=12, pi_to_dff=41, reg_to_reg=41, global=41, reachable_from(n0)=202, XOR count=11, NOR gates with a constant input=0.",
+    "Lines 6 and 7 are a matched pair (report then transform) and must be scored together: routing both to the same intent is a failure even if one of them happens to match.",
+    "Line 8 cannot be scored from the response text -- every value of `against` yields True. Score it from the recorded params.",
+    "Line 8 deliberately expects last_loaded, the value test82 line 7 wrongly produced when pre was required, so the two cases cannot both be passed by a fixed preference.",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing.",
+    "Every scored failure in this case is a DEFINITE routing error: the wrong choice yields a different number, a different answer shape, or a materially different netlist. Parameters whose values are interchangeable in practice (verify_equivalence against=original vs last_loaded on a single load, insert_buffers mode omitted when fanout is the default) were removed, because a mis-route there changes nothing observable."
+  ]
+}

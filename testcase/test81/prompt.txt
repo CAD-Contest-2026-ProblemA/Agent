@@ -1,0 +1,9 @@
+This is the beginning of a new testcase. The case name is test81.
+Please load the design from the file test81.v located in the directory testcase/test81/.
+What is the longest gate chain that starts at a register output and ends at a primary output?
+How many gates sit downstream of primary input n0? I want the number, not the list.
+Name every XOR gate in the design.
+Scan the design for NOR cells that have a constant input, and report what you find.
+Now fold the constant inputs of the NOR cells.
+Across the design as a whole, how deep does the logic that ends at n5[0] run?
+Please write the current design to the output file test81_out.v.

@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test88.
+Please load the design from the file test88.v located in the directory testcase/test88/.
+Are there cells in here that compute the very same thing as another cell? Fold them together.
+How many cells were folded together by the merge?
+Sweep out anything that no longer reaches an output.
+Report the NOR cells sitting on a fixed input value, without touching the design.
+Taking the netlist as a whole, how deep does the logic that ends at n8[0] run?
+Please write the current design to the output file test88_out.v.

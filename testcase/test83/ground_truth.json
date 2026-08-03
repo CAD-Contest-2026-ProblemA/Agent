@@ -1,0 +1,90 @@
+{
+  "case": "test83",
+  "circuit": "copy of testcase/test33/test33.v (DFF design; global=326, pi_to_po=14, reg_to_po=10)",
+  "purpose": "Basic single-turn queries built from the only two mechanisms observed to actually beat the router: an optional parameter that must be inferred and is easy to drop (test85 line 5), and a shape mirror where two intents differ only in whether they answer with names or a count (test84 line 5). Earlier versions of this case aimed at the depth family and at the thinly-documented intents; both scored 5/5, which is why neither is used here.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test83"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test83.v",
+        "dir": "testcase/test83"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Restricting the tally to the cone of n12[0], how many NAND cells are in there?",
+      "intent": "count_type",
+      "params": {
+        "type": "nand",
+        "scope": "n12[0]"
+      },
+      "answer": 74,
+      "confusion": "count_type without scope, cone_type_counts, cone_gate_count",
+      "why_correct": "One gate type inside one cone: count_type carries the optional scope for exactly this.",
+      "why_hard": "Dropping scope still routes to count_type and still returns a number -- 35261 instead of 74. The intent looks right; only the params show the miss. This mechanism already beat the router on test85 line 5."
+    },
+    {
+      "id": 4,
+      "prompt": "Spell out the input ports of this design for me.",
+      "intent": "list_ports",
+      "params": {
+        "dir": "input"
+      },
+      "answer": 51,
+      "confusion": "count_ports, list_type",
+      "why_correct": "Naming the ports of one direction is list_ports {dir}.",
+      "why_hard": "Paired with line 5 as a shape mirror -- this one wants names, the next wants a count. The same mirror beat the router on test84 line 5."
+    },
+    {
+      "id": 5,
+      "prompt": "Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?",
+      "intent": "pi_to_po_depth",
+      "params": {},
+      "answer": 14,
+      "confusion": "global_max_depth, reg_to_reg_depth, pi_to_dff_depth",
+      "why_correct": "Pin to pin with the registers excluded is the PI-to-PO class pair.",
+      "why_hard": "Built from the one phrasing already observed to beat the router (test82 line 3): lead with the exclusion as a weak aside, then generic superlative depth vocabulary ('longest run of gates anywhere in this design') that pulls hard toward global_max_depth, and leave the endpoints to a trailing 'from one pin through to another'. An earlier version of this line said 'how deep is the combinational logic that runs straight from the pins to the pins' and passed -- naming the endpoints plainly is what defused it. The gap here is wide: pi_to_po=14 against global=326."
+    },
+    {
+      "id": 6,
+      "prompt": "Between one flip-flop and the next, how many gate levels does a signal pass through at worst?",
+      "intent": "reg_to_reg_depth",
+      "params": {},
+      "answer": 326,
+      "confusion": "global_max_depth, pi_to_dff_depth",
+      "why_correct": "Both endpoints are registers.",
+      "why_hard": "Both distractors return 326 here, so the answer text cannot reveal a mis-route -- only the recorded intent can."
+    },
+    {
+      "id": 7,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test83_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "notes": [
+    "Values: NAND inside cone of n12[0] = 74 (whole design 35261), PI=51, PO=87, pi_to_po_depth=14, global=326, pi_to_dff=326, reg_to_reg=326.",
+    "Line 3 is scored on params: without scope the answer is 35261 and still looks valid.",
+    "Line 5 is the deliberate failure: the same phrasing shape that produced global_max_depth instead of pi_to_po_depth on test82.",
+    "Line 6 cannot be scored from the response text -- the distractors return 326 as well.",
+    "No line refers to an earlier turn; each is answerable on its own."
+  ]
+}

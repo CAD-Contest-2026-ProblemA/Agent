@@ -1,0 +1,90 @@
+{
+  "case": "test85",
+  "mode": "pure-LLM (--no-rules)",
+  "trace": [
+    {
+      "id": 1,
+      "line": "This is the beginning of a new testcase. The case name is test85.",
+      "source": "llm",
+      "intent": "begin_case",
+      "params": {
+        "name": "test85"
+      }
+    },
+    {
+      "id": 2,
+      "line": "Please load the design from the file test85.v located in the directory testcase/test85/.",
+      "source": "llm",
+      "intent": "load_design",
+      "params": {
+        "file": "test85.v",
+        "dir": "testcase/test85"
+      }
+    },
+    {
+      "id": 3,
+      "line": "How much logic sits behind output n13[0]?",
+      "source": "llm",
+      "intent": "cone_gate_count",
+      "params": {
+        "output": "n13[0]"
+      }
+    },
+    {
+      "id": 4,
+      "line": "Break the logic behind n13[0] down by cell family for me.",
+      "source": "llm",
+      "intent": "cone_type_counts",
+      "params": {
+        "output": "n13[0]"
+      }
+    },
+    {
+      "id": 5,
+      "line": "Within the logic behind n13[0], how many are NAND cells?",
+      "source": "llm",
+      "intent": "count_type",
+      "params": {
+        "scope": "n13[0]",
+        "type": "nand"
+      }
+    },
+    {
+      "id": 6,
+      "line": "How tall is the logic stack behind n13[0]?",
+      "source": "llm",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n13[0]"
+      }
+    },
+    {
+      "id": 7,
+      "line": "Taking the whole picture into account, what is the longest run of gates that ends up at n13[0]?",
+      "source": "llm",
+      "intent": "cone_gate_count",
+      "params": {
+        "output": "n13[0]"
+      }
+    },
+    {
+      "id": 8,
+      "line": "Please write the current design to the output file test85_out.v.",
+      "source": "llm",
+      "intent": "write_design",
+      "params": {
+        "file": "test85_out.v"
+      }
+    }
+  ],
+  "responses": {
+    "1": "Acknowledged. Initialized testcase \"test85\". All subsequent responses will be recorded to test85.log. Design state is empty and ready for commands.",
+    "2": "Loaded gate-level Verilog from \"testcase/test85/test85.v\" successfully. Detected a single top module (flat netlist) with 4686 combinational gates and 756 flip-flops. Design state has been updated.",
+    "3": "The fan-in cone of n13[0] contains 136 gates.",
+    "4": "Gate-type counts in the cone of n13[0] (total 136):\n  AND: 0\n  OR: 5\n  NOT: 12\n  NAND: 57\n  NOR: 35\n  XOR: 0\n  XNOR: 0\n  BUF: 0\n  DFF: 27",
+    "5": "There are currently 57 NAND gates in the cone of n13[0].",
+    "6": "The maximum logic depth of the cone of n13[0] is 14.",
+    "7": "The fan-in cone of n13[0] contains 136 gates.",
+    "8": "Wrote the current netlist to \"testcase/test85/test85_out.v\" successfully."
+  }
+}

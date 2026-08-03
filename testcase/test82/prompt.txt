@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test82.
+Please load the design from the file test82.v located in the directory testcase/test82/.
+Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?
+How many gate levels deep is the logic feeding output n13[0]?
+Change the label of the internal wire n1001 to renamed_wire everywhere it appears.
+Give every load of n1023 its own private repeater.
+Confirm the netlist still behaves the same as it did immediately before that buffering step.
+Please write the current design to the output file test82_out.v.

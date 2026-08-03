@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test85.
+Please load the design from the file test85.v located in the directory testcase/test85/.
+How much logic sits behind output n13[0]?
+Break the logic behind n13[0] down by cell family for me.
+Within the logic behind n13[0], how many are NAND cells?
+How tall is the logic stack behind n13[0]?
+Taking the whole picture into account, what is the longest run of gates that ends up at n13[0]?
+Please write the current design to the output file test85_out.v.

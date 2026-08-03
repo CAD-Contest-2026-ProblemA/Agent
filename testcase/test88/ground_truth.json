@@ -1,0 +1,102 @@
+{
+  "case": "test88",
+  "circuit": "copy of testcase/test26/test26.v (1629 gates; 65 mergeable duplicates, 0 dangling, 0 NOR with a constant input)",
+  "purpose": "Transform routing across the CLEANUP family. Four cleanups share the vocabulary of removal but do different things, and one of the four lines must not touch the design at all.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test88"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test88.v",
+        "dir": "testcase/test88"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "Are there cells in here that compute the very same thing as another cell? Fold them together.",
+      "intent": "merge_duplicates",
+      "params": {},
+      "answer": 65,
+      "confusion": "remove_dangling, collapse_inverters, signals_equivalent",
+      "why_correct": "Folding gates that compute the same function is the structural duplicate merge.",
+      "why_hard": "Phrased as a question followed by an instruction, so a router may answer the question (signals_equivalent) and skip the transform. 'The very same thing' never says duplicate or merge."
+    },
+    {
+      "id": 4,
+      "prompt": "How many cells were folded together by the merge?",
+      "intent": "delta_count",
+      "params": {
+        "kind": "merged"
+      },
+      "answer": 65,
+      "confusion": "total_gate_count, count_gates",
+      "why_hard": "'How many were folded together' asks what the merge removed. total_gate_count and count_gates both answer a different question about the same design with equally plausible numbers.",
+      "mechanism": "delta versus inventory"
+    },
+    {
+      "id": 5,
+      "prompt": "Sweep out anything that no longer reaches an output.",
+      "intent": "remove_dangling",
+      "params": {},
+      "answer": 0,
+      "confusion": "merge_duplicates, collapse_inverters, check_floating",
+      "why_correct": "Gates that do not reach any output are dangling.",
+      "why_hard": "Follows a removal step, so a router carrying momentum may repeat the previous cleanup. The correct answer here is 0 removed, which looks like a no-op either way -- the intent is the only signal."
+    },
+    {
+      "id": 6,
+      "prompt": "Report the NOR cells sitting on a fixed input value, without touching the design.",
+      "intent": "report_const_gates",
+      "params": {
+        "type": "nor"
+      },
+      "answer": 0,
+      "confusion": "const_propagate",
+      "why_correct": "An explicit report-only request.",
+      "why_hard": "Sits at the end of three consecutive transforms, so the pull toward another mutation is strongest here. Choosing const_propagate modifies the netlist after it was asked not to."
+    },
+    {
+      "intent": "cone_depth",
+      "params": {
+        "output": "n8[0]"
+      },
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "why_hard": "'Taking the netlist as a whole' sits in the focus position and pulls toward global_max_depth (58 here against the correct 11); the scope survives only in the trailing 'that ends at n8[0]'. Verified to beat the router on test81 line 8 and, in the same shape, on test82 line 3 and test83 line 5. A mis-route returns a different number, so the error shows up in the answer.",
+      "id": 7,
+      "prompt": "Taking the netlist as a whole, how deep does the logic that ends at n8[0] run?",
+      "answer": 11,
+      "confusion": "global_max_depth"
+    },
+    {
+      "id": 8,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test88_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6,
+    7
+  ],
+  "notes": [
+    "Values: mergeable duplicates=65, dangling=0, NOR with a constant input=0.",
+    "Line 6 must not mutate. A router picking const_propagate there is a structural failure, not just a wrong answer.",
+    "Lines 5 and 6 both legitimately report 0, so neither can be scored from the response text -- score from the intent.",
+    "Every line is self-contained: nothing refers to an earlier turn. The agent sends no conversation history to the model (system = catalog, user = the current line only), so anaphoric wording would test dialogue memory rather than routing.",
+    "Every scored failure in this case is a DEFINITE routing error: the wrong choice yields a different number, a different answer shape, or a materially different netlist. Parameters whose values are interchangeable in practice (verify_equivalence against=original vs last_loaded on a single load, insert_buffers mode omitted when fanout is the default) were removed, because a mis-route there changes nothing observable."
+  ]
+}

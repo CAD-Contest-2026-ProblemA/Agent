@@ -1,0 +1,9 @@
+This is the beginning of a new testcase. The case name is test86.
+Please load the design from the file test86.v located in the directory testcase/test86/.
+How many XNOR cells does this design carry?
+Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.
+How many XNOR cells are left?
+Now bring the whole thing down to NAND and NOT only.
+Keeping the netlist NAND and NOT only, squeeze the critical path as short as you can.
+Taking the netlist as a whole, how deep does the logic that ends at n8[0] run?
+Please write the current design to the output file test86_out.v.

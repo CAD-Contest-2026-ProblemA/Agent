@@ -1,0 +1,84 @@
+{
+  "case": "test87",
+  "circuit": "copy of testcase/test23/test23.v (597 gates, 86 DFFs, depth 33)",
+  "purpose": "Transform routing over the COST OBJECTIVE: area first, then depth. The catalog carries a 'minimize_depth vs optimize_cone' block, but area and depth share almost all their vocabulary.",
+  "lines": [
+    {
+      "id": 1,
+      "category": "ack",
+      "intent": "begin_case",
+      "params": {
+        "name": "test87"
+      }
+    },
+    {
+      "id": 2,
+      "category": "load",
+      "intent": "load_design",
+      "params": {
+        "file": "test87.v",
+        "dir": "testcase/test87"
+      }
+    },
+    {
+      "id": 3,
+      "prompt": "What is the maximum combinational logic depth in the design?",
+      "intent": "global_max_depth",
+      "params": {},
+      "answer": 33,
+      "confusion": "pi_to_po_depth, reg_to_reg_depth",
+      "why_correct": "Design-wide maximum with no endpoints named.",
+      "why_hard": "Baseline so line 6's improvement is measurable."
+    },
+    {
+      "id": 4,
+      "prompt": "Rework the logic so the design ends up with as few cells as possible. Functionality must not change.",
+      "intent": "minimize_area",
+      "params": {},
+      "confusion": "minimize_depth, optimize_cone, merge_duplicates",
+      "why_correct": "'As few cells as possible' is the gate-count objective, which is minimize_area.",
+      "why_hard": "The word area never appears -- this is the phrasing that already beat BM25 retrieval. 'Rework the logic' is the same verb the depth objective uses, and minimize_depth also returns a restructured netlist that looks like success."
+    },
+    {
+      "id": 5,
+      "prompt": "Taking the netlist as a whole, how deep does the logic that ends at n475 run?",
+      "intent": "cone_depth",
+      "params": {
+        "output": "n475"
+      },
+      "why_hard": "'Taking the netlist as a whole' sits in the focus position and pulls toward global_max_depth (33 here against the correct 9); the scope survives only in the trailing 'that ends at n475'. Verified to beat the router on test81 line 8 and, in the same shape, on test82 line 3 and test83 line 5. A mis-route returns a different number, so the error shows up in the answer.",
+      "answer": 9,
+      "mechanism": "sentence weight pulls to the design-wide reading",
+      "confusion": "global_max_depth"
+    },
+    {
+      "id": 6,
+      "prompt": "Now go after the timing instead: restructure so the worst-case path is as short as it can be.",
+      "intent": "minimize_depth",
+      "params": {},
+      "confusion": "minimize_area, optimize_cone",
+      "why_correct": "Worst-case path length is the depth objective.",
+      "why_hard": "Deliberately the mirror of line 4: same verb, same 'as X as possible' shape, opposite objective. A router that collapses the two passes one and fails the other."
+    },
+    {
+      "id": 7,
+      "category": "write",
+      "intent": "write_design",
+      "params": {
+        "file": "test87_out.v"
+      }
+    }
+  ],
+  "scored_lines": [
+    3,
+    4,
+    5,
+    6
+  ],
+  "notes": [
+    "Baseline: depth=33, gates=597.",
+    "Lines 4 and 6 are a mirrored objective pair and must be scored together -- both return a restructured netlist, so only the intent separates area from depth.",
+    "Optimisability verified: minimize_depth improves this circuit (33 -> 15 after a NAND/NOT remap), so line 6 has headroom regardless of what line 4 did.",
+    "Every scored failure in this case is a DEFINITE routing error: the wrong choice yields a different number, a different answer shape, or a materially different netlist. Parameters whose values are interchangeable in practice (verify_equivalence against=original vs last_loaded on a single load, insert_buffers mode omitted when fanout is the default) were removed, because a mis-route there changes nothing observable."
+  ]
+}
