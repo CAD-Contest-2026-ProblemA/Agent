@@ -1,0 +1,20 @@
+Display every NOR gate together with what it connects.
+List all XNOR gates in this design.
+Which cells are XNORs? Point them out.
+The full roster of the design's XNOR gates, please.
+Locate all inverters (NOT cells) and list them with their pins.
+List all BUF gates in this design with their input and output signals.
+Which cells are of the BUF variety? Show each with its nets.
+Point out every XNOR in this circuit.
+Where are the NORs? A complete list with their connections.
+List all NAND gates in this design with their input and output signals.
+Roll call for the NOR gates, please.
+List all XOR gates in this design.
+Show me each NAND cell and how it is wired.
+Present all NAND cells together with their wiring.
+Round up the ANDs — instance names and I/O signals.
+The NAND contingent: names plus input and output signals.
+Identify all the BUF cells present in this design.
+Name every XOR gate in the design.
+List all NOR gates in this design with their input and output signals.
+Every XOR instance, called out by name.

@@ -1,0 +1,20 @@
+The intersection of the support of n63[1] and of n8[0] — which gates?
+Which logic pulls double duty for both n16 and n15?
+Report every gate shared between the fanin cones of n30 and n14.
+Which logic is jointly claimed by n30 and n13[0]?
+Where do the dependency regions of n12 and n25[0] intersect?
+Find the gates serving two masters: n13[0] and n11[0].
+Report the gates shared between the fanin cones of n12 and n3.
+The overlap between what feeds n63[1] and what feeds n13[0] — list it.
+Which gates moonlight in both the cone of n31[0] and the cone of n3?
+The shared portion of the two cones (n25[0] and n31[0]): which gates?
+What machinery do n12 and n31[0] share upstream?
+List the cells common to what feeds n31[0] and what feeds n14.
+Which gates would both n63[1] and n31[0] lose if they were removed?
+Report all gates shared between the fanin cones of n16 and n31[0].
+Report all gates that are shared between the fanin cones of n31[0] and n8.
+What hardware do n8 and n3 have in common upstream?
+Where do the cones of n16 and n31[0] overlap?
+Cells present in both cones — that of n13[0] and that of n475 — name them.
+The common ancestry of n3 and n63[1]: which cells appear in both?
+Report all gates shared between the fanin cones of n16 and n11[0].

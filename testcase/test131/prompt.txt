@@ -1,0 +1,20 @@
+How deep is the deepest combinational stretch anywhere in here?
+Overall, the most gate levels any signal traverses is how many?
+What is the tallest gate stack in the whole design?
+Across the entire netlist, what is the tallest column of combinational logic?
+The top-end depth figure for the whole circuit is?
+What is the maximum combinational logic depth of the design now?
+Peak logic depth, whole circuit: what is the number?
+What is the maximum combinational logic depth in the design?
+Worst-case logic levels anywhere in the netlist?
+The design's maximum number of cascaded gates is what?
+At the design level, how many gate stages is the worst chain?
+Give the global worst-case count of stacked gates.
+What is the maximum logic depth of the design now?
+Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?
+What is the ceiling on logic levels across the design?
+Measure the longest combinational run in the whole netlist.
+How deep does this design go at its deepest point?
+Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?
+What is the maximum logic depth of the design?
+What is the maximum combinational logic depth in the design now?

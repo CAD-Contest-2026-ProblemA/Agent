@@ -1,0 +1,20 @@
+Which result signal has the widest base of machinery?
+Which output has the widest support, counted in gates?
+The bulkiest cone in the design belongs to which output?
+Find the output backed by the biggest block of gates.
+By sheer number of contributing gates, which output leads?
+Which output has the largest fanin cone in this design?
+Which output has the largest fanin cone?
+Which output has the largest fan-in cone?
+Which output's upstream machinery is the bulkiest?
+The output with the most cells upstream — which one is it?
+Which output's dependency region contains the most logic?
+Which output of this design has the largest fanin cone?
+Whose supporting cast is largest among the outputs?
+Which output commands the biggest army of gates?
+Whose fanin region is the most populous, among the outputs?
+Which output has the largest fanin cone of the design?
+Whose cone holds the most cells among the outputs?
+Which output drags the heaviest cone behind it, by gate count?
+The most gates feed into which output?
+Which output sits on the largest pile of gates?

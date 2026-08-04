@@ -1,0 +1,20 @@
+Which output anchors the design's deepest cone?
+Which output sits atop the tallest stack of logic?
+Find the output whose farthest input is the most levels away.
+Whose computation runs longest — name the output at the end of the deepest chain.
+Which output has the deepest fanin logic cone?
+Where does the longest chain of reasoning end — at which output?
+Which output bit has the deepest fanin cone?
+Which output bit has the deepest cone of logic?
+Point to the output with the maximum logical altitude.
+Name the output with the most levels of logic beneath it.
+Rank the outputs by cone depth; who tops the chart?
+Which result signal is buried under the most layers of gates?
+Among every output, which one's supporting logic towers the highest?
+Of all outputs, whose supporting cone reaches deepest?
+One output has the tallest ancestry of logic. Identify it.
+The output requiring the most gate levels to settle — which is it?
+Which output is the farthest from the inputs, measured in gate levels?
+Which output takes the longest logical journey to compute?
+Which output has the deepest logic cone?
+Which output bit has the deepest fanin logic cone?

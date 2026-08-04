@@ -1,0 +1,20 @@
+Identify g12: type and connectivity.
+Details of g12 — the nature of the gate, plus its I/O nets.
+Characterize g454: its function type and its terminals.
+For g868, report the gate class and the net on each pin.
+Describe cell g2198 for me.
+What type of gate is g2198? Report its gate type and pin connections.
+What exactly is g5 and where do its pins go?
+g100 in one line — its type, inputs, and output.
+What am I looking at with g1259? Kind and pinout.
+The card on g0: type and wiring, please.
+The dossier on g0, please: what it is and what it connects to.
+What type of gate is g100? Report its gate type and its pin connections.
+What flavor of gate is g868, and which nets does it join?
+Tell me about g5 — what is it and what is it wired to?
+What type of gate is g2198? Report its type and pin connections.
+What kind of gate is g12? Report its gate type and pin connections.
+What type of gate is g868? Report the gate type and pin connections.
+Pull up g71713: what species of gate is it, and where do its wires run?
+Give me the spec sheet for g926: kind, inputs, output.
+Break down cell g2198: classification plus connections.

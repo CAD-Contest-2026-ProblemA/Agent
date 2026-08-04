@@ -1,0 +1,71 @@
+This is the beginning of a new testcase. The case name is test94.
+Please load the design from the file test94.v located in the directory testcase/test94/.
+Find all combinational paths from primary input n5 to primary output n43 and list each path showing the gates traversed.
+Can one NAND over existing wires reproduce n33[0]?
+What is the fanout of primary input n5? List the gates that n5 drives directly.
+Which registers march to the beat of n0?
+How many floating signals were found in the design?
+What exactly is g3 and where do its pins go?
+Determine whether gate g3 lies on any maximum-depth path in the design. Report yes or no.
+How big is the direct audience of g3?
+What is the maximum combinational logic depth in the design now?
+Which input fans out to the most gates?
+Insert buffers so that no gate drives more than 6 loads. Ensure functional equivalence is preserved.
+Would the design split apart if we removed n1203?
+Which output has the largest fanin cone of the design?
+Are any outputs just straight wires from an input? List them.
+List all primary outputs of this design with their bit widths.
+Roll call for the NOR gates, please.
+Compute the maximum logic depth from n5 to n43.
+The maximum drive count on n18 is what?
+Find and merge all gate pairs in the design that are functionally equivalent (produce the same function). Make sure nothing changes functionally.
+Shrink this netlist — every gate you can spare, remove.
+Reduce the critical path depth through restructuring. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Those NANDs stuck with a high input? Make them NOTs.
+Optimize the logic cone of n33[0] while keeping the netlist NAND and NOT only. Preserve functional equivalence. The cost function is the depth of the cone of n33[0]; smaller is better.
+Does n33[0] ever change, or is it stuck at a fixed value?
+How many outputs have a logic depth greater than 6 in this design?
+Steering clear of n703, does n5 still connect to n43?
+What is the maximum logic depth from a primary input to any DFF D-pin in this design?
+Deepest direct combinational route from any input to any output?
+Determine all gates reachable from n18.
+From a flop's Q to the design's outputs, how deep can it get?
+What is the maximum combinational depth on a register-to-register path in this design?
+Which registers feed which other registers?
+Remove every dangling gate that does not contribute to any primary output. Ensure the design functionality does not change.
+Change the label of the internal wire n1203 to renamed_sig everywhere it appears.
+Report any NOR gates with constant inputs (0 or 1) in this design.
+Are g3 and g53 on the same clock domain?
+Report all gates that are shared between the fanin cones of n33[0] and n33[1].
+Check if n5 mirrors n43 exactly, always.
+Enumerate the immediate successors of gate g3.
+Does n33[0] treat n5 and n0[3] interchangeably?
+Compute the total gate count for the design.
+What is in the complete upstream closure of n33[0]?
+Compute the transitive fan-out cone of input n5.
+Confirm the netlist still behaves the same as it did immediately before that last step.
+Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.
+Lower every XOR into and-or-invert form.
+Try to replace all XOR gates with equivalent NAND-only implementations. Ensure the design functionality does not change.
+Is there a choke point whose removal cuts all connections between n5 and n43? Name every such node.
+Derive the Boolean equation for output n33[0] in terms of the primary inputs.
+Any orphaned ports I should worry about?
+Find every back-to-back inverter pair and collapse it into a wire. Make sure nothing changes functionally.
+Taking the netlist as a whole, how deep does the logic that ends at n33[0] run?
+How many gates are in the logic cone of output n33[0]?
+What is the type mix inside the cone of n33[0]?
+List every gate that now connects to the renamed signal renamed_sig.
+What hangs off the output pin of g3?
+List all gates with one or more inputs tied to 1'b1.
+Push those fixed input values through the gates and simplify what collapses.
+Replace all 2-input OR gates in the cone of n33[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.
+Tabulate the design's cells per type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Determine the number of primary inputs and primary outputs in this design.
+How many XNOR cells does this design carry?
+Which output has the deepest fanin logic cone?
+Compared to before that transform, how many gates disappeared?
+Does output n33[0] functionally depend on input n5? Report yes or no.
+Does g3 hold a monopoly on the traffic between n5 and n43?
+How many flip-flops were found to have enable or hold structures in their D input logic?
+Inspect each flop's D input: any mux-style self-feedback in there?
+Please write the current design to the output file test94_out.v.

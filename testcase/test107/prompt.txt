@@ -1,0 +1,20 @@
+How many gates are in the logic cone of output n8[0]?
+How many gates, all told, participate in computing n13[0]?
+How big is the support circuitry of n8[0], in gates?
+Size up the cone under n8[0] — the number of gates only.
+Weigh the cone of n12 in units of gates.
+How many gates are in the fanin cone of primary output n14?
+How many gates does the fanin cone of primary output n16 contain?
+How many components have a hand in the value of n3?
+Count the cells that feed into n8, directly or indirectly.
+How much logic sits behind output n12?
+Tally everything that contributes to computing n3.
+How many gates are in the cone of output n8[0]?
+If we fenced off everything n11[0] depends on, how many gates are inside the fence?
+How many gates are in the fanin cone of output n11[0]?
+Quantify the logic upstream of n16: a single count.
+What is the size of the machinery upstream of n11[0]?
+The support of n16 contains how many cells?
+The number of gates ancestral to n12 is what?
+Give me a head-count of the cells enlisted in producing n475.
+What is the population of the region feeding n25[0]?

@@ -1,0 +1,20 @@
+Current netlist, original netlist: prove they compute alike.
+Double-check that we did not change behavior anywhere.
+Compare present against pristine: any functional daylight between them?
+Is today's netlist still the same machine we started with?
+Line up today's netlist against the original and certify they match behaviorally.
+Prove that the transformed design is equivalent to the netlist before the transformation.
+Verify functional equivalence between the current design and the original loaded netlist.
+Validate that the design's function survived all the edits intact.
+Establish that nothing behavioral has changed since load time.
+Same circuit as the one we loaded, functionally? Prove it.
+Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.
+After all these edits, is the machine still the machine we imported?
+Prove that the transformed design is equivalent to the pre-transformation netlist.
+Run the equivalence proof: now versus as-loaded.
+Confirm the netlist still behaves the same as it did immediately before that last step.
+A formal check: the current design versus the loaded baseline — identical function?
+Certify that the transformations preserved the circuit's behavior.
+Is the working copy still faithful to the source design? Verify it.
+Verify functional equivalence between the current design and the originally loaded netlist.
+Sanity-check: current versus original — identical behavior?

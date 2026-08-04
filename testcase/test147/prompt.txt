@@ -1,0 +1,20 @@
+No matter what we feed it, does n3 stay put?
+Is n13[0] a live signal or a constant in disguise?
+Might n8 be a constant masquerading as logic?
+Can any stimulus move n3, or is it frozen solid?
+Is the value at n63[1] independent of every input?
+Does n25[0] flatline at one level regardless of the inputs?
+Is n8[0] carved in stone — the same value whatever the stimulus?
+Is n8[0] welded to a constant?
+Is output n31[0] always 0 regardless of all inputs? Report yes or no.
+Test n13[0] for liveness: can it ever toggle at all?
+Is output n8 always 1 regardless of the inputs? Report yes or no.
+Is output n15 always 1 regardless of all inputs? Report yes or no.
+Is output n475 always 0 regardless of the inputs? Report yes or no.
+Is the output n16 always 0 regardless of all inputs? Report yes or no.
+Determine whether n15 is pinned to a single logic value at all times.
+Whatever we drive in, n13[0] shows the same thing — true or false?
+Fixed or free: does n14 ever change state?
+Does n8 ever change, or is it stuck at a fixed value?
+Can any input pattern move n11[0] off zero?
+Does n31[0] respond to anything, or is it fixed in place?

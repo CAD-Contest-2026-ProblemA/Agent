@@ -1,0 +1,20 @@
+List the outputs that are literally an input, unprocessed.
+Are any outputs just straight wires from an input? List them.
+Any pass-through connections from the input side to the output side?
+Wires that connect an input directly to an output with nothing in between: find them.
+List the direct input-to-output shorts present in this design.
+Are there outputs that are simply an input passed through by wiring, with no processing?
+Which outputs are verbatim copies of an input — zero gates involved?
+Identify the gate-free connections from the input side to the output side.
+Are there any I/O pairs joined by bare wire alone? List them.
+Show me input-to-output shortcuts that pass through no logic at all.
+Find all paths of length 0 (direct wire connections from a PI to a PO).
+Find every path of length 0 (direct wire connections from PI to PO).
+Which outputs connect to an input with zero gates in between?
+Do any signals walk in one door and straight out another, untouched by logic?
+Find all paths of length 0 (direct wire connections from PI to PO).
+Which outputs does an input reach without crossing a single gate?
+Find every place a primary input touches a primary output with no logic between them.
+Spot the through-wires: primary input to primary output with an empty path.
+Find all paths of length zero (direct wire connections from PI to PO).
+Find all the paths of length 0 (direct wire connections from PI to PO).

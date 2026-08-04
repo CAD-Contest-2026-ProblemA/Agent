@@ -1,0 +1,20 @@
+Compute the transitive fanout cone of n0[0].
+The set of cells n5 can propagate into, complete and explicit?
+All the logic that n12 eventually reaches, no matter how many hops away?
+Where does n5 end up mattering, in total?
+Compute the transitive fanout cone of input n12.
+Everything downstream of n1 out to the farthest edge — list it.
+The forward footprint of n5, exhaustively enumerated.
+Track n0[0] through the whole design: the complete downstream inventory.
+Compute the transitive fanout cone for input n1.
+Give me the identifiers of everything n13 eventually feeds.
+Follow n13 to the bitter end: everything it ever influences.
+How many gates sit downstream of primary input n0? I want the number, not the list.
+Compute the transitive fanout of input n1.
+Counting everything the signal eventually touches, how many cells does n5 end up affecting?
+Compute the transitive fan-out cone of input n3.
+Which gates feel the influence of n6, directly or through others?
+The full downstream footprint of n5 — what does it cover?
+Follow every branch out of n5; report all the gates encountered.
+The full sphere of downstream effect of n5 is what?
+Enumerate all the logic ultimately fed by n2.

@@ -1,0 +1,20 @@
+Would blocking g1259 silence every message n24[2] sends toward n31[1]?
+Is there any way around g454 when traveling from n24[2] to n25[0]?
+Confirm or refute: all routes from n0 to n25[0] run through g2198.
+Can a signal get from n7 to n31[1] while dodging g868, or is g868 unavoidable?
+Does the entirety of n12's influence on n13[0] pass under the roof of g71713?
+Does every path from input n0[1] to output n117[1] go through gate g0? Report yes or no.
+Does every path from input n0[0] to output n26[1] pass through g12? Report yes or no.
+Does every combinational path from input n13 to output n30 pass through gate g5? Report yes or no.
+Is there even one itinerary from n0[0] to n31[1] that leaves g12 out?
+Can n117[1] hear from n61 without g454 in the middle, or never?
+Between n0 and n31[1], does g2198 sit on each and every path?
+Does g926 hold a monopoly on the traffic between n0[0] and n117[1]?
+Check whether g1259 is the toll booth every n0[0]-to-n475 route must pay.
+Traveling from n14 to n117[1], is skipping g926 ever an option?
+Is g100 a mandatory stop on every route from n24[2] to n26[1]?
+Is g0 indispensable to the n29-to-n9 connection?
+Does a way from n0 to n4 that bypasses g5 exist at all?
+Must all influence from n61 on n117[1] funnel through g1259?
+Does every path from input n3 to output n8[0] pass through gate g5? Report yes or no.
+Does every path from n2 to n26[1] pass through gate g926? Report yes or no.

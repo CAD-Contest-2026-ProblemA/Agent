@@ -1,0 +1,20 @@
+What's on the shelf here? Count the gates by kind.
+What does the gate inventory look like, type by type?
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Audit the gate population, category by category.
+I need the composition report — counts across AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF.
+Sum up the netlist by type — every family, every count.
+Give me the full head-count of cells, split by kind.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Tally the design's cells and organize the totals by gate category.
+Census time: how many of each gate family are we carrying?
+Break the whole design into type buckets and tell me each bucket's size.
+Inventory the circuit: per-type totals plus the grand sum.
+Produce a bill of materials: how many of each gate type?
+Tabulate the design's cells per type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+How many gates in total, and how does that break down across types?
+Run the numbers on this netlist: totals for every gate family.
+Full manifest, please: gate counts per type, everything included.

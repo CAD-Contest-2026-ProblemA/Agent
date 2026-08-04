@@ -1,0 +1,20 @@
+How many NOT gates are currently in the design?
+Right now, how many inverters are on the books?
+How many XOR gates are left?
+How many XORs remain in the design at this point?
+How many XOR gates are currently in the design?
+In the design as it stands, how many NOT gates are there?
+How many XNOR cells does this design carry?
+How many XNOR gates are currently in the design?
+How many NAND gates are currently in the design?
+What is today's count of OR gates?
+Give me the inverter count as it stands right now.
+The XNOR headcount currently stands at what?
+Current NAND census: what is the figure?
+Within the logic behind n3, how many are NAND cells?
+As of this moment, how many NOR cells exist in the netlist?
+What is the NOR population in here?
+How many NOR gates are currently in the design?
+State the current AND-gate total.
+How many DFF cells does the netlist hold at present?
+The number of BUF cells presently in the design is?

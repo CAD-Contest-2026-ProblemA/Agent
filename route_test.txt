@@ -1,0 +1,30 @@
+This is the beginning of a new testcase. The case name is test01.
+Please load the design from the file test01.v located in the directory testcase/test01/.
+Please write the current design to the output file test01_out.v.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Determine the number of primary inputs and outputs.
+List all NAND gates in this design with their input and output signals.
+What is the fanout of primary input n5? List all gates that n5 drives directly.
+Determine the number of gates driven by g0.
+Enumerate the immediate successors of gate g0.
+Compute the transitive fanin cone of output n3.
+Compute the transitive fanout cone of input n0[0].
+How many gates are in the fanin cone of primary output n15?
+Which primary input has the highest fanout in this design?
+Determine whether a combinational path from n0[0] to n4 exists that does not traverse node n719.
+Verify whether a path connecting input n0[1] to output n6 exists while avoiding n94.
+List every path originating at primary input n0[1] and terminating at primary output n10.
+Does every path from input n2 to output n12 pass through gate g0? Report yes or no.
+Determine whether wire n55104 is a cut between any primary input and any primary output. Report yes or no.
+Compute the maximum logic depth from input n12 to output n25[0].
+Compute the maximum logic depth of the fanin cone of output n3.
+What is the maximum combinational depth on any register-to-register path in this design?
+What is the maximum combinational depth from any primary input to any primary output in the entire design?
+Which output bit has the deepest fanin logic cone?
+Verify that n1039 and n1046 produce identical logic values for all inputs.
+Report any NAND gates with constant inputs (0 or 1) in this design.
+Prove that the transformed design is equivalent to the pre-transformation netlist.
+Rename gate g0 to renamed_gate. Ensure functional equivalence is preserved.
+Replace all 2-input OR gates in the cone of n11[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.
+Reduce the critical path depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Trim unused wires and gates. Make sure nothing changes functionally.

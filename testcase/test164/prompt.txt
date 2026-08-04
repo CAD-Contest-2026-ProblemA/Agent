@@ -1,0 +1,20 @@
+Just the grand total of gates.
+Compute the total gate count of the design.
+Count everything with pins — a single figure, please.
+The aggregate gate quantity across the entire circuit is?
+Compute the design's total gate count.
+Compute the total gate count for the design.
+Total cells, please — no breakdown needed.
+How large is the design, measured simply in gates?
+What does the design total out to, in gates?
+Just the sum, please: how many cells overall?
+Sum every gate of every kind — what is the aggregate figure?
+Bottom line: how many cells are in this thing?
+Compute the total gate count of this design.
+Overall gate tally, one number.
+The grand total of components, no per-type detail needed?
+The whole netlist weighs in at how many gates?
+Compute the total gate count of the current design.
+All types combined, the cell total comes to what?
+One number: the cells in this netlist, all types pooled together.
+What is the headcount of this netlist?

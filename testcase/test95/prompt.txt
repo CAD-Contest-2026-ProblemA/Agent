@@ -1,0 +1,71 @@
+This is the beginning of a new testcase. The case name is test95.
+Please load the design from the file test95.v located in the directory testcase/test95/.
+Determine the number of gates driven by g4.
+Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?
+Which primary input has the highest fanout?
+Shield n19: one dedicated buffer per consumer.
+Determine whether wire n1204 forms a cut between any primary input and any primary output. Report yes or no.
+Which output commands the biggest army of gates?
+Find all paths of length 0 (direct wire connections from a PI to a PO).
+Run down the design's entry points for me.
+List all XNOR gates in this design.
+How far apart are n6 and n44, measured in logic depth?
+What is the maximum fanout of n19 now?
+Deduplicate the logic: identical computations should exist only once.
+Reduce the gate count through restructuring. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Now shorten the worst-case path as far as you can without breaking anything.
+Replace all 2-input NAND gates with one input tied to constant 1 by inverters. Ensure the design functionality does not change.
+Leaving the rest of the design untouched, make the logic behind n34[0] as shallow as you can.
+Is output n34[0] always 1 regardless of all inputs? Report yes or no.
+Outputs taller than 3 levels — how many are there?
+Verify whether a path connecting input n6 to output n44 exists while avoiding node n704.
+What is the longest chain from any input to any flop's data pin?
+What is the maximum combinational depth from any primary input to any primary output in the entire design?
+Which parts of the circuit does n19 eventually touch?
+What is the maximum combinational logic depth from any register Q pin to any primary output?
+How much logic separates consecutive registers at the extreme?
+List every register-to-register path in this design through combinational logic.
+Sweep out anything that no longer reaches an output.
+Rename wire n1204 to renamed_sig. Ensure functional equivalence is preserved.
+Which NANDs are being fed a hardwired 0 or 1? Just report them.
+Do the flip-flops g4 and g54 share the same clock signal? Report yes or no.
+The intersection of the support of n34[0] and of n34[1] — which gates?
+Determine whether signals n6 and n44 are functionally equivalent.
+One hop downstream of g4: who is there?
+Check whether the function at output n34[0] is symmetric with respect to inputs n6 and n0[0].
+Total cells, please — no breakdown needed.
+Compute the transitive fan-in cone of output n34[0].
+Counting everything the signal eventually touches, how many cells does n6 end up affecting?
+Prove that the transformed design is equivalent to the pre-transformation netlist.
+Re-express each XNOR purely with NORs.
+Decompose all XOR gates in the design into AND, OR, and NOT gates without changing functionality.
+Turn every XOR into its NAND lattice.
+Identify all articulation points in the combinational graph between n6 and n44.
+What is the closed-form function sitting at n34[0]?
+Check if the design contains any floating inputs or unconnected output ports.
+Two NOTs in a row cancel out — go squash those into plain wires.
+What is the depth of the cone of n34[0] now?
+What is the size of the machinery upstream of n34[0]?
+Report the number of every gate type in the cone of n34[0].
+After that rename, what connects to renamed_sig?
+Report every gate connected to the output of g4.
+Find the gates where some input is stuck at 1 and list them.
+Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.
+I want the cone of n34[0] speaking only AND, OR, and NOT.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+How wide is the design's interface — inputs and outputs?
+How many XNOR gates are currently in the design?
+Of all outputs, whose supporting cone reaches deepest?
+How many NOT gates were removed by the inverter-pair collapse?
+Is there a functional dependence of n34[0] on n6?
+Does every path from input n6 to output n44 pass through gate g4? Report yes or no.
+Count the flops whose next state can be their current state.
+Report the D input logic of the flip-flops to identify any enable or hold structures implemented through multiplexers or AND gates.
+Chart every corridor connecting n6 with n44.
+Does there exist any pair of internal signals (a, b) already present in the netlist such that NAND(a, b) is equivalent to n34[0]?
+Which cells does n6 hand its value to straight away?
+List every flip-flop driven by clock n0.
+How many hanging wires are we talking about?
+What kind of gate is g4? Report its gate type and pin connections.
+Does g4 sit on the slowest route through the design?
+Please write the current design to the output file test95_out.v.

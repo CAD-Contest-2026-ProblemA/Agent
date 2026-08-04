@@ -1,0 +1,20 @@
+Determine whether the wire n10239 is a cut between any primary input and any primary output. Report yes or no.
+Determine whether wire n848 is a cut between any primary input and any primary output. Report yes or no. 
+Test n55104: a bottleneck whose removal splits the I/O flow, or redundant?
+Determine whether wire n1023 is a cut between a primary input and a primary output. Report yes or no.
+Would the design split apart if we removed n1039?
+Is all of some output's traffic riding on n10239?
+Determine whether wire n2122 forms a cut between any primary input and any primary output. Report yes or no.
+n2116 gone — is any output stranded from the inputs? That is the question.
+If n1039 were severed, would some output lose contact with the inputs?
+Would snipping n1080 orphan any input-to-output connectivity?
+Take n848 out of the picture — does some output go dark relative to the inputs?
+Does cutting n1001 disconnect part of the design's I/O flow?
+Is the wire n1039 a single point whose removal partitions input from output?
+If n1039 disappeared, would an output lose its last link to the inputs?
+Is n2122 load-bearing for the input-to-output connectivity?
+Does everything between some input and some output funnel over n55104?
+Determine whether wire n55104 is a cut between any primary input and any primary output. Report yes or no.
+Determine if n2116 alone bridges some input to some output.
+Is n2122 the only thread holding part of the input-output connectivity together?
+Can the design afford to lose n1214 without severing an input-output relation?

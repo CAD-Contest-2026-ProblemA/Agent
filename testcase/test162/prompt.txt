@@ -1,0 +1,20 @@
+Which cells border g12 on its output side?
+One edge away from g0, downstream: which nodes?
+Name the next-door downstream neighbors of g5.
+Right after g71713, which gates come next?
+Adjacent to and downstream of g12: which gates?
+Which gates consume the output of g868 first-hand?
+The first-generation descendants of g1259 are?
+Where does the signal go the instant it leaves g926?
+Enumerate all immediate successors of gate g868.
+The direct heirs of g2198 in the graph: name them.
+Enumerate the immediate successors of gate g5.
+Enumerate the immediate successors of g868.
+Enumerate every immediate successor of gate g2198.
+One hop downstream of g12: who is there?
+The very next gates after g71713 — who are they?
+Which cells directly follow g868 in the graph?
+Immediately after g5, the signal hits which gates?
+List the gates g12 hands off to directly.
+Immediately past g12, which cells stand?
+Enumerate the immediate successor gates of g1259.

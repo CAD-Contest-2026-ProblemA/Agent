@@ -1,0 +1,20 @@
+Outputs taller than 8 levels — how many are there?
+How many outputs have a logic depth greater than 2 in this design?
+How many outputs exceed 2 gate levels of logic?
+Count the outputs whose cones run deeper than 7 levels.
+How many outputs blow past the 2-level mark?
+Past a depth of 6: how many outputs qualify?
+How many result pins have cones deeper than 5 levels?
+How many outputs have logic depth greater than 4?
+Count the outputs whose depth overshoots 6.
+How many outputs of this design have a logic depth greater than 3?
+How many of the design's outputs exceed a logic depth of 7?
+How many outputs have a logic depth of more than 8?
+What quantity of outputs carries more than 5 gate levels?
+How many outputs need more than 4 stages to compute?
+How many outputs have a logic depth greater than 5?
+Beyond 3 levels of logic — how many outputs live there?
+Deeper than 2: the number of such outputs is what?
+Outputs above the 8-stage threshold — the total?
+For how many outputs does the level count exceed 2?
+Outputs needing more than 3 stages: what is the count?

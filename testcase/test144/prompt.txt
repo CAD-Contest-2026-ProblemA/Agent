@@ -1,0 +1,20 @@
+Shave stages off the longest path wherever equivalence permits.
+Optimize the logic to minimize maximum path depth. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Reduce the maximum logic depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Compress the critical chain — flatter logic, identical behavior.
+Optimize the logic to minimize the maximum path depth. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Trade structure for speed: minimize the levels end to end.
+Now go after the timing instead: restructure so the worst-case path is as short as it can be.
+Make the slowest chain shorter; nothing else may change.
+Depth-focused optimization: flatten the tallest stack of gates.
+Reduce the critical path depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Squeeze the critical path as short as you can without changing behavior.
+Flatten the deepest logic chain — fewer levels, same function.
+Restructure with one goal only: minimum worst-case depth.
+Reduce the critical path depth through restructuring. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Re-balance the logic to bring the peak depth down.
+The metric is maximum logic depth, and lower is better. Go.
+Now shorten the worst-case path as far as you can without breaking anything.
+Reduce the cascading to the bare minimum the function allows.
+Timing is king now: rebuild so the deepest chain is as shallow as possible.
+Attack the levels: same function, fewer cascaded gates on the worst path.

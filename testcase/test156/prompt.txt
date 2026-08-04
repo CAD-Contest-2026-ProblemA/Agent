@@ -1,0 +1,20 @@
+Logic that serves no output is dead weight — drop it.
+The netlist carries passengers that contribute nothing; remove them.
+Dispose of the unused machinery cluttering this design.
+Prune everything whose influence never arrives at a primary output.
+Remove every dangling gate that does not contribute to any primary output. Ensure the design functionality does not change.
+If a cell's output never matters downstream, delete that cell.
+Take out the trash: non-contributing logic goes.
+Cut loose the gates orphaned from all outputs.
+Clear the deadwood out of this netlist.
+Remove all dangling gates that do not contribute to any primary output. Make sure nothing changes functionally.
+Weed out the cells with no route to any output.
+Trim unused wires and gates. Make sure nothing changes functionally.
+Strip the netlist of gates the outputs never see.
+Excise every gate that fails to matter to any output.
+Trim unused wires and gates. Ensure functional equivalence is preserved.
+Garbage-collect the dead logic in this netlist.
+Sweep out anything that no longer reaches an output.
+Anything not observable from the outputs — cut it.
+Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.
+Purge the cells whose work never leaves the chip.

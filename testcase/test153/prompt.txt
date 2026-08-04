@@ -1,0 +1,20 @@
+The longest logic run between any register's Q and the design's outputs is?
+Measure the deepest combinational segment from Q pins to primary outputs.
+What is the deepest path launched at a Q pin and captured at an output port?
+After the last register, how much logic can a signal still cross before exiting?
+A stored bit heading for the outside world crosses at most how many gates?
+The register-to-output segment: worst-case levels?
+What is the longest gate chain that starts at a register output and ends at a primary output?
+How far can a stored value travel through logic before exiting at an output port?
+What is the maximum combinational depth from any register output (Q pin) to any primary output?
+What is the maximum combinational logic depth from any register Q pin to any primary output?
+How deep is the longest chain that begins at a Q pin and ends at an output port?
+From a flop's Q to the design's outputs, how deep can it get?
+The register-to-boundary stretch: its maximum depth?
+What is the maximum combinational depth from any DFF Q output to any primary output in this design?
+From the register outputs to the primary outputs, the peak gate count is?
+Out of storage and toward the pins: the deepest Q-to-output run measures what?
+What is the maximum combinational depth from any DFF Q pin to any primary output?
+What is the maximum combinational depth from any register output to any primary output in this design?
+The final leg — flop to output pin — how many levels at worst?
+The worst-case levels from any flop's Q to any primary output?

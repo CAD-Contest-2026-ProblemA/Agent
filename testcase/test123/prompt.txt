@@ -1,0 +1,20 @@
+No sampling — the complete route inventory from n5 to n4.
+Provide a complete enumeration of paths between n2 and n13[0].
+Spell out all the ways n1 reaches n13[0], gate by gate.
+Chart every corridor connecting n13 with n9.
+Find all combinational paths from primary input n7 to primary output n9 and list each path showing the gates traversed.
+Every way through the logic from n2 to n30, listed one per line.
+All journeys from n0[0] to n31[1]: print them out.
+I want the exhaustive route list from n12 to n31[1].
+Every itinerary from n14 to n63[0], please — no summaries.
+Provide a complete enumeration of the paths between n3 and n63[0].
+Lay out each distinct corridor from n0[1] to n13[0], gate by gate.
+Trace and list the totality of routes n1 takes to arrive at n63[0].
+List every path originating at input n7 and terminating at output n117[1].
+Catalog the n0-to-n15 connections exhaustively, showing the gates en route.
+List every path originating at primary input n61 and terminating at primary output n13[0].
+I want to see every single chain from n61 to n25[0], not a summary.
+Produce the definitive list of paths tying n61 to n26[1].
+Between n24[2] and n30, write out each traversal in its entirety.
+Walk me through every distinct route a signal can take from n1 to n15.
+Unroll the full set of gate sequences leading from n0[0] to n31[1].

@@ -1,0 +1,20 @@
+Rename wire n1039 to sig_alias. Make sure nothing changes functionally.
+Rebadge n1001 as stage2_out throughout the netlist.
+Give g71713 the new identifier sig_alias.
+Rename gate g926 to renamed_wire. Ensure functional equivalence is preserved.
+Henceforth n1039 answers to renamed_sig; propagate the change everywhere.
+From now on, g1259 goes by renamed_sig — update every reference.
+Every mention of n1023 should now read stage2_out — apply that globally.
+Change the label of the internal wire n10239 to stage2_out everywhere it appears.
+Rename gate g12 to sig_alias. Make sure nothing changes functionally.
+Push a global find-and-replace: n848 becomes sig_alias.
+Update the netlist so that n10239 carries the name renamed_sig everywhere it appears.
+The wire once called n848 is now renamed_sig — make it official everywhere.
+Swap the name n10239 for renamed_wire across the whole netlist.
+Assign stage2_out as the new identifier of gate g5.
+Substitute the identifier renamed_sig for n1039 across the whole netlist.
+g1259 needs a new name. Use sig_alias and update all references to it.
+Rename wire n1001 to renamed_sig. Ensure functional equivalence is preserved.
+Change the identifier of gate g0 to stage2_out and update all references. Ensure the design functionality does not change.
+Retitle the gate g1259: its new handle is renamed_wire.
+Re-label g100 as sig_alias without altering any behavior.

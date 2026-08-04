@@ -1,0 +1,20 @@
+What is the maximum logic depth from any primary input to any DFF D-pin in the design?
+Before first storage — how many gate levels can a fresh input cross, at maximum?
+How tall is the logic between the design's inputs and the D pins?
+The peak number of levels on any path from a primary input into a flop's D pin?
+What is the maximum logic depth from any primary input to any DFF D-pin?
+The stretch between the input pins and the registers' D terminals: how deep at worst?
+What is the maximum logic depth from a primary input to any DFF D-pin in this design?
+Measure the deepest input-to-D segment in the design.
+How much logic can pile up between an entry signal and a D input?
+An input's journey to storage: at most how many gates long?
+How many levels at most between an input pin and a register's data input?
+Worst-case stage count, from the inputs to the register data pins?
+What is the longest chain from any input to any flop's data pin?
+The input-to-register segment: how many gate levels at its deepest?
+From the boundary to a D pin, the maximum depth is what?
+Worst case, how deep is the logic from the PIs to the flop D pins?
+What is the maximum logic depth from any primary input to any DFF D-pin in this design?
+The longest combinational leg from a primary input to any flop's data pin is?
+What is the maximum logic depth from any primary input to a DFF D-pin in this design?
+How tall can the logic get before a signal is first registered?

@@ -1,0 +1,20 @@
+Kick out the XORs; the NAND-only equivalents go in.
+The classic 4-NAND XOR replaces each native XOR — everywhere.
+Kick every XOR out of the netlist; leave NAND structures behind.
+Re-express the XOR gates with NAND cells exclusively.
+Try to replace all XOR gates with equivalent NAND-only implementations. Ensure the design functionality does not change.
+Turn every XOR into its NAND lattice.
+NAND-only reconstruction for every XOR cell, please.
+Convert all XOR gates in this design to equivalent 4-NAND circuits. Ensure the design functionality does not change.
+Convert the XOR population wholesale into NAND constructions.
+The XOR instances should be realized via NANDs alone from now on.
+Each XOR should become the classic four-NAND diamond.
+Convert every XOR gate in this design to an equivalent 4-NAND circuit. Ensure the design functionality does not change.
+Each XOR is to be reborn as the four-NAND lattice.
+Try to replace all XOR gates in this design with equivalent NAND-only implementations. Ensure the design functionality does not change.
+Rebuild all the XORs in NAND-only fashion.
+XOR cells: rebuild them from NANDs alone.
+Re-plumb the XORs with NAND-only internals.
+Melt the XORs down and recast them purely in NAND.
+Wherever an XOR sits, place its NAND-network equivalent instead.
+Convert every XOR gate in the design to an equivalent 4-NAND circuit. Make sure nothing changes functionally.

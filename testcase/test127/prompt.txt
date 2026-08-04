@@ -1,0 +1,20 @@
+Give the number of unwired signals discovered.
+What is the bottom line on floating nets?
+How many floating signals were found by that check?
+So how many loose ends did that check turn up?
+State the count of floating connections found.
+How many terminals failed the connection check?
+The final figure on unattached signals is?
+So, how many pins came up empty in the end?
+How many wires turned out to be going nowhere?
+How many loose wires does the design contain?
+How many hanging wires are we talking about?
+How many pins came back unwired?
+That connectivity audit — how many strays did it turn up?
+What is the count of unconnected nets?
+How many floating signals were found in the design?
+The dangling-signal total lands where?
+How many floating signals were found?
+How many floating signals were found in this design?
+Number of orphaned signals, please.
+How many floating signals have been found?

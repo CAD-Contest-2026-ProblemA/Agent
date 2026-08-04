@@ -1,0 +1,20 @@
+The tally of enable- or hold-equipped flip-flops is what?
+How many state bits have a keep-alive loop in their D logic?
+How many flip-flops were found to have an enable or hold structure in their D input logic?
+How many flip-flops carry a hold-your-value mechanism?
+What is the tally of enable-gated registers?
+Count the flops whose next state can be their current state.
+How many flip-flops have an enable or hold structure in their D input logic?
+How many flip-flops were found with enable or hold structures in their D input logic?
+Sum up the registers whose next value can equal their present one by construction.
+How many DFFs were flagged as hold-capable?
+How many registers can freeze their own value?
+The number of registers with self-retaining D logic comes to what?
+How many flip-flops were found to have enable or hold structures in their D input logic?
+How many storage cells have conditional-update wiring?
+How many flops, in total, can opt out of updating?
+How many sequential cells guard their updates with an enable?
+What count of flops carries a recirculating D-input structure?
+The count of state elements wearing an enable gate is?
+How many flip-flops have enable or hold structures in their D input logic?
+Registers that can stand pat — how many of them?

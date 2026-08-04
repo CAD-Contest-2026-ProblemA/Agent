@@ -1,0 +1,20 @@
+Ignoring anything stored, how deep can a straight input-to-output path get?
+Purely combinational, inputs to outputs: what is the deepest chain?
+Flow-through worst case — input to output, no flops involved — how many stages?
+Not counting register crossings, the peak input-to-output depth is?
+How deep is the longest direct combinational corridor from PI to PO?
+What is the worst-case flow-through depth, PI to PO, combinational only?
+What is the maximum combinational logic depth from any primary input to any primary output in the entire design?
+Register-free from input to output: the deepest such chain has how many levels?
+Deepest direct combinational route from any input to any output?
+The longest unclocked route from an entry pin to an exit pin: its length in gates?
+From the PI boundary to the PO boundary, how many levels max, with no registers involved?
+What is the maximum combinational depth from any primary input to any primary output in the entire design?
+What is the maximum combinational depth from any primary input to any primary output?
+What is the maximum combinational depth from any primary input to any primary output in the design?
+Combinational only: the maximum levels from the input boundary to the output boundary?
+What is the maximum combinational depth from a primary input to a primary output in the entire design?
+Steering clear of all DFFs, what is the deepest chain from an input to an output?
+What is the deepest chain that starts at a primary input and ends at a primary output without touching a register?
+For purely combinational flow-through, what is the max depth from PI to PO?
+What is the longest register-free path from an input pin to an output pin?

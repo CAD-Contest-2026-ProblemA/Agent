@@ -1,0 +1,20 @@
+What is in the complete upstream closure of n14?
+Everything with a causal line into n25[0]: name it.
+Everything that ultimately influences n8 — list it.
+Backtrack from n31[0] to its origins and list what you cross.
+Which cells stand anywhere in the lineage of n12?
+Compute the transitive fanin of output n475.
+Everything upstream that n12 ultimately draws on — enumerate it.
+Compute the transitive fanin cone of output n31[0].
+From n8[0], walk upstream to exhaustion — report every gate found.
+Compute the transitive fanin cone of n3.
+Compute the transitive fan-in cone of output n11[0].
+The closure of the dependencies of n31[0], listed out.
+Which cells does the value of n16 ultimately rest on?
+Which gates, near or far, feed into the making of n12?
+Compute the transitive fanin cone for output n3.
+The full ancestry of n11[0], please.
+All the logic n13[0] transitively depends on: the full set.
+Assemble the complete list of gates n16 descends from.
+The ancestry of n13[0], all generations included: which cells?
+Trace n3 all the way back: which gates are involved?

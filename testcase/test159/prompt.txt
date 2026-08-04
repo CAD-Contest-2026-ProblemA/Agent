@@ -1,0 +1,20 @@
+Are both registers, g100 and g1287, hanging on one clock line?
+One timing source for both g2198 and g992, or two different ones?
+Do g1259 and g203 tick together — same clock source?
+Do flip-flops g2198 and g992 share the same clock signal? Report yes or no.
+Is the clock feeding g1259 the very same signal feeding g1?
+Are flip-flops g12 and g203 clocked by the same signal? Report yes or no.
+Do g1259 and g992 tick off the same source?
+Do the flops g0 and g1003 beat to a common clock?
+Are g12 and g50 on the same clock domain?
+g868 and g1287: clocked as siblings, or strangers?
+Check whether g5 and g2200 get their edges from the same place.
+Do the flip-flops g1259 and g903 share the same clock signal? Report yes or no.
+Confirm whether g2198 and g1 share their timing reference.
+Do g454 and g1 latch in unison — identical clock net?
+Is a single clock wire responsible for both g2198 and g203?
+Are flip-flops g454 and g1003 driven by the same clock? Report yes or no.
+A same-domain check for g1259 and g1287, please.
+Is one clock driving both g2198 and g1287?
+g868 versus g50: common clock or different clocks?
+Do flip-flops g5 and g7 use the same clock signal? Report yes or no.

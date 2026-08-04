@@ -1,0 +1,20 @@
+Please write the current design out to the file test168_out.v.
+Emit the netlist in its current form to test168_out.v.
+Serialize the working netlist out to test168_out.v.
+Take a snapshot of the netlist and store it at test168_out.v.
+Capture the current state of the circuit into test168_out.v.
+Flush the in-memory design to the file test168_out.v.
+Export the present netlist to test168_out.v.
+Please write the current design to the output file named test168_out.v.
+Archive the current netlist into test168_out.v.
+Dump the current circuit into test168_out.v.
+Finalize by writing the circuit out as test168_out.v.
+Commit the working design to disk as test168_out.v.
+Save what we have now as test168_out.v.
+Record today's version of the circuit under test168_out.v.
+Produce test168_out.v containing the design exactly as it now stands.
+The present design belongs on disk — file it as test168_out.v.
+Please write out the current design to the output file test168_out.v.
+Persist the netlist as it stands to test168_out.v.
+Please write the current design to the output file test168_out.v.
+Please write the current design to output file test168_out.v.

@@ -1,0 +1,20 @@
+Just the peak load figure for n1023, please.
+What is the maximum fanout of n15 now?
+What is the maximum fanout of signal n1 now?
+What is the maximum fanout of n5?
+Give me the load ceiling of n1214.
+How heavy is the worst loading on n10[0]?
+The loading maximum on n1214 — give the figure.
+Peak sink count for the net n10[0]?
+What is the maximum fanout of net n15 now?
+The maximum drive count on n5 is what?
+The top-end connection count on n2 is?
+Report the largest number of loads sitting on n0.
+The ceiling on the fanout of n61 stands at what?
+What is the maximum fanout of the signal n15?
+n10[0]'s heaviest loading: what is the number?
+How burdened is n10[0] at worst, counted in direct loads?
+What is the most gates n2 is asked to drive?
+What is the top fanout number on n10[0]?
+n61 branches into at most how many gate inputs?
+How many sinks does n2 carry at its peak?

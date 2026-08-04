@@ -1,0 +1,20 @@
+First stop after n29: which gates take the signal?
+Who sits one wire away from n0, listening?
+List the cells taking n61 as a direct input.
+What is the fanout of primary input n13? List every gate that n13 drives directly.
+The immediate audience of n3 consists of which gates?
+What is the fanout of primary input n24[2]? List the gates that n24[2] drives directly.
+How many loads hang directly on n0[0], and which are they?
+What is the fanout of primary input n61? List all gates that n61 drives directly.
+Directly downstream of n12: which gates?
+Straight off the wire of n0[0]: name the receivers.
+Which cells does n29 hand its value to straight away?
+n24[2] feeds directly into what? Name each gate.
+Where does n3 deliver its value directly?
+What is the fanout of input n5? List all gates that n5 drives directly.
+Name the gates n1 touches first.
+Which gates receive n0[0] without any intermediary?
+What hardware does n0[1] drive first-hand?
+The moment n7 changes, which cells are notified immediately?
+What is the fanout of n61? List all gates that n61 drives directly.
+Who are the immediate customers of n5?

@@ -1,0 +1,20 @@
+Try to replace all XNOR gates with equivalent NOR-only implementations. Ensure the design functionality does not change.
+Re-express each XNOR purely with NORs.
+Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.
+No XNOR shall remain: replace each with a NOR-based structure.
+Convert every XNOR gate in the design to an equivalent NOR-only circuit. Make sure nothing changes functionally.
+Convert the equality gates (the XNORs) into their NOR realizations.
+Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.
+The XNORs are to be re-expressed entirely in NOR logic.
+Displace the XNORs in favor of pure-NOR implementations.
+Retire the XNORs; erect NOR-built replacements in their place.
+Swap the XNOR gates for their four-NOR equivalents.
+Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change.
+Convert all XNOR gates in this design to equivalent NOR-only circuits. Ensure the design functionality does not change.
+Every XNOR should become NOR-only logic; touch nothing else.
+Substitute NOR-only fabric wherever an XNOR now stands.
+One by one, remake the XNOR cells out of NORs.
+XNORs out, NOR structures in — one for one.
+Each XNOR cell must dissolve into an all-NOR construction.
+Trade every XNOR for its NOR-network equivalent.
+Purge XNOR from the type list by rebuilding each instance with NORs.

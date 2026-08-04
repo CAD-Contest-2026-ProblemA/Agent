@@ -1,0 +1,20 @@
+What hangs off the output pin of g12?
+Which loads does the output pin of g454 carry?
+Attached to the output side of g868: which components?
+Every consumer wired to the product of g926, please.
+g926 emits a signal — enumerate its takers.
+Report every gate connected to the output signal of g2198.
+The output of g454 lands on which gates?
+Which gates are wired to the output of g12?
+Which cells receive their signal straight off the back of g1259?
+Show every cell that taps the output of g868.
+Report every gate connected to the output of g5.
+Who consumes what g1259 produces? List them.
+The pin coming out of g0 — which gates grab onto it?
+Who reads what g868 writes? List them all.
+Report each gate connected to the output of gate g2198.
+Report all gates connected to the output of g5.
+List everything soldered onto the result wire of g454.
+Name the loads sitting on the output of g1259.
+Downstream of g454's output terminal, who is attached?
+Report every gate that is connected to the output of g12.

@@ -1,0 +1,20 @@
+Each gate reading n15 should get the signal via a personal BUF — set that up.
+Bring in BUFs until every driver is within 3 loads.
+Shield n1214: one dedicated buffer per consumer.
+Deploy buffering to cap per-driver loading at 3.
+Insert buffers so that no gate drives more than 5 loads. Ensure functional equivalence is preserved.
+Retrofit the design with buffers wherever a driver exceeds 6 sinks.
+Too much on one driver is bad practice — enforce a 3-load maximum using buffers.
+Please insert a BUF gate on signal n1214 so that every load of n1214 is driven through a dedicated buffer. Make sure nothing changes functionally.
+Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.
+Add repeater stages so that no single cell pushes beyond 8 sinks.
+Stage the loading on n10[0] through fresh BUF cells, one per receiver.
+Isolate each consumer of n1214 behind its own buffer.
+Fan n10[0] out through individual BUFs, one per load.
+Interpose a dedicated buffer between n15 and every one of its loads.
+Insert buffers wherever needed so that no gate drives more than 3 loads. Ensure the design functionality does not change.
+Please insert a BUF gate on signal n1214 so that each load of n1214 is driven through a dedicated buffer. Ensure the design functionality does not change.
+Break up the heavy nets: add buffers so the 3-load rule holds design-wide.
+Nobody should drive more than 6 listeners — add buffers where that is violated.
+Give every load of n0 its own private repeater.
+Cap the drive burden at 6 loads per gate by sprinkling in buffers.

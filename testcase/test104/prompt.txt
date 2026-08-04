@@ -1,0 +1,20 @@
+Look for terminals that never got wired up and tell me what you find.
+Is every port actually connected, or are some dangling in the air?
+Look over the I/O and flag anything unattached.
+Any orphaned ports I should worry about?
+Check if the design contains any floating inputs or unconnected output ports.
+Verify that the design has no stray, unattached ports.
+Are any pins in here left hanging with nothing attached?
+Check if there are any floating inputs or unconnected output ports in this design.
+Check whether there are any floating inputs or unconnected output ports in this design.
+Sanity pass, please: any connectors left dangling on either side of the design?
+I suspect some ports were never hooked up — can you confirm or deny?
+Somewhere in here a port may be electrically alone. Check whether that is the case.
+Give the netlist a once-over for terminals that end in thin air.
+Check if there are any floating inputs or unconnected outputs in the design.
+Audit the ports: fully wired, or do we have loose sockets?
+Sweep the boundary for pins with no wiring behind them.
+Quality check: does every input actually go somewhere, and does every output actually come from somewhere?
+Do we have inputs going nowhere or outputs fed by nothing?
+Do a connectivity audit of the design's inputs and outputs.
+Check whether any floating inputs or unconnected output ports exist in this design.

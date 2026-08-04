@@ -1,0 +1,20 @@
+Direct dependents of g1259: how many are there?
+How many cells hang off g868 directly?
+Directly speaking, g868 powers how many components?
+How many gates list the output of g2198 among their inputs?
+Determine the number of gates directly driven by g2198.
+Determine how many gates are driven by g2198.
+Count the gates taking the output of g454 as an input.
+Determine the number of gates driven by g71713.
+What is the size of g2198's first-hop following?
+How many pieces of logic does g926 feed without intermediaries?
+The immediate downstream of g2198 numbers how many gates?
+How many cells take their marching orders from g1259?
+What is the direct load count of g868?
+The output of g926 lands on how many gates?
+How big is the direct audience of g71713?
+How many gates does g5 push directly?
+Count the immediate dependents of g1259.
+Determine the number of gates that are driven by g0.
+Give the count of cells g71713 supplies directly.
+Determine the number of gates driven by gate g0.

@@ -1,0 +1,20 @@
+Each XOR becomes a small AND/OR/NOT network — convert them all.
+Take the XORs apart; reassemble them with the three primitive types AND, OR, NOT.
+Dismantle each XOR into its and-or-invert skeleton.
+Break the XORs apart using only the basic three: AND, OR, NOT.
+Decompose all XOR gates in this design into AND, OR, and NOT gates without changing functionality.
+Lower the XOR abstraction: express each one via ANDs, ORs, and inverters.
+Unpack the XORs into plain AND, OR, and NOT structures.
+Expand every XOR cell into basic AND/OR/NOT structure.
+Decompose all XOR gates in the design into AND, OR, and NOT gates without changing functionality.
+No more XOR cells — spell each one out with ANDs, ORs, and inverters.
+Decompose all the XOR gates in the fanin cone of n12 into AND, OR, and NOT gates without changing functionality.
+Flatten the XORs into and-or-invert logic.
+Decompose all XOR gates in the fanin cone of n30 into AND, OR, and NOT gates without changing functionality.
+Lower every XOR into and-or-invert form.
+Replace the XOR gates by their sum-of-products construction using AND, OR, and NOT.
+Spell out the XOR gates in sum-of-products form (AND, OR, NOT).
+Replace the XOR instances by their two-term AND-OR-NOT expansions.
+Out with the XOR cells; in with their AND-OR-NOT equivalents.
+Decompose every XOR gate in the fanin cone of n8[0] into AND, OR, and NOT gates without changing functionality.
+The XORs must be rebuilt from AND, OR, and NOT — nothing fancier.

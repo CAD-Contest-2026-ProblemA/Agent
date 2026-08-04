@@ -1,0 +1,20 @@
+Can n12 be shortcut to a single NAND of in-design signals?
+Does there exist any pair of internal signals (a, b) in the netlist such that NAND(a, b) is equivalent to n30?
+Is one NAND gate over signals already present enough to rebuild n25[0]?
+Is there a two-signal NAND lurking in here that is equivalent to n63[1]?
+Search the design: existing signals a and b with NAND(a, b) equivalent to n31[0].
+Could n8[0] be rebuilt as a single NAND of two signals we already have?
+Scan for a signal pair that, NANDed together, matches n31[0] bit for bit.
+Search the netlist: any two nets whose NAND matches n12 exactly?
+Among the current wires, do some pair NAND together into exactly n15?
+Could we retire the logic of n63[1] in favor of NAND(x, y) with x and y drawn from the netlist?
+Hunt for two existing nets whose NAND would replicate n16 perfectly.
+Verify whether some pair of live nets NANDs into n15 exactly.
+Can one NAND over existing wires reproduce n15?
+Does there exist a pair of internal signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n31[0]?
+Does there exist any pair of signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n11[0]?
+Does there exist any pair of internal signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n8[0]?
+Does there exist any pair of internal signals (a, b) already present in the netlist such that NAND(a, b) is equivalent to n12?
+Does n15 admit a one-NAND implementation using wires we already run?
+Two nets, one NAND, the same function as n13[0] — is that possible in this design?
+Is n475 secretly just NAND(x, y) for some existing x and y?

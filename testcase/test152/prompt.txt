@@ -1,0 +1,20 @@
+Determine all gates that are reachable from n2.
+Which parts of the netlist lie in the shadow of n5?
+Determine every gate reachable from n1.
+Determine all gates reachable from n10[0].
+Determine all gates reachable from the signal n61.
+Chart the region n1023 can influence, however indirectly.
+Where does the effect of n0 propagate, in full?
+From n10[0] outward, which gates are attainable?
+Compute the forward closure of n15.
+What lies within reach of n2, transitively?
+Which parts of the circuit does n15 eventually touch?
+Determine all the gates reachable from n15.
+All the cells n61 can touch through any chain of wires and gates?
+Everything influenced by n5, transitively: list it.
+The reach of n1023 — the complete set of gates it can affect.
+Determine the territory downstream of n15.
+Starting at n10[0], which gates can be arrived at?
+Map the sphere of influence of n0.
+Everything downstream of n15 — what can it reach?
+Every gate downstream of n10[0], to any distance: name them.

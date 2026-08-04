@@ -1,0 +1,71 @@
+This is the beginning of a new testcase. The case name is test91.
+Please load the design from the file test91.v located in the directory testcase/test91/.
+Find all articulation points in the combinational graph between n2 and n40.
+Give me a formula for n30[0] built out of the input pins.
+Check if there are any floating inputs or unconnected outputs in the design.
+Chase down NOT-NOT chains and short them through.
+Compute the logic depth of the fanin cone of output n30[0].
+How much logic sits behind output n30[0]?
+Report the number of each gate type in the fanin cone of n30[0].
+Show me everything hanging off the net renamed_sig.
+Report each gate connected to the output of gate g0.
+Which gates receive a hardwired 1 directly on an input?
+Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.
+Re-express everything in the cone of n30[0] with a NOR-plus-NOT vocabulary.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Size of the I/O footprint, please.
+How many XOR gates are currently in the design?
+Which output takes the longest logical journey to compute?
+How many BUF gates were added by the buffer insertion just performed?
+Does n2 have any influence over n30[0]?
+Does every path from n2 to n40 pass through gate g0? Report yes or no.
+How many state bits have a keep-alive loop in their D logic?
+Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates.
+Spell out all the ways n2 reaches n40, gate by gate.
+Does there exist a pair of internal signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n30[0]?
+Name the gates n2 touches first.
+List all flip-flops driven by the clock n0.
+So how many loose ends did that check turn up?
+What type of gate is g0? Report the gate type and pin connections.
+Would the deepest path miss g0 entirely, or is it on it?
+Determine how many gates are driven by g0.
+What is the tallest gate stack in the whole design?
+Which primary input has the highest fanout in this design?
+Cap the drive burden at 3 loads per gate by sprinkling in buffers.
+Determine whether the wire n1200 is a cut between any primary input and any primary output. Report yes or no.
+Which output's upstream machinery is the bulkiest?
+Find all the paths of length 0 (direct wire connections from PI to PO).
+Spell out the input ports of this design for me.
+List all XOR gates in this design.
+The deepest chain linking n2 to n40 — how many levels is it?
+What is the maximum fanout of the signal n15?
+Consolidate gates that produce the same signal from the same inputs.
+Minimize the total gate count of the design through restructuring. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Squeeze the critical path as short as you can without changing behavior.
+Replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.
+Give the cone of n30[0] a depth makeover; the rest stays as-is.
+Is output n30[0] always 1 regardless of the inputs? Report yes or no.
+Count the outputs whose cones run deeper than 3 levels.
+Verify whether a path connecting input n2 to output n40 exists while avoiding n700.
+The input-to-register segment: how many gate levels at its deepest?
+What is the maximum combinational logic depth from any primary input to any primary output in the entire design?
+Starting at n15, which gates can be arrived at?
+What is the maximum combinational depth from any register output (Q pin) to any primary output?
+Flop to flop, what is the deepest stretch of logic?
+List all the register-to-register paths in this design through combinational logic.
+Clear the deadwood out of this netlist.
+Rename wire n1200 to renamed_sig. Make sure nothing changes functionally.
+Scan the design for NOR cells that have a constant input, and report what you find.
+Do flip-flops g0 and g50 use the same clock signal? Report yes or no.
+List the cells common to what feeds n30[0] and what feeds n30[1].
+Verify that signals n2 and n40 produce identical logic values for all inputs.
+Immediately after g0, the signal hits which gates?
+Check whether the function at n30[0] is symmetric with respect to inputs n2 and n0[0].
+Overall gate tally, one number.
+Compute the transitive fanin of output n30[0].
+Follow n2 to the bitter end: everything it ever influences.
+Prove that the transformed design is equivalent to the netlist before the transformation.
+Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.
+Decompose all XOR gates in this design into AND, OR, and NOT gates without changing functionality.
+XOR cells: rebuild them from NANDs alone.
+Please write the current design to the output file test91_out.v.

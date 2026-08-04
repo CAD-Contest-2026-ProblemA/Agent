@@ -1,0 +1,71 @@
+Spin up a clean testcase under the name test99.
+Ingest test99.v (it lives in testcase/test99/) as our current netlist.
+Do flip-flops g8 and g58 share the same clock signal? Report yes or no.
+Where do the cones of n38[0] and n38[1] overlap?
+Determine whether the signals n10 and n48 are functionally equivalent.
+Name the next-door downstream neighbors of g8.
+Check whether the function at n38[0] is symmetric in inputs n10 and n0[0].
+Bottom line: how many cells are in this thing?
+Compute the transitive fanin cone of n38[0].
+How many gates sit downstream of primary input n10? I want the number, not the list.
+Verify functional equivalence between the current design and the originally loaded netlist.
+Every XNOR should become NOR-only logic; touch nothing else.
+Decompose all XOR gates in the fanin cone of n38[0] into AND, OR, and NOT gates without changing functionality.
+Re-plumb the XORs with NAND-only internals.
+Find all articulation points between n10 and n48 in the combinational graph.
+In plain algebra, what does n38[0] compute from the inputs?
+Check whether there are any floating inputs or unconnected output ports in this design.
+Cancel out doubled negations across the netlist.
+What is the maximum logic depth of the cone of output n38[0]?
+How big is the support circuitry of n38[0], in gates?
+Report the number of each gate type in the cone of n38[0].
+Who is attached to renamed_sig now?
+Report every gate that is connected to the output of g8.
+Any gates with a pin hardwired to a constant high? List them.
+Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.
+Now bring the whole thing down to NAND and NOT only.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+What are the PI and PO counts?
+How many NAND gates are currently in the design?
+Name the output with the most levels of logic beneath it.
+How many dangling gates were removed?
+Is n38[0] sensitive to n10 at all?
+Does every combinational path from input n10 to output n48 pass through gate g8? Report yes or no.
+What is the tally of enable-gated registers?
+Report the D input logic of the flip-flops to reveal any enable or hold structures implemented through multiplexers or AND gates.
+Walk me through every distinct route a signal can take from n10 to n48.
+Does there exist any pair of internal signals (a, b) in the netlist such that NAND(a, b) is equivalent to n38[0]?
+How many loads hang directly on n10, and which are they?
+List all flip-flops that are driven by clock n0.
+How many pins came back unwired?
+What type of gate is g8? Report its gate type and pin connections.
+Does the longest logic chain in the design run through g8?
+Determine the number of gates driven by gate g8.
+Worst-case logic levels anywhere in the netlist?
+Which primary input has the largest fanout in this design?
+Give every load of n23 its own private repeater.
+Determine whether wire n1208 is a cut between any primary input and any primary output. Report yes or no. 
+Which output has the widest support, counted in gates?
+Find every path of length 0 (direct wire connections from PI to PO).
+What are the names and sizes of the input pins?
+List all NAND gates in this design with their input and output signals.
+At worst, how long is the logic between n10 and n48?
+What is the maximum fanout of signal n23 now?
+Any redundant duplicates doing identical work? Merge them.
+Optimize the design to minimize total gate count. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Now go after the timing instead: restructure so the worst-case path is as short as it can be.
+Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Make sure nothing changes functionally.
+Focus on n38[0] — tighten its logic without touching anything else.
+Is the output n38[0] always 0 regardless of all inputs? Report yes or no.
+How many outputs need more than 3 stages to compute?
+Determine whether a combinational path from n10 to n48 exists that does not traverse node n708.
+Worst case, how deep is the logic from the PIs to the flop D pins?
+What is the maximum combinational depth from any primary input to any primary output in the design?
+What lies within reach of n23, transitively?
+What is the maximum combinational depth from any DFF Q pin to any primary output?
+Between one flip-flop and the next, how many gate levels does a signal pass through at worst?
+List all register-to-register paths in the design through combinational logic.
+Anything not observable from the outputs — cut it.
+Rename gate g8 to renamed_sig. Make sure nothing changes functionally.
+Any NAND cells wired to constants? List them and change nothing.
+Commit the working design to disk as test99_out.v.

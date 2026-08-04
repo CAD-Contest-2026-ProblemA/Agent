@@ -1,0 +1,20 @@
+What is the type mix inside the cone of n8?
+Report the number of each gate type in the fanin cone of n15.
+Categorize the machinery of n8[0] — counts for every type.
+Take a census inside the cone of n3, sorted by gate type.
+Inventory the cone of n16: how many of each flavor?
+Report the per-type gate counts in the cone of n15.
+Break the logic behind n14 down by cell family for me.
+Report the count of each gate type in the cone of n475.
+Profile the cone of n13[0]: how many of each gate species live there?
+What does the cone of n16 consist of, type by type?
+Under n475, how do the gate types distribute? Give numbers.
+For the logic upstream of n63[1], I need a per-family breakdown.
+Report the number of every gate type in the cone of n13[0].
+Within everything that feeds n8, tabulate the counts per gate kind.
+Give a per-type census of the gates upstream of n12.
+Itemize the gates supporting n15 by their kind.
+Report the number of each gate type in the cone of n30.
+Split the cells behind n8 into categories and give each category's size.
+Break down the composition of the cone of n13[0] per gate class.
+Sort the gates supporting n12 into buckets by kind and count each bucket.

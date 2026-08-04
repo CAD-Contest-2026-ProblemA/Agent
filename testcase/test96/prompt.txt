@@ -1,0 +1,71 @@
+Kick off a fresh run; call it test96.
+Pull in the netlist stored at testcase/test96/test96.v and make it the working design.
+Please list all primary inputs of this design with their bit widths.
+Show me each NAND cell and how it is wired.
+Determine the longest combinational path depth from input n7 to output n45.
+Just the peak load figure for n20, please.
+Try to merge any pairs of gates in this design that compute the same Boolean function on the same inputs (structural duplicates). Ensure the design functionality does not change.
+Put the design on a diet: same behavior, fewer gates.
+Optimize the logic to minimize the maximum path depth. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Simplify throughout: NAND of x and constant 1 becomes NOT of x.
+Optimize the logic cone of output n35[0] while ensuring the netlist remains NAND and NOT only. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n35[0]; smaller is better.
+Can any input pattern move n35[0] off zero?
+How many outputs have logic depth greater than 4?
+If n705 is off-limits, can a signal still travel from n7 to n45?
+What is the maximum logic depth from any primary input to a DFF D-pin in this design?
+Purely combinational, inputs to outputs: what is the deepest chain?
+Determine all the gates reachable from n20.
+The register-to-output segment: worst-case levels?
+What is the maximum combinational depth on any register-to-register path in the design?
+Chart the sequential dependencies: flip-flop to flip-flop.
+Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.
+From now on, g5 goes by renamed_sig — update every reference.
+Report any AND gates with a constant 0 input in this design.
+Check whether g5 and g55 get their edges from the same place.
+Report every gate shared between the fanin cones of n35[0] and n35[1].
+Are n7 and n45 just two names for the same function?
+Enumerate the immediate successors of g5.
+Is n35[0] indifferent to exchanging n7 with n0[1]?
+Compute the design's total gate count.
+Which cells does the value of n35[0] ultimately rest on?
+Compute the transitive fanout cone of input n7.
+Double-check that we did not change behavior anywhere.
+Convert every XNOR gate in the design to an equivalent NOR-only circuit. Make sure nothing changes functionally.
+Replace the XOR gates by their sum-of-products construction using AND, OR, and NOT.
+Convert all XOR gates in this design to equivalent 4-NAND circuits. Ensure the design functionality does not change.
+Point out the nodes that every n7-to-n45 connection is forced to squeeze through.
+Write the Boolean expression computed at n35[0] using only primary input names.
+Is every port actually connected, or are some dangling in the air?
+Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.
+How tall is the logic stack behind n35[0]?
+How many gates are in the fanin cone of output n35[0]?
+Sort the gates supporting n35[0] into buckets by kind and count each bucket.
+List all the gates that now connect to the renamed signal renamed_sig.
+Who consumes what g5 produces? List them.
+List every gate with one or more inputs tied to 1'b1.
+Absorb the constants into the logic they feed.
+Convert the logic cone of n35[0] to use only NAND and NOT gates while preserving functional equivalence.
+How many gates in total, and how does that break down across types?
+Determine the number of primary inputs and outputs.
+What is the NOR population in here?
+Which output bit has the deepest fanin cone?
+What is the before-versus-after gate difference from that step?
+Does output n35[0] depend on input n7? Answer yes or no.
+Can a signal get from n7 to n45 while dodging g5, or is g5 unavoidable?
+How many flip-flops have enable or hold structures in their D input logic?
+Hunt for flip-flops whose D pin loops back their own Q and describe what you find.
+List every path originating at input n7 and terminating at output n45.
+Is there a two-signal NAND lurking in here that is equivalent to n35[0]?
+What is the fanout of primary input n7? List all gates that n7 drives directly.
+Show the flops whose clock pin is wired to n0.
+How many floating signals were found by that check?
+Describe cell g5 for me.
+Determine whether gate g5 lies on any path of maximum depth in the design. Report yes or no.
+How many cells take their marching orders from g5?
+What is the maximum combinational logic depth in the design?
+Who is the busiest primary input?
+Insert buffers wherever needed so that no gate drives more than 4 loads. Ensure the design functionality does not change.
+Is all of some output's traffic riding on n1205?
+Which output has the largest fanin cone?
+Which outputs connect to an input with zero gates in between?
+Persist the netlist as it stands to test96_out.v.

@@ -1,0 +1,20 @@
+What does the output-side interface consist of, signal by signal, with widths?
+Give the complete list of departing signals with their bus widths.
+List all primary outputs of this design with their bit widths.
+Which signals form the input boundary? Names and widths, please.
+Introduce me to the inputs: every port, every width.
+Spell out the input ports of this design for me.
+The design's outputs, item by item, with how many bits each carries.
+Run down the design's entry points for me.
+A roster of the exit ports with their bit sizes, please.
+Detail the entry pins — identifiers plus widths.
+Please list all the primary inputs of the design with their bit widths.
+Name each way into this circuit, widths included.
+List all the primary outputs of this design with their bit widths.
+Please list all primary inputs of this design with their bit widths.
+Which named ports bring data in, and how wide is each one?
+What are the names and sizes of the input pins?
+Please list all the primary inputs of this design with their bit widths.
+Catalogue the exits: every output port with its width.
+What comes out of this design? Name the output ports and their widths.
+Lay out the output ports together with their bit counts.

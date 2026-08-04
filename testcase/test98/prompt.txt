@@ -1,0 +1,71 @@
+New session, new circuit. Refer to this one as test98.
+Bring up the design description in testcase/test98/test98.v.
+Determine all gates that are reachable from n22.
+How far can a stored value travel through logic before exiting at an output port?
+What is the maximum combinational logic depth on any register-to-register path in this design?
+Which flop pairs talk to each other through logic? List the connections.
+Trim unused wires and gates. Make sure nothing changes functionally.
+Rebadge n1207 as renamed_sig throughout the netlist.
+Report any NAND gates with constant inputs in this design.
+g7 versus g57: common clock or different clocks?
+Report all gates shared between the fanin cones of n37[0] and n37[1].
+Do n9 and n47 ever disagree, under any input at all?
+Enumerate all immediate successors of gate g7.
+Are n9 and n0[3] equal citizens as far as n37[0] is concerned?
+Compute the total gate count of the current design.
+Everything that ultimately influences n37[0] — list it.
+Compute the transitive fanout cone of n9.
+Same circuit as the one we loaded, functionally? Prove it.
+Try to replace all XNOR gates with equivalent NOR-only implementations. Ensure the design functionality does not change.
+Break the XORs apart using only the basic three: AND, OR, NOT.
+Convert every XOR gate in this design to an equivalent 4-NAND circuit. Ensure the design functionality does not change.
+If deleting one node means n9 can no longer influence n47, which nodes have that property?
+Derive the logic equation of output n37[0] in terms of its primary inputs.
+Are any pins in here left hanging with nothing attached?
+Find all back-to-back inverter pairs and collapse them into a wire. Make sure nothing changes functionally.
+Taking the whole picture into account, what is the longest run of gates that ends up at n37[0]?
+How many gates does the fanin cone of primary output n37[0] contain?
+Inventory the cone of n37[0]: how many of each flavor?
+List all gates that now connect to the renamed signal renamed_sig.
+Show every cell that taps the output of g7.
+List all gates with an input tied to 1'b1.
+Propagate the stuck values forward and clean up the fallout.
+Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.
+Give me the full head-count of cells, split by kind.
+How many primary inputs and primary outputs does this design have?
+Give me the inverter count as it stands right now.
+Which output has the deepest logic cone?
+How many components did we just lose?
+Does output n37[0] depend on input n9? Report yes or no.
+Is g7 a mandatory stop on every route from n9 to n47?
+How many flip-flops were found to have an enable or hold structure in their D input logic?
+Which flops only update conditionally? Report the gating you discover.
+Provide a complete enumeration of the paths between n9 and n47.
+Could n37[0] be rebuilt as a single NAND of two signals we already have?
+What is the fanout of primary input n9? List every gate that n9 drives directly.
+Who gets clocked by n0?
+How many floating signals have been found?
+Identify g7: type and connectivity.
+Determine whether gate g7 lies on any maximum-depth path of the design. Report yes or no.
+What is the direct load count of g7?
+What is the maximum logic depth of the design?
+Which entry signal has the widest immediate reach?
+Please insert a BUF gate on signal n22 so that every load of n22 is driven through a dedicated buffer. Make sure nothing changes functionally.
+If n1207 were severed, would some output lose contact with the inputs?
+Which output has the largest fanin cone in this design?
+Show me input-to-output shortcuts that pass through no logic at all.
+List all the primary outputs of this design with their bit widths.
+Identify all the BUF cells present in this design.
+Compute the maximum logic depth from input n9 to output n47.
+How heavy is the worst loading on n22?
+Find and merge all gate pairs that are functionally equivalent (produce the same function). Ensure functional equivalence is preserved.
+Compact the logic aggressively; behavior is sacred, area is not.
+Reduce the maximum logic depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+A NAND with a 1 on one leg is just a NOT — swap those in.
+Optimize the depth of the cone of n37[0] while ensuring the cone of n37[0] maintains only NAND and NOT gates. Preserve functional equivalence. The cost function is the depth of the cone of n37[0]; smaller is better.
+Is n37[0] welded to a constant?
+How many outputs of this design have a logic depth greater than 6?
+Does n9 have a way to n47 that bypasses n707?
+What is the maximum logic depth from any primary input to any DFF D-pin in this design?
+From the PI boundary to the PO boundary, how many levels max, with no registers involved?
+Save what we have now as test98_out.v.

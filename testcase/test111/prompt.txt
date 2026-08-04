@@ -1,0 +1,20 @@
+Which gates receive a hardwired 1 directly on an input?
+List every gate with one or more inputs tied to 1'b1.
+Which components take a fixed high as one of their inputs?
+List all gates that have one or more inputs tied to 1'b1.
+Which gates have the constant one riding on an input leg?
+Gates fed by the constant-high source: list them.
+Identify the logic whose inputs include a permanently asserted signal.
+Find the gates where some input is stuck at 1 and list them.
+List all gates with an input tied to 1'b1.
+Any cell with an input pinned high belongs on your list — produce it.
+Which cells have an input nailed to logic high?
+Find the cells where an input is welded to the always-on level.
+Show me every gate that is fed a constant one.
+List the gates with one or more inputs tied to 1'b1.
+Some cells are permanently fed a high level — round them up.
+List all gates with one or more inputs tied to 1'b1.
+Which gates see a 1 on an input pin no matter what happens?
+Any gates with a pin hardwired to a constant high? List them.
+Show the gates hard-strapped to one on any input.
+Locate every gate with a pin that never leaves logic 1.

@@ -1,0 +1,71 @@
+Begin anew — label this whole exchange test100.
+Read the Verilog at testcase/test100/test100.v into memory.
+Compute the transitive fanout of input n11.
+Is today's netlist still the same machine we started with?
+Convert all XNOR gates in this design to equivalent NOR-only circuits. Ensure the design functionality does not change.
+Unpack the XORs into plain AND, OR, and NOT structures.
+Try to replace all XOR gates in this design with equivalent NAND-only implementations. Ensure the design functionality does not change.
+Hunting for single points of failure between n11 and n49 — which nodes qualify?
+Derive the Boolean equation for output n39[0] in terms of its primary inputs.
+Do we have inputs going nowhere or outputs fed by nothing?
+Find all pairs of back-to-back inverters (NOT followed by NOT) in this design and collapse them into direct wire connections. Ensure the design functionality does not change.
+How many levels does a signal climb at most before it lands on n39[0]?
+How many gates are in the cone of output n39[0]?
+Break the logic behind n39[0] down by cell family for me.
+List all gates that connect to the renamed signal renamed_sig.
+Which gates are wired to the output of g9?
+List all gates that have one or more inputs tied to 1'b1.
+Take the gates sitting on constant inputs and boil them down.
+Convert the logic cone of n39[0] to use only NOR and NOT gates while preserving functional equivalence.
+What does the gate inventory look like, type by type?
+Determine the number of primary inputs and primary outputs.
+Within the logic behind n39[0], how many are NAND cells?
+Which output bit has the deepest cone of logic?
+What did that last cleanup cost us in gates, net change?
+Does output n39[0] depend on the input n11? Report yes or no.
+Must all influence from n11 on n49 funnel through g9?
+How many flip-flops were found with enable or hold structures in their D input logic?
+Find the registers with gated updates and describe their D-side logic.
+List every path originating at primary input n11 and terminating at primary output n49.
+Is n39[0] secretly just NAND(x, y) for some existing x and y?
+What is the fanout of input n11? List all gates that n11 drives directly.
+Round up every DFF ticking on n0.
+How many floating signals were found in this design?
+Tell me about g9 — what is it and what is it wired to?
+Determine whether gate g9 lies on a maximum-depth path of the design. Report yes or no.
+How many gates does g9 push directly?
+What is the maximum combinational logic depth of the design now?
+Of all the inputs, which one drives the biggest crowd?
+Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.
+Is n1209 load-bearing for the input-to-output connectivity?
+Which output has the largest fan-in cone?
+Any pass-through connections from the input side to the output side?
+Please list all the primary inputs of the design with their bit widths.
+Name every XOR gate in the design.
+Determine the longest combinational path depth from n11 to n49.
+What is the top fanout number on n24?
+Find and merge all gate pairs in this design that are functionally equivalent. Make sure nothing changes functionally.
+Make it smaller. Same function, minimum gate count.
+Reduce the critical path depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Convert the constant-one NANDs into plain inverters.
+Optimize the logic cone of output n39[0]. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n39[0]; smaller is better.
+No matter what we feed it, does n39[0] stay put?
+How many outputs have a logic depth of more than 4?
+Can n11 reach n49 without ever passing n709?
+What is the maximum logic depth from any primary input to any DFF D-pin?
+What is the longest register-free path from an input pin to an output pin?
+Determine every gate reachable from n24.
+What is the deepest path launched at a Q pin and captured at an output port?
+What is the maximum combinational depth on any register-to-register path in this design?
+Map out the Q-to-D corridors between registers.
+Remove all dangling gates that do not contribute to any primary output. Make sure nothing changes functionally.
+Give g9 the new identifier renamed_sig.
+Report any NOR gates with constant inputs in the design.
+Do g9 and g59 tick together — same clock source?
+Report all gates shared between the fanin cones of n39[1] and n39[0].
+Same truth table for n11 and n49?
+Enumerate the immediate successor gates of g9.
+Same output if n11 and n0[1] trade places?
+Compute the total gate count of the design.
+Trace n39[0] all the way back: which gates are involved?
+Export the present netlist to test100_out.v.

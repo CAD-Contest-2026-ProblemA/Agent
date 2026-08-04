@@ -1,0 +1,20 @@
+Expose the conditional-update structures among the flip-flops.
+Which state bits are wired to preserve themselves, and through what logic exactly?
+Find the registers with gated updates and describe their D-side logic.
+Report the D input logic of the flip-flops to reveal any enable or hold structures implemented through multiplexers or AND gates.
+Survey the registers for enable-style gating on the D side and report it.
+Where do registers keep their own value alive? Show the enable and hold circuitry.
+Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates.
+Report the D input logic of the flip-flops to identify any enable or hold structures implemented through multiplexers or AND gates.
+Detail the flip-flops whose D input embeds a keep-current-value path.
+Which flops recirculate their own output back into their input logic? Describe each one.
+Which registers are built to hold their value when not enabled? Show me the structures.
+Inspect each flop's D input: any mux-style self-feedback in there?
+Hunt for flip-flops whose D pin loops back their own Q and describe what you find.
+Walk the D pins of every register and surface any self-holding arrangements.
+Look under the hood of the registers: report any mux- or AND-based update gating.
+Report the D input logic of each flip-flop to report any existing enable or hold structures implemented through multiplexers or AND gates.
+Which flops only update conditionally? Report the gating you discover.
+Report the D input logic of the flip-flops and report any existing enable or hold structures implemented through multiplexers or AND gates.
+Identify and describe every hold loop found in the registers' input cones.
+Examine each DFF's data path for hold-state feedback and document what you find.

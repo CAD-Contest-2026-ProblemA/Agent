@@ -1,0 +1,20 @@
+Collapse the redundant replicas into single gates.
+Coalesce the structural duplicates in this design.
+Eliminate the copy-paste logic by merging equivalent gates.
+Find and merge all gate pairs that are functionally equivalent (produce the same function). Ensure functional equivalence is preserved.
+Where the netlist repeats itself gate for gate, fold the repetition away.
+Identical twins in the logic — same inputs, same function — should become one. Make it so.
+Try to merge any pairs of gates that compute the same Boolean function on the same inputs (structural duplicates). Make sure nothing changes functionally.
+Consolidate gates that produce the same signal from the same inputs.
+Find the computation that is done twice and consolidate it.
+Find and merge all gate pairs in this design that are functionally equivalent. Make sure nothing changes functionally.
+Gates producing carbon-copy signals from the same sources: unify them.
+Any redundant duplicates doing identical work? Merge them.
+Are there cells in here that compute the very same thing as another cell? Fold them together.
+Find and merge all gate pairs in the design that are functionally equivalent (produce the same function). Make sure nothing changes functionally.
+Any gate whose job another gate already does should be absorbed into it. Proceed.
+Try to merge any pairs of gates in this design that compute the same Boolean function on the same inputs (structural duplicates). Ensure the design functionality does not change.
+Deduplicate the logic: identical computations should exist only once.
+Spot the twins and collapse each pair into one gate.
+De-duplicate: wherever two gates redo each other's work, keep a single copy.
+Two cells, one function, same inputs — that is one cell too many. Fix that throughout.

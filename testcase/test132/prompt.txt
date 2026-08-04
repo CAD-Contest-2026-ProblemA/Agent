@@ -1,0 +1,20 @@
+Which input fans out to the most gates?
+Among the primary inputs, who commands the largest direct following?
+Name the input with the fattest fanout.
+Which input signal is spread the widest — driving the most gates at once?
+Of the entry pins, which one shoulders the most immediate connections?
+Which primary input wins on immediate connections?
+Across the whole design, which input pin is loaded the heaviest?
+Which incoming signal branches to the greatest number of gates?
+Which primary input has the highest fanout?
+Which entry signal has the widest immediate reach?
+Which primary input has the highest fanout in the design?
+Of all the inputs, which one drives the biggest crowd?
+Which primary input has the highest fanout in this design?
+Who is the busiest primary input?
+Which primary input has the largest fanout in this design?
+The most heavily tapped input pin is which one?
+Which primary input tops the loading chart?
+Which entry net has the most direct listeners?
+Which primary input of this design has the highest fanout?
+The busiest doorway into the chip: which input is it?

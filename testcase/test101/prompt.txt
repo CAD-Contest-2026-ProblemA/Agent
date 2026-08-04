@@ -1,0 +1,20 @@
+Between n14 and n117[1], where are the bridges that carry every last route?
+Every alternative from n14 to n475 still crosses certain nodes — identify all of them.
+I am after the bottleneck vertices of the n13-to-n13[0] region — the ones all traffic funnels past.
+Across the web of routes linking n1 and n63[0], which points are common to all of them?
+Where could a single failure break every connection n5 has to n8[0]? Name each such node.
+Which single nodes, if removed, would disconnect every route from n29 to n30?
+List all articulation points in the combinational graph between n29 and n25[0].
+Find all articulation points between n1 and n13[0] in the combinational graph.
+Hunting for single points of failure between n61 and n8[0] — which nodes qualify?
+List the nodes whose individual loss would strand n4 from n1.
+Is there a choke point whose removal cuts all connections between n5 and n4? Name every such node.
+If deleting one node means n29 can no longer influence n117[1], which nodes have that property?
+Sever one of these and n1 loses n30 entirely: which nodes fit that description?
+Which vertices are unavoidable no matter how a signal winds from n0[0] toward n30?
+Removing which individual nodes would leave no way from n61 to n9?
+Point out the nodes that every n0[1]-to-n13[0] connection is forced to squeeze through.
+Find the articulation points on the combinational paths between n14 and n13[0].
+Find all articulation points in the combinational graph between n2 and n26[1].
+Identify all articulation points in the combinational graph between n7 and n4.
+Single out the nodes that no n2-to-n63[0] detour can route around.

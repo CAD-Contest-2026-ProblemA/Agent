@@ -1,0 +1,20 @@
+Point out the AND gates with a frozen input — look, don't touch.
+Report any NAND gates with constant inputs (0 or 1) in this design.
+Without modifying anything, flag the NANDs that are fed constant levels.
+Take stock of the constant-fed NAND cells; leave the netlist as it is.
+Report any NOR gates with constant inputs in the design.
+Report any NAND gates with constant inputs in this design.
+A read-only pass: list the NAND gates with a constant on any leg.
+Reconnaissance: AND gates with a hard 0 on an input. Report back.
+Survey only — which NOR cells sit with a frozen input?
+Note every NOR whose input includes a hardwired level.
+Any NAND cells wired to constants? List them and change nothing.
+Which NORs are chained to fixed inputs? Observation only, no edits.
+Document the gates of type NOR that receive unchanging inputs.
+Which NANDs are being fed a hardwired 0 or 1? Just report them.
+Scan the design for NOR cells that have a constant input, and report what you find.
+Report the NOR cells sitting on a fixed input value, without touching the design.
+Report any NOR gates with constant inputs (0 or 1) in this design.
+Which NAND cells are anchored to constants? Just the report, please.
+Identify — but do not alter — the ANDs stuck with a fixed input.
+Report any AND gates with a constant 0 input in this design.

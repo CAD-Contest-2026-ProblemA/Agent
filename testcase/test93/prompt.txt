@@ -1,0 +1,71 @@
+This is the beginning of a new testcase. The case name is test93.
+Please load the design from the file test93.v located in the directory testcase/test93/.
+How many NOT gates are currently in the design?
+Which output sits atop the tallest stack of logic?
+How many NAND gates were eliminated by constant propagation?
+Will changing n4 ever change n32[0]?
+Does every path from input n4 to output n42 go through gate g2? Report yes or no.
+How many registers can freeze their own value?
+Report the D input logic of the flip-flops and report any existing enable or hold structures implemented through multiplexers or AND gates.
+I want the exhaustive route list from n4 to n42.
+Does there exist any pair of signals (a, b) already in the netlist such that NAND(a, b) is equivalent to n32[0]?
+Directly downstream of n4: which gates?
+List all flip-flops driven by clock n0.
+What is the count of unconnected nets?
+What type of gate is g2? Report its type and pin connections.
+Is g2 implicated in the worst-case depth?
+Determine the number of gates directly driven by g2.
+Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?
+Which primary input has the highest fanout in the design?
+Nobody should drive more than 5 listeners — add buffers where that is violated.
+Determine whether wire n1202 is a cut between a primary input and a primary output. Report yes or no.
+The most gates feed into which output?
+Find all paths of length 0 (direct wire connections from PI to PO).
+What comes out of this design? Name the output ports and their widths.
+List all NOR gates in this design with their input and output signals.
+Travel time in gate levels from n4 to n42, worst case?
+What is the maximum fanout of net n17 now?
+Are there cells in here that compute the very same thing as another cell? Fold them together.
+Optimize the logic to minimize the total gate count. Ensure functional equivalence is preserved. The cost function is the total number of gates; smaller is better.
+Flatten the deepest logic chain — fewer levels, same function.
+Try to replace every 2-input NAND gate that has one input tied to constant 1 with an inverter. Ensure the design functionality does not change.
+Locally optimize what feeds n32[0]; do not disturb the neighbors.
+Is output n32[0] always 0 regardless of all inputs? Report yes or no.
+How many outputs exceed 5 gate levels of logic?
+Determine whether a combinational path from n4 to n42 exists that does not traverse the node n702.
+How tall is the logic between the design's inputs and the D pins?
+What is the maximum combinational depth from a primary input to a primary output in the entire design?
+Everything downstream of n17 — what can it reach?
+What is the maximum combinational depth from any DFF Q output to any primary output in this design?
+Worst-case levels on the register-to-register hops?
+List all register-to-register paths through combinational logic in this design.
+Purge the cells whose work never leaves the chip.
+Rename gate g2 to renamed_sig. Ensure functional equivalence is preserved.
+Report the NOR cells sitting on a fixed input value, without touching the design.
+Are flip-flops g2 and g52 driven by the same clock? Report yes or no.
+What machinery do n32[0] and n32[1] share upstream?
+Determine whether n4 and n42 are functionally equivalent.
+Right after g2, which gates come next?
+Check whether the function at n32[0] is symmetric with respect to the inputs n4 and n0[2].
+What is the headcount of this netlist?
+Compute the transitive fanin cone for output n32[0].
+The full downstream footprint of n4 — what does it cover?
+Verify functional equivalence between the current design and the original loaded netlist.
+XNORs out, NOR structures in — one for one.
+Decompose every XOR gate in the fanin cone of n32[0] into AND, OR, and NOT gates without changing functionality.
+Kick out the XORs; the NAND-only equivalents go in.
+List all articulation points in the combinational graph between n4 and n42.
+Express n32[0] symbolically — inputs only, no internal wires.
+Check whether any floating inputs or unconnected output ports exist in this design.
+Fold consecutive inversions into bare connections.
+Compute the maximum logic depth of the fanin cone of output n32[0].
+Count the cells that feed into n32[0], directly or indirectly.
+Report the count of each gate type in the cone of n32[0].
+Enumerate the gates wired to renamed_sig.
+Report every gate connected to the output signal of g2.
+Which cells have an input nailed to logic high?
+Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.
+Strip the design down to a two-gate diet: NAND and inverters.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+How many signals enter this design and how many leave it?
+Please write the current design to the output file test93_out.v.

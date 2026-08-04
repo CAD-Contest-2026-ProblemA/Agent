@@ -1,0 +1,20 @@
+Fold the logic of n12 into a closed expression over the design's inputs.
+Collapse the netlist feeding n11[0] into one symbolic expression of the primary inputs.
+Summarize n8 mathematically, using input names as the only variables.
+If you had to write n31[0] on a whiteboard as pure algebra over the input pins, what would it say?
+Write the logic expression for n3 using only the primary input names.
+Reduce n11[0] to an equation over the primary inputs.
+Distill the cone of n12 to its Boolean formula over the inputs.
+Derive the Boolean equation for output n30 in terms of the primary inputs.
+Derive the logic equation of output n14 in terms of its primary inputs.
+Spell n475 out as an equation whose only symbols are input pins.
+What single equation captures how n31[0] is computed from the inputs?
+Give me a formula for n14 built out of the input pins.
+What is the closed-form function sitting at n12?
+Express n13[0] symbolically — inputs only, no internal wires.
+Write the Boolean expression computed at n31[0] using only primary input names.
+Derive the Boolean equation for output n475 in terms of its primary inputs.
+Hand me the algebraic identity of n14 in primary-input terms.
+State n14 as a formula — the variables must be primary inputs, nothing internal.
+Translate the gates behind n8[0] into one line of Boolean algebra over the PIs.
+In plain algebra, what does n11[0] compute from the inputs?

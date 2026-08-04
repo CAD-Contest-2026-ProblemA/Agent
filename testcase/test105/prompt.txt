@@ -1,0 +1,20 @@
+Find all back-to-back inverter pairs in the design and collapse them into wires. Ensure functional equivalence is preserved.
+Cancel out doubled negations across the netlist.
+Wherever an inverter feeds straight into another inverter, delete the pair and reconnect the ends.
+Trim every pair of consecutive polarity swaps down to a bare wire.
+Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.
+Find all back-to-back inverter pairs and collapse them into a wire. Make sure nothing changes functionally.
+Fold consecutive inversions into bare connections.
+Straighten out the doubled inversions into plain connections.
+Chase down NOT-NOT chains and short them through.
+Hunt for gates that undo each other back-to-back (a NOT feeding a NOT) and cut both out.
+Wherever two inversions stack, dissolve the pair.
+Find every back-to-back inverter pair and collapse it into a wire. Make sure nothing changes functionally.
+Double negation adds nothing; splice those wires directly.
+Any NOT whose only job is reversing another NOT should disappear, along with its partner.
+Where the signal gets flipped twice in a row, bypass both flips.
+Erase the redundant invert-invert patterns — connect each entry wire to the final output directly.
+Two NOTs in a row cancel out — go squash those into plain wires.
+Inversion followed by inversion is a no-op — remove such pairs and tie the wires straight.
+Find all pairs of back-to-back inverters (NOT followed by NOT) in this design and collapse them into direct wire connections. Ensure the design functionality does not change.
+Streamline the netlist by canceling adjacent inverter pairs.

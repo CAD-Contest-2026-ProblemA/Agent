@@ -1,0 +1,20 @@
+What is the maximum combinational depth on any register-to-register path in the design?
+How much logic separates consecutive registers at the extreme?
+With register boundaries on both sides — the max levels inside is?
+What is the maximum combinational depth on any register-to-register path in this design?
+Worst-case levels on the register-to-register hops?
+The peak depth on the register-to-register legs is?
+What is the maximum combinational logic depth on any register-to-register path in this design?
+What is the maximum combinational depth on any register-to-register path?
+Q to D, flop to flop: the deepest such segment runs how many levels?
+The sequential-to-sequential worst-case depth is what?
+How much combinational logic can accumulate between two registers?
+How tall is the logic between successive clocked elements, worst case?
+The longest hop between storage elements measures what, in gates?
+Between consecutive storage points, what is the worst gate-level count?
+What is the maximum combinational depth on a register-to-register path in this design?
+Between one flip-flop and the next, how many gate levels does a signal pass through at worst?
+The deepest stretch bounded by registers on both ends is how long?
+Flop to flop, what is the deepest stretch of logic?
+At most, how many gates between one flop's output and the next flop's input?
+The deepest Q-to-D stretch runs how many levels?

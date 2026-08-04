@@ -1,0 +1,71 @@
+This is the beginning of a new testcase. The case name is test92.
+Please load the design from the file test92.v located in the directory testcase/test92/.
+List all gates that now connect to the signal renamed_sig.
+Name the loads sitting on the output of g1.
+List the gates with one or more inputs tied to 1'b1.
+Now fold the constant inputs of the NOR cells.
+Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.
+Census time: how many of each gate family are we carrying?
+How many primary inputs and outputs does the design have?
+How many XOR gates are left?
+Which output bit has the deepest fanin logic cone?
+How many cells did the merge shave off?
+Does the output n31[0] depend on input n3? Report yes or no.
+Is there any way around g1 when traveling from n3 to n41?
+How many flip-flops have an enable or hold structure in their D input logic?
+Which registers are built to hold their value when not enabled? Show me the structures.
+Provide a complete enumeration of paths between n3 and n41.
+Search the netlist: any two nets whose NAND matches n31[0] exactly?
+What is the fanout of n3? List all gates that n3 drives directly.
+Which state elements does n0 drive?
+How many floating signals were found?
+Give me the spec sheet for g1: kind, inputs, output.
+Determine whether g1 lies on any maximum-depth path of the design. Report yes or no.
+Count the immediate dependents of g1.
+What is the maximum logic depth of the design now?
+Across the whole design, which input pin is loaded the heaviest?
+Please insert a BUF gate on signal n16 so that each load of n16 is driven through a dedicated buffer. Ensure the design functionality does not change.
+Does cutting n1201 disconnect part of the design's I/O flow?
+Which output of this design has the largest fanin cone?
+List the outputs that are literally an input, unprocessed.
+Please list all the primary inputs of this design with their bit widths.
+Which cells are XNORs? Point them out.
+Calculate the critical path depth between n3 and n41.
+Give me the load ceiling of n16.
+Try to merge any pairs of gates that compute the same Boolean function on the same inputs (structural duplicates). Make sure nothing changes functionally.
+Rework the logic so the design ends up with as few cells as possible. Functionality must not change.
+Optimize the logic to minimize maximum path depth. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.
+Wherever a NAND sees a hardwired 1 on an input, downgrade it to an inverter.
+Optimize the depth of the cone of n31[0]. Preserve functional equivalence. The cost function is the depth of the cone of n31[0]; smaller is better.
+Is n31[0] a live signal or a constant in disguise?
+How many outputs have a logic depth greater than 4?
+Is there a n701-free route from n3 to n41?
+What is the maximum logic depth from any primary input to any DFF D-pin in the design?
+What is the worst-case flow-through depth, PI to PO, combinational only?
+Determine all gates reachable from the signal n16.
+What is the longest gate chain that starts at a register output and ends at a primary output?
+What is the maximum combinational depth on any register-to-register path?
+Enumerate the register-to-register links in this design.
+Trim unused wires and gates. Ensure functional equivalence is preserved.
+Swap the name n1201 for renamed_sig across the whole netlist.
+Report any NAND gates with constant inputs (0 or 1) in this design.
+Is one clock driving both g1 and g51?
+Report the gates shared between the fanin cones of n31[0] and n31[1].
+Would swapping n3 for n41 change anything logically?
+Enumerate every immediate successor of gate g1.
+Could I swap n3 and n0[1] without n31[0] noticing?
+Compute the total gate count of this design.
+The full ancestry of n31[0], please.
+Compute the transitive fanout cone for input n3.
+Sanity-check: current versus original — identical behavior?
+Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change.
+No more XOR cells — spell each one out with ANDs, ORs, and inverters.
+Convert every XOR gate in the design to an equivalent 4-NAND circuit. Make sure nothing changes functionally.
+Which single nodes, if removed, would disconnect every route from n3 to n41?
+Write the logic expression for n31[0] using only the primary input names.
+Look for terminals that never got wired up and tell me what you find.
+Find all back-to-back inverter pairs in the design and collapse them into wires. Ensure functional equivalence is preserved.
+What is the worst-case number of gates stacked between the inputs and n31[0]?
+How many gates are in the fanin cone of primary output n31[0]?
+Give a per-type census of the gates upstream of n31[0].
+Please write the current design to the output file test92_out.v.

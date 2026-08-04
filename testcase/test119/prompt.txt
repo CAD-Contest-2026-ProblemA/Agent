@@ -1,0 +1,20 @@
+Establish whether n3 is a function of n0[2] under any input scenario.
+If I wiggle n12, can n63[1] ever notice?
+Does output n16 depend on the input n0[2]? Report yes or no.
+Functionally speaking, does n2 matter to n63[1]?
+Trace it for me: does any influence flow from n3 to n12?
+Does n0[0] have any influence over n31[0]?
+Does output n11[0] depend on input n0[0]? Answer yes or no.
+Does output n63[1] depend on input n0? Report yes or no.
+Does the truth table of n3 involve n3 at all?
+Does the output n475 depend on input n0[2]? Report yes or no.
+If n13 were frozen, could n13[0] behave any differently?
+Is n5 part of the story n13[0] tells, or irrelevant to it?
+Does output n31[0] functionally depend on input n3? Report yes or no.
+Is n12 sensitive to n2 at all?
+Does the cone of n475 give n0[2] any say in the outcome?
+Could the value at n63[1] ever hinge on what n12 carries?
+Is n30 even listening to n0?
+Answer plainly: is n11[0] sensitive to n12, yes or no?
+Will changing n0 ever change n13[0]?
+Is there a functional dependence of n8 on n12?

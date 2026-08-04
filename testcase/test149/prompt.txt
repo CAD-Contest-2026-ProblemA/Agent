@@ -1,0 +1,20 @@
+n24[2] to n117[1] with n141 forbidden: connected or not?
+Can influence travel from n7 to n31[1] while n1646 stays untouched?
+Steering clear of n95, does n0 still connect to n26[1]?
+Does n14 have a way to n31[1] that bypasses n719?
+Route check: n0[1] to n30, mandatory detour around n719 — feasible?
+If n1127 is off-limits, can a signal still travel from n0[0] to n30?
+Can n7 reach n26[1] without ever passing n208?
+Is there a road from n0 to n26[1] on which n208 never appears?
+Determine whether a combinational path from n3 to n26[1] exists that does not traverse the node n719.
+Does the netlist offer a passage from n5 to n31[1] that skips n1646 entirely?
+Verify whether a path connecting input n5 to output n30 exists while avoiding n141.
+With n4156 declared off-limits, does n3 still find its way to n31[1]?
+Is there a n86984-free route from n2 to n13[0]?
+Determine whether a combinational path from n0[0] to n63[0] exists that does not traverse node n208.
+Verify whether a path connecting input n1 to output n13[0] exists while avoiding node n58.
+Pretend n86984 is removed. Is there any surviving connection from n14 to n475?
+Absent n141, would n12 and n13[0] remain linked?
+Establish whether a chain from n24[2] to n15 exists that leaves n86984 out.
+Avoiding n14 at all costs, is n117[1] still within reach of n1?
+Determine whether a combinational path exists from n61 to n15 that does not traverse node n4156.

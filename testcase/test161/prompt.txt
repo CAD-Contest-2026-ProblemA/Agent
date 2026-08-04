@@ -1,0 +1,20 @@
+Would swapping n24[2] for n4 change anything logically?
+Check n0[0] and n4 for functional identity.
+Do the nets n61 and n30 agree across the entire input space?
+Same truth table for n1 and n475?
+Can n12 and n15 ever hold different values at the same time?
+Are n14 and n31[1] just two names for the same function?
+Is the logic value of n61 always the very value of n9?
+Determine whether n2 and n30 are functionally equivalent.
+Prove or disprove: n0 and n25[0] compute one and the same function.
+Verify that n0[1] and n63[0] produce identical logic values for all inputs.
+Under every stimulus, do n2 and n31[1] read identically?
+Determine whether the signals n0 and n13[0] are functionally equivalent.
+Do n13 and n31[1] track each other perfectly, input for input?
+Do n12 and n117[1] ever disagree, under any input at all?
+Is there any input pattern on which n7 and n25[0] part ways?
+Verify that signals n3 and n25[0] produce identical logic values for all inputs.
+Determine whether signals n14 and n15 are functionally equivalent.
+Check if n1 mirrors n63[0] exactly, always.
+Same function, two wires? Compare n29 against n63[0].
+n1 versus n31[1]: logically indistinguishable, or not?

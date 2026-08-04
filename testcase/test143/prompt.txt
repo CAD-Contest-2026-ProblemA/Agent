@@ -1,0 +1,20 @@
+Shrink this netlist — every gate you can spare, remove.
+Refactor this design for economy of gates.
+Compact the logic aggressively; behavior is sacred, area is not.
+Rework the logic so the design ends up with as few cells as possible. Functionality must not change.
+Fewer cells, same truth tables — compress the design.
+Optimize the logic to minimize the total gate count. Ensure functional equivalence is preserved. The cost function is the total number of gates; smaller is better.
+Squeeze the redundancy out; the smallest netlist wins.
+Same circuit behavior, minimal gate budget: rework it.
+Slim the netlist down to its leanest gate count; behavior stays untouched.
+Make it smaller. Same function, minimum gate count.
+Optimize the design to minimize total gate count. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Put the design on a diet: same behavior, fewer gates.
+Reduce the gate count through restructuring. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Downsize the logic — remove every gate the function does not strictly need.
+Cut the design's size while keeping it functionally identical.
+The metric is cell count and lower is better. Optimize for it.
+Minimize the total gate count of the design through restructuring. Make sure nothing changes functionally. The cost function is the total number of gates; smaller is better.
+Minimize the area of the design through restructuring. Ensure functional equivalence is preserved. The cost function is the total number of gates; smaller is better.
+Chase area: restructure until the gate total is as low as you can push it.
+Push the gate total down as far as equivalence allows.

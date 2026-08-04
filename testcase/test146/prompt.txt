@@ -1,0 +1,20 @@
+Optimize for depth inside the region of n3 exclusively.
+Locally optimize what feeds n8[0]; do not disturb the neighbors.
+Only the cone of n13[0]: restructure it for fewer levels.
+Restructure the cone of n16 alone — target its worst chain.
+Optimize the depth of the cone of n12. Preserve functional equivalence. The cost function is the depth of the cone of n12; smaller is better.
+Surgery on n11[0] only: bring the depth of its cone down, leave the rest alone.
+Rebuild what computes n8 to be flatter, in isolation from the rest.
+Give the cone of n8 a depth makeover; the rest stays as-is.
+Optimize the logic cone of output n30 while ensuring the netlist remains NAND and NOT only. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n30; smaller is better.
+Tune just the machinery of n30 for depth; everything else stays frozen.
+Within the fence of the logic of n14 — and only there — cut the levels.
+Make the private logic of n12 shallower without touching anything outside it.
+Optimize the depth of the cone of n11[0] while ensuring the cone of n11[0] maintains only NAND and NOT gates. Preserve functional equivalence. The cost function is the depth of the cone of n11[0]; smaller is better.
+A local job: fewer stages in the cone of n30, no changes elsewhere.
+The cone of n31[0] could be shallower. Fix it there and only there.
+Depth-optimize the region feeding n15; the rest of the chip is off-limits.
+Leaving the rest of the design untouched, make the logic behind n475 as shallow as you can.
+Optimize the logic cone of n25[0] while keeping the netlist NAND and NOT only. Preserve functional equivalence. The cost function is the depth of the cone of n25[0]; smaller is better.
+Focus on n8 — tighten its logic without touching anything else.
+Optimize the logic cone of output n3. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n3; smaller is better.

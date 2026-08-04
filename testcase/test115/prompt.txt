@@ -1,0 +1,20 @@
+Count the pins on the boundary: how many in, how many out?
+How many primary inputs and primary outputs does this design have?
+Determine the number of primary inputs and primary outputs in this design.
+How many signals enter this design and how many leave it?
+Measure the perimeter: how many signals cross in, how many cross out?
+How many entry pins and exit pins does this block expose?
+Determine the number of primary inputs and primary outputs.
+What are the PI and PO counts?
+Size of the I/O footprint, please.
+Give me the totals of externally visible inputs and outputs.
+Two numbers, please: incoming ports, outgoing ports.
+How many ports feed the block and how many leave it?
+What is the in-degree and out-degree of the design's boundary?
+Count the doors into this circuit and the doors out of it.
+How many primary inputs and outputs does the design have?
+Determine the number of primary inputs and outputs.
+Report the sizes of the input side and the output side of the interface.
+Boundary stats: the number of ways in versus ways out.
+How wide is the design's interface — inputs and outputs?
+The interface tally — inputs and outputs, both counts.

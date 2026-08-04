@@ -1,0 +1,20 @@
+How far apart are n24[2] and n475, measured in logic depth?
+The depth of the longest logic run linking n12 with n117[1] is what?
+Between the endpoints n12 and n4, what is the maximum chain length in gates?
+Setting out at n12 and finishing at n9, the worst-case number of gate hops is?
+Determine the longest combinational path depth from n12 to n13[0].
+Calculate the critical path depth between n24[2] and n15.
+What is the worst-case propagation depth from n0 to n26[1]?
+Travel time in gate levels from n5 to n4, worst case?
+Compute the maximum logic depth from input n24[2] to output n26[1].
+The deepest chain linking n1 to n63[0] — how many levels is it?
+From n3 clear through to n30, the maximum gate count en route is?
+Compute the maximum logic depth from n12 to n475.
+From the perspective of n2, how many gate levels until its effect shows up at n117[1]?
+At worst, how long is the logic between n1 and n30?
+If a change at n14 crawls to n9 the long way, how many gates does it cross?
+The corridor from n12 to n15 at its deepest: how many levels?
+How many stages does the slowest chain from n0[1] to n117[1] pass through?
+The longest gate sequence with n0[1] as source and n4 as sink — what is its length?
+Count the levels on the most drawn-out route from n1 to n475.
+Determine the longest combinational path depth from input n2 to output n8[0].

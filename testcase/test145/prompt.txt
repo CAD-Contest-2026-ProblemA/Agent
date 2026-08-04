@@ -1,0 +1,20 @@
+Those NANDs stuck with a high input? Make them NOTs.
+Replace all 2-input NAND gates with one input tied to constant 1 by inverters. Ensure the design functionality does not change.
+Convert the constant-one NANDs into plain inverters.
+A NAND with a 1 on one leg is just a NOT — swap those in.
+Trade each constant-1 NAND for the NOT it actually is.
+Any NAND effectively negating one signal (its other input held high) becomes an inverter.
+Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.
+Where a NAND's second input is stuck at one, install an inverter instead.
+Downgrade the constant-fed NANDs to plain inverters.
+Wherever a NAND sees a hardwired 1 on an input, downgrade it to an inverter.
+Those two-input NANDs seeing a permanent high: convert each into a single NOT.
+Sweep the design for NANDs with a 1 input and inverter-ize them.
+Replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.
+Simplify throughout: NAND of x and constant 1 becomes NOT of x.
+A NAND with one leg tied high is an inverter in disguise — reveal it, throughout the design.
+Each NAND neutralized by a constant high should be swapped for a NOT.
+Try to replace every 2-input NAND gate that has one input tied to constant 1 with an inverter. Ensure the design functionality does not change.
+Simplify: the high-strapped NANDs turn into NOTs.
+Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Make sure nothing changes functionally.
+Replace NAND(x, 1) with NOT(x) across the board.

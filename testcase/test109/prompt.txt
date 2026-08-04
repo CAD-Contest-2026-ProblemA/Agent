@@ -1,0 +1,20 @@
+List all gates that now connect to the signal sig_alias.
+Enumerate the gates wired to sig_alias.
+Which cells touch the wire renamed_sig at any pin?
+Map the endpoints of the net renamed_wire — every connected gate.
+Everything with a pin on sig_alias — name it.
+List all gates that now connect to the renamed signal stage2_out.
+List all the gates that now connect to the renamed signal stage2_out.
+List every gate that now connects to the renamed signal renamed_wire.
+Trace renamed_sig and report each gate it touches.
+Gates in touch with renamed_wire: the full list, please.
+The wire sig_alias runs somewhere — list every gate along it.
+After that rename, what connects to net_b?
+Who shares the net stage2_out? All parties, driver and readers alike.
+Show me everything hanging off the net renamed_wire.
+Identify all hardware attached to stage2_out.
+List all gates that connect to the renamed signal sig_alias.
+Which components does the net renamed_sig tie together?
+Who is attached to renamed_wire now?
+What plugs into stage2_out? Every gate counts.
+Which cells make physical contact with the wire renamed_wire?

@@ -1,0 +1,20 @@
+Would n13[0] even notice if n2 and n1 switched roles?
+Could I swap n1 and n0[3] without n475 noticing?
+Check whether the function at n25[0] is symmetric in inputs n0 and n3.
+Check whether the function at output n475 is symmetric with respect to inputs n12 and n9[0].
+Are n0[1] and n1 on equal footing in the eyes of n13[0]?
+Same output if n0 and n4[0] trade places?
+Is n63[1] indifferent to exchanging n13 with n4[0]?
+Is n31[0] blind to which of n1 and n3 carries which value?
+Does n15 treat n0 and n0[1] interchangeably?
+Check if the function at n8 is symmetric with respect to inputs n2 and n24[0].
+Does permuting n1 and n0[3] leave the behavior of n475 intact?
+Check whether the function at n31[0] is symmetric with respect to the inputs n0 and n0[1].
+Are n0[2] and n0[1] equal citizens as far as n15 is concerned?
+Interchangeable or not: n24[1] and n0[3], as seen from n63[1]?
+If n13 and n1 exchanged their signals, would n8 be unchanged?
+Test n16 for symmetry in the input pair n12, n4[0].
+Check whether the function at n25[0] is symmetric with respect to inputs n0[0] and n4[0].
+Trading places between n5 and n1 — does n8 care?
+Symmetric with respect to n2 and n4[0] — is the function at n31[0]?
+Does the function at n15 stay fixed under swapping n0[1] with n9[0]?

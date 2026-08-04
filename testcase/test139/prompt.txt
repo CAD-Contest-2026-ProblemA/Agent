@@ -1,0 +1,20 @@
+Please load the design from the file test139.v in the directory testcase/test139/.
+Source the circuit from test139.v under testcase/test139/ and hold it as the current design.
+Open test139.v from testcase/test139/ and read the circuit in.
+Please load the design from the file test139.v, located in the directory testcase/test139/.
+Parse testcase/test139/test139.v and let that be our working netlist.
+Please load the design from the file test139.v located in the directory testcase/test139/.
+Mount test139.v (directory testcase/test139/) as the active circuit.
+Our subject is the netlist at testcase/test139/test139.v — take it in.
+The netlist to study sits at testcase/test139/test139.v — load away.
+Fetch the Verilog living at testcase/test139/test139.v into the session.
+Pull in the netlist stored at testcase/test139/test139.v and make it the working design.
+Please load the design from file test139.v located in the directory testcase/test139/.
+Read the Verilog at testcase/test139/test139.v into memory.
+Bring up the design description in testcase/test139/test139.v.
+The file testcase/test139/test139.v holds today's design; absorb it.
+Consume testcase/test139/test139.v; everything after this refers to it.
+Please load the design from the file test139.v located in directory testcase/test139/.
+Stand up the design described in testcase/test139/test139.v.
+Initialize the working design from the file testcase/test139/test139.v.
+Ingest test139.v (it lives in testcase/test139/) as our current netlist.

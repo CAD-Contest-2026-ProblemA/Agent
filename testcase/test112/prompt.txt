@@ -1,0 +1,20 @@
+Propagate the stuck values forward and clean up the fallout.
+Push those fixed input values through the gates and simplify what collapses.
+Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.
+Ride each fixed value forward through the logic and delete what becomes trivial.
+Those hardwired inputs make some gates pointless — simplify them away.
+Evaluate the gates with fixed inputs ahead of time, so to speak — fold them away.
+Absorb the constants into the logic they feed.
+Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.
+Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.
+Let the constants do their work: simplify the gates they feed until nothing more collapses.
+Push the 0s and 1s through the logic and prune whatever they trivialize.
+Apply constant folding to the gates affected by fixed inputs.
+Chase the constants downstream and clean up the wreckage.
+Simplify the reported NAND gates by propagating their constant inputs. Make sure nothing changes functionally.
+Reduce the gates sitting on constants to their simplified forms.
+Take the gates sitting on constant inputs and boil them down.
+Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.
+Simplify the netlist by absorbing known-fixed inputs into the gates downstream.
+Wherever a constant decides a gate's output, replace that gate accordingly.
+Now fold the constant inputs of the NOR cells.

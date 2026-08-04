@@ -1,0 +1,20 @@
+How many BUF gates were added by the buffer insertion just performed?
+How did the tally move after that step — up or down, and by how much?
+How many NAND gates were eliminated by constant propagation?
+Net change report: how many gates did the last operation add or remove?
+What did that last cleanup cost us in gates, net change?
+How many NOT gates were removed by the inverter-pair collapse?
+Since the previous transform, what is the swing in cell count?
+How many cells did the merge shave off?
+Compared to before that transform, how many gates disappeared?
+How many gates were rewritten by the conversion just performed?
+That change altered the gate total by how much exactly?
+Before versus after that operation: the count moved by how many?
+What is the before-versus-after gate difference from that step?
+By what margin did the netlist grow or shrink just now?
+The operation just performed: quantify its impact on the gate numbers.
+How many cells did we gain or shed in that last move?
+Give the delta in cells attributable to the last edit.
+What is the difference in gate count relative to before the transformation?
+How many components did we just lose?
+How many dangling gates were removed?

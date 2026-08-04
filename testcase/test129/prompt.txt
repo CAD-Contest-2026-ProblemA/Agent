@@ -1,0 +1,20 @@
+Is g868 among the gates setting the design's worst delay?
+Does the deepest route in the circuit pass across g2198?
+Is g926 part of the critical path?
+Does g5 lie along the slowest logical journey through the design?
+Determine whether gate g868 lies on any maximum-depth path of the design. Report yes or no.
+Determine whether gate g5 lies on a maximum-depth path of the design. Report yes or no.
+Determine whether g1259 lies on any maximum-depth path of the design. Report yes or no.
+Does the worst-case chain thread through g71713?
+Does g454 sit on the slowest route through the design?
+Would the deepest path miss g2198 entirely, or is it on it?
+When the design runs its longest chain, is g2198 one of the links?
+Would a critical-path report have to name g1259?
+Does the longest logic chain in the design run through g71713?
+Critical-path membership check for g100: in or out?
+Verify whether g100 participates in the deepest path.
+Is g2198 implicated in the worst-case depth?
+The maximum-depth chain — does it include g1259?
+Determine whether gate g926 lies on any maximum-depth path in the design. Report yes or no.
+Is g868 on the design's longest chain of gates?
+Determine whether gate g100 lies on any path of maximum depth in the design. Report yes or no.

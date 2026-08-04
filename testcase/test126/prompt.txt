@@ -1,0 +1,20 @@
+List all flip-flops that are driven by clock n0.
+Which storage elements latch on the edge of n0?
+Round up every DFF ticking on n6.
+List all flip-flops driven by clock n0.
+Which flip-flops belong to the domain of n6?
+n6 paces which registers?
+Which DFFs are subscribers to n1?
+Which state elements does n0 drive?
+Who gets clocked by n1?
+Identify the sequential cells whose clock is fed by n6.
+The registers synchronized by n1 — all of them, please.
+Every register that n0 triggers: list it.
+Which registers march to the beat of n0?
+List all flip-flops driven by the clock n0.
+List every flip-flop driven by clock n1.
+Who takes their timing from n0?
+Point out every DFF with n0 on its clock pin.
+Show the flops whose clock pin is wired to n6.
+Which flops answer to n1?
+List all the flip-flops driven by clock n6.

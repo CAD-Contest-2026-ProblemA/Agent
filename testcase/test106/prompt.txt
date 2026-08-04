@@ -1,0 +1,20 @@
+Measure the worst-case ladder of gates one climbs to reach n30.
+Taking the whole picture into account, what is the longest run of gates that ends up at n3?
+From the farthest contributing input down to n16, how many gates deep is the descent?
+Compute the maximum logic depth of the fanin cone of output n14.
+Compute the logic depth of the fanin cone of output n15.
+How many cascaded gates does the slowest signal cross on its way into n63[1]?
+Count the levels a signal must climb before it surfaces at n14.
+Gauge the depth of the circuitry stacked beneath n63[1].
+How long is the critical chain terminating at n3?
+What is the maximum logic depth of the cone of output n14?
+How tall is the logic stack behind n12?
+What is the depth of the cone of n8[0] now?
+What is the worst-case number of gates stacked between the inputs and n15?
+The machinery computing n475: how many storeys tall?
+How many levels does a signal climb at most before it lands on n25[0]?
+What is the height of the tree of logic whose root is n15?
+Compute the maximum logic depth of the fanin cone of n12.
+Standing at n63[1] and looking backward, how many gate layers stretch behind it?
+At its longest, the chain of gates leading into n14 spans how many stages?
+Taking the netlist as a whole, how deep does the logic that ends at n8[0] run?

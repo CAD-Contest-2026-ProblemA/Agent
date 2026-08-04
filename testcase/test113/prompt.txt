@@ -1,0 +1,20 @@
+Translate the logic under n11[0] into pure AND/OR/NOT construction.
+Rebuild just that output's logic so it uses nothing but NAND and NOT cells.
+Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.
+Recast the netlist so that only NAND gates and inverters remain.
+Strip the design down to a two-gate diet: NAND and inverters.
+Replace all 2-input OR gates in the cone of n3 with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.
+Re-express everything in the cone of n13[0] with a NOR-plus-NOT vocabulary.
+Reforge the logic of n8 using just the two primitives NAND and NOT.
+Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.
+Convert the logic cone of n12 to use only NAND and NOT gates while preserving functional equivalence.
+Convert the logic cone of n13[0] to use only NOR and NOT gates while preserving functional equivalence.
+Migrate the design onto a NAND-plus-inverter cell set, functionally identical.
+Port the cone of n8 to a NAND-NOT basis.
+Swap the whole netlist over to NOR-and-NOT-only construction.
+Every gate in the cone of n16 must end up as NOR or NOT — convert it.
+Now bring the whole thing down to NAND and NOT only.
+Re-implement the cone of n8 with nothing in the toolbox but NAND and NOT.
+Everything within the cone of n63[1]: express it with AND, OR, NOT and no other types.
+The whole design should survive on a vocabulary of NOR and NOT alone — rewrite it accordingly.
+I want the cone of n15 speaking only AND, OR, and NOT.

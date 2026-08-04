@@ -1,0 +1,20 @@
+Chart each pair of registers joined by logic.
+List all the register-to-register paths in this design through combinational logic.
+Show the wiring of who-stores-feeds-who: register to register.
+Which registers feed which other registers?
+Lay out the sequential graph: flip-flop sources to flip-flop sinks.
+All flop-to-flop connections routed through logic: the list, please.
+The inter-register traffic map, please.
+List all register-to-register paths in the design through combinational logic.
+Enumerate the register-to-register links in this design.
+Which Q pins ultimately land on which D pins? Enumerate the pairs.
+Chart the sequential dependencies: flip-flop to flip-flop.
+Who talks to whom among the flops? The complete pairing.
+Which registers deliver into which others? The full connection roster.
+List all register-to-register paths through combinational logic in this design.
+Map out the Q-to-D corridors between registers.
+List every register-to-register path in this design through combinational logic.
+Between the registers, which links exist through the combinational fabric?
+List all register-to-register paths in this design through combinational logic.
+Which flop pairs talk to each other through logic? List the connections.
+Every storage-to-storage connection: spell it out.
