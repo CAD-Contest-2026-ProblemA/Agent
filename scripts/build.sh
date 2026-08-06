@@ -71,6 +71,25 @@ else
   echo ">> NOTE: dist/yosys_static/yosys not found — yosys will NOT be embedded"
 fi
 
+# Example bank for retrieval.  --collect-submodules gathers Python modules,
+# not data files, so without this the frozen binary finds no examples.jsonl,
+# silently disables retrieval and routes at the pre-retrieval accuracy with
+# nothing to say why.  scripts/spec_assets.py is the single source of truth
+# (the .spec files use the same module) so the two build paths cannot drift.
+#   WITH_DENSE=1 also embeds the ONNX encoder (~94MB).  Off by default: it
+#   measured within the noise of the stdlib BM25 retriever.
+dense_flag=()
+[ "${WITH_DENSE:-0}" = 1 ] && dense_flag+=(--dense)
+mapfile -t retrieval_args < <(
+  "$bvenv/bin/python" "$repo/scripts/spec_assets.py" "$repo" \
+    --pyinstaller-args "${dense_flag[@]}" | tr ' ' '\n' | grep -v '^$'
+)
+if [ "${#retrieval_args[@]}" -eq 0 ]; then
+  echo ">> ERROR: no retrieval assets resolved — the binary would ship without" >&2
+  echo "          the example bank. Run scripts/export_examples.py first." >&2
+  exit 1
+fi
+
 echo ">> running PyInstaller (name: $NAME) ..."
 "$bvenv/bin/pyinstaller" --onefile --clean --noconfirm \
   --name "$NAME" \
@@ -78,6 +97,7 @@ echo ">> running PyInstaller (name: $NAME) ..."
   --collect-submodules cada \
   --hidden-import yaml \
   --add-data "$repo/configs:configs" \
+  "${retrieval_args[@]}" \
   "${extra[@]}" \
   "$repo/scripts/_pyi_entry.py"
 

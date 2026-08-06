@@ -283,6 +283,14 @@ def build_retriever(prefer: str = "auto",
         return None
     rows = list(bank) if bank is not None else load_bank()
     if not rows:
+        # Say so.  Without the bank routing still works, just at the accuracy
+        # it had before retrieval existed — and a frozen binary that forgot to
+        # bundle examples.jsonl would otherwise look completely healthy.
+        import sys
+        sys.stderr.write(
+            f"[retrieval] no example bank at {bank_path()} — routing from the "
+            "catalog alone. If this is a packaged build, examples.jsonl was "
+            "not bundled (see scripts/spec_assets.py).\n")
         return None
     if prefer in ("union", "union-rrf"):
         dense = build_retriever("onnx", rows)
