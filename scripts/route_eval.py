@@ -77,7 +77,7 @@ def main() -> int:
     ap.add_argument("--provider", choices=("openai", "anthropic"), default=None,
                     help="override the config's provider for this run")
     ap.add_argument("--out", default=None, help="write per-sentence results as JSONL")
-    ap.add_argument("--retriever", choices=("none", "bm25", "onnx", "auto"),
+    ap.add_argument("--retriever", choices=("none", "bm25", "onnx", "union", "auto"),
                     default="none", help="append retrieved examples (default: none)")
     ap.add_argument("--top-k", type=int, default=25)
     args = ap.parse_args()
