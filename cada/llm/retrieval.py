@@ -173,6 +173,18 @@ class OnnxRetriever(Retriever):
         # Vectors are stored L2-normalised, so cosine is a plain dot product.
         self._vecs = vecs.astype("float32")
 
+        # Probe with a real encode.  Loading the graph proves nothing — an
+        # instruction-set mismatch or a broken tokenizer only shows up when a
+        # kernel actually runs, and without this it would surface on the first
+        # user request instead of here, where build_retriever can fall back to
+        # BM25.  (A genuine SIGILL still kills the process; nothing in-process
+        # can catch that, which is why the fp32 graph is the shipped default.)
+        probe = self._enc.encode(["probe"])
+        if probe.shape != (1, self._vecs.shape[1]):
+            raise ValueError(
+                f"encoder returned {probe.shape}, expected (1, {self._vecs.shape[1]}) "
+                "— model and vectors disagree; re-run scripts/build_vectors.py")
+
     def scores(self, query: str) -> List[float]:
         q = self._enc.encode([query])[0]
         return (self._vecs @ q).tolist()
