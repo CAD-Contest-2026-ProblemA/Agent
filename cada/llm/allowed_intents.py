@@ -228,6 +228,15 @@ OPERATION SYNONYMS:
 "Audit the primitive count per logic family: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF."
 → {"intent":"count_gates","params":{}}
 
+"Determine the number of primary inputs and primary outputs in this design."
+→ {"intent":"count_ports","params":{}}
+
+"Size of the I/O footprint, please."
+→ {"intent":"count_ports","params":{}}
+
+"Count the pins on the boundary: how many in, how many out?"
+→ {"intent":"count_ports","params":{}}
+
 "Apply fanout-reduction buffers to net n1 until no driver fanout exceeds 4."
 → {"intent":"insert_buffers","params":{"k":4,"net":"n1"}}
 
@@ -297,6 +306,15 @@ OPERATION SYNONYMS:
 "Enumerate the bridge nodes in the combinational DAG spanning from n2 to n14."
 → {"intent":"articulation","params":{"a":"n2","b":"n14"}}
 
+"Determine whether the wire n1200 is a cut between any primary input and any primary output. Report yes or no."
+→ {"intent":"is_cut","params":{"wire":"n1200"}}
+
+"Would the design split apart if we removed n1203?"
+→ {"intent":"is_cut","params":{"wire":"n1203"}}
+
+"Is n1209 load-bearing for the input-to-output connectivity?"
+→ {"intent":"is_cut","params":{"wire":"n1209"}}
+
 "Alias net n440 as renamed_wire across the entire netlist."
 → {"intent":"rename","params":{"kind":"signal","old":"n440","new":"renamed_wire"}}
 
@@ -348,6 +366,15 @@ OPERATION SYNONYMS:
 "Write the logic expression for n30 using only the primary input names."
 → {"intent":"boolean_equation","params":{"output":"n30"}}
 
+"Check whether the function at n30[0] is symmetric with respect to inputs n2 and n0[0]."
+→ {"intent":"symmetric","params":{"output":"n30[0]","a":"n2","b":"n0[0]"}}
+
+"Could I swap n3 and n0[1] without n31[0] noticing?"
+→ {"intent":"symmetric","params":{"output":"n31[0]","a":"n3","b":"n0[1]"}}
+
+"Are n9 and n0[3] equal citizens as far as n37[0] is concerned?"
+→ {"intent":"symmetric","params":{"output":"n37[0]","a":"n9","b":"n0[3]"}}
+
 "Report the number of each gate type in the cone of n8."
 → {"intent":"cone_type_counts","params":{"output":"n8"}}
 
@@ -365,6 +392,15 @@ OPERATION SYNONYMS:
 
 "How many flip-flops were found to have enable or hold structures in their D input logic?"
 → {"intent":"enable_hold_count","params":{}}
+
+"Do flip-flops g0 and g50 use the same clock signal? Report yes or no."
+→ {"intent":"same_clock","params":{"a":"g0","b":"g50"}}
+
+"Are g3 and g53 on the same clock domain?"
+→ {"intent":"same_clock","params":{"a":"g3","b":"g53"}}
+
+"Do g9 and g59 tick together — same clock source?"
+→ {"intent":"same_clock","params":{"a":"g9","b":"g59"}}
 
 "Which output has the largest fanin cone?"
 → {"intent":"largest_fanin_cone","params":{}}
