@@ -43,3 +43,7 @@ Thumbs.db
 # ---- abc ----
 abc
 abc.rc
+# ---- retrieval build artifacts (regenerate: scripts/fetch_embed_model.py
+#      then scripts/build_vectors.py) ----
+cada/llm/embed_model/
+cada/llm/example_vecs.npy
