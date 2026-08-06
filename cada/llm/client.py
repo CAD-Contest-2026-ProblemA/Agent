@@ -74,11 +74,17 @@ class LLMClient:
         for attempt in range(3):
             try:
                 if self._kind == "anthropic":
+                    # The intent catalog is byte-identical on every call and
+                    # dwarfs the one request line that follows it, so cache it:
+                    # reads bill at ~0.1x.  Caching is a prefix match — anything
+                    # per-request must stay in the user message, or the prefix
+                    # stops matching and every call pays in full.
                     msg = self._client.messages.create(
                         model=cfg.anthropic_model,
                         max_tokens=cfg.max_output_tokens,
                         temperature=cfg.temperature,
-                        system=system,
+                        system=[{"type": "text", "text": system,
+                                 "cache_control": {"type": "ephemeral"}}],
                         messages=[{"role": "user", "content": user}],
                     )
                     return "".join(
