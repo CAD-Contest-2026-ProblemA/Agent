@@ -31,6 +31,11 @@ equivalence / cost-ranked-synthesis oracles.
 * Optional Python packages: `openai` / `anthropic` (LLM fallback only — the
   benchmark never calls the LLM) and `PyYAML` (config parsing; falls back to a
   built-in mini-parser if absent).
+* Example retrieval (which nearest labelled requests go into the LLM prompt)
+  needs **nothing extra** — the default BM25 retriever is stdlib.  A dense
+  encoder is available via `requirements-retrieval.txt` +
+  `scripts/fetch_embed_model.py`, but it measured within one sentence in 1420
+  of the stdlib one, so it is opt-in.
 
 ## Get the code
 
@@ -249,7 +254,7 @@ stdin ─► io_/protocol ─► agent/agent (regex router; LLM fallback)
 | Transform | `transform/*` | basis remap, XOR/XNOR decomposition, constant propagation, dangling removal, fixpoint duplicate merge, buffer trees, renaming |
 | Optimize | `optimize/abc_opt.py` | Depth/area minimisation via ABC + unit-delay genlib mapping, basis-preserving, cec-guarded |
 | Agent | `agent/*` | rule router, request state + snapshots + transform deltas |
-| LLM | `llm/*` | thin dual-provider client + cached fallback translator |
+| LLM | `llm/*` | thin dual-provider client + cached fallback translator; retrieves the nearest labelled requests from `examples.jsonl` into the prompt (`retrieval.py`, stdlib BM25 by default) |
 
 ## Correctness model
 
