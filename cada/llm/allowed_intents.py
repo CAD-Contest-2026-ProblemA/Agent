@@ -334,6 +334,58 @@ OPERATION SYNONYMS:
   only when the request names dead / unused / unobservable / inert logic
   specifically.
 
+▸ symmetric vs signals_equivalent
+  "symmetric {output, a, b}"  → THREE names: does the OUTPUT keep its function
+    when the two inputs trade places?
+    Triggers: "would n13[0] even notice if n2 and n1 switched roles", "is
+              n31[0] blind to which of n1 and n3 carries which value",
+              "interchangeable or not: n24[1] and n0[3], as seen from n63[1]",
+              "does the function at n15 stay fixed under swapping n0[1] with
+              n9[0]".
+  "signals_equivalent {a, b}" → TWO names: do these two signals carry the same
+    value for every input?
+  KEY RULE: swap/exchange/interchange wording with a THIRD name naming where
+  it is observed → symmetric.  Only two names and no observation point →
+  signals_equivalent.  Both read as "would anything change"; the name count
+  decides.
+
+▸ counting vs listing: how many vs which
+  Several op pairs walk the same graph and differ only in whether the request
+  wants a NUMBER or the NAMES:
+  "gates_driven_by {gate}"     → HOW MANY gates the gate drives.
+    Triggers: "how many cells hang off g868 directly", "the output of g926
+              lands on how many gates".
+  "connected_to_output {gate}" → WHICH gates.  "which cells receive their
+    signal straight off the back of g1259".
+  "cone_gate_count {output}"   → HOW MANY gates the fanin cone holds.
+    Triggers: "what is the size of the machinery upstream of n11[0]", "the
+              number of gates ancestral to n12 is what", "how many gates are
+              inside the fence around everything n11[0] depends on".
+  "transitive_fanin {net}"     → the cone itself ("compute the transitive
+    fanin of n30[0]", "the full ancestry of n31[0]", "the complete upstream
+    closure of n33[0]").
+  KEY RULE: "how many" / "the number of" / "the size of" / "count" asks for a
+  number — take the counting op.  "which" / "name them" / "list" / "compute
+  the cone" asks for the objects.
+
+▸ connected_to_net vs connected_to_output
+  "connected_to_net {net}"     → the named thing is a NET: every gate touching
+    it, driver and loads alike.  Triggers: "identify all hardware attached to
+    stage2_out", "what plugs into stage2_out? every gate counts".
+  "connected_to_output {gate}" → the named thing is a GATE.
+  KEY RULE: same discriminator as elsewhere — a gate/instance name (g0, cg288)
+  versus a net name (n14, stage2_out) decides it, not the wording.
+
+▸ articulation vs shared_cone
+  "articulation {a, b}"  → cut vertices ON THE PATHS between two nets: points
+    every route from a to b must pass.  Triggers: "across the web of routes
+    linking n1 and n63[0], which points are common to all of them".
+  "shared_cone {a, b}"   → gates in BOTH nets' fanin cones — shared ancestry,
+    no path between the two required.  Triggers: "which gates would both
+    n63[1] and n31[0] lose if they were removed".
+  KEY RULE: routes/paths BETWEEN the two → articulation.  What the two have in
+  COMMON upstream → shared_cone.
+
 ▸ floating_count vs delta_count
   "floating_count {}"  → how many floating/unconnected signals the preceding
     check reported.  Triggers: "how many floating signals were found", "so how
