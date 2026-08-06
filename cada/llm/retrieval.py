@@ -202,10 +202,12 @@ class UnionRetriever(Retriever):
 
     name = "union"
 
-    def __init__(self, parts: Sequence[Retriever]):
+    def __init__(self, parts: Sequence[Retriever], fusion: str = "interleave"):
         super().__init__(parts[0].bank if parts else [])
         self.parts = list(parts)
-        self.name = "union(" + "+".join(p.name for p in self.parts) + ")"
+        self.fusion = fusion
+        self.name = ("union-" + fusion + "(" +
+                     "+".join(p.name for p in self.parts) + ")")
 
     def scores(self, query: str) -> List[float]:
         raise NotImplementedError("union ranks by interleaving, not by score")
@@ -220,6 +222,25 @@ class UnionRetriever(Retriever):
         # is a handicap disguised as a comparison rather than a union.
         per = k
         ranked = [p.top_k(query, per, exclude_case=exclude_case) for p in self.parts]
+
+        if self.fusion == "rrf":
+            # Interleaving spends the whole budget before any list gets to say
+            # "these two agree"; RRF lets agreement accumulate instead.
+            from .retrieval_qdrant import rrf_merge
+            keyed = [[(r["text"], r["op"]) for r in lst] for lst in ranked]
+            order = {}
+            for lst in keyed:
+                for key in lst:
+                    order.setdefault(key, len(order))
+            index = {key: i for i, key in enumerate(order)}
+            merged = rrf_merge([[index[key] for key in lst] for lst in keyed], k)
+            rev = {i: key for key, i in index.items()}
+            lookup = {}
+            for lst in ranked:
+                for r in lst:
+                    lookup.setdefault((r["text"], r["op"]), r)
+            return [lookup[rev[i]] for i in merged]
+
         out, seen = [], set()
         for i in range(per):
             for lst in ranked:
@@ -256,12 +277,16 @@ def build_retriever(prefer: str = "auto",
     rows = list(bank) if bank is not None else load_bank()
     if not rows:
         return None
-    if prefer == "union":
+    if prefer in ("union", "union-rrf"):
         dense = build_retriever("onnx", rows)
         lexical = Bm25Retriever(rows)
         if dense is None or dense.name != "onnx":
             return lexical
-        return UnionRetriever([lexical, dense])
+        return UnionRetriever([lexical, dense],
+                              fusion="rrf" if prefer == "union-rrf" else "interleave")
+    if prefer in ("qdrant", "qdrant-hybrid"):
+        from .retrieval_qdrant import build_qdrant
+        return build_qdrant(rows, hybrid=(prefer == "qdrant-hybrid"))
     if prefer == "onnx":
         model_dir = data_path("embed_model")
         vecs = data_path(VECS_NAME)
