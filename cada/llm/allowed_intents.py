@@ -171,7 +171,9 @@ OPERATION SYNONYMS:
 
 ▸ fanout vs transitive_fanout vs connected_to_net
   "fanout {net}"            → what the net drives DIRECTLY (list of driven gates/loads).
-    Also correct for a clock/reset net: its loads are the flip-flops it clocks.
+    For a clock/reset net this is still fanout ONLY when the request asks for
+    its loads generically; if it asks which FLIP-FLOPS the net clocks, that is
+    ffs_on_clock (see below).
   "transitive_fanout {net}" → everything downstream through multiple gate levels.
   "connected_to_net {net}"  → every gate touching the net (its driver AND its loads),
     e.g. "list all gates that connect to the renamed signal X".
@@ -216,6 +218,133 @@ OPERATION SYNONYMS:
 ▸ rename kind
   kind echoes the noun used in the request: "rename wire X" → "wire",
   "rename (internal) signal X" → "signal", "rename gate X" → "gate".
+
+▸ cone_depth vs max_depth_between vs cone_gate_count
+  "cone_depth {output}"      → the DEPTH of ONE named net's fanin cone.
+    Triggers: "logic depth of the fanin cone of n30[0]", "how deep does the
+              logic that ends at n31[0] run", "worst-case number of gates
+              stacked between the inputs and n31[0]".
+  "max_depth_between {a, b}" → depth between TWO concrete net names.
+  "cone_gate_count {output}" → how MANY gates the cone holds (size, not depth).
+  KEY RULE: count the concrete net names.  ONE net + depth wording →
+  cone_depth, never max_depth_between: "between the inputs and n31[0]" names
+  only n31[0], and "the inputs" is a class, not an endpoint.  TWO concrete
+  names → max_depth_between.  One net but asking "how many gates" →
+  cone_gate_count.
+
+▸ gate-named downstream queries: connected_to_output vs successors vs fanout
+  Both gate intents return what the gate feeds; the VOCABULARY decides which.
+  "successors {gate}"          → GRAPH / ORDERING wording: adjacent, neighbour,
+    border, edge, hop, next, follows, immediate, successor, descendant, heir.
+    Triggers: "which cells border g12 on its output side", "one edge away from
+              g0, downstream", "one hop downstream of g12", "the very next
+              gates after g71713", "the first-generation descendants of g1259",
+              "which cells directly follow g868 in the graph", "where does the
+              signal go the instant it leaves g926".
+  "connected_to_output {gate}" → PIN / WIRE / LOAD wording: output pin, output
+    signal, output terminal, connected/wired/attached/soldered to, loads,
+    consumers, takers, "who reads what X writes".
+    Triggers: "what hangs off the output pin of g12", "which loads does the
+              output pin of g454 carry", "who consumes what g1259 produces",
+              "show every cell that taps the output of g868".
+  "fanout {net}"               → only when the named thing is a NET.
+  KEY RULE: a gate/instance name (g0, cg288) NEVER routes to fanout.  Between
+  the two gate intents choose by vocabulary — adjacency/ordering → successors,
+  pin/wire/load → connected_to_output.  Both describe the same walk, so the
+  wording is the only signal.
+
+▸ dominator vs path_exists vs depends_on
+  dominator and path_exists BOTH name two endpoints plus a third thing to get
+  around, and BOTH are phrased with bypass / around / avoid / skip / dodge /
+  free-of wording.  That wording therefore decides NOTHING.  What decides is
+  whether the third name is a GATE or a NET:
+  "dominator {a, b, gate}"    → third name is a GATE instance (g0, g454, g1259).
+    Asks whether that gate is unavoidable.  Answered yes/no.
+    Triggers: "is there any way around g454 when traveling from n24[2] to
+              n25[0]", "does g926 hold a monopoly on the traffic between n0[0]
+              and n117[1]", "is g100 a mandatory stop on every route from
+              n24[2] to n26[1]", "would blocking g1259 silence every message
+              n24[2] sends toward n31[1]", "traveling from n14 to n117[1], is
+              skipping g926 ever an option".
+  "path_exists {a, b, avoid}" → third name is a NET / node (n141, n719, n208).
+    Asks whether a path survives with that net off-limits.
+    Triggers: "does n14 have a way to n31[1] that bypasses n719", "steering
+              clear of n95, does n0 still connect to n26[1]", "is there a
+              n86984-free route from n2 to n13[0]", "with n4156 declared
+              off-limits, does n3 still find its way to n31[1]".
+  "depends_on {output, input}"→ only TWO names, asking functional influence:
+    "does n2 have any influence over n30[0]", "will changing n4 ever change
+    n32[0]".
+  KEY RULE: gate name in the avoid/through position → dominator; net name there
+  → path_exists.  Never choose between them on the phrasing.
+
+▸ is_cut vs articulation vs dominator
+  "is_cut {wire}"          → is this ONE wire a cut between ANY primary input and
+    ANY primary output? yes/no.  No endpoints are named.
+    Triggers: "would the design split apart if we removed n1203", "is n1209
+              load-bearing for the input-to-output connectivity", "if n1207
+              were severed, would some output lose contact with the inputs".
+  "articulation {a, b}"    → LIST the cut vertices between TWO named endpoints.
+  "dominator {a, b, gate}" → two endpoints AND a named gate, answered yes/no.
+  KEY RULE: if the request names ONE wire and leaves the endpoints as classes
+  ("any primary input", "the inputs", "some output"), it is is_cut.
+  articulation requires two concrete endpoints and dominator requires two
+  endpoints plus a gate — neither can be chosen when only one name appears.
+
+▸ ffs_on_clock vs fanout / reachable_from / gates_driven_by
+  "ffs_on_clock {clk}" → which flip-flops are clocked by this net.
+    Triggers: "which state elements does n0 drive", "which registers march to
+              the beat of n0", "who gets clocked by n0", "round up every DFF
+              ticking on n0", "which flip-flops belong to the domain of n0",
+              "show the flops whose clock pin is wired to n0".
+  KEY RULE: when the request asks which FLIP-FLOPS / registers / state
+  elements / DFFs / flops a net drives or clocks, use ffs_on_clock — NOT
+  fanout, reachable_from or gates_driven_by.  The deciding clue is the NOUN
+  being asked for (a sequential element), not the verb ("drive").  A bare
+  "what does n0 drive" with no sequential noun stays fanout.
+
+▸ same_clock vs signals_equivalent
+  "same_clock {a, b}"         → are these two FLIP-FLOPS clocked by the same net?
+    Triggers: "are g3 and g53 on the same clock domain", "do g9 and g59 tick
+              together", "g7 versus g57: common clock or different clocks".
+  "signals_equivalent {a, b}" → do these two SIGNALS carry the same logic value
+    for every input?  Triggers: "would swapping n3 for n41 change anything
+    logically", "check if n5 mirrors n43 exactly".
+  KEY RULE: the objects decide, not the word "same".  Two flip-flop/instance
+  names + clock wording → same_clock.  Two net names + value/equivalence
+  wording → signals_equivalent.
+
+▸ transitive_fanin vs reachable_from
+  "transitive_fanin {net}" → everything UPSTREAM of the net.
+    Triggers: "the full ancestry of n31[0]", "the complete upstream closure of
+              n33[0]", "compute the transitive fanin of n30[0]".
+  "reachable_from {net}"   → everything DOWNSTREAM of the net.
+  KEY RULE: direction decides it.  ancestry / upstream / feeds-into / closure
+  of what drives it → transitive_fanin.  reachable / downstream / what it
+  drives → reachable_from.
+
+▸ minimize_area vs remove_dangling
+  "minimize_area {basis}" → RESYNTHESIZE the logic to reduce total gate count.
+    Triggers: "minimize the total gate count", "rework the logic so the design
+              ends up with as few cells as possible", "shrink this netlist —
+              every gate you can spare, remove".
+  "remove_dangling {}"    → delete only gates that are ALREADY unused/dead.
+  KEY RULE: a request to make the design smaller by restructuring is
+  minimize_area even when it uses the word "remove".  remove_dangling applies
+  only when the request names dead / unused / unobservable / inert logic
+  specifically.
+
+▸ floating_count vs delta_count
+  "floating_count {}"  → how many floating/unconnected signals the preceding
+    check reported.  Triggers: "how many floating signals were found", "so how
+    many loose ends did that check turn up", "what is the count of
+    unconnected nets".
+  "delta_count {kind}" → how many GATES a preceding TRANSFORM added or removed.
+  KEY RULE: "how many ... floating / unconnected / undriven / loose ends" is
+  floating_count even though it refers back to an earlier step.  The
+  "count_gates vs delta_count" rule above lists "floating" among the adjectives
+  describing removed GATES; that does not apply when the question asks how many
+  floating SIGNALS a check found.
 
 ━━━ FEW-SHOT EXAMPLES ━━━
 
