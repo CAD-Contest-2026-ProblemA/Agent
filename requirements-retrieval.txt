@@ -1,0 +1,17 @@
+# Optional: dense (embedding) retrieval of similar past requests.
+#
+# Without these the agent uses the stdlib BM25 retriever, which needs no
+# third-party package at all and measured within about one point of the
+# embedding backend end to end.  Install only if you want the dense path.
+#
+# Deliberately NOT torch/sentence-transformers: at inference the model is
+# fixed, so the exported ONNX graph gives the same vectors for a fraction of
+# the footprint — torch would add several hundred MB to a 45MB one-file binary.
+#
+# After installing:
+#   python3 scripts/fetch_embed_model.py    # ~90 MB, fp32 (instruction-set safe)
+#   python3 scripts/build_vectors.py        # writes cada/llm/example_vecs.npy
+numpy>=1.24
+onnxruntime>=1.16
+tokenizers>=0.15
+huggingface-hub>=0.20   # only needed by scripts/fetch_embed_model.py

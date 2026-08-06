@@ -35,8 +35,28 @@ def _here() -> str:
     return os.path.dirname(os.path.abspath(__file__))
 
 
+def data_path(name: str) -> str:
+    """Locate a bundled data file, frozen or from source.
+
+    Under PyInstaller one-file the payload is unpacked to sys._MEIPASS, so the
+    package directory that ``__file__`` points at is not where --add-data put
+    these.  Check the extraction dir first, then fall back to the source tree.
+    """
+    import sys
+    if getattr(sys, "frozen", False):
+        base = getattr(sys, "_MEIPASS", None)
+        if base:
+            cand = os.path.join(base, "cada", "llm", name)
+            if os.path.exists(cand):
+                return cand
+            cand = os.path.join(base, name)
+            if os.path.exists(cand):
+                return cand
+    return os.path.join(_here(), name)
+
+
 def bank_path() -> str:
-    return os.path.join(_here(), BANK_NAME)
+    return data_path(BANK_NAME)
 
 
 def load_bank(path: Optional[str] = None) -> List[dict]:
@@ -170,8 +190,8 @@ def build_retriever(prefer: str = "auto",
     if not rows:
         return None
     if prefer in ("auto", "onnx"):
-        model_dir = os.path.join(_here(), "embed_model")
-        vecs = os.path.join(_here(), VECS_NAME)
+        model_dir = data_path("embed_model")
+        vecs = data_path(VECS_NAME)
         if os.path.isdir(model_dir) and os.path.isfile(vecs):
             try:
                 return OnnxRetriever(rows, model_dir, vecs)

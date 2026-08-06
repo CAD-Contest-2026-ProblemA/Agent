@@ -90,7 +90,8 @@ class Encoder:
 
 
 def default_model_dir() -> str:
-    return os.path.join(os.path.dirname(os.path.abspath(__file__)), "embed_model")
+    from .retrieval import data_path
+    return data_path("embed_model")
 
 
 def try_load(model_dir: Optional[str] = None) -> Optional["Encoder"]:
