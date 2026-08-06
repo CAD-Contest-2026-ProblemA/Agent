@@ -65,7 +65,14 @@ class LLMClient:
             kwargs.pop("temperature", None)
             return self._client.chat.completions.create(**kwargs)
 
-    def complete(self, system: str, user: str) -> Optional[str]:
+    def complete(self, system: str, user: str,
+                 dynamic: Optional[str] = None) -> Optional[str]:
+        """``system`` is the fixed catalog; ``dynamic`` varies per request.
+
+        Everything up to the cache breakpoint is reused across calls, so the
+        per-request half must come strictly after it — on both providers that
+        means appending, never interleaving.
+        """
         if self._client is None:
             return None
         cfg = self.config
@@ -79,18 +86,24 @@ class LLMClient:
                     # reads bill at ~0.1x.  Caching is a prefix match — anything
                     # per-request must stay in the user message, or the prefix
                     # stops matching and every call pays in full.
+                    blocks = [{"type": "text", "text": system,
+                               "cache_control": {"type": "ephemeral"}}]
+                    if dynamic:
+                        blocks.append({"type": "text", "text": dynamic})
                     msg = self._client.messages.create(
                         model=cfg.anthropic_model,
                         max_tokens=cfg.max_output_tokens,
                         temperature=cfg.temperature,
-                        system=[{"type": "text", "text": system,
-                                 "cache_control": {"type": "ephemeral"}}],
+                        system=blocks,
                         messages=[{"role": "user", "content": user}],
                     )
                     return "".join(
                         b.text for b in msg.content if getattr(b, "type", "") == "text")
                 else:
-                    msgs = [{"role": "system", "content": system},
+                    # OpenAI caches long prefixes automatically; keeping the
+                    # variable half last is what preserves the hit.
+                    sys_text = system if not dynamic else system + "\n\n" + dynamic
+                    msgs = [{"role": "system", "content": sys_text},
                             {"role": "user", "content": user}]
                     resp = self._openai_complete(cfg.openai_model,
                                                  cfg.max_output_tokens,

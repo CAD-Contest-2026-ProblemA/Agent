@@ -51,7 +51,11 @@ class Agent:
         self.config = config
         self.state = State()
         self.llm = LLMClient(config)
-        self.fallback = Fallback(self.llm)
+        # "auto" = dense retrieval when the model ships, BM25 otherwise, and
+        # None if even the example bank is missing.  Every step degrades to
+        # the catalog-only behaviour rather than failing the run.
+        from ..llm.retrieval import build_retriever
+        self.fallback = Fallback(self.llm, retriever=build_retriever("auto"))
         self.use_rules = use_rules
         self.rules = self._build_rules()
         self.const_nets = {}     # functionally-constant nets (from last report)

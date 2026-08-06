@@ -36,6 +36,7 @@ sys.path.insert(0, ROOT)
 from cada.io_.config import load_config
 from cada.llm.client import LLMClient
 from cada.llm.fallback import Fallback
+from cada.llm.retrieval import build_retriever
 
 BANK = os.path.join(ROOT, "cada", "llm", "examples.jsonl")
 # USD per million tokens (input, output), for the pre-run estimate only.
@@ -68,11 +69,17 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cases", default="test101-171")
     ap.add_argument("--limit", type=int, default=None, help="evaluate only the first N")
+    ap.add_argument("--sample", type=int, default=None,
+                    help="evenly-spread sample of N (deterministic; covers every op, "
+                         "unlike --limit which takes the first N testcases only)")
     ap.add_argument("--workers", type=int, default=8)
     ap.add_argument("--config", default="configs/api_key.yaml")
     ap.add_argument("--provider", choices=("openai", "anthropic"), default=None,
                     help="override the config's provider for this run")
     ap.add_argument("--out", default=None, help="write per-sentence results as JSONL")
+    ap.add_argument("--retriever", choices=("none", "bm25", "onnx", "auto"),
+                    default="none", help="append retrieved examples (default: none)")
+    ap.add_argument("--top-k", type=int, default=25)
     args = ap.parse_args()
 
     cfg = load_config(args.config)
@@ -83,6 +90,9 @@ def main() -> int:
         raise SystemExit("error: LLM client unavailable — check provider/api_key.")
 
     rows = select(load_bank(), args.cases)
+    if args.sample and args.sample < len(rows):
+        stride = len(rows) / args.sample
+        rows = [rows[int(i * stride)] for i in range(args.sample)]
     if args.limit:
         rows = rows[:args.limit]
     if not rows:
@@ -93,8 +103,11 @@ def main() -> int:
     if p_in:
         # ~7k prompt tokens per call; caching makes repeats ~0.1x.
         est = f"  (rough cost with caching: ${len(rows) * 7000 * 0.1 / 1e6 * p_in:.2f})"
+    retriever = build_retriever(args.retriever) if args.retriever != "none" else None
     print(f"model={cfg.model}  cases={args.cases}  sentences={len(rows)}"
-          f"  workers={args.workers}{est}\n", flush=True)
+          f"  workers={args.workers}  retriever="
+          f"{retriever.name if retriever else 'none'}"
+          f"{'/k=%d' % args.top_k if retriever else ''}{est}\n", flush=True)
 
     local = threading.local()
 
@@ -103,7 +116,10 @@ def main() -> int:
         # (cache, last_error), so sharing one across threads would race.
         fb = getattr(local, "fb", None)
         if fb is None:
-            fb = local.fb = Fallback(client)
+            fb = local.fb = Fallback(client, retriever=retriever, top_k=args.top_k)
+        # Leave-one-testcase-out: the bank contains this very sentence, so
+        # without the exclusion the run measures lookup, not routing.
+        fb.exclude_case = row["case"]
         try:
             obj = fb.translate(row["text"])
         except Exception as exc:
