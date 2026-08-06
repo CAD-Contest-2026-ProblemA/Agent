@@ -214,7 +214,11 @@ class UnionRetriever(Retriever):
               exclude_case: Optional[str] = None) -> List[dict]:
         if not self.parts:
             return []
-        per = max(1, k // len(self.parts))
+        # Ask each backend for a full k, not k/n.  The two rankings overlap
+        # heavily, so splitting the budget and then deduplicating returned ~39
+        # of a requested 50 — fewer examples than either backend alone, which
+        # is a handicap disguised as a comparison rather than a union.
+        per = k
         ranked = [p.top_k(query, per, exclude_case=exclude_case) for p in self.parts]
         out, seen = [], set()
         for i in range(per):
