@@ -178,30 +178,36 @@ class OnnxRetriever(Retriever):
 
 def build_retriever(prefer: str = "auto",
                     bank: Optional[Sequence[dict]] = None) -> Optional[Retriever]:
-    """Build the best retriever available, or None if the bank is missing.
+    """Build a retriever, or None if the bank is missing.
 
-    ``prefer`` is "auto" (onnx, else bm25), "bm25", "onnx", or "none".  A
-    missing model must never be fatal: routing without retrieved examples is
-    the previous behaviour, which is degraded but correct.
+    ``prefer`` is "auto", "bm25", "onnx", or "none".
+
+    "auto" means BM25.  The dense backend retrieves better in isolation
+    (recall@25 95.0% vs 93.9% over the 1420 evaluation queries) but that did
+    not survive to the answer: end to end the two scored 94.2% and 94.3%, one
+    sentence apart out of 1420.  BM25 needs no third-party package, adds
+    nothing to the 45MB binary, and avoids the glibc / libstdc++ / SIGILL
+    portability surface an ONNX runtime brings — so the dense path has to be
+    asked for explicitly, and is worth re-testing only if the bank grows or
+    the phrasings drift further from the labelled set.
     """
     if prefer == "none":
         return None
     rows = list(bank) if bank is not None else load_bank()
     if not rows:
         return None
-    if prefer in ("auto", "onnx"):
+    if prefer == "onnx":
         model_dir = data_path("embed_model")
         vecs = data_path(VECS_NAME)
         if os.path.isdir(model_dir) and os.path.isfile(vecs):
             try:
                 return OnnxRetriever(rows, model_dir, vecs)
             except Exception as exc:
-                if prefer == "onnx":
-                    raise
                 import sys
                 sys.stderr.write(f"[retrieval] onnx unavailable ({exc}); using bm25\n")
-        elif prefer == "onnx":
-            raise FileNotFoundError(f"missing {model_dir} or {vecs}")
+        else:
+            import sys
+            sys.stderr.write(f"[retrieval] missing {model_dir} or {vecs}; using bm25\n")
     try:
         return Bm25Retriever(rows)
     except Exception:
