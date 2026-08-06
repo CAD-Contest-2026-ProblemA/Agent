@@ -94,7 +94,7 @@ class Retriever:
     def scores(self, query: str) -> List[float]:
         raise NotImplementedError
 
-    def top_k(self, query: str, k: int = 25,
+    def top_k(self, query: str, k: int = 50,
               exclude_case: Optional[str] = None) -> List[dict]:
         if not self.bank:
             return []
@@ -210,7 +210,7 @@ class UnionRetriever(Retriever):
     def scores(self, query: str) -> List[float]:
         raise NotImplementedError("union ranks by interleaving, not by score")
 
-    def top_k(self, query: str, k: int = 25,
+    def top_k(self, query: str, k: int = 50,
               exclude_case: Optional[str] = None) -> List[dict]:
         if not self.parts:
             return []

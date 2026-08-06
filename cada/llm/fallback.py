@@ -14,6 +14,12 @@ from typing import Dict, Optional
 
 from .allowed_intents import INTENT_CATALOG, validate_intent_object
 
+# How many retrieved examples to append.  Measured over the full 1420-sentence
+# set: 25 -> 94.3%, 50 -> 95.3% (BM25).  More examples also mean more
+# wrong-label distractors, so this is an empirical setting, not "bigger is
+# better" — re-measure before changing it.
+DEFAULT_TOP_K = 50
+
 
 def parse_json_object(text: str) -> Optional[dict]:
     if not text:
@@ -35,7 +41,7 @@ def parse_json_object(text: str) -> Optional[dict]:
 
 
 class Fallback:
-    def __init__(self, client, retriever=None, top_k: int = 25,
+    def __init__(self, client, retriever=None, top_k: int = DEFAULT_TOP_K,
                  exclude_case: Optional[str] = None):
         self.client = client
         self.cache: Dict[str, dict] = {}

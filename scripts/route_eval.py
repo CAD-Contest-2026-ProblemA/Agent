@@ -79,7 +79,7 @@ def main() -> int:
     ap.add_argument("--out", default=None, help="write per-sentence results as JSONL")
     ap.add_argument("--retriever", choices=("none", "bm25", "onnx", "union", "auto"),
                     default="none", help="append retrieved examples (default: none)")
-    ap.add_argument("--top-k", type=int, default=25)
+    ap.add_argument("--top-k", type=int, default=50)
     args = ap.parse_args()
 
     cfg = load_config(args.config)
