@@ -11,10 +11,12 @@ unhelpful examples.  Nothing here can remove the correct answer from the
 model's reach — which is exactly why the retrieval unit is example sentences
 and not the op list itself.
 
-Two backends behind one interface.  ``OnnxRetriever`` is the intended one;
-``Bm25Retriever`` needs no third-party package and is the offline baseline
-that says whether the embedding model earns its footprint.  If neither can be
-built, ``build_retriever`` returns None and the caller simply omits the block.
+Two backends behind one interface.  ``Bm25Retriever`` is the default: it needs
+no third-party package, and measured end to end it matched the dense backend
+to within one sentence in 1420 despite retrieving worse in isolation (see
+``build_retriever``).  ``OnnxRetriever`` must be asked for explicitly.  If
+neither can be built, ``build_retriever`` returns None and the caller simply
+omits the block — routing then works from the catalog alone, as it did before.
 """
 
 from __future__ import annotations
