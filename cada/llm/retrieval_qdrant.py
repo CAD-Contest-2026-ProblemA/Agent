@@ -134,26 +134,43 @@ class QdrantRetriever(Retriever):
             flt = models.Filter(must_not=[models.FieldCondition(
                 key="case", match=models.MatchValue(value=exclude_case))])
         qv = self._enc.encode([query])[0].tolist()
+        # Over-fetch: the bank repeats 354 of its 2130 sentences, so asking for
+        # exactly k and then deduplicating would return fewer distinct examples
+        # than every other backend and quietly bias the comparison.
+        want = k * 2
 
         if not self.hybrid:
             res = self._client.query_points(
-                COLLECTION, query=qv, using="dense", limit=k,
+                COLLECTION, query=qv, using="dense", limit=want,
                 query_filter=flt).points
-            return [self.bank[p.id] for p in res]
+            return self._dedup([self.bank[p.id] for p in res], k)
 
         sp = self._sparse.query_sparse(query)
         prefetch = [
-            models.Prefetch(query=qv, using="dense", limit=k * 2, filter=flt),
+            models.Prefetch(query=qv, using="dense", limit=want * 2, filter=flt),
             models.Prefetch(
                 query=models.SparseVector(indices=list(sp.keys()),
                                           values=list(sp.values())),
-                using="bm25", limit=k * 2, filter=flt),
+                using="bm25", limit=want * 2, filter=flt),
         ]
         res = self._client.query_points(
             COLLECTION, prefetch=prefetch,
             query=models.FusionQuery(fusion=models.Fusion.RRF),
-            limit=k, query_filter=flt).points
-        return [self.bank[p.id] for p in res]
+            limit=want, query_filter=flt).points
+        return self._dedup([self.bank[p.id] for p in res], k)
+
+    @staticmethod
+    def _dedup(rows: Sequence[dict], k: int) -> List[dict]:
+        out, seen = [], set()
+        for r in rows:
+            key = (r["text"], r["op"])
+            if key in seen:
+                continue
+            seen.add(key)
+            out.append(r)
+            if len(out) >= k:
+                break
+        return out
 
 
 def build_qdrant(bank: Sequence[dict], hybrid: bool = False) -> QdrantRetriever:

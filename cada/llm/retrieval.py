@@ -100,13 +100,20 @@ class Retriever:
             return []
         ranked = sorted(range(len(self.bank)), key=self.scores(query).__getitem__,
                         reverse=True)
-        out = []
+        out, seen = [], set()
         for i in ranked:
             row = self.bank[i]
             # Leave-one-testcase-out: when evaluating, the query's own testcase
             # must not supply its own answer or the measurement is meaningless.
             if exclude_case and row.get("case") == exclude_case:
                 continue
+            # The bank repeats 354 of its 2130 sentences across testcases, so
+            # an undeduplicated top-50 carried ~42 distinct examples — 15% of
+            # the budget spent showing the model the same line twice.
+            key = (row["text"], row["op"])
+            if key in seen:
+                continue
+            seen.add(key)
             out.append(row)
             if len(out) >= k:
                 break

@@ -15,3 +15,10 @@ numpy>=1.24
 onnxruntime>=1.16
 tokenizers>=0.15
 huggingface-hub>=0.20   # only needed by scripts/fetch_embed_model.py
+
+# Comparison only — NOT a shipping path.  Enables --retriever qdrant and
+# qdrant-hybrid in scripts/route_eval.py.  Qdrant stores and searches the
+# vectors the encoder above produces; it does not produce them, and at 2130
+# vectors its approximate index cannot beat the exact cosine already computed
+# in-process.  Installed if you want to reproduce that comparison.
+# qdrant-client>=1.9
