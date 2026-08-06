@@ -162,6 +162,14 @@ def main() -> int:
                 (r["op"], r["pred"]) for r in wrong).most_common(15):
             print(f"  {n:4d}  {t:22s} -> {p}")
 
+    if client.degraded:
+        print(f"\n{'!'*64}\nINVALID RUN: {client.degraded} of {len(rows)} calls "
+              f"({100*client.degraded/len(rows):.0f}%) exhausted their retries and "
+              f"returned nothing.\nThose count as the model giving up, so the "
+              f"success rate above is meaningless.\nUsual cause: another job "
+              f"sharing this provider's rate limit. Re-run alone.\n{'!'*64}",
+              file=sys.stderr)
+
     errs = [r for r in results if r["error"]]
     if errs:
         print(f"\nWARNING: {len(errs)} sentence(s) raised; first: {errs[0]['error']}",

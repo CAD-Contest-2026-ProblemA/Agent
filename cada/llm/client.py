@@ -26,6 +26,11 @@ class LLMClient:
         self.config = config
         self._client = None
         self._kind = None
+        # Calls that exhausted their retries and returned None.  A degraded run
+        # still produces a complete-looking transcript of no-op acks, so this
+        # has to be observable — a score computed over a rate-limited run reads
+        # as a result and is not one.
+        self.degraded = 0
         self._init()
 
     def _init(self):
@@ -117,6 +122,7 @@ class LLMClient:
                 low = str(e).lower()
                 if any(m in low for m in _FATAL_MARKERS):
                     import sys
+                    self.degraded += 1
                     sys.stderr.write(f"[llm] fatal API error, degrading to no-op: {e}\n")
                     return None
                 # A rate limit is not a failed request, it is a request that has
@@ -127,6 +133,7 @@ class LLMClient:
                 budget = _RATE_ATTEMPTS if rate else _ATTEMPTS
                 if attempt + 1 >= budget:
                     import sys
+                    self.degraded += 1
                     sys.stderr.write(f"[llm] API call failed, degrading to no-op: {e}\n")
                     return None
                 # 2, 4, 8, ... capped at 60s
