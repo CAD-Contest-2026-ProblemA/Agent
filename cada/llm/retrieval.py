@@ -320,18 +320,33 @@ def build_retriever(prefer: str = "auto",
         return None
 
 
-HEADER = """━━━ SIMILAR PAST REQUESTS ━━━
+HEADER = """━━━ SIMILAR PAST RRQUESTS ━━━
 Requests already classified, ordered by similarity to the one you must answer.
-They fix the intent NAME for a phrasing; they do not show params, and they do
-not override the rules above.  If none of them fits, ignore them.
-"""
+Where the params were unambiguous they are shown; where only the intent is
+shown, that entry fixes the intent name alone and says nothing about params —
+it does NOT mean the intent takes none.  Always extract params for the actual
+request from the actual request.  These examples do not override the rules
+above; if none of them fits, ignore them.
+""".replace("RRQUESTS", "REQUESTS")
 
 
 def format_block(hits: Sequence[dict]) -> str:
-    """Render retrieved examples as the dynamic half of the system prompt."""
+    """Render retrieved examples as the dynamic half of the system prompt.
+
+    Entries carrying params are rendered in the same shape as the catalog's
+    hand-written examples.  Rendering every entry as a bare intent name would
+    make the most recent 50 demonstrations in the prompt all show an answer
+    with no params, which is the opposite of the contract.
+    """
     if not hits:
         return ""
     lines = [HEADER]
     for h in hits:
-        lines.append(f'"{h["text"]}" → {h["op"]}')
+        params = h.get("params")
+        if params is None:
+            lines.append(f'"{h["text"]}" → {h["op"]}')
+        else:
+            obj = json.dumps({"intent": h["op"], "params": params},
+                             ensure_ascii=False, sort_keys=True)
+            lines.append(f'"{h["text"]}" → {obj}')
     return "\n".join(lines)
