@@ -10,8 +10,8 @@
 {"case": "test91", "line": 10, "text": "Show me everything hanging off the net renamed_sig.", "op": "connected_to_net", "kind": "hard", "params": {"net": "renamed_sig"}}
 {"case": "test91", "line": 11, "text": "Report each gate connected to the output of gate g0.", "op": "connected_to_output", "kind": "safe", "params": {"gate": "g0"}}
 {"case": "test91", "line": 12, "text": "Which gates receive a hardwired 1 directly on an input?", "op": "const1_gates", "kind": "hard", "params": {}}
-{"case": "test91", "line": 13, "text": "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
-{"case": "test91", "line": 14, "text": "Re-express everything in the cone of n30[0] with a NOR-plus-NOT vocabulary.", "op": "convert_basis", "kind": "hard", "params": {}}
+{"case": "test91", "line": 13, "text": "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "nand"}}
+{"case": "test91", "line": 14, "text": "Re-express everything in the cone of n30[0] with a NOR-plus-NOT vocabulary.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NOR_NOT", "scope": "n30[0]"}}
 {"case": "test91", "line": 15, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test91", "line": 16, "text": "Size of the I/O footprint, please.", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test91", "line": 17, "text": "How many XOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xor"}}
@@ -55,7 +55,7 @@
 {"case": "test91", "line": 55, "text": "List all the register-to-register paths in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test91", "line": 56, "text": "Clear the deadwood out of this netlist.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test91", "line": 57, "text": "Rename wire n1200 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "n1200", "new": "renamed_sig", "kind": "wire"}}
-{"case": "test91", "line": 58, "text": "Scan the design for NOR cells that have a constant input, and report what you find.", "op": "report_const_gates", "kind": "hard", "params": {}}
+{"case": "test91", "line": 58, "text": "Scan the design for NOR cells that have a constant input, and report what you find.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test91", "line": 59, "text": "Do flip-flops g0 and g50 use the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g0", "b": "g50"}}
 {"case": "test91", "line": 60, "text": "List the cells common to what feeds n30[0] and what feeds n30[1].", "op": "shared_cone", "kind": "hard", "params": {"a": "n30[0]", "b": "n30[1]"}}
 {"case": "test91", "line": 61, "text": "Verify that signals n2 and n40 produce identical logic values for all inputs.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n2", "b": "n40"}}
@@ -64,7 +64,7 @@
 {"case": "test91", "line": 64, "text": "Overall gate tally, one number.", "op": "total_gate_count", "kind": "hard", "params": {}}
 {"case": "test91", "line": 65, "text": "Compute the transitive fanin of output n30[0].", "op": "transitive_fanin", "kind": "safe", "params": {"net": "n30[0]"}}
 {"case": "test91", "line": 66, "text": "Follow n2 to the bitter end: everything it ever influences.", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n2"}}
-{"case": "test91", "line": 67, "text": "Prove that the transformed design is equivalent to the netlist before the transformation.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test91", "line": 67, "text": "Prove that the transformed design is equivalent to the netlist before the transformation.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "pre"}}
 {"case": "test91", "line": 68, "text": "Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
 {"case": "test91", "line": 69, "text": "Decompose all XOR gates in this design into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
 {"case": "test91", "line": 70, "text": "XOR cells: rebuild them from NANDs alone.", "op": "xor_to_nand", "kind": "hard", "params": {}}
@@ -74,8 +74,8 @@
 {"case": "test92", "line": 3, "text": "List all gates that now connect to the signal renamed_sig.", "op": "connected_to_net", "kind": "safe", "params": {"net": "renamed_sig"}}
 {"case": "test92", "line": 4, "text": "Name the loads sitting on the output of g1.", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g1"}}
 {"case": "test92", "line": 5, "text": "List the gates with one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
-{"case": "test92", "line": 6, "text": "Now fold the constant inputs of the NOR cells.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test92", "line": 7, "text": "Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test92", "line": 6, "text": "Now fold the constant inputs of the NOR cells.", "op": "const_propagate", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test92", "line": 7, "text": "Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT"}}
 {"case": "test92", "line": 8, "text": "Census time: how many of each gate family are we carrying?", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test92", "line": 9, "text": "How many primary inputs and outputs does the design have?", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test92", "line": 10, "text": "How many XOR gates are left?", "op": "count_type", "kind": "hard", "params": {"type": "xor"}}
@@ -119,7 +119,7 @@
 {"case": "test92", "line": 48, "text": "Enumerate the register-to-register links in this design.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test92", "line": 49, "text": "Trim unused wires and gates. Ensure functional equivalence is preserved.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test92", "line": 50, "text": "Swap the name n1201 for renamed_sig across the whole netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1201", "new": "renamed_sig", "kind": "wire"}}
-{"case": "test92", "line": 51, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test92", "line": 51, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test92", "line": 52, "text": "Is one clock driving both g1 and g51?", "op": "same_clock", "kind": "hard", "params": {"a": "g1", "b": "g51"}}
 {"case": "test92", "line": 53, "text": "Report the gates shared between the fanin cones of n31[0] and n31[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n31[0]", "b": "n31[1]"}}
 {"case": "test92", "line": 54, "text": "Would swapping n3 for n41 change anything logically?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n3", "b": "n41"}}
@@ -128,7 +128,7 @@
 {"case": "test92", "line": 57, "text": "Compute the total gate count of this design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test92", "line": 58, "text": "The full ancestry of n31[0], please.", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n31[0]"}}
 {"case": "test92", "line": 59, "text": "Compute the transitive fanout cone for input n3.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n3"}}
-{"case": "test92", "line": 60, "text": "Sanity-check: current versus original — identical behavior?", "op": "verify_equivalence", "kind": "hard", "params": {}}
+{"case": "test92", "line": 60, "text": "Sanity-check: current versus original — identical behavior?", "op": "verify_equivalence", "kind": "hard", "params": {"against": "original"}}
 {"case": "test92", "line": 61, "text": "Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change.", "op": "xnor_to_nor", "kind": "safe", "params": {}}
 {"case": "test92", "line": 62, "text": "No more XOR cells — spell each one out with ANDs, ORs, and inverters.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test92", "line": 63, "text": "Convert every XOR gate in the design to an equivalent 4-NAND circuit. Make sure nothing changes functionally.", "op": "xor_to_nand", "kind": "safe", "params": {}}
@@ -183,7 +183,7 @@
 {"case": "test93", "line": 41, "text": "List all register-to-register paths through combinational logic in this design.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test93", "line": 42, "text": "Purge the cells whose work never leaves the chip.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test93", "line": 43, "text": "Rename gate g2 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "g2", "new": "renamed_sig", "kind": "gate"}}
-{"case": "test93", "line": 44, "text": "Report the NOR cells sitting on a fixed input value, without touching the design.", "op": "report_const_gates", "kind": "hard", "params": {}}
+{"case": "test93", "line": 44, "text": "Report the NOR cells sitting on a fixed input value, without touching the design.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test93", "line": 45, "text": "Are flip-flops g2 and g52 driven by the same clock? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g2", "b": "g52"}}
 {"case": "test93", "line": 46, "text": "What machinery do n32[0] and n32[1] share upstream?", "op": "shared_cone", "kind": "hard", "params": {"a": "n32[0]", "b": "n32[1]"}}
 {"case": "test93", "line": 47, "text": "Determine whether n4 and n42 are functionally equivalent.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n4", "b": "n42"}}
@@ -192,9 +192,9 @@
 {"case": "test93", "line": 50, "text": "What is the headcount of this netlist?", "op": "total_gate_count", "kind": "hard", "params": {}}
 {"case": "test93", "line": 51, "text": "Compute the transitive fanin cone for output n32[0].", "op": "transitive_fanin", "kind": "safe", "params": {"net": "n32[0]"}}
 {"case": "test93", "line": 52, "text": "The full downstream footprint of n4 — what does it cover?", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n4"}}
-{"case": "test93", "line": 53, "text": "Verify functional equivalence between the current design and the original loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test93", "line": 53, "text": "Verify functional equivalence between the current design and the original loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "original"}}
 {"case": "test93", "line": 54, "text": "XNORs out, NOR structures in — one for one.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
-{"case": "test93", "line": 55, "text": "Decompose every XOR gate in the fanin cone of n32[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test93", "line": 55, "text": "Decompose every XOR gate in the fanin cone of n32[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n32[0]"}}
 {"case": "test93", "line": 56, "text": "Kick out the XORs; the NAND-only equivalents go in.", "op": "xor_to_nand", "kind": "hard", "params": {}}
 {"case": "test93", "line": 57, "text": "List all articulation points in the combinational graph between n4 and n42.", "op": "articulation", "kind": "safe", "params": {"a": "n4", "b": "n42"}}
 {"case": "test93", "line": 58, "text": "Express n32[0] symbolically — inputs only, no internal wires.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n32[0]"}}
@@ -206,7 +206,7 @@
 {"case": "test93", "line": 64, "text": "Enumerate the gates wired to renamed_sig.", "op": "connected_to_net", "kind": "hard", "params": {"net": "renamed_sig"}}
 {"case": "test93", "line": 65, "text": "Report every gate connected to the output signal of g2.", "op": "connected_to_output", "kind": "safe", "params": {"gate": "g2"}}
 {"case": "test93", "line": 66, "text": "Which cells have an input nailed to logic high?", "op": "const1_gates", "kind": "hard", "params": {}}
-{"case": "test93", "line": 67, "text": "Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
+{"case": "test93", "line": 67, "text": "Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test93", "line": 68, "text": "Strip the design down to a two-gate diet: NAND and inverters.", "op": "convert_basis", "kind": "hard", "params": {}}
 {"case": "test93", "line": 69, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test93", "line": 70, "text": "How many signals enter this design and how many leave it?", "op": "count_ports", "kind": "hard", "params": {}}
@@ -247,7 +247,7 @@
 {"case": "test94", "line": 34, "text": "Which registers feed which other registers?", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test94", "line": 35, "text": "Remove every dangling gate that does not contribute to any primary output. Ensure the design functionality does not change.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test94", "line": 36, "text": "Change the label of the internal wire n1203 to renamed_sig everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n1203", "new": "renamed_sig", "kind": "wire"}}
-{"case": "test94", "line": 37, "text": "Report any NOR gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test94", "line": 37, "text": "Report any NOR gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test94", "line": 38, "text": "Are g3 and g53 on the same clock domain?", "op": "same_clock", "kind": "hard", "params": {"a": "g3", "b": "g53"}}
 {"case": "test94", "line": 39, "text": "Report all gates that are shared between the fanin cones of n33[0] and n33[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n33[0]", "b": "n33[1]"}}
 {"case": "test94", "line": 40, "text": "Check if n5 mirrors n43 exactly, always.", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n5", "b": "n43"}}
@@ -256,7 +256,7 @@
 {"case": "test94", "line": 43, "text": "Compute the total gate count for the design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test94", "line": 44, "text": "What is in the complete upstream closure of n33[0]?", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n33[0]"}}
 {"case": "test94", "line": 45, "text": "Compute the transitive fan-out cone of input n5.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n5"}}
-{"case": "test94", "line": 46, "text": "Confirm the netlist still behaves the same as it did immediately before that last step.", "op": "verify_equivalence", "kind": "hard", "params": {}}
+{"case": "test94", "line": 46, "text": "Confirm the netlist still behaves the same as it did immediately before that last step.", "op": "verify_equivalence", "kind": "hard", "params": {"against": "pre"}}
 {"case": "test94", "line": 47, "text": "Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.", "op": "xnor_to_nor", "kind": "safe", "params": {}}
 {"case": "test94", "line": 48, "text": "Lower every XOR into and-or-invert form.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test94", "line": 49, "text": "Try to replace all XOR gates with equivalent NAND-only implementations. Ensure the design functionality does not change.", "op": "xor_to_nand", "kind": "safe", "params": {}}
@@ -271,7 +271,7 @@
 {"case": "test94", "line": 58, "text": "What hangs off the output pin of g3?", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g3"}}
 {"case": "test94", "line": 59, "text": "List all gates with one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
 {"case": "test94", "line": 60, "text": "Push those fixed input values through the gates and simplify what collapses.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test94", "line": 61, "text": "Replace all 2-input OR gates in the cone of n33[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test94", "line": 61, "text": "Replace all 2-input OR gates in the cone of n33[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT", "scope": "n33[0]"}}
 {"case": "test94", "line": 62, "text": "Tabulate the design's cells per type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test94", "line": 63, "text": "Determine the number of primary inputs and primary outputs in this design.", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test94", "line": 64, "text": "How many XNOR cells does this design carry?", "op": "count_type", "kind": "hard", "params": {"type": "xnor"}}
@@ -311,7 +311,7 @@
 {"case": "test95", "line": 27, "text": "List every register-to-register path in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test95", "line": 28, "text": "Sweep out anything that no longer reaches an output.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test95", "line": 29, "text": "Rename wire n1204 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "n1204", "new": "renamed_sig", "kind": "wire"}}
-{"case": "test95", "line": 30, "text": "Which NANDs are being fed a hardwired 0 or 1? Just report them.", "op": "report_const_gates", "kind": "hard", "params": {}}
+{"case": "test95", "line": 30, "text": "Which NANDs are being fed a hardwired 0 or 1? Just report them.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test95", "line": 31, "text": "Do the flip-flops g4 and g54 share the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g4", "b": "g54"}}
 {"case": "test95", "line": 32, "text": "The intersection of the support of n34[0] and of n34[1] — which gates?", "op": "shared_cone", "kind": "hard", "params": {"a": "n34[0]", "b": "n34[1]"}}
 {"case": "test95", "line": 33, "text": "Determine whether signals n6 and n44 are functionally equivalent.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n6", "b": "n44"}}
@@ -320,7 +320,7 @@
 {"case": "test95", "line": 36, "text": "Total cells, please — no breakdown needed.", "op": "total_gate_count", "kind": "hard", "params": {}}
 {"case": "test95", "line": 37, "text": "Compute the transitive fan-in cone of output n34[0].", "op": "transitive_fanin", "kind": "safe", "params": {"net": "n34[0]"}}
 {"case": "test95", "line": 38, "text": "Counting everything the signal eventually touches, how many cells does n6 end up affecting?", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n6"}}
-{"case": "test95", "line": 39, "text": "Prove that the transformed design is equivalent to the pre-transformation netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test95", "line": 39, "text": "Prove that the transformed design is equivalent to the pre-transformation netlist.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "pre"}}
 {"case": "test95", "line": 40, "text": "Re-express each XNOR purely with NORs.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
 {"case": "test95", "line": 41, "text": "Decompose all XOR gates in the design into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
 {"case": "test95", "line": 42, "text": "Turn every XOR into its NAND lattice.", "op": "xor_to_nand", "kind": "hard", "params": {}}
@@ -334,8 +334,8 @@
 {"case": "test95", "line": 50, "text": "After that rename, what connects to renamed_sig?", "op": "connected_to_net", "kind": "hard", "params": {"net": "renamed_sig"}}
 {"case": "test95", "line": 51, "text": "Report every gate connected to the output of g4.", "op": "connected_to_output", "kind": "safe", "params": {"gate": "g4"}}
 {"case": "test95", "line": 52, "text": "Find the gates where some input is stuck at 1 and list them.", "op": "const1_gates", "kind": "hard", "params": {}}
-{"case": "test95", "line": 53, "text": "Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
-{"case": "test95", "line": 54, "text": "I want the cone of n34[0] speaking only AND, OR, and NOT.", "op": "convert_basis", "kind": "hard", "params": {}}
+{"case": "test95", "line": 53, "text": "Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "and"}}
+{"case": "test95", "line": 54, "text": "I want the cone of n34[0] speaking only AND, OR, and NOT.", "op": "convert_basis", "kind": "hard", "params": {"basis": "AND_OR_NOT", "scope": "n34[0]"}}
 {"case": "test95", "line": 55, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test95", "line": 56, "text": "How wide is the design's interface — inputs and outputs?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test95", "line": 57, "text": "How many XNOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xnor"}}
@@ -375,7 +375,7 @@
 {"case": "test96", "line": 20, "text": "Chart the sequential dependencies: flip-flop to flip-flop.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test96", "line": 21, "text": "Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test96", "line": 22, "text": "From now on, g5 goes by renamed_sig — update every reference.", "op": "rename", "kind": "hard", "params": {"old": "g5", "new": "renamed_sig", "kind": "gate"}}
-{"case": "test96", "line": 23, "text": "Report any AND gates with a constant 0 input in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test96", "line": 23, "text": "Report any AND gates with a constant 0 input in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "and", "value": "0"}}
 {"case": "test96", "line": 24, "text": "Check whether g5 and g55 get their edges from the same place.", "op": "same_clock", "kind": "hard", "params": {"a": "g5", "b": "g55"}}
 {"case": "test96", "line": 25, "text": "Report every gate shared between the fanin cones of n35[0] and n35[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n35[0]", "b": "n35[1]"}}
 {"case": "test96", "line": 26, "text": "Are n7 and n45 just two names for the same function?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n7", "b": "n45"}}
@@ -399,7 +399,7 @@
 {"case": "test96", "line": 44, "text": "Who consumes what g5 produces? List them.", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g5"}}
 {"case": "test96", "line": 45, "text": "List every gate with one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
 {"case": "test96", "line": 46, "text": "Absorb the constants into the logic they feed.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test96", "line": 47, "text": "Convert the logic cone of n35[0] to use only NAND and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test96", "line": 47, "text": "Convert the logic cone of n35[0] to use only NAND and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT", "scope": "n35[0]"}}
 {"case": "test96", "line": 48, "text": "How many gates in total, and how does that break down across types?", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test96", "line": 49, "text": "Determine the number of primary inputs and outputs.", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test96", "line": 50, "text": "What is the NOR population in here?", "op": "count_type", "kind": "hard", "params": {"type": "nor"}}
@@ -439,7 +439,7 @@
 {"case": "test97", "line": 13, "text": "List all register-to-register paths in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test97", "line": 14, "text": "Garbage-collect the dead logic in this netlist.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test97", "line": 15, "text": "Change the identifier of gate g6 to renamed_sig and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g6", "new": "renamed_sig", "kind": "gate"}}
-{"case": "test97", "line": 16, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {}}
+{"case": "test97", "line": 16, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {"type": "and"}}
 {"case": "test97", "line": 17, "text": "Are flip-flops g6 and g56 clocked by the same signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g6", "b": "g56"}}
 {"case": "test97", "line": 18, "text": "Which logic pulls double duty for both n36[0] and n36[1]?", "op": "shared_cone", "kind": "hard", "params": {"a": "n36[0]", "b": "n36[1]"}}
 {"case": "test97", "line": 19, "text": "Verify that n8 and n46 produce identical logic values for all inputs.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n8", "b": "n46"}}
@@ -448,9 +448,9 @@
 {"case": "test97", "line": 22, "text": "Just the grand total of gates.", "op": "total_gate_count", "kind": "hard", "params": {}}
 {"case": "test97", "line": 23, "text": "Compute the transitive fanin cone of output n36[0].", "op": "transitive_fanin", "kind": "safe", "params": {"net": "n36[0]"}}
 {"case": "test97", "line": 24, "text": "Give me the identifiers of everything n8 eventually feeds.", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n8"}}
-{"case": "test97", "line": 25, "text": "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test97", "line": 25, "text": "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "last_loaded"}}
 {"case": "test97", "line": 26, "text": "Swap the XNOR gates for their four-NOR equivalents.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
-{"case": "test97", "line": 27, "text": "Decompose all the XOR gates in the fanin cone of n36[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test97", "line": 27, "text": "Decompose all the XOR gates in the fanin cone of n36[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n36[0]"}}
 {"case": "test97", "line": 28, "text": "Each XOR should become the classic four-NAND diamond.", "op": "xor_to_nand", "kind": "hard", "params": {}}
 {"case": "test97", "line": 29, "text": "Find the articulation points on the combinational paths between n8 and n46.", "op": "articulation", "kind": "safe", "params": {"a": "n8", "b": "n46"}}
 {"case": "test97", "line": 30, "text": "Reduce n36[0] to an equation over the primary inputs.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n36[0]"}}
@@ -462,8 +462,8 @@
 {"case": "test97", "line": 36, "text": "Which cells touch the wire renamed_sig at any pin?", "op": "connected_to_net", "kind": "hard", "params": {"net": "renamed_sig"}}
 {"case": "test97", "line": 37, "text": "Report all gates connected to the output of g6.", "op": "connected_to_output", "kind": "safe", "params": {"gate": "g6"}}
 {"case": "test97", "line": 38, "text": "Show me every gate that is fed a constant one.", "op": "const1_gates", "kind": "hard", "params": {}}
-{"case": "test97", "line": 39, "text": "Simplify the reported NAND gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {}}
-{"case": "test97", "line": 40, "text": "Rebuild just that output's logic so it uses nothing but NAND and NOT cells.", "op": "convert_basis", "kind": "hard", "params": {}}
+{"case": "test97", "line": 39, "text": "Simplify the reported NAND gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {"type": "nand"}}
+{"case": "test97", "line": 40, "text": "Rebuild just that output's logic so it uses nothing but NAND and NOT cells.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT"}}
 {"case": "test97", "line": 41, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test97", "line": 42, "text": "Count the pins on the boundary: how many in, how many out?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test97", "line": 43, "text": "How many NOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nor"}}
@@ -503,7 +503,7 @@
 {"case": "test98", "line": 6, "text": "Which flop pairs talk to each other through logic? List the connections.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test98", "line": 7, "text": "Trim unused wires and gates. Make sure nothing changes functionally.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test98", "line": 8, "text": "Rebadge n1207 as renamed_sig throughout the netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1207", "new": "renamed_sig", "kind": "wire"}}
-{"case": "test98", "line": 9, "text": "Report any NAND gates with constant inputs in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test98", "line": 9, "text": "Report any NAND gates with constant inputs in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test98", "line": 10, "text": "g7 versus g57: common clock or different clocks?", "op": "same_clock", "kind": "hard", "params": {"a": "g7", "b": "g57"}}
 {"case": "test98", "line": 11, "text": "Report all gates shared between the fanin cones of n37[0] and n37[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n37[0]", "b": "n37[1]"}}
 {"case": "test98", "line": 12, "text": "Do n9 and n47 ever disagree, under any input at all?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n9", "b": "n47"}}
@@ -527,7 +527,7 @@
 {"case": "test98", "line": 30, "text": "Show every cell that taps the output of g7.", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g7"}}
 {"case": "test98", "line": 31, "text": "List all gates with an input tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
 {"case": "test98", "line": 32, "text": "Propagate the stuck values forward and clean up the fallout.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test98", "line": 33, "text": "Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test98", "line": 33, "text": "Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "AND_OR_NOT"}}
 {"case": "test98", "line": 34, "text": "Give me the full head-count of cells, split by kind.", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test98", "line": 35, "text": "How many primary inputs and primary outputs does this design have?", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test98", "line": 36, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
@@ -578,7 +578,7 @@
 {"case": "test99", "line": 10, "text": "How many gates sit downstream of primary input n10? I want the number, not the list.", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n10"}}
 {"case": "test99", "line": 11, "text": "Verify functional equivalence between the current design and the originally loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
 {"case": "test99", "line": 12, "text": "Every XNOR should become NOR-only logic; touch nothing else.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
-{"case": "test99", "line": 13, "text": "Decompose all XOR gates in the fanin cone of n38[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test99", "line": 13, "text": "Decompose all XOR gates in the fanin cone of n38[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n38[0]"}}
 {"case": "test99", "line": 14, "text": "Re-plumb the XORs with NAND-only internals.", "op": "xor_to_nand", "kind": "hard", "params": {}}
 {"case": "test99", "line": 15, "text": "Find all articulation points between n10 and n48 in the combinational graph.", "op": "articulation", "kind": "safe", "params": {"a": "n10", "b": "n48"}}
 {"case": "test99", "line": 16, "text": "In plain algebra, what does n38[0] compute from the inputs?", "op": "boolean_equation", "kind": "hard", "params": {"output": "n38[0]"}}
@@ -590,8 +590,8 @@
 {"case": "test99", "line": 22, "text": "Who is attached to renamed_sig now?", "op": "connected_to_net", "kind": "hard", "params": {"net": "renamed_sig"}}
 {"case": "test99", "line": 23, "text": "Report every gate that is connected to the output of g8.", "op": "connected_to_output", "kind": "safe", "params": {"gate": "g8"}}
 {"case": "test99", "line": 24, "text": "Any gates with a pin hardwired to a constant high? List them.", "op": "const1_gates", "kind": "hard", "params": {}}
-{"case": "test99", "line": 25, "text": "Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {}}
-{"case": "test99", "line": 26, "text": "Now bring the whole thing down to NAND and NOT only.", "op": "convert_basis", "kind": "hard", "params": {}}
+{"case": "test99", "line": 25, "text": "Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {"type": "nor"}}
+{"case": "test99", "line": 26, "text": "Now bring the whole thing down to NAND and NOT only.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT"}}
 {"case": "test99", "line": 27, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test99", "line": 28, "text": "What are the PI and PO counts?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test99", "line": 29, "text": "How many NAND gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nand"}}
@@ -635,7 +635,7 @@
 {"case": "test99", "line": 67, "text": "List all register-to-register paths in the design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test99", "line": 68, "text": "Anything not observable from the outputs — cut it.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test99", "line": 69, "text": "Rename gate g8 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "g8", "new": "renamed_sig", "kind": "gate"}}
-{"case": "test99", "line": 70, "text": "Any NAND cells wired to constants? List them and change nothing.", "op": "report_const_gates", "kind": "hard", "params": {}}
+{"case": "test99", "line": 70, "text": "Any NAND cells wired to constants? List them and change nothing.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test99", "line": 71, "text": "Commit the working design to disk as test99_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test99_out.v"}}
 {"case": "test100", "line": 1, "text": "Begin anew — label this whole exchange test100.", "op": "begin_case", "kind": "hard", "params": {"name": "test100"}}
 {"case": "test100", "line": 2, "text": "Read the Verilog at testcase/test100/test100.v into memory.", "op": "load_design", "kind": "hard", "params": {"file": "test100.v", "dir": "testcase/test100"}}
@@ -655,10 +655,10 @@
 {"case": "test100", "line": 16, "text": "Which gates are wired to the output of g9?", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g9"}}
 {"case": "test100", "line": 17, "text": "List all gates that have one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
 {"case": "test100", "line": 18, "text": "Take the gates sitting on constant inputs and boil them down.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test100", "line": 19, "text": "Convert the logic cone of n39[0] to use only NOR and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test100", "line": 19, "text": "Convert the logic cone of n39[0] to use only NOR and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NOR_NOT", "scope": "n39[0]"}}
 {"case": "test100", "line": 20, "text": "What does the gate inventory look like, type by type?", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test100", "line": 21, "text": "Determine the number of primary inputs and primary outputs.", "op": "count_ports", "kind": "safe", "params": {}}
-{"case": "test100", "line": 22, "text": "Within the logic behind n39[0], how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test100", "line": 22, "text": "Within the logic behind n39[0], how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand", "scope": "n39[0]"}}
 {"case": "test100", "line": 23, "text": "Which output bit has the deepest cone of logic?", "op": "deepest_output", "kind": "safe", "params": {}}
 {"case": "test100", "line": 24, "text": "What did that last cleanup cost us in gates, net change?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test100", "line": 25, "text": "Does output n39[0] depend on the input n11? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n39[0]", "input": "n11"}}
@@ -699,7 +699,7 @@
 {"case": "test100", "line": 60, "text": "Map out the Q-to-D corridors between registers.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test100", "line": 61, "text": "Remove all dangling gates that do not contribute to any primary output. Make sure nothing changes functionally.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test100", "line": 62, "text": "Give g9 the new identifier renamed_sig.", "op": "rename", "kind": "hard", "params": {"old": "g9", "new": "renamed_sig", "kind": "gate"}}
-{"case": "test100", "line": 63, "text": "Report any NOR gates with constant inputs in the design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test100", "line": 63, "text": "Report any NOR gates with constant inputs in the design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test100", "line": 64, "text": "Do g9 and g59 tick together — same clock source?", "op": "same_clock", "kind": "hard", "params": {"a": "g9", "b": "g59"}}
 {"case": "test100", "line": 65, "text": "Report all gates shared between the fanin cones of n39[1] and n39[0].", "op": "shared_cone", "kind": "safe", "params": {"a": "n39[1]", "b": "n39[0]"}}
 {"case": "test100", "line": 66, "text": "Same truth table for n11 and n49?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n11", "b": "n49"}}
@@ -930,44 +930,44 @@
 {"case": "test111", "line": 20, "text": "Locate every gate with a pin that never leaves logic 1.", "op": "const1_gates", "kind": "hard", "params": {}}
 {"case": "test112", "line": 1, "text": "Propagate the stuck values forward and clean up the fallout.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 2, "text": "Push those fixed input values through the gates and simplify what collapses.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test112", "line": 3, "text": "Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
+{"case": "test112", "line": 3, "text": "Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test112", "line": 4, "text": "Ride each fixed value forward through the logic and delete what becomes trivial.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 5, "text": "Those hardwired inputs make some gates pointless — simplify them away.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 6, "text": "Evaluate the gates with fixed inputs ahead of time, so to speak — fold them away.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 7, "text": "Absorb the constants into the logic they feed.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test112", "line": 8, "text": "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
-{"case": "test112", "line": 9, "text": "Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {}}
+{"case": "test112", "line": 8, "text": "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "nand"}}
+{"case": "test112", "line": 9, "text": "Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.", "op": "const_propagate", "kind": "safe", "params": {"type": "and"}}
 {"case": "test112", "line": 10, "text": "Let the constants do their work: simplify the gates they feed until nothing more collapses.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 11, "text": "Push the 0s and 1s through the logic and prune whatever they trivialize.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 12, "text": "Apply constant folding to the gates affected by fixed inputs.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 13, "text": "Chase the constants downstream and clean up the wreckage.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test112", "line": 14, "text": "Simplify the reported NAND gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {}}
+{"case": "test112", "line": 14, "text": "Simplify the reported NAND gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test112", "line": 15, "text": "Reduce the gates sitting on constants to their simplified forms.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 16, "text": "Take the gates sitting on constant inputs and boil them down.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test112", "line": 17, "text": "Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {}}
+{"case": "test112", "line": 17, "text": "Simplify the reported NOR gates by propagating their constant inputs. Make sure nothing changes functionally.", "op": "const_propagate", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test112", "line": 18, "text": "Simplify the netlist by absorbing known-fixed inputs into the gates downstream.", "op": "const_propagate", "kind": "hard", "params": {}}
 {"case": "test112", "line": 19, "text": "Wherever a constant decides a gate's output, replace that gate accordingly.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test112", "line": 20, "text": "Now fold the constant inputs of the NOR cells.", "op": "const_propagate", "kind": "hard", "params": {}}
-{"case": "test113", "line": 1, "text": "Translate the logic under n11[0] into pure AND/OR/NOT construction.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 2, "text": "Rebuild just that output's logic so it uses nothing but NAND and NOT cells.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 3, "text": "Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test112", "line": 20, "text": "Now fold the constant inputs of the NOR cells.", "op": "const_propagate", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test113", "line": 1, "text": "Translate the logic under n11[0] into pure AND/OR/NOT construction.", "op": "convert_basis", "kind": "hard", "params": {"basis": "AND_OR_NOT", "scope": "n11[0]"}}
+{"case": "test113", "line": 2, "text": "Rebuild just that output's logic so it uses nothing but NAND and NOT cells.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT"}}
+{"case": "test113", "line": 3, "text": "Rebuild the netlist using only NAND and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT"}}
 {"case": "test113", "line": 4, "text": "Recast the netlist so that only NAND gates and inverters remain.", "op": "convert_basis", "kind": "hard", "params": {}}
 {"case": "test113", "line": 5, "text": "Strip the design down to a two-gate diet: NAND and inverters.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 6, "text": "Replace all 2-input OR gates in the cone of n3 with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
-{"case": "test113", "line": 7, "text": "Re-express everything in the cone of n13[0] with a NOR-plus-NOT vocabulary.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 8, "text": "Reforge the logic of n8 using just the two primitives NAND and NOT.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 9, "text": "Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
-{"case": "test113", "line": 10, "text": "Convert the logic cone of n12 to use only NAND and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {}}
-{"case": "test113", "line": 11, "text": "Convert the logic cone of n13[0] to use only NOR and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {}}
+{"case": "test113", "line": 6, "text": "Replace all 2-input OR gates in the cone of n3 with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT", "scope": "n3"}}
+{"case": "test113", "line": 7, "text": "Re-express everything in the cone of n13[0] with a NOR-plus-NOT vocabulary.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NOR_NOT", "scope": "n13[0]"}}
+{"case": "test113", "line": 8, "text": "Reforge the logic of n8 using just the two primitives NAND and NOT.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT", "scope": "n8"}}
+{"case": "test113", "line": 9, "text": "Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {"basis": "AND_OR_NOT"}}
+{"case": "test113", "line": 10, "text": "Convert the logic cone of n12 to use only NAND and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NAND_NOT", "scope": "n12"}}
+{"case": "test113", "line": 11, "text": "Convert the logic cone of n13[0] to use only NOR and NOT gates while preserving functional equivalence.", "op": "convert_basis", "kind": "safe", "params": {"basis": "NOR_NOT", "scope": "n13[0]"}}
 {"case": "test113", "line": 12, "text": "Migrate the design onto a NAND-plus-inverter cell set, functionally identical.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 13, "text": "Port the cone of n8 to a NAND-NOT basis.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 14, "text": "Swap the whole netlist over to NOR-and-NOT-only construction.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 15, "text": "Every gate in the cone of n16 must end up as NOR or NOT — convert it.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 16, "text": "Now bring the whole thing down to NAND and NOT only.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 17, "text": "Re-implement the cone of n8 with nothing in the toolbox but NAND and NOT.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 18, "text": "Everything within the cone of n63[1]: express it with AND, OR, NOT and no other types.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 19, "text": "The whole design should survive on a vocabulary of NOR and NOT alone — rewrite it accordingly.", "op": "convert_basis", "kind": "hard", "params": {}}
-{"case": "test113", "line": 20, "text": "I want the cone of n15 speaking only AND, OR, and NOT.", "op": "convert_basis", "kind": "hard", "params": {}}
+{"case": "test113", "line": 13, "text": "Port the cone of n8 to a NAND-NOT basis.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT", "scope": "n8"}}
+{"case": "test113", "line": 14, "text": "Swap the whole netlist over to NOR-and-NOT-only construction.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NOR_NOT"}}
+{"case": "test113", "line": 15, "text": "Every gate in the cone of n16 must end up as NOR or NOT — convert it.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NOR_NOT", "scope": "n16"}}
+{"case": "test113", "line": 16, "text": "Now bring the whole thing down to NAND and NOT only.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT"}}
+{"case": "test113", "line": 17, "text": "Re-implement the cone of n8 with nothing in the toolbox but NAND and NOT.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NAND_NOT", "scope": "n8"}}
+{"case": "test113", "line": 18, "text": "Everything within the cone of n63[1]: express it with AND, OR, NOT and no other types.", "op": "convert_basis", "kind": "hard", "params": {"basis": "AND_OR_NOT", "scope": "n63[1]"}}
+{"case": "test113", "line": 19, "text": "The whole design should survive on a vocabulary of NOR and NOT alone — rewrite it accordingly.", "op": "convert_basis", "kind": "hard", "params": {"basis": "NOR_NOT"}}
+{"case": "test113", "line": 20, "text": "I want the cone of n15 speaking only AND, OR, and NOT.", "op": "convert_basis", "kind": "hard", "params": {"basis": "AND_OR_NOT", "scope": "n15"}}
 {"case": "test114", "line": 1, "text": "What's on the shelf here? Count the gates by kind.", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test114", "line": 2, "text": "What does the gate inventory look like, type by type?", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test114", "line": 3, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
@@ -1021,7 +1021,7 @@
 {"case": "test116", "line": 11, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
 {"case": "test116", "line": 12, "text": "The XNOR headcount currently stands at what?", "op": "count_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test116", "line": 13, "text": "Current NAND census: what is the figure?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
-{"case": "test116", "line": 14, "text": "Within the logic behind n3, how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test116", "line": 14, "text": "Within the logic behind n3, how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand", "scope": "n3"}}
 {"case": "test116", "line": 15, "text": "As of this moment, how many NOR cells exist in the netlist?", "op": "count_type", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test116", "line": 16, "text": "What is the NOR population in here?", "op": "count_type", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test116", "line": 17, "text": "How many NOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nor"}}
@@ -1848,26 +1848,26 @@
 {"case": "test157", "line": 18, "text": "Change the identifier of gate g0 to stage2_out and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g0", "new": "stage2_out", "kind": "gate"}}
 {"case": "test157", "line": 19, "text": "Retitle the gate g1259: its new handle is renamed_wire.", "op": "rename", "kind": "hard", "params": {"old": "g1259", "new": "renamed_wire", "kind": "gate"}}
 {"case": "test157", "line": 20, "text": "Re-label g100 as sig_alias without altering any behavior.", "op": "rename", "kind": "hard", "params": {"old": "g100", "new": "sig_alias", "kind": "gate"}}
-{"case": "test158", "line": 1, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 2, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
-{"case": "test158", "line": 3, "text": "Without modifying anything, flag the NANDs that are fed constant levels.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 4, "text": "Take stock of the constant-fed NAND cells; leave the netlist as it is.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 5, "text": "Report any NOR gates with constant inputs in the design.", "op": "report_const_gates", "kind": "safe", "params": {}}
-{"case": "test158", "line": 6, "text": "Report any NAND gates with constant inputs in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
-{"case": "test158", "line": 7, "text": "A read-only pass: list the NAND gates with a constant on any leg.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 8, "text": "Reconnaissance: AND gates with a hard 0 on an input. Report back.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 9, "text": "Survey only — which NOR cells sit with a frozen input?", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 10, "text": "Note every NOR whose input includes a hardwired level.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 11, "text": "Any NAND cells wired to constants? List them and change nothing.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 12, "text": "Which NORs are chained to fixed inputs? Observation only, no edits.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 13, "text": "Document the gates of type NOR that receive unchanging inputs.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 14, "text": "Which NANDs are being fed a hardwired 0 or 1? Just report them.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 15, "text": "Scan the design for NOR cells that have a constant input, and report what you find.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 16, "text": "Report the NOR cells sitting on a fixed input value, without touching the design.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 17, "text": "Report any NOR gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
-{"case": "test158", "line": 18, "text": "Which NAND cells are anchored to constants? Just the report, please.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 19, "text": "Identify — but do not alter — the ANDs stuck with a fixed input.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test158", "line": 20, "text": "Report any AND gates with a constant 0 input in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
+{"case": "test158", "line": 1, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {"type": "and"}}
+{"case": "test158", "line": 2, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nand"}}
+{"case": "test158", "line": 3, "text": "Without modifying anything, flag the NANDs that are fed constant levels.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 4, "text": "Take stock of the constant-fed NAND cells; leave the netlist as it is.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 5, "text": "Report any NOR gates with constant inputs in the design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nor"}}
+{"case": "test158", "line": 6, "text": "Report any NAND gates with constant inputs in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nand"}}
+{"case": "test158", "line": 7, "text": "A read-only pass: list the NAND gates with a constant on any leg.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 8, "text": "Reconnaissance: AND gates with a hard 0 on an input. Report back.", "op": "report_const_gates", "kind": "hard", "params": {"type": "and", "value": "0"}}
+{"case": "test158", "line": 9, "text": "Survey only — which NOR cells sit with a frozen input?", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 10, "text": "Note every NOR whose input includes a hardwired level.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 11, "text": "Any NAND cells wired to constants? List them and change nothing.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 12, "text": "Which NORs are chained to fixed inputs? Observation only, no edits.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 13, "text": "Document the gates of type NOR that receive unchanging inputs.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 14, "text": "Which NANDs are being fed a hardwired 0 or 1? Just report them.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 15, "text": "Scan the design for NOR cells that have a constant input, and report what you find.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 16, "text": "Report the NOR cells sitting on a fixed input value, without touching the design.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test158", "line": 17, "text": "Report any NOR gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "nor"}}
+{"case": "test158", "line": 18, "text": "Which NAND cells are anchored to constants? Just the report, please.", "op": "report_const_gates", "kind": "hard", "params": {"type": "nand"}}
+{"case": "test158", "line": 19, "text": "Identify — but do not alter — the ANDs stuck with a fixed input.", "op": "report_const_gates", "kind": "hard", "params": {"type": "and"}}
+{"case": "test158", "line": 20, "text": "Report any AND gates with a constant 0 input in this design.", "op": "report_const_gates", "kind": "safe", "params": {"type": "and", "value": "0"}}
 {"case": "test159", "line": 1, "text": "Are both registers, g100 and g1287, hanging on one clock line?", "op": "same_clock", "kind": "hard", "params": {"a": "g100", "b": "g1287"}}
 {"case": "test159", "line": 2, "text": "One timing source for both g2198 and g992, or two different ones?", "op": "same_clock", "kind": "hard", "params": {"a": "g2198", "b": "g992"}}
 {"case": "test159", "line": 3, "text": "Do g1259 and g203 tick together — same clock source?", "op": "same_clock", "kind": "hard", "params": {"a": "g1259", "b": "g203"}}
@@ -2028,26 +2028,26 @@
 {"case": "test166", "line": 18, "text": "Follow every branch out of n5; report all the gates encountered.", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n5"}}
 {"case": "test166", "line": 19, "text": "The full sphere of downstream effect of n5 is what?", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n5"}}
 {"case": "test166", "line": 20, "text": "Enumerate all the logic ultimately fed by n2.", "op": "transitive_fanout", "kind": "hard", "params": {"net": "n2"}}
-{"case": "test167", "line": 1, "text": "Current netlist, original netlist: prove they compute alike.", "op": "verify_equivalence", "kind": "hard", "params": {}}
+{"case": "test167", "line": 1, "text": "Current netlist, original netlist: prove they compute alike.", "op": "verify_equivalence", "kind": "hard", "params": {"against": "original"}}
 {"case": "test167", "line": 2, "text": "Double-check that we did not change behavior anywhere.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 3, "text": "Compare present against pristine: any functional daylight between them?", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 4, "text": "Is today's netlist still the same machine we started with?", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test167", "line": 5, "text": "Line up today's netlist against the original and certify they match behaviorally.", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test167", "line": 6, "text": "Prove that the transformed design is equivalent to the netlist before the transformation.", "op": "verify_equivalence", "kind": "safe", "params": {}}
-{"case": "test167", "line": 7, "text": "Verify functional equivalence between the current design and the original loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test167", "line": 5, "text": "Line up today's netlist against the original and certify they match behaviorally.", "op": "verify_equivalence", "kind": "hard", "params": {"against": "original"}}
+{"case": "test167", "line": 6, "text": "Prove that the transformed design is equivalent to the netlist before the transformation.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "pre"}}
+{"case": "test167", "line": 7, "text": "Verify functional equivalence between the current design and the original loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "original"}}
 {"case": "test167", "line": 8, "text": "Validate that the design's function survived all the edits intact.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 9, "text": "Establish that nothing behavioral has changed since load time.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 10, "text": "Same circuit as the one we loaded, functionally? Prove it.", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test167", "line": 11, "text": "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test167", "line": 11, "text": "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "last_loaded"}}
 {"case": "test167", "line": 12, "text": "After all these edits, is the machine still the machine we imported?", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test167", "line": 13, "text": "Prove that the transformed design is equivalent to the pre-transformation netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
+{"case": "test167", "line": 13, "text": "Prove that the transformed design is equivalent to the pre-transformation netlist.", "op": "verify_equivalence", "kind": "safe", "params": {"against": "pre"}}
 {"case": "test167", "line": 14, "text": "Run the equivalence proof: now versus as-loaded.", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test167", "line": 15, "text": "Confirm the netlist still behaves the same as it did immediately before that last step.", "op": "verify_equivalence", "kind": "hard", "params": {}}
+{"case": "test167", "line": 15, "text": "Confirm the netlist still behaves the same as it did immediately before that last step.", "op": "verify_equivalence", "kind": "hard", "params": {"against": "pre"}}
 {"case": "test167", "line": 16, "text": "A formal check: the current design versus the loaded baseline — identical function?", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 17, "text": "Certify that the transformations preserved the circuit's behavior.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 18, "text": "Is the working copy still faithful to the source design? Verify it.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 19, "text": "Verify functional equivalence between the current design and the originally loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
-{"case": "test167", "line": 20, "text": "Sanity-check: current versus original — identical behavior?", "op": "verify_equivalence", "kind": "hard", "params": {}}
+{"case": "test167", "line": 20, "text": "Sanity-check: current versus original — identical behavior?", "op": "verify_equivalence", "kind": "hard", "params": {"against": "original"}}
 {"case": "test168", "line": 1, "text": "Please write the current design out to the file test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
 {"case": "test168", "line": 2, "text": "Emit the netlist in its current form to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
 {"case": "test168", "line": 3, "text": "Serialize the working netlist out to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
@@ -2098,15 +2098,15 @@
 {"case": "test170", "line": 8, "text": "Expand every XOR cell into basic AND/OR/NOT structure.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test170", "line": 9, "text": "Decompose all XOR gates in the design into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
 {"case": "test170", "line": 10, "text": "No more XOR cells — spell each one out with ANDs, ORs, and inverters.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
-{"case": "test170", "line": 11, "text": "Decompose all the XOR gates in the fanin cone of n12 into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test170", "line": 11, "text": "Decompose all the XOR gates in the fanin cone of n12 into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n12"}}
 {"case": "test170", "line": 12, "text": "Flatten the XORs into and-or-invert logic.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
-{"case": "test170", "line": 13, "text": "Decompose all XOR gates in the fanin cone of n30 into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test170", "line": 13, "text": "Decompose all XOR gates in the fanin cone of n30 into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n30"}}
 {"case": "test170", "line": 14, "text": "Lower every XOR into and-or-invert form.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test170", "line": 15, "text": "Replace the XOR gates by their sum-of-products construction using AND, OR, and NOT.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test170", "line": 16, "text": "Spell out the XOR gates in sum-of-products form (AND, OR, NOT).", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test170", "line": 17, "text": "Replace the XOR instances by their two-term AND-OR-NOT expansions.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test170", "line": 18, "text": "Out with the XOR cells; in with their AND-OR-NOT equivalents.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
-{"case": "test170", "line": 19, "text": "Decompose every XOR gate in the fanin cone of n8[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
+{"case": "test170", "line": 19, "text": "Decompose every XOR gate in the fanin cone of n8[0] into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {"scope": "n8[0]"}}
 {"case": "test170", "line": 20, "text": "The XORs must be rebuilt from AND, OR, and NOT — nothing fancier.", "op": "xor_to_aoi", "kind": "hard", "params": {}}
 {"case": "test171", "line": 1, "text": "Kick out the XORs; the NAND-only equivalents go in.", "op": "xor_to_nand", "kind": "hard", "params": {}}
 {"case": "test171", "line": 2, "text": "The classic 4-NAND XOR replaces each native XOR — everywhere.", "op": "xor_to_nand", "kind": "hard", "params": {}}
