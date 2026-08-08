@@ -180,6 +180,74 @@ def _basis(text: str) -> Optional[str]:
     return None
 
 
+# A cone-scoped request names the cone's output; anything else is design-wide.
+# Anaphora ("just that output's logic", "the logic under n11[0]") is deliberately
+# not matched — the net is not being named as a cone here, and guessing turns a
+# scoped request into a whole-design remap or the reverse.
+_CONE_PATTERNS = (
+    rf"\b(?:fan-?in\s+)?cone\s+of\s+(?:primary\s+)?(?:output\s+)?({N})",
+    rf"\bwithin\s+({N})'s\s+(?:fan-?in\s+)?cone",
+    rf"\b({N})'s\s+(?:fan-?in\s+)?cone",
+    rf"\b(?:the\s+)?logic\s+(?:of|under|behind|feeding)\s+({N})",
+    rf"\beverything\s+(?:under|feeding|driving)\s+({N})",
+)
+
+
+def _cone_scope(text: str) -> Optional[str]:
+    """The net a conversion is scoped to, or None for a design-wide request."""
+    hits = set()
+    for rx in _CONE_PATTERNS:
+        for m in re.finditer(rx, text, re.I):
+            if _looks_like_net(m.group(1)):
+                hits.add(m.group(1))
+    return hits.pop() if len(hits) == 1 else None
+
+
+def _scope_is_decidable(text: str, scope: Optional[str]) -> bool:
+    """False when a sentence names a net but no phrase says it is the scope.
+
+    "Reforge the logic of n8 ..." is scoped; a label that carries the basis and
+    omits the scope does not merely under-specify it, it asserts a design-wide
+    remap. Whichever way that guess goes it becomes a counter-example, so the
+    row is dropped instead.  Anaphoric scoping ("just that output's logic")
+    names no net and is left alone -- there is nothing there to get wrong.
+    """
+    return scope is not None or not any(_looks_like_net(t) for t in named_idents(text))
+
+
+# Ordered: "the netlist before the transformation" also contains "netlist", and
+# "as last loaded" also reads as an origin, so the narrower reference wins.
+_AGAINST_PATTERNS = (
+    ("pre", r"before the transformation|before that (?:last )?(?:step|transform)|"
+            r"pre-?transformation|prior to the (?:last )?transform|immediately before"),
+    ("last_loaded", r"last loaded|as last loaded|loaded from disk|as read from disk"),
+    ("original", r"\boriginal\b|as originally loaded|first loaded"),
+)
+
+
+def _equiv_target(text: str) -> Optional[str]:
+    """pre|last_loaded|original, only when exactly one reference is named."""
+    hits = [t for t, rx in _AGAINST_PATTERNS if re.search(rx, text, re.I)]
+    return hits[0] if len(hits) == 1 else None
+
+
+def _const_value(text: str) -> Optional[str]:
+    """The constant level a report is restricted to, or None for either level.
+
+    "with constant inputs (0 or 1)" names both and restricts nothing, so it has
+    to come back None — labelling it "0" would teach the model to narrow a
+    request that was deliberately broad.
+    """
+    # "a hardwired 0 or 1" names both levels but only the first sits next to
+    # the constant word, so match the enumeration before matching a single one.
+    if re.search(r"\b[01]\s+or\s+[01]\b", text):
+        return None
+    found = set(re.findall(
+        r"(?:constant|fixed|hardwired|hard-wired|frozen|stuck|tied|hard)\W{0,12}?\b([01])\b",
+        text, re.I))
+    return found.pop() if len(found) == 1 else None
+
+
 def _dir(text: str) -> Optional[str]:
     """input|output for list_ports, from whichever side's vocabulary appears.
 
@@ -502,8 +570,6 @@ def _match_roles(text: str, patterns):
 def extract(text: str, op: str) -> Optional[Dict]:
     """Best-effort params for one (sentence, op), or None if not confident."""
     req = set(REQUIRED_PARAMS.get(op, ()))
-    if not req:
-        return {}                      # ops that legitimately take no params
     names = named_idents(text)
     p: Dict = {}
 
@@ -713,11 +779,37 @@ def extract(text: str, op: str) -> Optional[Dict]:
         p[key] = v
 
     # --- optional params, only when unambiguous --------------------------
+    # Reached by every op, including the ones with no required params at all.
+    # Those are exactly the ops whose whole payload is optional -- convert_basis
+    # carries basis and scope, xor_to_* carry scope, verify_equivalence carries
+    # against -- so skipping them left 270 examples demonstrating an empty
+    # params object for sentences that state the value outright.
     opt = set(OPTIONAL_PARAMS.get(op, ()))
     if "basis" in opt:
         b = _basis(text)
         if b:
             p["basis"] = b
+    # scope is two different types under one key: an enum for insert_buffers,
+    # a net name everywhere else.  Only the net-valued form is quoted from the
+    # sentence, and the enum form is left to the required-param path.
+    if "scope" in opt and op != "insert_buffers":
+        s = _cone_scope(text)
+        if not _scope_is_decidable(text, s):
+            return None
+        if s:
+            p["scope"] = s
+    if "against" in opt:
+        a = _equiv_target(text)
+        if a:
+            p["against"] = a
+    if "type" in opt and "type" not in p:
+        t = _gate_type(text)
+        if t:
+            p["type"] = t
+    if "value" in opt:
+        v = _const_value(text)
+        if v:
+            p["value"] = v
 
     return p
 
@@ -737,8 +829,14 @@ def verify(text: str, op: str, params: Dict) -> Optional[str]:
         if key in VERBATIM_KEYS and isinstance(val, str):
             if val not in text:
                 return f"{key}={val!r} does not occur in the sentence"
-        if key == "scope" and op == "count_type" and val not in text:
-            return f"scope={val!r} does not occur in the sentence"
+        # scope is a net name for every op but insert_buffers, where it is the
+        # gate|signal enum.  Quote the net-valued form; check the enum by value.
+        if key == "scope":
+            if op == "insert_buffers":
+                if val not in ("gate", "signal"):
+                    return f"bad buffer scope {val!r}"
+            elif val not in text:
+                return f"scope={val!r} does not occur in the sentence"
         if key == "kind" and op == "delta_count":
             tag = _kind_tag(val)
             if tag is not None and tag not in DELTA_TAGS:
@@ -802,14 +900,32 @@ def main() -> int:
                     empty += 1
         out.append(r)
 
-    need = sum(1 for r in rows if REQUIRED_PARAMS.get(r["op"]))
-    with_vals = labelled - empty
+    # Report each population against its own denominator.  Counting only the
+    # required-param ops was how 270 systematically empty rows stayed invisible:
+    # convert_basis, xor_to_*, verify_equivalence and friends have no required
+    # params, so they were never in any ratio and the run printed 99.8%.
+    def bucket(op: str) -> str:
+        if REQUIRED_PARAMS.get(op):
+            return "required"
+        return "optional" if OPTIONAL_PARAMS.get(op) else "none"
+
+    pop = {"required": [0, 0], "optional": [0, 0], "none": [0, 0]}  # [total, with values]
+    for r in out:
+        b = pop[bucket(r["op"])]
+        b[0] += 1
+        if r.get("params"):
+            b[1] += 1
+
+    pct = lambda n, d: f"{100*n/d:.1f}%" if d else "—"
     print(f"總計 {len(rows)} 筆")
-    print(f"  有必填 params 的 op          {need}")
-    print(f"  成功標註(含空 params)       {labelled}")
-    print(f"    其中真的有值               {with_vals} / {need} = "
-          f"{100*with_vals/need:.1f}%")
-    print(f"  無法確信、留空不標           {skipped}")
+    print(f"  必填 params 的 op        {pop['required'][0]:5d}   標到值 "
+          f"{pop['required'][1]} = {pct(*reversed(pop['required']))}  (空 = 漏標)")
+    print(f"  只有選填 params 的 op    {pop['optional'][0]:5d}   標到值 "
+          f"{pop['optional'][1]} = {pct(*reversed(pop['optional']))}  "
+          f"(空未必是錯:設計層級的請求本來就沒有 scope)")
+    print(f"  完全沒有 params 的 op    {pop['none'][0]:5d}   (空才是對的)")
+    print(f"  成功標註(含空 params)   {labelled}")
+    print(f"  無法確信、留空不標        {skipped}")
     if reasons:
         print("\n未標註原因(前 12):")
         for k, v in sorted(reasons.items(), key=lambda kv: -kv[1])[:12]:
