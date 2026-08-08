@@ -1,7 +1,7 @@
 Acknowledged. Initialized testcase "test31". All subsequent responses will be recorded to test31.log. Design state is empty and ready for commands.
 Loaded gate-level Verilog from "testcase/test31/test31.v" successfully. Detected a single top module (flat netlist) with 4686 combinational gates and 756 flip-flops. Design state has been updated.
 Total gate count: 5442 AND: 0 OR: 144 NOT: 507 NAND: 3214 NOR: 505 XOR: 22 XNOR: 294 BUF: 0 DFF: 756
-343 gate(s) are reachable from n2: the complete list has been written to testcase/test31/test31_reachable_n2.txt
+443 gate(s) are reachable from n2: the complete list has been written to testcase/test31/test31_reachable_n2.txt
 Collapsed 5 back-to-back inverter pair(s) into direct wires; equivalence verified.
 Verified: the current design is functionally equivalent to the pre-transformation netlist.
 The fanout of n0 is 756. The complete list of driven gates has been written to testcase/test31/test31_n0_fanout.txt.

@@ -1,20 +1,26 @@
 """Logic-cone queries (fan-in / fan-out cones, shared cones).
 
 DFF-Q convention.  Official Q&A A21.2 says "combinational depth only; treat
-DFF.Q outputs as primary inputs", and the organisers' 2026-07-20 reply extends
-that from depth to membership: DFF.Q counts as a primary input for cone
-*contents* too, so a PO driven straight off a Q has an empty cone (0 gates).
+DFF.Q outputs as primary inputs" and A50 restates it as a general rule ("DFF.Q
+signals are treated as pseudo-PIs"), so a flip-flop whose Q feeds a fan-in cone
+is that cone's *source*, dropped for exactly the reason a primary input is.
+A65 applies the same rule to the queried net itself: a PO driven straight off a
+Q has an empty cone (0 gates).
 
-The consequence, and the thing to keep straight when editing this module: a
-flip-flop is a *boundary* of the combinational subgraph, not a member of it.
-A cone stops at DFF.Q on the way back and at a DFF input pin on the way
-forward, and in neither direction is the flip-flop itself inside.  That is the
-same reason a primary input's driver is not in the cone.
+The rule is NOT symmetric, and that is the thing to keep straight when editing
+this module.  Walking backward the cone meets a register at Q -- a source, so
+the register is outside.  Walking forward it meets D/CK/RN/SN, which A29 calls
+ordinary fan-out loads -- something this net drives, so the register is
+downstream and IS collected; see connectivity.downstream_instances().  No Q&A
+item extends the source rule to the load side (searching all of Q1-Q70 for
+"reachable", "transitive fanout" and "downstream" returns nothing), and doing
+so would contradict A29.  Both walks still stop AT the register: neither
+crosses from D to Q or from Q to D.
 
-This is about MEMBERSHIP only.  It does not touch load counting: per Q&A A29 a
-DFF's D/CK/RN/SN pins are ordinary fan-out loads, so fanout_count() and the
-max-fanout constraint still count them.  "What does this net drive?" and "what
-is inside this cone?" are different questions with different answers.
+Load counting is a third question again, untouched by either: per A29
+fanout_count() and the max-fanout constraint count D/CK/RN/SN pins through
+nl.loads().  "What does this net drive?", "what does it reach?" and "what is
+inside this cone?" have three different answers.
 
 ``redirect_q`` (default False) can optionally redirect a Q-net query to the
 D-side next-state cone, but the default matches the official rule.
