@@ -17,6 +17,13 @@ from ..netlist.ir import Gate, Netlist, is_const
 from .base import Emitter
 
 
+_UNSATISFIABLE_K = (
+    "fanout bound k=%d is unsatisfiable: bounding every driver to one load "
+    "makes the buffer network a path, and a path ends at a single sink. "
+    "One buffer per load is dedicated_buffer_per_load(), not limit_fanout(k=1)."
+)
+
+
 def _pin_setter(inst_tuple) -> Callable[[str], None]:
     kind, inst, pin = inst_tuple
 
@@ -36,6 +43,12 @@ def _pin_setter(inst_tuple) -> Callable[[str], None]:
 
 
 def _buffer_one_net(nl: Netlist, em: Emitter, source: str, k: int) -> int:
+    # Termination precondition.  Each pass removes k sinks and adds back the
+    # one buffer that now feeds them, so the queue shrinks by k-1: only k >= 2
+    # makes progress.  At k == 1 the length is a fixed point and the loop
+    # allocates a gate per iteration forever.
+    if k < 2:
+        raise ValueError(_UNSATISFIABLE_K % k)
     loads = nl.loads(source)
     if len(loads) <= k:
         return 0
@@ -67,7 +80,16 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
     ``include_pi`` additionally bounds primary inputs, which is the broader
     "no signal/net drives more than K" phrasing -- a PI is a net but not a
     gate, so it is in scope only there.  Constants are exempt.
+
+    Raises ValueError for k < 2, which is not a bound this can meet.  The check
+    is here, before the first edit, and not only in _buffer_one_net: callers
+    mutate the live netlist (Agent._commit passes state.current straight in)
+    and roll back only when the validator objects, never when the transform
+    raises, so a refusal partway through the target list would strand a
+    half-buffered design.
     """
+    if k < 2:
+        raise ValueError(_UNSATISFIABLE_K % k)
     em = Emitter(nl)
 
     # snapshot the set of driver nets to process (new buffer nets are <=k by
