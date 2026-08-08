@@ -1,5 +1,5 @@
-{"case": "test91", "line": 1, "text": "This is the beginning of a new testcase. The case name is test91.", "op": "begin_case", "kind": "safe"}
-{"case": "test91", "line": 2, "text": "Please load the design from the file test91.v located in the directory testcase/test91/.", "op": "load_design", "kind": "safe"}
+{"case": "test91", "line": 1, "text": "This is the beginning of a new testcase. The case name is test91.", "op": "begin_case", "kind": "safe", "params": {"name": "test91"}}
+{"case": "test91", "line": 2, "text": "Please load the design from the file test91.v located in the directory testcase/test91/.", "op": "load_design", "kind": "safe", "params": {"file": "test91.v", "dir": "testcase/test91/"}}
 {"case": "test91", "line": 3, "text": "Find all articulation points in the combinational graph between n2 and n40.", "op": "articulation", "kind": "safe", "params": {"a": "n2", "b": "n40"}}
 {"case": "test91", "line": 4, "text": "Give me a formula for n30[0] built out of the input pins.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n30[0]"}}
 {"case": "test91", "line": 5, "text": "Check if there are any floating inputs or unconnected outputs in the design.", "op": "check_floating", "kind": "safe", "params": {}}
@@ -16,8 +16,8 @@
 {"case": "test91", "line": 16, "text": "Size of the I/O footprint, please.", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test91", "line": 17, "text": "How many XOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xor"}}
 {"case": "test91", "line": 18, "text": "Which output takes the longest logical journey to compute?", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test91", "line": 19, "text": "How many BUF gates were added by the buffer insertion just performed?", "op": "delta_count", "kind": "safe"}
-{"case": "test91", "line": 20, "text": "Does n2 have any influence over n30[0]?", "op": "depends_on", "kind": "hard"}
+{"case": "test91", "line": 19, "text": "How many BUF gates were added by the buffer insertion just performed?", "op": "delta_count", "kind": "safe", "params": {"kind": "buffers_added"}}
+{"case": "test91", "line": 20, "text": "Does n2 have any influence over n30[0]?", "op": "depends_on", "kind": "hard", "params": {"input": "n2", "output": "n30[0]"}}
 {"case": "test91", "line": 21, "text": "Does every path from n2 to n40 pass through gate g0? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n2", "b": "n40", "gate": "g0"}}
 {"case": "test91", "line": 22, "text": "How many state bits have a keep-alive loop in their D logic?", "op": "enable_hold_count", "kind": "hard", "params": {}}
 {"case": "test91", "line": 23, "text": "Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates.", "op": "enable_hold_report", "kind": "safe", "params": {}}
@@ -54,7 +54,7 @@
 {"case": "test91", "line": 54, "text": "Flop to flop, what is the deepest stretch of logic?", "op": "reg_to_reg_depth", "kind": "hard", "params": {}}
 {"case": "test91", "line": 55, "text": "List all the register-to-register paths in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test91", "line": 56, "text": "Clear the deadwood out of this netlist.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test91", "line": 57, "text": "Rename wire n1200 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "n1200", "new": "renamed_sig"}}
+{"case": "test91", "line": 57, "text": "Rename wire n1200 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "n1200", "new": "renamed_sig", "kind": "wire"}}
 {"case": "test91", "line": 58, "text": "Scan the design for NOR cells that have a constant input, and report what you find.", "op": "report_const_gates", "kind": "hard", "params": {}}
 {"case": "test91", "line": 59, "text": "Do flip-flops g0 and g50 use the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g0", "b": "g50"}}
 {"case": "test91", "line": 60, "text": "List the cells common to what feeds n30[0] and what feeds n30[1].", "op": "shared_cone", "kind": "hard", "params": {"a": "n30[0]", "b": "n30[1]"}}
@@ -68,9 +68,9 @@
 {"case": "test91", "line": 68, "text": "Take the XNOR cells and build each one out of NOR logic instead. Leave everything else alone.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
 {"case": "test91", "line": 69, "text": "Decompose all XOR gates in this design into AND, OR, and NOT gates without changing functionality.", "op": "xor_to_aoi", "kind": "safe", "params": {}}
 {"case": "test91", "line": 70, "text": "XOR cells: rebuild them from NANDs alone.", "op": "xor_to_nand", "kind": "hard", "params": {}}
-{"case": "test91", "line": 71, "text": "Please write the current design to the output file test91_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test92", "line": 1, "text": "This is the beginning of a new testcase. The case name is test92.", "op": "begin_case", "kind": "safe"}
-{"case": "test92", "line": 2, "text": "Please load the design from the file test92.v located in the directory testcase/test92/.", "op": "load_design", "kind": "safe"}
+{"case": "test91", "line": 71, "text": "Please write the current design to the output file test91_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test91_out.v"}}
+{"case": "test92", "line": 1, "text": "This is the beginning of a new testcase. The case name is test92.", "op": "begin_case", "kind": "safe", "params": {"name": "test92"}}
+{"case": "test92", "line": 2, "text": "Please load the design from the file test92.v located in the directory testcase/test92/.", "op": "load_design", "kind": "safe", "params": {"file": "test92.v", "dir": "testcase/test92/"}}
 {"case": "test92", "line": 3, "text": "List all gates that now connect to the signal renamed_sig.", "op": "connected_to_net", "kind": "safe", "params": {"net": "renamed_sig"}}
 {"case": "test92", "line": 4, "text": "Name the loads sitting on the output of g1.", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g1"}}
 {"case": "test92", "line": 5, "text": "List the gates with one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
@@ -80,7 +80,7 @@
 {"case": "test92", "line": 9, "text": "How many primary inputs and outputs does the design have?", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test92", "line": 10, "text": "How many XOR gates are left?", "op": "count_type", "kind": "hard", "params": {"type": "xor"}}
 {"case": "test92", "line": 11, "text": "Which output bit has the deepest fanin logic cone?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test92", "line": 12, "text": "How many cells did the merge shave off?", "op": "delta_count", "kind": "hard"}
+{"case": "test92", "line": 12, "text": "How many cells did the merge shave off?", "op": "delta_count", "kind": "hard", "params": {"kind": "merged"}}
 {"case": "test92", "line": 13, "text": "Does the output n31[0] depend on input n3? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n31[0]", "input": "n3"}}
 {"case": "test92", "line": 14, "text": "Is there any way around g1 when traveling from n3 to n41?", "op": "dominator", "kind": "hard", "params": {"a": "n3", "b": "n41", "gate": "g1"}}
 {"case": "test92", "line": 15, "text": "How many flip-flops have an enable or hold structure in their D input logic?", "op": "enable_hold_count", "kind": "safe", "params": {}}
@@ -95,12 +95,12 @@
 {"case": "test92", "line": 24, "text": "Count the immediate dependents of g1.", "op": "gates_driven_by", "kind": "hard", "params": {"gate": "g1"}}
 {"case": "test92", "line": 25, "text": "What is the maximum logic depth of the design now?", "op": "global_max_depth", "kind": "safe", "params": {}}
 {"case": "test92", "line": 26, "text": "Across the whole design, which input pin is loaded the heaviest?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test92", "line": 27, "text": "Please insert a BUF gate on signal n16 so that each load of n16 is driven through a dedicated buffer. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe"}
+{"case": "test92", "line": 27, "text": "Please insert a BUF gate on signal n16 so that each load of n16 is driven through a dedicated buffer. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n16", "mode": "dedicated"}}
 {"case": "test92", "line": 28, "text": "Does cutting n1201 disconnect part of the design's I/O flow?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1201"}}
 {"case": "test92", "line": 29, "text": "Which output of this design has the largest fanin cone?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test92", "line": 30, "text": "List the outputs that are literally an input, unprocessed.", "op": "length_zero_paths", "kind": "hard", "params": {}}
 {"case": "test92", "line": 31, "text": "Please list all the primary inputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "input"}}
-{"case": "test92", "line": 32, "text": "Which cells are XNORs? Point them out.", "op": "list_type", "kind": "hard"}
+{"case": "test92", "line": 32, "text": "Which cells are XNORs? Point them out.", "op": "list_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test92", "line": 33, "text": "Calculate the critical path depth between n3 and n41.", "op": "max_depth_between", "kind": "safe", "params": {"a": "n3", "b": "n41"}}
 {"case": "test92", "line": 34, "text": "Give me the load ceiling of n16.", "op": "max_fanout_of", "kind": "hard", "params": {"net": "n16"}}
 {"case": "test92", "line": 35, "text": "Try to merge any pairs of gates that compute the same Boolean function on the same inputs (structural duplicates). Make sure nothing changes functionally.", "op": "merge_duplicates", "kind": "safe", "params": {}}
@@ -118,13 +118,13 @@
 {"case": "test92", "line": 47, "text": "What is the maximum combinational depth on any register-to-register path?", "op": "reg_to_reg_depth", "kind": "safe", "params": {}}
 {"case": "test92", "line": 48, "text": "Enumerate the register-to-register links in this design.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test92", "line": 49, "text": "Trim unused wires and gates. Ensure functional equivalence is preserved.", "op": "remove_dangling", "kind": "safe", "params": {}}
-{"case": "test92", "line": 50, "text": "Swap the name n1201 for renamed_sig across the whole netlist.", "op": "rename", "kind": "hard"}
+{"case": "test92", "line": 50, "text": "Swap the name n1201 for renamed_sig across the whole netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1201", "new": "renamed_sig", "kind": "wire"}}
 {"case": "test92", "line": 51, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test92", "line": 52, "text": "Is one clock driving both g1 and g51?", "op": "same_clock", "kind": "hard", "params": {"a": "g1", "b": "g51"}}
 {"case": "test92", "line": 53, "text": "Report the gates shared between the fanin cones of n31[0] and n31[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n31[0]", "b": "n31[1]"}}
 {"case": "test92", "line": 54, "text": "Would swapping n3 for n41 change anything logically?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n3", "b": "n41"}}
 {"case": "test92", "line": 55, "text": "Enumerate every immediate successor of gate g1.", "op": "successors", "kind": "safe", "params": {"gate": "g1"}}
-{"case": "test92", "line": 56, "text": "Could I swap n3 and n0[1] without n31[0] noticing?", "op": "symmetric", "kind": "hard"}
+{"case": "test92", "line": 56, "text": "Could I swap n3 and n0[1] without n31[0] noticing?", "op": "symmetric", "kind": "hard", "params": {"output": "n31[0]", "a": "n3", "b": "n0[1]"}}
 {"case": "test92", "line": 57, "text": "Compute the total gate count of this design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test92", "line": 58, "text": "The full ancestry of n31[0], please.", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n31[0]"}}
 {"case": "test92", "line": 59, "text": "Compute the transitive fanout cone for input n3.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n3"}}
@@ -139,13 +139,13 @@
 {"case": "test92", "line": 68, "text": "What is the worst-case number of gates stacked between the inputs and n31[0]?", "op": "cone_depth", "kind": "hard", "params": {"output": "n31[0]"}}
 {"case": "test92", "line": 69, "text": "How many gates are in the fanin cone of primary output n31[0]?", "op": "cone_gate_count", "kind": "safe", "params": {"output": "n31[0]"}}
 {"case": "test92", "line": 70, "text": "Give a per-type census of the gates upstream of n31[0].", "op": "cone_type_counts", "kind": "hard", "params": {"output": "n31[0]"}}
-{"case": "test92", "line": 71, "text": "Please write the current design to the output file test92_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test93", "line": 1, "text": "This is the beginning of a new testcase. The case name is test93.", "op": "begin_case", "kind": "safe"}
-{"case": "test93", "line": 2, "text": "Please load the design from the file test93.v located in the directory testcase/test93/.", "op": "load_design", "kind": "safe"}
+{"case": "test92", "line": 71, "text": "Please write the current design to the output file test92_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test92_out.v"}}
+{"case": "test93", "line": 1, "text": "This is the beginning of a new testcase. The case name is test93.", "op": "begin_case", "kind": "safe", "params": {"name": "test93"}}
+{"case": "test93", "line": 2, "text": "Please load the design from the file test93.v located in the directory testcase/test93/.", "op": "load_design", "kind": "safe", "params": {"file": "test93.v", "dir": "testcase/test93/"}}
 {"case": "test93", "line": 3, "text": "How many NOT gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "not"}}
 {"case": "test93", "line": 4, "text": "Which output sits atop the tallest stack of logic?", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test93", "line": 5, "text": "How many NAND gates were eliminated by constant propagation?", "op": "delta_count", "kind": "safe"}
-{"case": "test93", "line": 6, "text": "Will changing n4 ever change n32[0]?", "op": "depends_on", "kind": "hard"}
+{"case": "test93", "line": 5, "text": "How many NAND gates were eliminated by constant propagation?", "op": "delta_count", "kind": "safe", "params": {"kind": "const_eliminated"}}
+{"case": "test93", "line": 6, "text": "Will changing n4 ever change n32[0]?", "op": "depends_on", "kind": "hard", "params": {"input": "n4", "output": "n32[0]"}}
 {"case": "test93", "line": 7, "text": "Does every path from input n4 to output n42 go through gate g2? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n4", "b": "n42", "gate": "g2"}}
 {"case": "test93", "line": 8, "text": "How many registers can freeze their own value?", "op": "enable_hold_count", "kind": "hard", "params": {}}
 {"case": "test93", "line": 9, "text": "Report the D input logic of the flip-flops and report any existing enable or hold structures implemented through multiplexers or AND gates.", "op": "enable_hold_report", "kind": "safe", "params": {}}
@@ -164,7 +164,7 @@
 {"case": "test93", "line": 22, "text": "The most gates feed into which output?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test93", "line": 23, "text": "Find all paths of length 0 (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
 {"case": "test93", "line": 24, "text": "What comes out of this design? Name the output ports and their widths.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
-{"case": "test93", "line": 25, "text": "List all NOR gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test93", "line": 25, "text": "List all NOR gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test93", "line": 26, "text": "Travel time in gate levels from n4 to n42, worst case?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n4", "b": "n42"}}
 {"case": "test93", "line": 27, "text": "What is the maximum fanout of net n17 now?", "op": "max_fanout_of", "kind": "safe", "params": {"net": "n17"}}
 {"case": "test93", "line": 28, "text": "Are there cells in here that compute the very same thing as another cell? Fold them together.", "op": "merge_duplicates", "kind": "hard", "params": {}}
@@ -182,7 +182,7 @@
 {"case": "test93", "line": 40, "text": "Worst-case levels on the register-to-register hops?", "op": "reg_to_reg_depth", "kind": "hard", "params": {}}
 {"case": "test93", "line": 41, "text": "List all register-to-register paths through combinational logic in this design.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test93", "line": 42, "text": "Purge the cells whose work never leaves the chip.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test93", "line": 43, "text": "Rename gate g2 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "g2", "new": "renamed_sig"}}
+{"case": "test93", "line": 43, "text": "Rename gate g2 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "g2", "new": "renamed_sig", "kind": "gate"}}
 {"case": "test93", "line": 44, "text": "Report the NOR cells sitting on a fixed input value, without touching the design.", "op": "report_const_gates", "kind": "hard", "params": {}}
 {"case": "test93", "line": 45, "text": "Are flip-flops g2 and g52 driven by the same clock? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g2", "b": "g52"}}
 {"case": "test93", "line": 46, "text": "What machinery do n32[0] and n32[1] share upstream?", "op": "shared_cone", "kind": "hard", "params": {"a": "n32[0]", "b": "n32[1]"}}
@@ -210,9 +210,9 @@
 {"case": "test93", "line": 68, "text": "Strip the design down to a two-gate diet: NAND and inverters.", "op": "convert_basis", "kind": "hard", "params": {}}
 {"case": "test93", "line": 69, "text": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).", "op": "count_gates", "kind": "safe", "params": {}}
 {"case": "test93", "line": 70, "text": "How many signals enter this design and how many leave it?", "op": "count_ports", "kind": "hard", "params": {}}
-{"case": "test93", "line": 71, "text": "Please write the current design to the output file test93_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test94", "line": 1, "text": "This is the beginning of a new testcase. The case name is test94.", "op": "begin_case", "kind": "safe"}
-{"case": "test94", "line": 2, "text": "Please load the design from the file test94.v located in the directory testcase/test94/.", "op": "load_design", "kind": "safe"}
+{"case": "test93", "line": 71, "text": "Please write the current design to the output file test93_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test93_out.v"}}
+{"case": "test94", "line": 1, "text": "This is the beginning of a new testcase. The case name is test94.", "op": "begin_case", "kind": "safe", "params": {"name": "test94"}}
+{"case": "test94", "line": 2, "text": "Please load the design from the file test94.v located in the directory testcase/test94/.", "op": "load_design", "kind": "safe", "params": {"file": "test94.v", "dir": "testcase/test94/"}}
 {"case": "test94", "line": 3, "text": "Find all combinational paths from primary input n5 to primary output n43 and list each path showing the gates traversed.", "op": "enumerate_paths", "kind": "safe", "params": {"a": "n5", "b": "n43"}}
 {"case": "test94", "line": 4, "text": "Can one NAND over existing wires reproduce n33[0]?", "op": "exists_nand_pair", "kind": "hard", "params": {"target": "n33[0]"}}
 {"case": "test94", "line": 5, "text": "What is the fanout of primary input n5? List the gates that n5 drives directly.", "op": "fanout", "kind": "safe", "params": {"net": "n5"}}
@@ -238,7 +238,7 @@
 {"case": "test94", "line": 25, "text": "Optimize the logic cone of n33[0] while keeping the netlist NAND and NOT only. Preserve functional equivalence. The cost function is the depth of the cone of n33[0]; smaller is better.", "op": "optimize_cone", "kind": "safe", "params": {"output": "n33[0]", "basis": "NAND_NOT"}}
 {"case": "test94", "line": 26, "text": "Does n33[0] ever change, or is it stuck at a fixed value?", "op": "output_constant", "kind": "hard", "params": {"output": "n33[0]"}}
 {"case": "test94", "line": 27, "text": "How many outputs have a logic depth greater than 6 in this design?", "op": "outputs_depth_gt", "kind": "safe", "params": {"k": 6}}
-{"case": "test94", "line": 28, "text": "Steering clear of n703, does n5 still connect to n43?", "op": "path_exists", "kind": "hard"}
+{"case": "test94", "line": 28, "text": "Steering clear of n703, does n5 still connect to n43?", "op": "path_exists", "kind": "hard", "params": {"a": "n5", "b": "n43", "avoid": "n703"}}
 {"case": "test94", "line": 29, "text": "What is the maximum logic depth from a primary input to any DFF D-pin in this design?", "op": "pi_to_dff_depth", "kind": "safe", "params": {}}
 {"case": "test94", "line": 30, "text": "Deepest direct combinational route from any input to any output?", "op": "pi_to_po_depth", "kind": "hard", "params": {}}
 {"case": "test94", "line": 31, "text": "Determine all gates reachable from n18.", "op": "reachable_from", "kind": "safe", "params": {"net": "n18"}}
@@ -246,13 +246,13 @@
 {"case": "test94", "line": 33, "text": "What is the maximum combinational depth on a register-to-register path in this design?", "op": "reg_to_reg_depth", "kind": "safe", "params": {}}
 {"case": "test94", "line": 34, "text": "Which registers feed which other registers?", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test94", "line": 35, "text": "Remove every dangling gate that does not contribute to any primary output. Ensure the design functionality does not change.", "op": "remove_dangling", "kind": "safe", "params": {}}
-{"case": "test94", "line": 36, "text": "Change the label of the internal wire n1203 to renamed_sig everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n1203", "new": "renamed_sig"}}
+{"case": "test94", "line": 36, "text": "Change the label of the internal wire n1203 to renamed_sig everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n1203", "new": "renamed_sig", "kind": "wire"}}
 {"case": "test94", "line": 37, "text": "Report any NOR gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test94", "line": 38, "text": "Are g3 and g53 on the same clock domain?", "op": "same_clock", "kind": "hard", "params": {"a": "g3", "b": "g53"}}
 {"case": "test94", "line": 39, "text": "Report all gates that are shared between the fanin cones of n33[0] and n33[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n33[0]", "b": "n33[1]"}}
 {"case": "test94", "line": 40, "text": "Check if n5 mirrors n43 exactly, always.", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n5", "b": "n43"}}
 {"case": "test94", "line": 41, "text": "Enumerate the immediate successors of gate g3.", "op": "successors", "kind": "safe", "params": {"gate": "g3"}}
-{"case": "test94", "line": 42, "text": "Does n33[0] treat n5 and n0[3] interchangeably?", "op": "symmetric", "kind": "hard"}
+{"case": "test94", "line": 42, "text": "Does n33[0] treat n5 and n0[3] interchangeably?", "op": "symmetric", "kind": "hard", "params": {"output": "n33[0]", "a": "n5", "b": "n0[3]"}}
 {"case": "test94", "line": 43, "text": "Compute the total gate count for the design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test94", "line": 44, "text": "What is in the complete upstream closure of n33[0]?", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n33[0]"}}
 {"case": "test94", "line": 45, "text": "Compute the transitive fan-out cone of input n5.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n5"}}
@@ -276,22 +276,22 @@
 {"case": "test94", "line": 63, "text": "Determine the number of primary inputs and primary outputs in this design.", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test94", "line": 64, "text": "How many XNOR cells does this design carry?", "op": "count_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test94", "line": 65, "text": "Which output has the deepest fanin logic cone?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test94", "line": 66, "text": "Compared to before that transform, how many gates disappeared?", "op": "delta_count", "kind": "hard"}
+{"case": "test94", "line": 66, "text": "Compared to before that transform, how many gates disappeared?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test94", "line": 67, "text": "Does output n33[0] functionally depend on input n5? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n33[0]", "input": "n5"}}
 {"case": "test94", "line": 68, "text": "Does g3 hold a monopoly on the traffic between n5 and n43?", "op": "dominator", "kind": "hard", "params": {"a": "n5", "b": "n43", "gate": "g3"}}
 {"case": "test94", "line": 69, "text": "How many flip-flops were found to have enable or hold structures in their D input logic?", "op": "enable_hold_count", "kind": "safe", "params": {}}
 {"case": "test94", "line": 70, "text": "Inspect each flop's D input: any mux-style self-feedback in there?", "op": "enable_hold_report", "kind": "hard", "params": {}}
-{"case": "test94", "line": 71, "text": "Please write the current design to the output file test94_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test95", "line": 1, "text": "This is the beginning of a new testcase. The case name is test95.", "op": "begin_case", "kind": "safe"}
-{"case": "test95", "line": 2, "text": "Please load the design from the file test95.v located in the directory testcase/test95/.", "op": "load_design", "kind": "safe"}
+{"case": "test94", "line": 71, "text": "Please write the current design to the output file test94_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test94_out.v"}}
+{"case": "test95", "line": 1, "text": "This is the beginning of a new testcase. The case name is test95.", "op": "begin_case", "kind": "safe", "params": {"name": "test95"}}
+{"case": "test95", "line": 2, "text": "Please load the design from the file test95.v located in the directory testcase/test95/.", "op": "load_design", "kind": "safe", "params": {"file": "test95.v", "dir": "testcase/test95/"}}
 {"case": "test95", "line": 3, "text": "Determine the number of gates driven by g4.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g4"}}
 {"case": "test95", "line": 4, "text": "Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test95", "line": 5, "text": "Which primary input has the highest fanout?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
-{"case": "test95", "line": 6, "text": "Shield n19: one dedicated buffer per consumer.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test95", "line": 6, "text": "Shield n19: one dedicated buffer per consumer.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n19", "mode": "dedicated"}}
 {"case": "test95", "line": 7, "text": "Determine whether wire n1204 forms a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n1204"}}
 {"case": "test95", "line": 8, "text": "Which output commands the biggest army of gates?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test95", "line": 9, "text": "Find all paths of length 0 (direct wire connections from a PI to a PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
-{"case": "test95", "line": 10, "text": "Run down the design's entry points for me.", "op": "list_ports", "kind": "hard"}
+{"case": "test95", "line": 10, "text": "Run down the design's entry points for me.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test95", "line": 11, "text": "List all XNOR gates in this design.", "op": "list_type", "kind": "safe", "params": {"type": "xnor"}}
 {"case": "test95", "line": 12, "text": "How far apart are n6 and n44, measured in logic depth?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n6", "b": "n44"}}
 {"case": "test95", "line": 13, "text": "What is the maximum fanout of n19 now?", "op": "max_fanout_of", "kind": "safe", "params": {"net": "n19"}}
@@ -310,7 +310,7 @@
 {"case": "test95", "line": 26, "text": "How much logic separates consecutive registers at the extreme?", "op": "reg_to_reg_depth", "kind": "hard", "params": {}}
 {"case": "test95", "line": 27, "text": "List every register-to-register path in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test95", "line": 28, "text": "Sweep out anything that no longer reaches an output.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test95", "line": 29, "text": "Rename wire n1204 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "n1204", "new": "renamed_sig"}}
+{"case": "test95", "line": 29, "text": "Rename wire n1204 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "n1204", "new": "renamed_sig", "kind": "wire"}}
 {"case": "test95", "line": 30, "text": "Which NANDs are being fed a hardwired 0 or 1? Just report them.", "op": "report_const_gates", "kind": "hard", "params": {}}
 {"case": "test95", "line": 31, "text": "Do the flip-flops g4 and g54 share the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g4", "b": "g54"}}
 {"case": "test95", "line": 32, "text": "The intersection of the support of n34[0] and of n34[1] — which gates?", "op": "shared_cone", "kind": "hard", "params": {"a": "n34[0]", "b": "n34[1]"}}
@@ -340,8 +340,8 @@
 {"case": "test95", "line": 56, "text": "How wide is the design's interface — inputs and outputs?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test95", "line": 57, "text": "How many XNOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xnor"}}
 {"case": "test95", "line": 58, "text": "Of all outputs, whose supporting cone reaches deepest?", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test95", "line": 59, "text": "How many NOT gates were removed by the inverter-pair collapse?", "op": "delta_count", "kind": "safe"}
-{"case": "test95", "line": 60, "text": "Is there a functional dependence of n34[0] on n6?", "op": "depends_on", "kind": "hard"}
+{"case": "test95", "line": 59, "text": "How many NOT gates were removed by the inverter-pair collapse?", "op": "delta_count", "kind": "safe", "params": {"kind": "collapsed"}}
+{"case": "test95", "line": 60, "text": "Is there a functional dependence of n34[0] on n6?", "op": "depends_on", "kind": "hard", "params": {"output": "n34[0]", "input": "n6"}}
 {"case": "test95", "line": 61, "text": "Does every path from input n6 to output n44 pass through gate g4? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n6", "b": "n44", "gate": "g4"}}
 {"case": "test95", "line": 62, "text": "Count the flops whose next state can be their current state.", "op": "enable_hold_count", "kind": "hard", "params": {}}
 {"case": "test95", "line": 63, "text": "Report the D input logic of the flip-flops to identify any enable or hold structures implemented through multiplexers or AND gates.", "op": "enable_hold_report", "kind": "safe", "params": {}}
@@ -352,11 +352,11 @@
 {"case": "test95", "line": 68, "text": "How many hanging wires are we talking about?", "op": "floating_count", "kind": "hard", "params": {}}
 {"case": "test95", "line": 69, "text": "What kind of gate is g4? Report its gate type and pin connections.", "op": "gate_info", "kind": "safe", "params": {"gate": "g4"}}
 {"case": "test95", "line": 70, "text": "Does g4 sit on the slowest route through the design?", "op": "gate_on_max_path", "kind": "hard", "params": {"gate": "g4"}}
-{"case": "test95", "line": 71, "text": "Please write the current design to the output file test95_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test96", "line": 1, "text": "Kick off a fresh run; call it test96.", "op": "begin_case", "kind": "hard"}
-{"case": "test96", "line": 2, "text": "Pull in the netlist stored at testcase/test96/test96.v and make it the working design.", "op": "load_design", "kind": "hard"}
+{"case": "test95", "line": 71, "text": "Please write the current design to the output file test95_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test95_out.v"}}
+{"case": "test96", "line": 1, "text": "Kick off a fresh run; call it test96.", "op": "begin_case", "kind": "hard", "params": {"name": "test96"}}
+{"case": "test96", "line": 2, "text": "Pull in the netlist stored at testcase/test96/test96.v and make it the working design.", "op": "load_design", "kind": "hard", "params": {"file": "test96.v", "dir": "testcase/test96"}}
 {"case": "test96", "line": 3, "text": "Please list all primary inputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "input"}}
-{"case": "test96", "line": 4, "text": "Show me each NAND cell and how it is wired.", "op": "list_type", "kind": "hard"}
+{"case": "test96", "line": 4, "text": "Show me each NAND cell and how it is wired.", "op": "list_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test96", "line": 5, "text": "Determine the longest combinational path depth from input n7 to output n45.", "op": "max_depth_between", "kind": "safe", "params": {"a": "n7", "b": "n45"}}
 {"case": "test96", "line": 6, "text": "Just the peak load figure for n20, please.", "op": "max_fanout_of", "kind": "hard", "params": {"net": "n20"}}
 {"case": "test96", "line": 7, "text": "Try to merge any pairs of gates in this design that compute the same Boolean function on the same inputs (structural duplicates). Ensure the design functionality does not change.", "op": "merge_duplicates", "kind": "safe", "params": {}}
@@ -374,13 +374,13 @@
 {"case": "test96", "line": 19, "text": "What is the maximum combinational depth on any register-to-register path in the design?", "op": "reg_to_reg_depth", "kind": "safe", "params": {}}
 {"case": "test96", "line": 20, "text": "Chart the sequential dependencies: flip-flop to flip-flop.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test96", "line": 21, "text": "Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.", "op": "remove_dangling", "kind": "safe", "params": {}}
-{"case": "test96", "line": 22, "text": "From now on, g5 goes by renamed_sig — update every reference.", "op": "rename", "kind": "hard"}
+{"case": "test96", "line": 22, "text": "From now on, g5 goes by renamed_sig — update every reference.", "op": "rename", "kind": "hard", "params": {"old": "g5", "new": "renamed_sig", "kind": "gate"}}
 {"case": "test96", "line": 23, "text": "Report any AND gates with a constant 0 input in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test96", "line": 24, "text": "Check whether g5 and g55 get their edges from the same place.", "op": "same_clock", "kind": "hard", "params": {"a": "g5", "b": "g55"}}
 {"case": "test96", "line": 25, "text": "Report every gate shared between the fanin cones of n35[0] and n35[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n35[0]", "b": "n35[1]"}}
 {"case": "test96", "line": 26, "text": "Are n7 and n45 just two names for the same function?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n7", "b": "n45"}}
 {"case": "test96", "line": 27, "text": "Enumerate the immediate successors of g5.", "op": "successors", "kind": "safe", "params": {"gate": "g5"}}
-{"case": "test96", "line": 28, "text": "Is n35[0] indifferent to exchanging n7 with n0[1]?", "op": "symmetric", "kind": "hard"}
+{"case": "test96", "line": 28, "text": "Is n35[0] indifferent to exchanging n7 with n0[1]?", "op": "symmetric", "kind": "hard", "params": {"output": "n35[0]", "a": "n7", "b": "n0[1]"}}
 {"case": "test96", "line": 29, "text": "Compute the design's total gate count.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test96", "line": 30, "text": "Which cells does the value of n35[0] ultimately rest on?", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n35[0]"}}
 {"case": "test96", "line": 31, "text": "Compute the transitive fanout cone of input n7.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n7"}}
@@ -404,7 +404,7 @@
 {"case": "test96", "line": 49, "text": "Determine the number of primary inputs and outputs.", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test96", "line": 50, "text": "What is the NOR population in here?", "op": "count_type", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test96", "line": 51, "text": "Which output bit has the deepest fanin cone?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test96", "line": 52, "text": "What is the before-versus-after gate difference from that step?", "op": "delta_count", "kind": "hard"}
+{"case": "test96", "line": 52, "text": "What is the before-versus-after gate difference from that step?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test96", "line": 53, "text": "Does output n35[0] depend on input n7? Answer yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n35[0]", "input": "n7"}}
 {"case": "test96", "line": 54, "text": "Can a signal get from n7 to n45 while dodging g5, or is g5 unavoidable?", "op": "dominator", "kind": "hard", "params": {"a": "n7", "b": "n45", "gate": "g5"}}
 {"case": "test96", "line": 55, "text": "How many flip-flops have enable or hold structures in their D input logic?", "op": "enable_hold_count", "kind": "safe", "params": {}}
@@ -423,9 +423,9 @@
 {"case": "test96", "line": 68, "text": "Is all of some output's traffic riding on n1205?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1205"}}
 {"case": "test96", "line": 69, "text": "Which output has the largest fanin cone?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test96", "line": 70, "text": "Which outputs connect to an input with zero gates in between?", "op": "length_zero_paths", "kind": "hard", "params": {}}
-{"case": "test96", "line": 71, "text": "Persist the netlist as it stands to test96_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test97", "line": 1, "text": "We are starting over with a new exercise named test97.", "op": "begin_case", "kind": "hard"}
-{"case": "test97", "line": 2, "text": "Open test97.v from testcase/test97/ and read the circuit in.", "op": "load_design", "kind": "hard"}
+{"case": "test96", "line": 71, "text": "Persist the netlist as it stands to test96_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test96_out.v"}}
+{"case": "test97", "line": 1, "text": "We are starting over with a new exercise named test97.", "op": "begin_case", "kind": "hard", "params": {"name": "test97"}}
+{"case": "test97", "line": 2, "text": "Open test97.v from testcase/test97/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test97.v", "dir": "testcase/test97/"}}
 {"case": "test97", "line": 3, "text": "Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.", "op": "nand_const1_to_inv", "kind": "safe", "params": {}}
 {"case": "test97", "line": 4, "text": "Only the cone of n36[0]: restructure it for fewer levels.", "op": "optimize_cone", "kind": "hard", "params": {"output": "n36[0]"}}
 {"case": "test97", "line": 5, "text": "Is output n36[0] always 0 regardless of the inputs? Report yes or no.", "op": "output_constant", "kind": "safe", "params": {"output": "n36[0]"}}
@@ -438,7 +438,7 @@
 {"case": "test97", "line": 12, "text": "The deepest Q-to-D stretch runs how many levels?", "op": "reg_to_reg_depth", "kind": "hard", "params": {}}
 {"case": "test97", "line": 13, "text": "List all register-to-register paths in this design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test97", "line": 14, "text": "Garbage-collect the dead logic in this netlist.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test97", "line": 15, "text": "Change the identifier of gate g6 to renamed_sig and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g6", "new": "renamed_sig"}}
+{"case": "test97", "line": 15, "text": "Change the identifier of gate g6 to renamed_sig and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g6", "new": "renamed_sig", "kind": "gate"}}
 {"case": "test97", "line": 16, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {}}
 {"case": "test97", "line": 17, "text": "Are flip-flops g6 and g56 clocked by the same signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g6", "b": "g56"}}
 {"case": "test97", "line": 18, "text": "Which logic pulls double duty for both n36[0] and n36[1]?", "op": "shared_cone", "kind": "hard", "params": {"a": "n36[0]", "b": "n36[1]"}}
@@ -468,8 +468,8 @@
 {"case": "test97", "line": 42, "text": "Count the pins on the boundary: how many in, how many out?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test97", "line": 43, "text": "How many NOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test97", "line": 44, "text": "Which output is the farthest from the inputs, measured in gate levels?", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test97", "line": 45, "text": "How many gates were rewritten by the conversion just performed?", "op": "delta_count", "kind": "safe"}
-{"case": "test97", "line": 46, "text": "If I wiggle n8, can n36[0] ever notice?", "op": "depends_on", "kind": "hard"}
+{"case": "test97", "line": 45, "text": "How many gates were rewritten by the conversion just performed?", "op": "delta_count", "kind": "safe", "params": {"kind": "net_change"}}
+{"case": "test97", "line": 46, "text": "If I wiggle n8, can n36[0] ever notice?", "op": "depends_on", "kind": "hard", "params": {"input": "n8", "output": "n36[0]"}}
 {"case": "test97", "line": 47, "text": "Does every path from input n8 to output n46 pass through g6? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n8", "b": "n46", "gate": "g6"}}
 {"case": "test97", "line": 48, "text": "How many flip-flops carry a hold-your-value mechanism?", "op": "enable_hold_count", "kind": "hard", "params": {}}
 {"case": "test97", "line": 49, "text": "Report the D input logic of each flip-flop to report any existing enable or hold structures implemented through multiplexers or AND gates.", "op": "enable_hold_report", "kind": "safe", "params": {}}
@@ -483,32 +483,32 @@
 {"case": "test97", "line": 57, "text": "Determine the number of gates that are driven by g6.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g6"}}
 {"case": "test97", "line": 58, "text": "How deep does this design go at its deepest point?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test97", "line": 59, "text": "Which primary input of this design has the highest fanout?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
-{"case": "test97", "line": 60, "text": "Fan n21 out through individual BUFs, one per load.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test97", "line": 60, "text": "Fan n21 out through individual BUFs, one per load.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n21", "mode": "dedicated"}}
 {"case": "test97", "line": 61, "text": "Determine whether wire n1206 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n1206"}}
 {"case": "test97", "line": 62, "text": "Whose cone holds the most cells among the outputs?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test97", "line": 63, "text": "Find all paths of length zero (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
 {"case": "test97", "line": 64, "text": "Catalogue the exits: every output port with its width.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
-{"case": "test97", "line": 65, "text": "List all BUF gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test97", "line": 65, "text": "List all BUF gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "buf"}}
 {"case": "test97", "line": 66, "text": "From the perspective of n8, how many gate levels until its effect shows up at n46?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n8", "b": "n46"}}
 {"case": "test97", "line": 67, "text": "What is the maximum fanout of n21?", "op": "max_fanout_of", "kind": "safe", "params": {"net": "n21"}}
 {"case": "test97", "line": 68, "text": "Spot the twins and collapse each pair into one gate.", "op": "merge_duplicates", "kind": "hard", "params": {}}
 {"case": "test97", "line": 69, "text": "Minimize the area of the design through restructuring. Ensure functional equivalence is preserved. The cost function is the total number of gates; smaller is better.", "op": "minimize_area", "kind": "safe", "params": {}}
 {"case": "test97", "line": 70, "text": "Trade structure for speed: minimize the levels end to end.", "op": "minimize_depth", "kind": "hard", "params": {}}
-{"case": "test97", "line": 71, "text": "Dump the current circuit into test97_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test98", "line": 1, "text": "New session, new circuit. Refer to this one as test98.", "op": "begin_case", "kind": "hard"}
-{"case": "test98", "line": 2, "text": "Bring up the design description in testcase/test98/test98.v.", "op": "load_design", "kind": "hard"}
+{"case": "test97", "line": 71, "text": "Dump the current circuit into test97_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test97_out.v"}}
+{"case": "test98", "line": 1, "text": "New session, new circuit. Refer to this one as test98.", "op": "begin_case", "kind": "hard", "params": {"name": "test98"}}
+{"case": "test98", "line": 2, "text": "Bring up the design description in testcase/test98/test98.v.", "op": "load_design", "kind": "hard", "params": {"file": "test98.v", "dir": "testcase/test98"}}
 {"case": "test98", "line": 3, "text": "Determine all gates that are reachable from n22.", "op": "reachable_from", "kind": "safe", "params": {"net": "n22"}}
 {"case": "test98", "line": 4, "text": "How far can a stored value travel through logic before exiting at an output port?", "op": "reg_to_po_depth", "kind": "hard", "params": {}}
 {"case": "test98", "line": 5, "text": "What is the maximum combinational logic depth on any register-to-register path in this design?", "op": "reg_to_reg_depth", "kind": "safe", "params": {}}
 {"case": "test98", "line": 6, "text": "Which flop pairs talk to each other through logic? List the connections.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test98", "line": 7, "text": "Trim unused wires and gates. Make sure nothing changes functionally.", "op": "remove_dangling", "kind": "safe", "params": {}}
-{"case": "test98", "line": 8, "text": "Rebadge n1207 as renamed_sig throughout the netlist.", "op": "rename", "kind": "hard"}
+{"case": "test98", "line": 8, "text": "Rebadge n1207 as renamed_sig throughout the netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1207", "new": "renamed_sig", "kind": "wire"}}
 {"case": "test98", "line": 9, "text": "Report any NAND gates with constant inputs in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test98", "line": 10, "text": "g7 versus g57: common clock or different clocks?", "op": "same_clock", "kind": "hard", "params": {"a": "g7", "b": "g57"}}
 {"case": "test98", "line": 11, "text": "Report all gates shared between the fanin cones of n37[0] and n37[1].", "op": "shared_cone", "kind": "safe", "params": {"a": "n37[0]", "b": "n37[1]"}}
 {"case": "test98", "line": 12, "text": "Do n9 and n47 ever disagree, under any input at all?", "op": "signals_equivalent", "kind": "hard", "params": {"a": "n9", "b": "n47"}}
 {"case": "test98", "line": 13, "text": "Enumerate all immediate successors of gate g7.", "op": "successors", "kind": "safe", "params": {"gate": "g7"}}
-{"case": "test98", "line": 14, "text": "Are n9 and n0[3] equal citizens as far as n37[0] is concerned?", "op": "symmetric", "kind": "hard"}
+{"case": "test98", "line": 14, "text": "Are n9 and n0[3] equal citizens as far as n37[0] is concerned?", "op": "symmetric", "kind": "hard", "params": {"output": "n37[0]", "a": "n9", "b": "n0[3]"}}
 {"case": "test98", "line": 15, "text": "Compute the total gate count of the current design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test98", "line": 16, "text": "Everything that ultimately influences n37[0] — list it.", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n37[0]"}}
 {"case": "test98", "line": 17, "text": "Compute the transitive fanout cone of n9.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n9"}}
@@ -530,9 +530,9 @@
 {"case": "test98", "line": 33, "text": "Rebuild the design using only AND, OR, and NOT primitives. Ensure the design functionality does not change.", "op": "convert_basis", "kind": "safe", "params": {}}
 {"case": "test98", "line": 34, "text": "Give me the full head-count of cells, split by kind.", "op": "count_gates", "kind": "hard", "params": {}}
 {"case": "test98", "line": 35, "text": "How many primary inputs and primary outputs does this design have?", "op": "count_ports", "kind": "safe", "params": {}}
-{"case": "test98", "line": 36, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard"}
+{"case": "test98", "line": 36, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
 {"case": "test98", "line": 37, "text": "Which output has the deepest logic cone?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test98", "line": 38, "text": "How many components did we just lose?", "op": "delta_count", "kind": "hard"}
+{"case": "test98", "line": 38, "text": "How many components did we just lose?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test98", "line": 39, "text": "Does output n37[0] depend on input n9? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n37[0]", "input": "n9"}}
 {"case": "test98", "line": 40, "text": "Is g7 a mandatory stop on every route from n9 to n47?", "op": "dominator", "kind": "hard", "params": {"a": "n9", "b": "n47", "gate": "g7"}}
 {"case": "test98", "line": 41, "text": "How many flip-flops were found to have an enable or hold structure in their D input logic?", "op": "enable_hold_count", "kind": "safe", "params": {}}
@@ -547,7 +547,7 @@
 {"case": "test98", "line": 50, "text": "What is the direct load count of g7?", "op": "gates_driven_by", "kind": "hard", "params": {"gate": "g7"}}
 {"case": "test98", "line": 51, "text": "What is the maximum logic depth of the design?", "op": "global_max_depth", "kind": "safe", "params": {}}
 {"case": "test98", "line": 52, "text": "Which entry signal has the widest immediate reach?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test98", "line": 53, "text": "Please insert a BUF gate on signal n22 so that every load of n22 is driven through a dedicated buffer. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe"}
+{"case": "test98", "line": 53, "text": "Please insert a BUF gate on signal n22 so that every load of n22 is driven through a dedicated buffer. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n22", "mode": "dedicated"}}
 {"case": "test98", "line": 54, "text": "If n1207 were severed, would some output lose contact with the inputs?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1207"}}
 {"case": "test98", "line": 55, "text": "Which output has the largest fanin cone in this design?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test98", "line": 56, "text": "Show me input-to-output shortcuts that pass through no logic at all.", "op": "length_zero_paths", "kind": "hard", "params": {}}
@@ -562,12 +562,12 @@
 {"case": "test98", "line": 65, "text": "Optimize the depth of the cone of n37[0] while ensuring the cone of n37[0] maintains only NAND and NOT gates. Preserve functional equivalence. The cost function is the depth of the cone of n37[0]; smaller is better.", "op": "optimize_cone", "kind": "safe", "params": {"output": "n37[0]", "basis": "NAND_NOT"}}
 {"case": "test98", "line": 66, "text": "Is n37[0] welded to a constant?", "op": "output_constant", "kind": "hard", "params": {"output": "n37[0]"}}
 {"case": "test98", "line": 67, "text": "How many outputs of this design have a logic depth greater than 6?", "op": "outputs_depth_gt", "kind": "safe", "params": {"k": 6}}
-{"case": "test98", "line": 68, "text": "Does n9 have a way to n47 that bypasses n707?", "op": "path_exists", "kind": "hard"}
+{"case": "test98", "line": 68, "text": "Does n9 have a way to n47 that bypasses n707?", "op": "path_exists", "kind": "hard", "params": {"a": "n9", "b": "n47", "avoid": "n707"}}
 {"case": "test98", "line": 69, "text": "What is the maximum logic depth from any primary input to any DFF D-pin in this design?", "op": "pi_to_dff_depth", "kind": "safe", "params": {}}
 {"case": "test98", "line": 70, "text": "From the PI boundary to the PO boundary, how many levels max, with no registers involved?", "op": "pi_to_po_depth", "kind": "hard", "params": {}}
-{"case": "test98", "line": 71, "text": "Save what we have now as test98_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test99", "line": 1, "text": "Spin up a clean testcase under the name test99.", "op": "begin_case", "kind": "hard"}
-{"case": "test99", "line": 2, "text": "Ingest test99.v (it lives in testcase/test99/) as our current netlist.", "op": "load_design", "kind": "hard"}
+{"case": "test98", "line": 71, "text": "Save what we have now as test98_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test98_out.v"}}
+{"case": "test99", "line": 1, "text": "Spin up a clean testcase under the name test99.", "op": "begin_case", "kind": "hard", "params": {"name": "test99"}}
+{"case": "test99", "line": 2, "text": "Ingest test99.v (it lives in testcase/test99/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test99.v", "dir": "testcase/test99/"}}
 {"case": "test99", "line": 3, "text": "Do flip-flops g8 and g58 share the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g8", "b": "g58"}}
 {"case": "test99", "line": 4, "text": "Where do the cones of n38[0] and n38[1] overlap?", "op": "shared_cone", "kind": "hard", "params": {"a": "n38[0]", "b": "n38[1]"}}
 {"case": "test99", "line": 5, "text": "Determine whether the signals n10 and n48 are functionally equivalent.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n10", "b": "n48"}}
@@ -596,8 +596,8 @@
 {"case": "test99", "line": 28, "text": "What are the PI and PO counts?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test99", "line": 29, "text": "How many NAND gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test99", "line": 30, "text": "Name the output with the most levels of logic beneath it.", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test99", "line": 31, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe"}
-{"case": "test99", "line": 32, "text": "Is n38[0] sensitive to n10 at all?", "op": "depends_on", "kind": "hard"}
+{"case": "test99", "line": 31, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "dangling"}}
+{"case": "test99", "line": 32, "text": "Is n38[0] sensitive to n10 at all?", "op": "depends_on", "kind": "hard", "params": {"output": "n38[0]", "input": "n10"}}
 {"case": "test99", "line": 33, "text": "Does every combinational path from input n10 to output n48 pass through gate g8? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n10", "b": "n48", "gate": "g8"}}
 {"case": "test99", "line": 34, "text": "What is the tally of enable-gated registers?", "op": "enable_hold_count", "kind": "hard", "params": {}}
 {"case": "test99", "line": 35, "text": "Report the D input logic of the flip-flops to reveal any enable or hold structures implemented through multiplexers or AND gates.", "op": "enable_hold_report", "kind": "safe", "params": {}}
@@ -611,12 +611,12 @@
 {"case": "test99", "line": 43, "text": "Determine the number of gates driven by gate g8.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g8"}}
 {"case": "test99", "line": 44, "text": "Worst-case logic levels anywhere in the netlist?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test99", "line": 45, "text": "Which primary input has the largest fanout in this design?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
-{"case": "test99", "line": 46, "text": "Give every load of n23 its own private repeater.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test99", "line": 46, "text": "Give every load of n23 its own private repeater.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n23", "mode": "dedicated"}}
 {"case": "test99", "line": 47, "text": "Determine whether wire n1208 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n1208"}}
 {"case": "test99", "line": 48, "text": "Which output has the widest support, counted in gates?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test99", "line": 49, "text": "Find every path of length 0 (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
 {"case": "test99", "line": 50, "text": "What are the names and sizes of the input pins?", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
-{"case": "test99", "line": 51, "text": "List all NAND gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test99", "line": 51, "text": "List all NAND gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test99", "line": 52, "text": "At worst, how long is the logic between n10 and n48?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n10", "b": "n48"}}
 {"case": "test99", "line": 53, "text": "What is the maximum fanout of signal n23 now?", "op": "max_fanout_of", "kind": "safe", "params": {"net": "n23"}}
 {"case": "test99", "line": 54, "text": "Any redundant duplicates doing identical work? Merge them.", "op": "merge_duplicates", "kind": "hard", "params": {}}
@@ -634,11 +634,11 @@
 {"case": "test99", "line": 66, "text": "Between one flip-flop and the next, how many gate levels does a signal pass through at worst?", "op": "reg_to_reg_depth", "kind": "hard", "params": {}}
 {"case": "test99", "line": 67, "text": "List all register-to-register paths in the design through combinational logic.", "op": "reg_to_reg_paths", "kind": "safe", "params": {}}
 {"case": "test99", "line": 68, "text": "Anything not observable from the outputs — cut it.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test99", "line": 69, "text": "Rename gate g8 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "g8", "new": "renamed_sig"}}
+{"case": "test99", "line": 69, "text": "Rename gate g8 to renamed_sig. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "g8", "new": "renamed_sig", "kind": "gate"}}
 {"case": "test99", "line": 70, "text": "Any NAND cells wired to constants? List them and change nothing.", "op": "report_const_gates", "kind": "hard", "params": {}}
-{"case": "test99", "line": 71, "text": "Commit the working design to disk as test99_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test100", "line": 1, "text": "Begin anew — label this whole exchange test100.", "op": "begin_case", "kind": "hard"}
-{"case": "test100", "line": 2, "text": "Read the Verilog at testcase/test100/test100.v into memory.", "op": "load_design", "kind": "hard"}
+{"case": "test99", "line": 71, "text": "Commit the working design to disk as test99_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test99_out.v"}}
+{"case": "test100", "line": 1, "text": "Begin anew — label this whole exchange test100.", "op": "begin_case", "kind": "hard", "params": {"name": "test100"}}
+{"case": "test100", "line": 2, "text": "Read the Verilog at testcase/test100/test100.v into memory.", "op": "load_design", "kind": "hard", "params": {"file": "test100.v", "dir": "testcase/test100"}}
 {"case": "test100", "line": 3, "text": "Compute the transitive fanout of input n11.", "op": "transitive_fanout", "kind": "safe", "params": {"net": "n11"}}
 {"case": "test100", "line": 4, "text": "Is today's netlist still the same machine we started with?", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test100", "line": 5, "text": "Convert all XNOR gates in this design to equivalent NOR-only circuits. Ensure the design functionality does not change.", "op": "xnor_to_nor", "kind": "safe", "params": {}}
@@ -660,7 +660,7 @@
 {"case": "test100", "line": 21, "text": "Determine the number of primary inputs and primary outputs.", "op": "count_ports", "kind": "safe", "params": {}}
 {"case": "test100", "line": 22, "text": "Within the logic behind n39[0], how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test100", "line": 23, "text": "Which output bit has the deepest cone of logic?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test100", "line": 24, "text": "What did that last cleanup cost us in gates, net change?", "op": "delta_count", "kind": "hard"}
+{"case": "test100", "line": 24, "text": "What did that last cleanup cost us in gates, net change?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test100", "line": 25, "text": "Does output n39[0] depend on the input n11? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n39[0]", "input": "n11"}}
 {"case": "test100", "line": 26, "text": "Must all influence from n11 on n49 funnel through g9?", "op": "dominator", "kind": "hard", "params": {"a": "n11", "b": "n49", "gate": "g9"}}
 {"case": "test100", "line": 27, "text": "How many flip-flops were found with enable or hold structures in their D input logic?", "op": "enable_hold_count", "kind": "safe", "params": {}}
@@ -690,7 +690,7 @@
 {"case": "test100", "line": 51, "text": "Optimize the logic cone of output n39[0]. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n39[0]; smaller is better.", "op": "optimize_cone", "kind": "safe", "params": {"output": "n39[0]"}}
 {"case": "test100", "line": 52, "text": "No matter what we feed it, does n39[0] stay put?", "op": "output_constant", "kind": "hard", "params": {"output": "n39[0]"}}
 {"case": "test100", "line": 53, "text": "How many outputs have a logic depth of more than 4?", "op": "outputs_depth_gt", "kind": "safe", "params": {"k": 4}}
-{"case": "test100", "line": 54, "text": "Can n11 reach n49 without ever passing n709?", "op": "path_exists", "kind": "hard"}
+{"case": "test100", "line": 54, "text": "Can n11 reach n49 without ever passing n709?", "op": "path_exists", "kind": "hard", "params": {"a": "n11", "b": "n49", "avoid": "n709"}}
 {"case": "test100", "line": 55, "text": "What is the maximum logic depth from any primary input to any DFF D-pin?", "op": "pi_to_dff_depth", "kind": "safe", "params": {}}
 {"case": "test100", "line": 56, "text": "What is the longest register-free path from an input pin to an output pin?", "op": "pi_to_po_depth", "kind": "hard", "params": {}}
 {"case": "test100", "line": 57, "text": "Determine every gate reachable from n24.", "op": "reachable_from", "kind": "safe", "params": {"net": "n24"}}
@@ -698,7 +698,7 @@
 {"case": "test100", "line": 59, "text": "What is the maximum combinational depth on any register-to-register path in this design?", "op": "reg_to_reg_depth", "kind": "safe", "params": {}}
 {"case": "test100", "line": 60, "text": "Map out the Q-to-D corridors between registers.", "op": "reg_to_reg_paths", "kind": "hard", "params": {}}
 {"case": "test100", "line": 61, "text": "Remove all dangling gates that do not contribute to any primary output. Make sure nothing changes functionally.", "op": "remove_dangling", "kind": "safe", "params": {}}
-{"case": "test100", "line": 62, "text": "Give g9 the new identifier renamed_sig.", "op": "rename", "kind": "hard"}
+{"case": "test100", "line": 62, "text": "Give g9 the new identifier renamed_sig.", "op": "rename", "kind": "hard", "params": {"old": "g9", "new": "renamed_sig", "kind": "gate"}}
 {"case": "test100", "line": 63, "text": "Report any NOR gates with constant inputs in the design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test100", "line": 64, "text": "Do g9 and g59 tick together — same clock source?", "op": "same_clock", "kind": "hard", "params": {"a": "g9", "b": "g59"}}
 {"case": "test100", "line": 65, "text": "Report all gates shared between the fanin cones of n39[1] and n39[0].", "op": "shared_cone", "kind": "safe", "params": {"a": "n39[1]", "b": "n39[0]"}}
@@ -707,7 +707,7 @@
 {"case": "test100", "line": 68, "text": "Same output if n11 and n0[1] trade places?", "op": "symmetric", "kind": "hard"}
 {"case": "test100", "line": 69, "text": "Compute the total gate count of the design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test100", "line": 70, "text": "Trace n39[0] all the way back: which gates are involved?", "op": "transitive_fanin", "kind": "hard", "params": {"net": "n39[0]"}}
-{"case": "test100", "line": 71, "text": "Export the present netlist to test100_out.v.", "op": "write_design", "kind": "hard"}
+{"case": "test100", "line": 71, "text": "Export the present netlist to test100_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test100_out.v"}}
 {"case": "test101", "line": 1, "text": "Between n14 and n117[1], where are the bridges that carry every last route?", "op": "articulation", "kind": "hard", "params": {"a": "n14", "b": "n117[1]"}}
 {"case": "test101", "line": 2, "text": "Every alternative from n14 to n475 still crosses certain nodes — identify all of them.", "op": "articulation", "kind": "hard", "params": {"a": "n14", "b": "n475"}}
 {"case": "test101", "line": 3, "text": "I am after the bottleneck vertices of the n13-to-n13[0] region — the ones all traffic funnels past.", "op": "articulation", "kind": "hard", "params": {"a": "n13", "b": "n13[0]"}}
@@ -728,26 +728,26 @@
 {"case": "test101", "line": 18, "text": "Find all articulation points in the combinational graph between n2 and n26[1].", "op": "articulation", "kind": "safe", "params": {"a": "n2", "b": "n26[1]"}}
 {"case": "test101", "line": 19, "text": "Identify all articulation points in the combinational graph between n7 and n4.", "op": "articulation", "kind": "safe", "params": {"a": "n7", "b": "n4"}}
 {"case": "test101", "line": 20, "text": "Single out the nodes that no n2-to-n63[0] detour can route around.", "op": "articulation", "kind": "hard", "params": {"a": "n2", "b": "n63[0]"}}
-{"case": "test102", "line": 1, "text": "Spin up a clean testcase under the name test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 2, "text": "This is the beginning of a brand new testcase. The case name is test102.", "op": "begin_case", "kind": "safe"}
-{"case": "test102", "line": 3, "text": "New circuit incoming; log this session as test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 4, "text": "Kick off a fresh run; call it test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 5, "text": "From here on we are working on test102, a newly started case.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 6, "text": "Let's reset. The next batch of work belongs to a case called test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 7, "text": "A new evaluation starts here, registered under the identifier test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 8, "text": "This is the beginning of a new testcase. The case name is test102.", "op": "begin_case", "kind": "safe"}
-{"case": "test102", "line": 9, "text": "Begin anew — label this whole exchange test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 10, "text": "Here begins test102. Prepare for the requests that follow.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 11, "text": "Wipe the slate. test102 is the name of the exercise that begins now.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 12, "text": "This is the beginning of a new testcase. The case name is test102, please take note.", "op": "begin_case", "kind": "safe"}
-{"case": "test102", "line": 13, "text": "This is the beginning of another new testcase. The case name is test102.", "op": "begin_case", "kind": "safe"}
-{"case": "test102", "line": 14, "text": "New session, new circuit. Refer to this one as test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 15, "text": "Consider this the first line of test102 — a fresh test instance.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 16, "text": "Treat everything below as part of a fresh testcase titled test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 17, "text": "We are starting over with a new exercise named test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 18, "text": "Time to open a brand-new problem; file everything under test102.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 19, "text": "Open the books on test102; nothing from before carries over.", "op": "begin_case", "kind": "hard"}
-{"case": "test102", "line": 20, "text": "This is the beginning of a new testcase; the case name is test102.", "op": "begin_case", "kind": "safe"}
+{"case": "test102", "line": 1, "text": "Spin up a clean testcase under the name test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 2, "text": "This is the beginning of a brand new testcase. The case name is test102.", "op": "begin_case", "kind": "safe", "params": {"name": "test102"}}
+{"case": "test102", "line": 3, "text": "New circuit incoming; log this session as test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 4, "text": "Kick off a fresh run; call it test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 5, "text": "From here on we are working on test102, a newly started case.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 6, "text": "Let's reset. The next batch of work belongs to a case called test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 7, "text": "A new evaluation starts here, registered under the identifier test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 8, "text": "This is the beginning of a new testcase. The case name is test102.", "op": "begin_case", "kind": "safe", "params": {"name": "test102"}}
+{"case": "test102", "line": 9, "text": "Begin anew — label this whole exchange test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 10, "text": "Here begins test102. Prepare for the requests that follow.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 11, "text": "Wipe the slate. test102 is the name of the exercise that begins now.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 12, "text": "This is the beginning of a new testcase. The case name is test102, please take note.", "op": "begin_case", "kind": "safe", "params": {"name": "test102"}}
+{"case": "test102", "line": 13, "text": "This is the beginning of another new testcase. The case name is test102.", "op": "begin_case", "kind": "safe", "params": {"name": "test102"}}
+{"case": "test102", "line": 14, "text": "New session, new circuit. Refer to this one as test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 15, "text": "Consider this the first line of test102 — a fresh test instance.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 16, "text": "Treat everything below as part of a fresh testcase titled test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 17, "text": "We are starting over with a new exercise named test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 18, "text": "Time to open a brand-new problem; file everything under test102.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 19, "text": "Open the books on test102; nothing from before carries over.", "op": "begin_case", "kind": "hard", "params": {"name": "test102"}}
+{"case": "test102", "line": 20, "text": "This is the beginning of a new testcase; the case name is test102.", "op": "begin_case", "kind": "safe", "params": {"name": "test102"}}
 {"case": "test103", "line": 1, "text": "Fold the logic of n12 into a closed expression over the design's inputs.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n12"}}
 {"case": "test103", "line": 2, "text": "Collapse the netlist feeding n11[0] into one symbolic expression of the primary inputs.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n11[0]"}}
 {"case": "test103", "line": 3, "text": "Summarize n8 mathematically, using input names as the only variables.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n8"}}
@@ -1009,16 +1009,16 @@
 {"case": "test115", "line": 19, "text": "How wide is the design's interface — inputs and outputs?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test115", "line": 20, "text": "The interface tally — inputs and outputs, both counts.", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test116", "line": 1, "text": "How many NOT gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "not"}}
-{"case": "test116", "line": 2, "text": "Right now, how many inverters are on the books?", "op": "count_type", "kind": "hard"}
+{"case": "test116", "line": 2, "text": "Right now, how many inverters are on the books?", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
 {"case": "test116", "line": 3, "text": "How many XOR gates are left?", "op": "count_type", "kind": "hard", "params": {"type": "xor"}}
-{"case": "test116", "line": 4, "text": "How many XORs remain in the design at this point?", "op": "count_type", "kind": "hard"}
+{"case": "test116", "line": 4, "text": "How many XORs remain in the design at this point?", "op": "count_type", "kind": "hard", "params": {"type": "xor"}}
 {"case": "test116", "line": 5, "text": "How many XOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xor"}}
 {"case": "test116", "line": 6, "text": "In the design as it stands, how many NOT gates are there?", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
 {"case": "test116", "line": 7, "text": "How many XNOR cells does this design carry?", "op": "count_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test116", "line": 8, "text": "How many XNOR gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "xnor"}}
 {"case": "test116", "line": 9, "text": "How many NAND gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test116", "line": 10, "text": "What is today's count of OR gates?", "op": "count_type", "kind": "hard", "params": {"type": "or"}}
-{"case": "test116", "line": 11, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard"}
+{"case": "test116", "line": 11, "text": "Give me the inverter count as it stands right now.", "op": "count_type", "kind": "hard", "params": {"type": "not"}}
 {"case": "test116", "line": 12, "text": "The XNOR headcount currently stands at what?", "op": "count_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test116", "line": 13, "text": "Current NAND census: what is the figure?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test116", "line": 14, "text": "Within the logic behind n3, how many are NAND cells?", "op": "count_type", "kind": "hard", "params": {"type": "nand"}}
@@ -1048,46 +1048,46 @@
 {"case": "test117", "line": 18, "text": "Which output takes the longest logical journey to compute?", "op": "deepest_output", "kind": "hard", "params": {}}
 {"case": "test117", "line": 19, "text": "Which output has the deepest logic cone?", "op": "deepest_output", "kind": "safe", "params": {}}
 {"case": "test117", "line": 20, "text": "Which output bit has the deepest fanin logic cone?", "op": "deepest_output", "kind": "safe", "params": {}}
-{"case": "test118", "line": 1, "text": "How many BUF gates were added by the buffer insertion just performed?", "op": "delta_count", "kind": "safe"}
-{"case": "test118", "line": 2, "text": "How did the tally move after that step — up or down, and by how much?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 3, "text": "How many NAND gates were eliminated by constant propagation?", "op": "delta_count", "kind": "safe"}
-{"case": "test118", "line": 4, "text": "Net change report: how many gates did the last operation add or remove?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 5, "text": "What did that last cleanup cost us in gates, net change?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 6, "text": "How many NOT gates were removed by the inverter-pair collapse?", "op": "delta_count", "kind": "safe"}
-{"case": "test118", "line": 7, "text": "Since the previous transform, what is the swing in cell count?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 8, "text": "How many cells did the merge shave off?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 9, "text": "Compared to before that transform, how many gates disappeared?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 10, "text": "How many gates were rewritten by the conversion just performed?", "op": "delta_count", "kind": "safe"}
-{"case": "test118", "line": 11, "text": "That change altered the gate total by how much exactly?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 12, "text": "Before versus after that operation: the count moved by how many?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 13, "text": "What is the before-versus-after gate difference from that step?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 14, "text": "By what margin did the netlist grow or shrink just now?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 15, "text": "The operation just performed: quantify its impact on the gate numbers.", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 16, "text": "How many cells did we gain or shed in that last move?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 17, "text": "Give the delta in cells attributable to the last edit.", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 18, "text": "What is the difference in gate count relative to before the transformation?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 19, "text": "How many components did we just lose?", "op": "delta_count", "kind": "hard"}
-{"case": "test118", "line": 20, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe"}
-{"case": "test119", "line": 1, "text": "Establish whether n3 is a function of n0[2] under any input scenario.", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 2, "text": "If I wiggle n12, can n63[1] ever notice?", "op": "depends_on", "kind": "hard"}
+{"case": "test118", "line": 1, "text": "How many BUF gates were added by the buffer insertion just performed?", "op": "delta_count", "kind": "safe", "params": {"kind": "buffers_added"}}
+{"case": "test118", "line": 2, "text": "How did the tally move after that step — up or down, and by how much?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 3, "text": "How many NAND gates were eliminated by constant propagation?", "op": "delta_count", "kind": "safe", "params": {"kind": "const_eliminated"}}
+{"case": "test118", "line": 4, "text": "Net change report: how many gates did the last operation add or remove?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 5, "text": "What did that last cleanup cost us in gates, net change?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 6, "text": "How many NOT gates were removed by the inverter-pair collapse?", "op": "delta_count", "kind": "safe", "params": {"kind": "collapsed"}}
+{"case": "test118", "line": 7, "text": "Since the previous transform, what is the swing in cell count?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 8, "text": "How many cells did the merge shave off?", "op": "delta_count", "kind": "hard", "params": {"kind": "merged"}}
+{"case": "test118", "line": 9, "text": "Compared to before that transform, how many gates disappeared?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 10, "text": "How many gates were rewritten by the conversion just performed?", "op": "delta_count", "kind": "safe", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 11, "text": "That change altered the gate total by how much exactly?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 12, "text": "Before versus after that operation: the count moved by how many?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 13, "text": "What is the before-versus-after gate difference from that step?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 14, "text": "By what margin did the netlist grow or shrink just now?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 15, "text": "The operation just performed: quantify its impact on the gate numbers.", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 16, "text": "How many cells did we gain or shed in that last move?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 17, "text": "Give the delta in cells attributable to the last edit.", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 18, "text": "What is the difference in gate count relative to before the transformation?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 19, "text": "How many components did we just lose?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
+{"case": "test118", "line": 20, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "dangling"}}
+{"case": "test119", "line": 1, "text": "Establish whether n3 is a function of n0[2] under any input scenario.", "op": "depends_on", "kind": "hard", "params": {"output": "n3", "input": "n0[2]"}}
+{"case": "test119", "line": 2, "text": "If I wiggle n12, can n63[1] ever notice?", "op": "depends_on", "kind": "hard", "params": {"input": "n12", "output": "n63[1]"}}
 {"case": "test119", "line": 3, "text": "Does output n16 depend on the input n0[2]? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n16", "input": "n0[2]"}}
-{"case": "test119", "line": 4, "text": "Functionally speaking, does n2 matter to n63[1]?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 5, "text": "Trace it for me: does any influence flow from n3 to n12?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 6, "text": "Does n0[0] have any influence over n31[0]?", "op": "depends_on", "kind": "hard"}
+{"case": "test119", "line": 4, "text": "Functionally speaking, does n2 matter to n63[1]?", "op": "depends_on", "kind": "hard", "params": {"input": "n2", "output": "n63[1]"}}
+{"case": "test119", "line": 5, "text": "Trace it for me: does any influence flow from n3 to n12?", "op": "depends_on", "kind": "hard", "params": {"input": "n3", "output": "n12"}}
+{"case": "test119", "line": 6, "text": "Does n0[0] have any influence over n31[0]?", "op": "depends_on", "kind": "hard", "params": {"input": "n0[0]", "output": "n31[0]"}}
 {"case": "test119", "line": 7, "text": "Does output n11[0] depend on input n0[0]? Answer yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n11[0]", "input": "n0[0]"}}
 {"case": "test119", "line": 8, "text": "Does output n63[1] depend on input n0? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n63[1]", "input": "n0"}}
-{"case": "test119", "line": 9, "text": "Does the truth table of n3 involve n3 at all?", "op": "depends_on", "kind": "hard"}
+{"case": "test119", "line": 9, "text": "Does the truth table of n3 involve n3 at all?", "op": "depends_on", "kind": "hard", "params": {"output": "n3", "input": "n3"}}
 {"case": "test119", "line": 10, "text": "Does the output n475 depend on input n0[2]? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n475", "input": "n0[2]"}}
-{"case": "test119", "line": 11, "text": "If n13 were frozen, could n13[0] behave any differently?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 12, "text": "Is n5 part of the story n13[0] tells, or irrelevant to it?", "op": "depends_on", "kind": "hard"}
+{"case": "test119", "line": 11, "text": "If n13 were frozen, could n13[0] behave any differently?", "op": "depends_on", "kind": "hard", "params": {"input": "n13", "output": "n13[0]"}}
+{"case": "test119", "line": 12, "text": "Is n5 part of the story n13[0] tells, or irrelevant to it?", "op": "depends_on", "kind": "hard", "params": {"input": "n5", "output": "n13[0]"}}
 {"case": "test119", "line": 13, "text": "Does output n31[0] functionally depend on input n3? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n31[0]", "input": "n3"}}
-{"case": "test119", "line": 14, "text": "Is n12 sensitive to n2 at all?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 15, "text": "Does the cone of n475 give n0[2] any say in the outcome?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 16, "text": "Could the value at n63[1] ever hinge on what n12 carries?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 17, "text": "Is n30 even listening to n0?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 18, "text": "Answer plainly: is n11[0] sensitive to n12, yes or no?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 19, "text": "Will changing n0 ever change n13[0]?", "op": "depends_on", "kind": "hard"}
-{"case": "test119", "line": 20, "text": "Is there a functional dependence of n8 on n12?", "op": "depends_on", "kind": "hard"}
+{"case": "test119", "line": 14, "text": "Is n12 sensitive to n2 at all?", "op": "depends_on", "kind": "hard", "params": {"output": "n12", "input": "n2"}}
+{"case": "test119", "line": 15, "text": "Does the cone of n475 give n0[2] any say in the outcome?", "op": "depends_on", "kind": "hard", "params": {"output": "n475", "input": "n0[2]"}}
+{"case": "test119", "line": 16, "text": "Could the value at n63[1] ever hinge on what n12 carries?", "op": "depends_on", "kind": "hard", "params": {"output": "n63[1]", "input": "n12"}}
+{"case": "test119", "line": 17, "text": "Is n30 even listening to n0?", "op": "depends_on", "kind": "hard", "params": {"output": "n30", "input": "n0"}}
+{"case": "test119", "line": 18, "text": "Answer plainly: is n11[0] sensitive to n12, yes or no?", "op": "depends_on", "kind": "hard", "params": {"output": "n11[0]", "input": "n12"}}
+{"case": "test119", "line": 19, "text": "Will changing n0 ever change n13[0]?", "op": "depends_on", "kind": "hard", "params": {"input": "n0", "output": "n13[0]"}}
+{"case": "test119", "line": 20, "text": "Is there a functional dependence of n8 on n12?", "op": "depends_on", "kind": "hard", "params": {"output": "n8", "input": "n12"}}
 {"case": "test120", "line": 1, "text": "Would blocking g1259 silence every message n24[2] sends toward n31[1]?", "op": "dominator", "kind": "hard", "params": {"a": "n24[2]", "b": "n31[1]", "gate": "g1259"}}
 {"case": "test120", "line": 2, "text": "Is there any way around g454 when traveling from n24[2] to n25[0]?", "op": "dominator", "kind": "hard", "params": {"a": "n24[2]", "b": "n25[0]", "gate": "g454"}}
 {"case": "test120", "line": 3, "text": "Confirm or refute: all routes from n0 to n25[0] run through g2198.", "op": "dominator", "kind": "hard", "params": {"a": "n0", "b": "n25[0]", "gate": "g2198"}}
@@ -1097,7 +1097,7 @@
 {"case": "test120", "line": 7, "text": "Does every path from input n0[0] to output n26[1] pass through g12? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n0[0]", "b": "n26[1]", "gate": "g12"}}
 {"case": "test120", "line": 8, "text": "Does every combinational path from input n13 to output n30 pass through gate g5? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n13", "b": "n30", "gate": "g5"}}
 {"case": "test120", "line": 9, "text": "Is there even one itinerary from n0[0] to n31[1] that leaves g12 out?", "op": "dominator", "kind": "hard", "params": {"a": "n0[0]", "b": "n31[1]", "gate": "g12"}}
-{"case": "test120", "line": 10, "text": "Can n117[1] hear from n61 without g454 in the middle, or never?", "op": "dominator", "kind": "hard", "params": {"a": "n117[1]", "b": "n61", "gate": "g454"}}
+{"case": "test120", "line": 10, "text": "Can n117[1] hear from n61 without g454 in the middle, or never?", "op": "dominator", "kind": "hard", "params": {"a": "n61", "b": "n117[1]", "gate": "g454"}}
 {"case": "test120", "line": 11, "text": "Between n0 and n31[1], does g2198 sit on each and every path?", "op": "dominator", "kind": "hard", "params": {"a": "n0", "b": "n31[1]", "gate": "g2198"}}
 {"case": "test120", "line": 12, "text": "Does g926 hold a monopoly on the traffic between n0[0] and n117[1]?", "op": "dominator", "kind": "hard", "params": {"a": "n0[0]", "b": "n117[1]", "gate": "g926"}}
 {"case": "test120", "line": 13, "text": "Check whether g1259 is the toll booth every n0[0]-to-n475 route must pay.", "op": "dominator", "kind": "hard", "params": {"a": "n0[0]", "b": "n475", "gate": "g1259"}}
@@ -1348,25 +1348,25 @@
 {"case": "test132", "line": 18, "text": "Which entry net has the most direct listeners?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
 {"case": "test132", "line": 19, "text": "Which primary input of this design has the highest fanout?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
 {"case": "test132", "line": 20, "text": "The busiest doorway into the chip: which input is it?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test133", "line": 1, "text": "Each gate reading n15 should get the signal via a personal BUF — set that up.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test133", "line": 1, "text": "Each gate reading n15 should get the signal via a personal BUF — set that up.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n15", "mode": "dedicated"}}
 {"case": "test133", "line": 2, "text": "Bring in BUFs until every driver is within 3 loads.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
-{"case": "test133", "line": 3, "text": "Shield n1214: one dedicated buffer per consumer.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test133", "line": 3, "text": "Shield n1214: one dedicated buffer per consumer.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n1214", "mode": "dedicated"}}
 {"case": "test133", "line": 4, "text": "Deploy buffering to cap per-driver loading at 3.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
 {"case": "test133", "line": 5, "text": "Insert buffers so that no gate drives more than 5 loads. Ensure functional equivalence is preserved.", "op": "insert_buffers", "kind": "safe", "params": {"k": 5}}
 {"case": "test133", "line": 6, "text": "Retrofit the design with buffers wherever a driver exceeds 6 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
 {"case": "test133", "line": 7, "text": "Too much on one driver is bad practice — enforce a 3-load maximum using buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
-{"case": "test133", "line": 8, "text": "Please insert a BUF gate on signal n1214 so that every load of n1214 is driven through a dedicated buffer. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe"}
+{"case": "test133", "line": 8, "text": "Please insert a BUF gate on signal n1214 so that every load of n1214 is driven through a dedicated buffer. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n1214", "mode": "dedicated"}}
 {"case": "test133", "line": 9, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4}}
 {"case": "test133", "line": 10, "text": "Add repeater stages so that no single cell pushes beyond 8 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 8}}
-{"case": "test133", "line": 11, "text": "Stage the loading on n10[0] through fresh BUF cells, one per receiver.", "op": "insert_buffers", "kind": "hard"}
-{"case": "test133", "line": 12, "text": "Isolate each consumer of n1214 behind its own buffer.", "op": "insert_buffers", "kind": "hard"}
-{"case": "test133", "line": 13, "text": "Fan n10[0] out through individual BUFs, one per load.", "op": "insert_buffers", "kind": "hard"}
-{"case": "test133", "line": 14, "text": "Interpose a dedicated buffer between n15 and every one of its loads.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test133", "line": 11, "text": "Stage the loading on n10[0] through fresh BUF cells, one per receiver.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n10[0]", "mode": "dedicated"}}
+{"case": "test133", "line": 12, "text": "Isolate each consumer of n1214 behind its own buffer.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n1214", "mode": "dedicated"}}
+{"case": "test133", "line": 13, "text": "Fan n10[0] out through individual BUFs, one per load.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n10[0]", "mode": "dedicated"}}
+{"case": "test133", "line": 14, "text": "Interpose a dedicated buffer between n15 and every one of its loads.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n15", "mode": "dedicated"}}
 {"case": "test133", "line": 15, "text": "Insert buffers wherever needed so that no gate drives more than 3 loads. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"k": 3}}
-{"case": "test133", "line": 16, "text": "Please insert a BUF gate on signal n1214 so that each load of n1214 is driven through a dedicated buffer. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe"}
+{"case": "test133", "line": 16, "text": "Please insert a BUF gate on signal n1214 so that each load of n1214 is driven through a dedicated buffer. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n1214", "mode": "dedicated"}}
 {"case": "test133", "line": 17, "text": "Break up the heavy nets: add buffers so the 3-load rule holds design-wide.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
 {"case": "test133", "line": 18, "text": "Nobody should drive more than 6 listeners — add buffers where that is violated.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
-{"case": "test133", "line": 19, "text": "Give every load of n0 its own private repeater.", "op": "insert_buffers", "kind": "hard"}
+{"case": "test133", "line": 19, "text": "Give every load of n0 its own private repeater.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n0", "mode": "dedicated"}}
 {"case": "test133", "line": 20, "text": "Cap the drive burden at 6 loads per gate by sprinkling in buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
 {"case": "test134", "line": 1, "text": "Determine whether the wire n10239 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n10239"}}
 {"case": "test134", "line": 2, "text": "Determine whether wire n848 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n848"}}
@@ -1429,20 +1429,20 @@
 {"case": "test136", "line": 19, "text": "Find all paths of length zero (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
 {"case": "test136", "line": 20, "text": "Find all the paths of length 0 (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
 {"case": "test137", "line": 1, "text": "What does the output-side interface consist of, signal by signal, with widths?", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
-{"case": "test137", "line": 2, "text": "Give the complete list of departing signals with their bus widths.", "op": "list_ports", "kind": "hard"}
+{"case": "test137", "line": 2, "text": "Give the complete list of departing signals with their bus widths.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
 {"case": "test137", "line": 3, "text": "List all primary outputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "output"}}
 {"case": "test137", "line": 4, "text": "Which signals form the input boundary? Names and widths, please.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 5, "text": "Introduce me to the inputs: every port, every width.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 6, "text": "Spell out the input ports of this design for me.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 7, "text": "The design's outputs, item by item, with how many bits each carries.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
-{"case": "test137", "line": 8, "text": "Run down the design's entry points for me.", "op": "list_ports", "kind": "hard"}
-{"case": "test137", "line": 9, "text": "A roster of the exit ports with their bit sizes, please.", "op": "list_ports", "kind": "hard"}
-{"case": "test137", "line": 10, "text": "Detail the entry pins — identifiers plus widths.", "op": "list_ports", "kind": "hard"}
+{"case": "test137", "line": 8, "text": "Run down the design's entry points for me.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
+{"case": "test137", "line": 9, "text": "A roster of the exit ports with their bit sizes, please.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
+{"case": "test137", "line": 10, "text": "Detail the entry pins — identifiers plus widths.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 11, "text": "Please list all the primary inputs of the design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "input"}}
-{"case": "test137", "line": 12, "text": "Name each way into this circuit, widths included.", "op": "list_ports", "kind": "hard"}
+{"case": "test137", "line": 12, "text": "Name each way into this circuit, widths included.", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 13, "text": "List all the primary outputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "output"}}
 {"case": "test137", "line": 14, "text": "Please list all primary inputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "input"}}
-{"case": "test137", "line": 15, "text": "Which named ports bring data in, and how wide is each one?", "op": "list_ports", "kind": "hard"}
+{"case": "test137", "line": 15, "text": "Which named ports bring data in, and how wide is each one?", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 16, "text": "What are the names and sizes of the input pins?", "op": "list_ports", "kind": "hard", "params": {"dir": "input"}}
 {"case": "test137", "line": 17, "text": "Please list all the primary inputs of this design with their bit widths.", "op": "list_ports", "kind": "safe", "params": {"dir": "input"}}
 {"case": "test137", "line": 18, "text": "Catalogue the exits: every output port with its width.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
@@ -1450,44 +1450,44 @@
 {"case": "test137", "line": 20, "text": "Lay out the output ports together with their bit counts.", "op": "list_ports", "kind": "hard", "params": {"dir": "output"}}
 {"case": "test138", "line": 1, "text": "Display every NOR gate together with what it connects.", "op": "list_type", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test138", "line": 2, "text": "List all XNOR gates in this design.", "op": "list_type", "kind": "safe", "params": {"type": "xnor"}}
-{"case": "test138", "line": 3, "text": "Which cells are XNORs? Point them out.", "op": "list_type", "kind": "hard"}
+{"case": "test138", "line": 3, "text": "Which cells are XNORs? Point them out.", "op": "list_type", "kind": "hard", "params": {"type": "xnor"}}
 {"case": "test138", "line": 4, "text": "The full roster of the design's XNOR gates, please.", "op": "list_type", "kind": "hard", "params": {"type": "xnor"}}
-{"case": "test138", "line": 5, "text": "Locate all inverters (NOT cells) and list them with their pins.", "op": "list_type", "kind": "hard"}
-{"case": "test138", "line": 6, "text": "List all BUF gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test138", "line": 5, "text": "Locate all inverters (NOT cells) and list them with their pins.", "op": "list_type", "kind": "hard", "params": {"type": "not"}}
+{"case": "test138", "line": 6, "text": "List all BUF gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "buf"}}
 {"case": "test138", "line": 7, "text": "Which cells are of the BUF variety? Show each with its nets.", "op": "list_type", "kind": "hard", "params": {"type": "buf"}}
 {"case": "test138", "line": 8, "text": "Point out every XNOR in this circuit.", "op": "list_type", "kind": "hard", "params": {"type": "xnor"}}
-{"case": "test138", "line": 9, "text": "Where are the NORs? A complete list with their connections.", "op": "list_type", "kind": "hard"}
-{"case": "test138", "line": 10, "text": "List all NAND gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test138", "line": 9, "text": "Where are the NORs? A complete list with their connections.", "op": "list_type", "kind": "hard", "params": {"type": "nor"}}
+{"case": "test138", "line": 10, "text": "List all NAND gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test138", "line": 11, "text": "Roll call for the NOR gates, please.", "op": "list_type", "kind": "hard", "params": {"type": "nor"}}
 {"case": "test138", "line": 12, "text": "List all XOR gates in this design.", "op": "list_type", "kind": "safe", "params": {"type": "xor"}}
-{"case": "test138", "line": 13, "text": "Show me each NAND cell and how it is wired.", "op": "list_type", "kind": "hard"}
+{"case": "test138", "line": 13, "text": "Show me each NAND cell and how it is wired.", "op": "list_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test138", "line": 14, "text": "Present all NAND cells together with their wiring.", "op": "list_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test138", "line": 15, "text": "Round up the ANDs — instance names and I/O signals.", "op": "list_type", "kind": "hard", "params": {"type": "and"}}
-{"case": "test138", "line": 16, "text": "The NAND contingent: names plus input and output signals.", "op": "list_type", "kind": "hard"}
+{"case": "test138", "line": 16, "text": "The NAND contingent: names plus input and output signals.", "op": "list_type", "kind": "hard", "params": {"type": "nand"}}
 {"case": "test138", "line": 17, "text": "Identify all the BUF cells present in this design.", "op": "list_type", "kind": "hard", "params": {"type": "buf"}}
 {"case": "test138", "line": 18, "text": "Name every XOR gate in the design.", "op": "list_type", "kind": "hard", "params": {"type": "xor"}}
-{"case": "test138", "line": 19, "text": "List all NOR gates in this design with their input and output signals.", "op": "list_type", "kind": "safe"}
+{"case": "test138", "line": 19, "text": "List all NOR gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test138", "line": 20, "text": "Every XOR instance, called out by name.", "op": "list_type", "kind": "hard", "params": {"type": "xor"}}
-{"case": "test139", "line": 1, "text": "Please load the design from the file test139.v in the directory testcase/test139/.", "op": "load_design", "kind": "safe"}
-{"case": "test139", "line": 2, "text": "Source the circuit from test139.v under testcase/test139/ and hold it as the current design.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 3, "text": "Open test139.v from testcase/test139/ and read the circuit in.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 4, "text": "Please load the design from the file test139.v, located in the directory testcase/test139/.", "op": "load_design", "kind": "safe"}
-{"case": "test139", "line": 5, "text": "Parse testcase/test139/test139.v and let that be our working netlist.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 6, "text": "Please load the design from the file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe"}
-{"case": "test139", "line": 7, "text": "Mount test139.v (directory testcase/test139/) as the active circuit.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 8, "text": "Our subject is the netlist at testcase/test139/test139.v — take it in.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 9, "text": "The netlist to study sits at testcase/test139/test139.v — load away.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 10, "text": "Fetch the Verilog living at testcase/test139/test139.v into the session.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 11, "text": "Pull in the netlist stored at testcase/test139/test139.v and make it the working design.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 12, "text": "Please load the design from file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe"}
-{"case": "test139", "line": 13, "text": "Read the Verilog at testcase/test139/test139.v into memory.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 14, "text": "Bring up the design description in testcase/test139/test139.v.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 15, "text": "The file testcase/test139/test139.v holds today's design; absorb it.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 16, "text": "Consume testcase/test139/test139.v; everything after this refers to it.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 17, "text": "Please load the design from the file test139.v located in directory testcase/test139/.", "op": "load_design", "kind": "safe"}
-{"case": "test139", "line": 18, "text": "Stand up the design described in testcase/test139/test139.v.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 19, "text": "Initialize the working design from the file testcase/test139/test139.v.", "op": "load_design", "kind": "hard"}
-{"case": "test139", "line": 20, "text": "Ingest test139.v (it lives in testcase/test139/) as our current netlist.", "op": "load_design", "kind": "hard"}
+{"case": "test139", "line": 1, "text": "Please load the design from the file test139.v in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 2, "text": "Source the circuit from test139.v under testcase/test139/ and hold it as the current design.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 3, "text": "Open test139.v from testcase/test139/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 4, "text": "Please load the design from the file test139.v, located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 5, "text": "Parse testcase/test139/test139.v and let that be our working netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 6, "text": "Please load the design from the file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 7, "text": "Mount test139.v (directory testcase/test139/) as the active circuit.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 8, "text": "Our subject is the netlist at testcase/test139/test139.v — take it in.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 9, "text": "The netlist to study sits at testcase/test139/test139.v — load away.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 10, "text": "Fetch the Verilog living at testcase/test139/test139.v into the session.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 11, "text": "Pull in the netlist stored at testcase/test139/test139.v and make it the working design.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 12, "text": "Please load the design from file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 13, "text": "Read the Verilog at testcase/test139/test139.v into memory.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 14, "text": "Bring up the design description in testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 15, "text": "The file testcase/test139/test139.v holds today's design; absorb it.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 16, "text": "Consume testcase/test139/test139.v; everything after this refers to it.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 17, "text": "Please load the design from the file test139.v located in directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 18, "text": "Stand up the design described in testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 19, "text": "Initialize the working design from the file testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 20, "text": "Ingest test139.v (it lives in testcase/test139/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
 {"case": "test140", "line": 1, "text": "How far apart are n24[2] and n475, measured in logic depth?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n24[2]", "b": "n475"}}
 {"case": "test140", "line": 2, "text": "The depth of the longest logic run linking n12 with n117[1] is what?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n12", "b": "n117[1]"}}
 {"case": "test140", "line": 3, "text": "Between the endpoints n12 and n4, what is the maximum chain length in gates?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n12", "b": "n4"}}
@@ -1668,25 +1668,25 @@
 {"case": "test148", "line": 18, "text": "Outputs above the 8-stage threshold — the total?", "op": "outputs_depth_gt", "kind": "hard", "params": {"k": 8}}
 {"case": "test148", "line": 19, "text": "For how many outputs does the level count exceed 2?", "op": "outputs_depth_gt", "kind": "hard", "params": {"k": 2}}
 {"case": "test148", "line": 20, "text": "Outputs needing more than 3 stages: what is the count?", "op": "outputs_depth_gt", "kind": "hard", "params": {"k": 3}}
-{"case": "test149", "line": 1, "text": "n24[2] to n117[1] with n141 forbidden: connected or not?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 1, "text": "n24[2] to n117[1] with n141 forbidden: connected or not?", "op": "path_exists", "kind": "hard", "params": {"a": "n24[2]", "b": "n117[1]", "avoid": "n141"}}
 {"case": "test149", "line": 2, "text": "Can influence travel from n7 to n31[1] while n1646 stays untouched?", "op": "path_exists", "kind": "hard", "params": {"a": "n7", "b": "n31[1]", "avoid": "n1646"}}
-{"case": "test149", "line": 3, "text": "Steering clear of n95, does n0 still connect to n26[1]?", "op": "path_exists", "kind": "hard"}
-{"case": "test149", "line": 4, "text": "Does n14 have a way to n31[1] that bypasses n719?", "op": "path_exists", "kind": "hard"}
-{"case": "test149", "line": 5, "text": "Route check: n0[1] to n30, mandatory detour around n719 — feasible?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 3, "text": "Steering clear of n95, does n0 still connect to n26[1]?", "op": "path_exists", "kind": "hard", "params": {"a": "n0", "b": "n26[1]", "avoid": "n95"}}
+{"case": "test149", "line": 4, "text": "Does n14 have a way to n31[1] that bypasses n719?", "op": "path_exists", "kind": "hard", "params": {"a": "n14", "b": "n31[1]", "avoid": "n719"}}
+{"case": "test149", "line": 5, "text": "Route check: n0[1] to n30, mandatory detour around n719 — feasible?", "op": "path_exists", "kind": "hard", "params": {"a": "n0[1]", "b": "n30", "avoid": "n719"}}
 {"case": "test149", "line": 6, "text": "If n1127 is off-limits, can a signal still travel from n0[0] to n30?", "op": "path_exists", "kind": "hard", "params": {"a": "n0[0]", "b": "n30", "avoid": "n1127"}}
-{"case": "test149", "line": 7, "text": "Can n7 reach n26[1] without ever passing n208?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 7, "text": "Can n7 reach n26[1] without ever passing n208?", "op": "path_exists", "kind": "hard", "params": {"a": "n7", "b": "n26[1]", "avoid": "n208"}}
 {"case": "test149", "line": 8, "text": "Is there a road from n0 to n26[1] on which n208 never appears?", "op": "path_exists", "kind": "hard", "params": {"a": "n0", "b": "n26[1]", "avoid": "n208"}}
 {"case": "test149", "line": 9, "text": "Determine whether a combinational path from n3 to n26[1] exists that does not traverse the node n719.", "op": "path_exists", "kind": "safe", "params": {"a": "n3", "b": "n26[1]", "avoid": "n719"}}
 {"case": "test149", "line": 10, "text": "Does the netlist offer a passage from n5 to n31[1] that skips n1646 entirely?", "op": "path_exists", "kind": "hard", "params": {"a": "n5", "b": "n31[1]", "avoid": "n1646"}}
 {"case": "test149", "line": 11, "text": "Verify whether a path connecting input n5 to output n30 exists while avoiding n141.", "op": "path_exists", "kind": "safe", "params": {"a": "n5", "b": "n30", "avoid": "n141"}}
-{"case": "test149", "line": 12, "text": "With n4156 declared off-limits, does n3 still find its way to n31[1]?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 12, "text": "With n4156 declared off-limits, does n3 still find its way to n31[1]?", "op": "path_exists", "kind": "hard", "params": {"a": "n3", "b": "n31[1]", "avoid": "n4156"}}
 {"case": "test149", "line": 13, "text": "Is there a n86984-free route from n2 to n13[0]?", "op": "path_exists", "kind": "hard", "params": {"a": "n2", "b": "n13[0]", "avoid": "n86984"}}
 {"case": "test149", "line": 14, "text": "Determine whether a combinational path from n0[0] to n63[0] exists that does not traverse node n208.", "op": "path_exists", "kind": "safe", "params": {"a": "n0[0]", "b": "n63[0]", "avoid": "n208"}}
 {"case": "test149", "line": 15, "text": "Verify whether a path connecting input n1 to output n13[0] exists while avoiding node n58.", "op": "path_exists", "kind": "safe", "params": {"a": "n1", "b": "n13[0]", "avoid": "n58"}}
 {"case": "test149", "line": 16, "text": "Pretend n86984 is removed. Is there any surviving connection from n14 to n475?", "op": "path_exists", "kind": "hard", "params": {"a": "n14", "b": "n475", "avoid": "n86984"}}
-{"case": "test149", "line": 17, "text": "Absent n141, would n12 and n13[0] remain linked?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 17, "text": "Absent n141, would n12 and n13[0] remain linked?", "op": "path_exists", "kind": "hard", "params": {"a": "n12", "b": "n13[0]", "avoid": "n141"}}
 {"case": "test149", "line": 18, "text": "Establish whether a chain from n24[2] to n15 exists that leaves n86984 out.", "op": "path_exists", "kind": "hard", "params": {"a": "n24[2]", "b": "n15", "avoid": "n86984"}}
-{"case": "test149", "line": 19, "text": "Avoiding n14 at all costs, is n117[1] still within reach of n1?", "op": "path_exists", "kind": "hard"}
+{"case": "test149", "line": 19, "text": "Avoiding n14 at all costs, is n117[1] still within reach of n1?", "op": "path_exists", "kind": "hard", "params": {"a": "n1", "b": "n117[1]", "avoid": "n14"}}
 {"case": "test149", "line": 20, "text": "Determine whether a combinational path exists from n61 to n15 that does not traverse node n4156.", "op": "path_exists", "kind": "safe", "params": {"a": "n61", "b": "n15", "avoid": "n4156"}}
 {"case": "test150", "line": 1, "text": "What is the maximum logic depth from any primary input to any DFF D-pin in the design?", "op": "pi_to_dff_depth", "kind": "safe", "params": {}}
 {"case": "test150", "line": 2, "text": "Before first storage — how many gate levels can a fresh input cross, at maximum?", "op": "pi_to_dff_depth", "kind": "hard", "params": {}}
@@ -1828,26 +1828,26 @@
 {"case": "test156", "line": 18, "text": "Anything not observable from the outputs — cut it.", "op": "remove_dangling", "kind": "hard", "params": {}}
 {"case": "test156", "line": 19, "text": "Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.", "op": "remove_dangling", "kind": "safe", "params": {}}
 {"case": "test156", "line": 20, "text": "Purge the cells whose work never leaves the chip.", "op": "remove_dangling", "kind": "hard", "params": {}}
-{"case": "test157", "line": 1, "text": "Rename wire n1039 to sig_alias. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "n1039", "new": "sig_alias"}}
-{"case": "test157", "line": 2, "text": "Rebadge n1001 as stage2_out throughout the netlist.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 3, "text": "Give g71713 the new identifier sig_alias.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 4, "text": "Rename gate g926 to renamed_wire. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "g926", "new": "renamed_wire"}}
-{"case": "test157", "line": 5, "text": "Henceforth n1039 answers to renamed_sig; propagate the change everywhere.", "op": "rename", "kind": "hard", "params": {"old": "answers", "new": "renamed_sig"}}
-{"case": "test157", "line": 6, "text": "From now on, g1259 goes by renamed_sig — update every reference.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 7, "text": "Every mention of n1023 should now read stage2_out — apply that globally.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 8, "text": "Change the label of the internal wire n10239 to stage2_out everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n10239", "new": "stage2_out"}}
-{"case": "test157", "line": 9, "text": "Rename gate g12 to sig_alias. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "g12", "new": "sig_alias"}}
-{"case": "test157", "line": 10, "text": "Push a global find-and-replace: n848 becomes sig_alias.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 11, "text": "Update the netlist so that n10239 carries the name renamed_sig everywhere it appears.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 12, "text": "The wire once called n848 is now renamed_sig — make it official everywhere.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 13, "text": "Swap the name n10239 for renamed_wire across the whole netlist.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 14, "text": "Assign stage2_out as the new identifier of gate g5.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 15, "text": "Substitute the identifier renamed_sig for n1039 across the whole netlist.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 16, "text": "g1259 needs a new name. Use sig_alias and update all references to it.", "op": "rename", "kind": "hard", "params": {"old": "references", "new": "it"}}
-{"case": "test157", "line": 17, "text": "Rename wire n1001 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "n1001", "new": "renamed_sig"}}
-{"case": "test157", "line": 18, "text": "Change the identifier of gate g0 to stage2_out and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g0", "new": "stage2_out"}}
-{"case": "test157", "line": 19, "text": "Retitle the gate g1259: its new handle is renamed_wire.", "op": "rename", "kind": "hard"}
-{"case": "test157", "line": 20, "text": "Re-label g100 as sig_alias without altering any behavior.", "op": "rename", "kind": "hard"}
+{"case": "test157", "line": 1, "text": "Rename wire n1039 to sig_alias. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "n1039", "new": "sig_alias", "kind": "wire"}}
+{"case": "test157", "line": 2, "text": "Rebadge n1001 as stage2_out throughout the netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1001", "new": "stage2_out", "kind": "wire"}}
+{"case": "test157", "line": 3, "text": "Give g71713 the new identifier sig_alias.", "op": "rename", "kind": "hard", "params": {"old": "g71713", "new": "sig_alias", "kind": "gate"}}
+{"case": "test157", "line": 4, "text": "Rename gate g926 to renamed_wire. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "g926", "new": "renamed_wire", "kind": "gate"}}
+{"case": "test157", "line": 5, "text": "Henceforth n1039 answers to renamed_sig; propagate the change everywhere.", "op": "rename", "kind": "hard", "params": {"old": "n1039", "new": "renamed_sig", "kind": "wire"}}
+{"case": "test157", "line": 6, "text": "From now on, g1259 goes by renamed_sig — update every reference.", "op": "rename", "kind": "hard", "params": {"old": "g1259", "new": "renamed_sig", "kind": "gate"}}
+{"case": "test157", "line": 7, "text": "Every mention of n1023 should now read stage2_out — apply that globally.", "op": "rename", "kind": "hard", "params": {"old": "n1023", "new": "stage2_out", "kind": "wire"}}
+{"case": "test157", "line": 8, "text": "Change the label of the internal wire n10239 to stage2_out everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n10239", "new": "stage2_out", "kind": "wire"}}
+{"case": "test157", "line": 9, "text": "Rename gate g12 to sig_alias. Make sure nothing changes functionally.", "op": "rename", "kind": "safe", "params": {"old": "g12", "new": "sig_alias", "kind": "gate"}}
+{"case": "test157", "line": 10, "text": "Push a global find-and-replace: n848 becomes sig_alias.", "op": "rename", "kind": "hard", "params": {"old": "n848", "new": "sig_alias", "kind": "wire"}}
+{"case": "test157", "line": 11, "text": "Update the netlist so that n10239 carries the name renamed_sig everywhere it appears.", "op": "rename", "kind": "hard", "params": {"old": "n10239", "new": "renamed_sig", "kind": "wire"}}
+{"case": "test157", "line": 12, "text": "The wire once called n848 is now renamed_sig — make it official everywhere.", "op": "rename", "kind": "hard", "params": {"old": "n848", "new": "renamed_sig", "kind": "wire"}}
+{"case": "test157", "line": 13, "text": "Swap the name n10239 for renamed_wire across the whole netlist.", "op": "rename", "kind": "hard", "params": {"old": "n10239", "new": "renamed_wire", "kind": "wire"}}
+{"case": "test157", "line": 14, "text": "Assign stage2_out as the new identifier of gate g5.", "op": "rename", "kind": "hard", "params": {"old": "g5", "new": "stage2_out", "kind": "gate"}}
+{"case": "test157", "line": 15, "text": "Substitute the identifier renamed_sig for n1039 across the whole netlist.", "op": "rename", "kind": "hard", "params": {"old": "n1039", "new": "renamed_sig", "kind": "wire"}}
+{"case": "test157", "line": 16, "text": "g1259 needs a new name. Use sig_alias and update all references to it.", "op": "rename", "kind": "hard", "params": {"old": "g1259", "new": "sig_alias", "kind": "gate"}}
+{"case": "test157", "line": 17, "text": "Rename wire n1001 to renamed_sig. Ensure functional equivalence is preserved.", "op": "rename", "kind": "safe", "params": {"old": "n1001", "new": "renamed_sig", "kind": "wire"}}
+{"case": "test157", "line": 18, "text": "Change the identifier of gate g0 to stage2_out and update all references. Ensure the design functionality does not change.", "op": "rename", "kind": "safe", "params": {"old": "g0", "new": "stage2_out", "kind": "gate"}}
+{"case": "test157", "line": 19, "text": "Retitle the gate g1259: its new handle is renamed_wire.", "op": "rename", "kind": "hard", "params": {"old": "g1259", "new": "renamed_wire", "kind": "gate"}}
+{"case": "test157", "line": 20, "text": "Re-label g100 as sig_alias without altering any behavior.", "op": "rename", "kind": "hard", "params": {"old": "g100", "new": "sig_alias", "kind": "gate"}}
 {"case": "test158", "line": 1, "text": "Point out the AND gates with a frozen input — look, don't touch.", "op": "report_const_gates", "kind": "hard", "params": {}}
 {"case": "test158", "line": 2, "text": "Report any NAND gates with constant inputs (0 or 1) in this design.", "op": "report_const_gates", "kind": "safe", "params": {}}
 {"case": "test158", "line": 3, "text": "Without modifying anything, flag the NANDs that are fed constant levels.", "op": "report_const_gates", "kind": "hard", "params": {}}
@@ -1948,26 +1948,26 @@
 {"case": "test162", "line": 18, "text": "List the gates g12 hands off to directly.", "op": "successors", "kind": "hard", "params": {"gate": "g12"}}
 {"case": "test162", "line": 19, "text": "Immediately past g12, which cells stand?", "op": "successors", "kind": "hard", "params": {"gate": "g12"}}
 {"case": "test162", "line": 20, "text": "Enumerate the immediate successor gates of g1259.", "op": "successors", "kind": "safe", "params": {"gate": "g1259"}}
-{"case": "test163", "line": 1, "text": "Would n13[0] even notice if n2 and n1 switched roles?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 2, "text": "Could I swap n1 and n0[3] without n475 noticing?", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 1, "text": "Would n13[0] even notice if n2 and n1 switched roles?", "op": "symmetric", "kind": "hard", "params": {"output": "n13[0]", "a": "n2", "b": "n1"}}
+{"case": "test163", "line": 2, "text": "Could I swap n1 and n0[3] without n475 noticing?", "op": "symmetric", "kind": "hard", "params": {"output": "n475", "a": "n1", "b": "n0[3]"}}
 {"case": "test163", "line": 3, "text": "Check whether the function at n25[0] is symmetric in inputs n0 and n3.", "op": "symmetric", "kind": "safe", "params": {"output": "n25[0]", "a": "n0", "b": "n3"}}
 {"case": "test163", "line": 4, "text": "Check whether the function at output n475 is symmetric with respect to inputs n12 and n9[0].", "op": "symmetric", "kind": "safe", "params": {"output": "n475", "a": "n12", "b": "n9[0]"}}
-{"case": "test163", "line": 5, "text": "Are n0[1] and n1 on equal footing in the eyes of n13[0]?", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 5, "text": "Are n0[1] and n1 on equal footing in the eyes of n13[0]?", "op": "symmetric", "kind": "hard", "params": {"output": "n13[0]", "a": "n0[1]", "b": "n1"}}
 {"case": "test163", "line": 6, "text": "Same output if n0 and n4[0] trade places?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 7, "text": "Is n63[1] indifferent to exchanging n13 with n4[0]?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 8, "text": "Is n31[0] blind to which of n1 and n3 carries which value?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 9, "text": "Does n15 treat n0 and n0[1] interchangeably?", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 7, "text": "Is n63[1] indifferent to exchanging n13 with n4[0]?", "op": "symmetric", "kind": "hard", "params": {"output": "n63[1]", "a": "n13", "b": "n4[0]"}}
+{"case": "test163", "line": 8, "text": "Is n31[0] blind to which of n1 and n3 carries which value?", "op": "symmetric", "kind": "hard", "params": {"output": "n31[0]", "a": "n1", "b": "n3"}}
+{"case": "test163", "line": 9, "text": "Does n15 treat n0 and n0[1] interchangeably?", "op": "symmetric", "kind": "hard", "params": {"output": "n15", "a": "n0", "b": "n0[1]"}}
 {"case": "test163", "line": 10, "text": "Check if the function at n8 is symmetric with respect to inputs n2 and n24[0].", "op": "symmetric", "kind": "safe", "params": {"output": "n8", "a": "n2", "b": "n24[0]"}}
-{"case": "test163", "line": 11, "text": "Does permuting n1 and n0[3] leave the behavior of n475 intact?", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 11, "text": "Does permuting n1 and n0[3] leave the behavior of n475 intact?", "op": "symmetric", "kind": "hard", "params": {"output": "n475", "a": "n1", "b": "n0[3]"}}
 {"case": "test163", "line": 12, "text": "Check whether the function at n31[0] is symmetric with respect to the inputs n0 and n0[1].", "op": "symmetric", "kind": "safe", "params": {"output": "n31[0]", "a": "n0", "b": "n0[1]"}}
-{"case": "test163", "line": 13, "text": "Are n0[2] and n0[1] equal citizens as far as n15 is concerned?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 14, "text": "Interchangeable or not: n24[1] and n0[3], as seen from n63[1]?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 15, "text": "If n13 and n1 exchanged their signals, would n8 be unchanged?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 16, "text": "Test n16 for symmetry in the input pair n12, n4[0].", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 13, "text": "Are n0[2] and n0[1] equal citizens as far as n15 is concerned?", "op": "symmetric", "kind": "hard", "params": {"output": "n15", "a": "n0[2]", "b": "n0[1]"}}
+{"case": "test163", "line": 14, "text": "Interchangeable or not: n24[1] and n0[3], as seen from n63[1]?", "op": "symmetric", "kind": "hard", "params": {"output": "n63[1]", "a": "n24[1]", "b": "n0[3]"}}
+{"case": "test163", "line": 15, "text": "If n13 and n1 exchanged their signals, would n8 be unchanged?", "op": "symmetric", "kind": "hard", "params": {"output": "n8", "a": "n13", "b": "n1"}}
+{"case": "test163", "line": 16, "text": "Test n16 for symmetry in the input pair n12, n4[0].", "op": "symmetric", "kind": "hard", "params": {"output": "n16", "a": "n12", "b": "n4[0]"}}
 {"case": "test163", "line": 17, "text": "Check whether the function at n25[0] is symmetric with respect to inputs n0[0] and n4[0].", "op": "symmetric", "kind": "safe", "params": {"output": "n25[0]", "a": "n0[0]", "b": "n4[0]"}}
-{"case": "test163", "line": 18, "text": "Trading places between n5 and n1 — does n8 care?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 19, "text": "Symmetric with respect to n2 and n4[0] — is the function at n31[0]?", "op": "symmetric", "kind": "hard"}
-{"case": "test163", "line": 20, "text": "Does the function at n15 stay fixed under swapping n0[1] with n9[0]?", "op": "symmetric", "kind": "hard"}
+{"case": "test163", "line": 18, "text": "Trading places between n5 and n1 — does n8 care?", "op": "symmetric", "kind": "hard", "params": {"output": "n8", "a": "n5", "b": "n1"}}
+{"case": "test163", "line": 19, "text": "Symmetric with respect to n2 and n4[0] — is the function at n31[0]?", "op": "symmetric", "kind": "hard", "params": {"output": "n31[0]", "a": "n2", "b": "n4[0]"}}
+{"case": "test163", "line": 20, "text": "Does the function at n15 stay fixed under swapping n0[1] with n9[0]?", "op": "symmetric", "kind": "hard", "params": {"output": "n15", "a": "n0[1]", "b": "n9[0]"}}
 {"case": "test164", "line": 1, "text": "Just the grand total of gates.", "op": "total_gate_count", "kind": "hard", "params": {}}
 {"case": "test164", "line": 2, "text": "Compute the total gate count of the design.", "op": "total_gate_count", "kind": "safe", "params": {}}
 {"case": "test164", "line": 3, "text": "Count everything with pins — a single figure, please.", "op": "total_gate_count", "kind": "hard", "params": {}}
@@ -2048,26 +2048,26 @@
 {"case": "test167", "line": 18, "text": "Is the working copy still faithful to the source design? Verify it.", "op": "verify_equivalence", "kind": "hard", "params": {}}
 {"case": "test167", "line": 19, "text": "Verify functional equivalence between the current design and the originally loaded netlist.", "op": "verify_equivalence", "kind": "safe", "params": {}}
 {"case": "test167", "line": 20, "text": "Sanity-check: current versus original — identical behavior?", "op": "verify_equivalence", "kind": "hard", "params": {}}
-{"case": "test168", "line": 1, "text": "Please write the current design out to the file test168_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test168", "line": 2, "text": "Emit the netlist in its current form to test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 3, "text": "Serialize the working netlist out to test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 4, "text": "Take a snapshot of the netlist and store it at test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 5, "text": "Capture the current state of the circuit into test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 6, "text": "Flush the in-memory design to the file test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 7, "text": "Export the present netlist to test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 8, "text": "Please write the current design to the output file named test168_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test168", "line": 9, "text": "Archive the current netlist into test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 10, "text": "Dump the current circuit into test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 11, "text": "Finalize by writing the circuit out as test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 12, "text": "Commit the working design to disk as test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 13, "text": "Save what we have now as test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 14, "text": "Record today's version of the circuit under test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 15, "text": "Produce test168_out.v containing the design exactly as it now stands.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 16, "text": "The present design belongs on disk — file it as test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 17, "text": "Please write out the current design to the output file test168_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test168", "line": 18, "text": "Persist the netlist as it stands to test168_out.v.", "op": "write_design", "kind": "hard"}
-{"case": "test168", "line": 19, "text": "Please write the current design to the output file test168_out.v.", "op": "write_design", "kind": "safe"}
-{"case": "test168", "line": 20, "text": "Please write the current design to output file test168_out.v.", "op": "write_design", "kind": "safe"}
+{"case": "test168", "line": 1, "text": "Please write the current design out to the file test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 2, "text": "Emit the netlist in its current form to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 3, "text": "Serialize the working netlist out to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 4, "text": "Take a snapshot of the netlist and store it at test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 5, "text": "Capture the current state of the circuit into test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 6, "text": "Flush the in-memory design to the file test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 7, "text": "Export the present netlist to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 8, "text": "Please write the current design to the output file named test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 9, "text": "Archive the current netlist into test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 10, "text": "Dump the current circuit into test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 11, "text": "Finalize by writing the circuit out as test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 12, "text": "Commit the working design to disk as test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 13, "text": "Save what we have now as test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 14, "text": "Record today's version of the circuit under test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 15, "text": "Produce test168_out.v containing the design exactly as it now stands.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 16, "text": "The present design belongs on disk — file it as test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 17, "text": "Please write out the current design to the output file test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 18, "text": "Persist the netlist as it stands to test168_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 19, "text": "Please write the current design to the output file test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
+{"case": "test168", "line": 20, "text": "Please write the current design to output file test168_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test168_out.v"}}
 {"case": "test169", "line": 1, "text": "Try to replace all XNOR gates with equivalent NOR-only implementations. Ensure the design functionality does not change.", "op": "xnor_to_nor", "kind": "safe", "params": {}}
 {"case": "test169", "line": 2, "text": "Re-express each XNOR purely with NORs.", "op": "xnor_to_nor", "kind": "hard", "params": {}}
 {"case": "test169", "line": 3, "text": "Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.", "op": "xnor_to_nor", "kind": "safe", "params": {}}
