@@ -161,7 +161,29 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
         if s.is_transform:
             seen = True
 
+    # Where the executable may leave its netlist: next to the input, or at the
+    # cwd root as older builds did.
+    out_paths = (os.path.join("testcase", case, f"{case}_out.v"),
+                 f"{case}_out.v")
+
+    # Clear them FIRST, so that a file existing afterwards proves this run
+    # wrote it.  Without this the structural checks grade whatever happens to
+    # be lying around: the repo carries gitignored *_out.v files from previous
+    # sessions, the sandbox is a copy of testcase/, and nothing downstream can
+    # tell a fresh artifact from a stale one.  An executable that crashed,
+    # timed out, or never reached its write step then scored equiv-to-original
+    # and valid-output-netlist as PASS against a netlist weeks older than the
+    # run -- green on exactly the failure --exe exists to catch.
+    for p in out_paths:
+        try:
+            os.remove(p)
+        except FileNotFoundError:
+            pass
+        except OSError:
+            pass
+
     # run the executable in the current (sandbox) cwd; out.v lands here
+    exe_error = ""
     try:
         cmd = [os.path.abspath(exe), "-config", config_path]
         if not use_rules:
@@ -171,14 +193,15 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
                               capture_output=True, text=True, timeout=timeout)
         stdout = proc.stdout
     except Exception as exc:
+        # Do not let this look like an executable that simply answered
+        # nothing: a timeout and a silent binary produce the same empty
+        # stdout, and only one of them is a timeout.
         stdout = ""
+        exe_error = f"{type(exc).__name__}: {exc}"
     responses, nframes = _parse_frames(stdout, len(raw))
 
     final = None
-    # the agent writes the output next to the input (testcase/<case>/), and
-    # historically also cwd-root; check both
-    for outv in (os.path.join("testcase", case, f"{case}_out.v"),
-                 f"{case}_out.v"):
+    for outv in out_paths:
         if os.path.exists(outv):
             try:
                 final = reader.parse_file(outv)
@@ -193,6 +216,7 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
         "original": original, "final": final,
         "vfile": os.path.join(case_dir, f"{case}.v"),
         "exe_frames": (nframes, len(raw)),
+        "exe_error": exe_error,
     }
 
 
@@ -222,7 +246,8 @@ def evaluate_case(run, golden_dir, update_golden=False):
     if "exe_frames" in run:
         got, want = run["exe_frames"]
         out.append(Check("HARD", f"protocol frames {got}/{want}",
-                         "PASS" if got == want else "FAIL"))
+                         "PASS" if got == want else "FAIL",
+                         run.get("exe_error", "")))
 
     # HARD: functional equivalence of the submitted design to the original
     if has_transform and run["original"] is not None and run["final"] is not None:
@@ -325,9 +350,13 @@ def _enter_sandbox():
     tmp = tempfile.mkdtemp(prefix="cada_eval_")
     try:
         # copy (not symlink) testcase/ so the agent's output files (written next
-        # to the input) land inside the sandbox and never touch the repo
+        # to the input) land inside the sandbox and never touch the repo.
+        # *_out.v is deliberately left behind: those are previous runs' output,
+        # they are gitignored so they accumulate silently, and copying them in
+        # would seed the sandbox with results this run did not produce.
         shutil.copytree(os.path.join(ROOT, "testcase"),
-                        os.path.join(tmp, "testcase"))
+                        os.path.join(tmp, "testcase"),
+                        ignore=shutil.ignore_patterns("*_out.v"))
         os.chdir(tmp)
         return tmp
     except Exception:
