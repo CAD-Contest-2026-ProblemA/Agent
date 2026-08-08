@@ -838,9 +838,14 @@ def validate_intent_object(obj: Any) -> Tuple[Optional[Dict[str, Any]], Optional
     optional = OPTIONAL_PARAMS.get(intent, set())
     allowed_keys = required | optional
 
-    # k bounds fanout-mode buffering; dedicated-per-load has no bound to name.
+    # k bounds fanout-mode buffering; dedicated-per-load has no bound to name,
+    # but it does need the net it buffers.  Without that net the request is not
+    # under-specified in a harmless way: op_insert_buffers falls past its
+    # dedicated branch into the design-wide default bound, which on test31
+    # turns 2 requested buffers into 649 and reports the wrong count for the
+    # rest of the case.
     if intent == "insert_buffers" and raw_params.get("mode") == "dedicated":
-        required = required - {"k"}
+        required = (required - {"k"}) | {"net"}
 
     missing = [k for k in sorted(required) if _is_missing(raw_params.get(k))]
     if missing:
@@ -933,5 +938,26 @@ def _validate_param_values(intent: str, params: Dict[str, Any]) -> Optional[str]
         k = params["k"]
         if not isinstance(k, int) or k < 1:
             return f'Invalid bound k="{k}". Expected positive integer.'
+
+    # A fanout bound of 1 is not satisfiable: bounding every driver to a single
+    # load turns the buffer tree into a path, which can reach exactly one sink.
+    # The request that sounds like it ("one buffer per load") is the dedicated
+    # form, so say so rather than letting buffering spin on an unreachable goal.
+    if intent == "insert_buffers" and params.get("k") == 1:
+        return ('A fanout bound of k=1 cannot be met — one load per driver '
+                'admits no tree. For "a dedicated buffer per load of X" use '
+                '{"mode":"dedicated","net":X}; for a real bound use k >= 2.')
+
+    # Endpoint pairs must name two different endpoints.  a == b is what the
+    # model emits when a single-endpoint question ("how deep is the logic
+    # ending at X") gets routed to a two-endpoint intent; rejecting it sends
+    # the request back with the reason instead of answering the degenerate
+    # question the model actually asked.
+    if "a" in params and "b" in params and params["a"] == params["b"]:
+        return (f'intent "{intent}" needs two different endpoints, but a and b '
+                f'are both "{params["a"]}". If the request names only one '
+                "endpoint, it is asking about that endpoint's cone — use a "
+                "cone-scoped intent (cone_depth, cone_gate_count, "
+                "transitive_fanin) instead.")
 
     return None
