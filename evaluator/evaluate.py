@@ -35,6 +35,49 @@ TC_ROOT = os.path.join(ROOT, "testcase")
 GOLDEN_DIR = os.path.join(ROOT, "evaluator", "golden")
 
 
+def scoreable_cases(root: str = None):
+    """The official public testcases, which are the only ones this can score.
+
+    testcase/ is no longer just those 40.  It also holds the routing-test
+    fixtures added later -- test81-90 and test91-171 -- which exist to check
+    that a request maps to the right INTENT NAME and are driven by
+    scripts/route_check.py, not from here.  Most of them ship a prompt and no
+    design at all.
+
+    Enumerating the directory blindly therefore turned a 40-case run into a
+    131-case one: it drove real LLM calls for cases this evaluator cannot
+    score, and under --update-golden it wrote baseline files for them into
+    evaluator/golden/.  Two properties separate the two populations, and a
+    case has to have both:
+
+      * a design named after its directory -- there is nothing to load, run or
+        write out without one
+      * no ground_truth.json -- that file is the routing fixtures' marker,
+        declaring the case is about intent names rather than answers
+
+    Sorted numerically, not lexicographically: plain sorted() interleaves
+    test100 between test10 and test11, which made the run order nonsense and
+    is why the stray files were test101-120 rather than test41 onward.
+    """
+    root = root or TC_ROOT
+    out = []
+    for name in os.listdir(root):
+        d = os.path.join(root, name)
+        if not os.path.isdir(d):
+            continue
+        if not os.path.isfile(os.path.join(d, f"{name}.v")):
+            continue
+        if os.path.isfile(os.path.join(d, "ground_truth.json")):
+            continue
+        out.append(name)
+    return sorted(out, key=_case_key)
+
+
+def _case_key(name: str):
+    m = re.search(r"\d+", name)
+    return (int(m.group(0)) if m else 0, name)
+
+
 def _tty():
     try:
         return sys.stdout.isatty()
@@ -313,8 +356,7 @@ def main(argv=None) -> int:
     if args.config:
         args.config = os.path.abspath(args.config)
 
-    cases = args.cases or sorted(d for d in os.listdir(TC_ROOT)
-                                 if os.path.isdir(os.path.join(TC_ROOT, d)))
+    cases = args.cases or scoreable_cases()
 
     orig_cwd = os.getcwd()
     sandbox = None if args.no_sandbox else _enter_sandbox()
