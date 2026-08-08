@@ -1,11 +1,23 @@
 """Logic-cone queries (fan-in / fan-out cones, shared cones).
 
-DFF-Q convention (per official Q&A A21.2): fan-in cones are *combinational
-only* — a flip-flop's Q output is treated as a primary input, so the cone of a
-net terminates at DFF.Q.  If a queried output net is itself a DFF.Q, its
-combinational fan-in cone is therefore empty.  ``redirect_q`` (default False)
-can optionally redirect a Q-net query to the D-side next-state cone, but the
-default matches the official "treat DFF.Q as a primary input" rule.
+DFF-Q convention.  Official Q&A A21.2 says "combinational depth only; treat
+DFF.Q outputs as primary inputs", and the organisers' 2026-07-20 reply extends
+that from depth to membership: DFF.Q counts as a primary input for cone
+*contents* too, so a PO driven straight off a Q has an empty cone (0 gates).
+
+The consequence, and the thing to keep straight when editing this module: a
+flip-flop is a *boundary* of the combinational subgraph, not a member of it.
+A cone stops at DFF.Q on the way back and at a DFF input pin on the way
+forward, and in neither direction is the flip-flop itself inside.  That is the
+same reason a primary input's driver is not in the cone.
+
+This is about MEMBERSHIP only.  It does not touch load counting: per Q&A A29 a
+DFF's D/CK/RN/SN pins are ordinary fan-out loads, so fanout_count() and the
+max-fanout constraint still count them.  "What does this net drive?" and "what
+is inside this cone?" are different questions with different answers.
+
+``redirect_q`` (default False) can optionally redirect a Q-net query to the
+D-side next-state cone, but the default matches the official rule.
 """
 
 from __future__ import annotations
@@ -32,36 +44,17 @@ def fanin_cone_nets(nl: Netlist, net: str, redirect_q: bool = False) -> Set[str]
 
 
 def fanin_cone_gates(nl: Netlist, net: str, redirect_q: bool = False):
-    """Combinational gates in the cone.
+    """The gates in the cone — every instance in it, and the only ones.
 
-    Deliberately excludes flip-flops: callers that scope a *rewrite* to a cone
-    use this, and a transform must never restructure a DFF.  Use
-    :func:`fanin_cone_instances` for questions that count what is in the cone.
+    Flip-flops whose Q feeds the cone bound it rather than belong to it, so
+    they are not here; see the module docstring for the ruling.  This is both
+    "how many gates are in the fan-in cone of X" and the set a cone-scoped
+    rewrite may touch, which is the same set precisely because a DFF is
+    outside the combinational subgraph and a transform must never restructure
+    one.
     """
     nets = fanin_cone_nets(nl, net, redirect_q)
     return [g for g in nl.gates if g.out in nets]
-
-
-def fanin_cone_dffs(nl: Netlist, net: str, redirect_q: bool = False):
-    """Flip-flops bounding the cone -- those whose Q feeds it.
-
-    A flip-flop whose Q *is* the queried net is excluded: per Q&A A65 the cone
-    of a register output is empty, that register being the boundary itself
-    rather than something inside the cone.
-    """
-    nets = fanin_cone_nets(nl, net, redirect_q)
-    sinks = set(effective_sinks(nl, net, redirect_q))
-    return [ff for ff in nl.dffs if ff.q in nets and ff.q not in sinks]
-
-
-def fanin_cone_instances(nl: Netlist, net: str, redirect_q: bool = False):
-    """Every instance in the cone: combinational gates plus the boundary DFFs.
-
-    This is what "how many gates are in the fan-in cone of X" asks for -- a
-    flip-flop is one of the nine primitive gate types (Q&A A2), so it counts.
-    """
-    return (fanin_cone_gates(nl, net, redirect_q)
-            + fanin_cone_dffs(nl, net, redirect_q))
 
 
 def transitive_fanin(nl: Netlist, net: str) -> Set[str]:
@@ -74,16 +67,17 @@ def fanout_cone_gates(nl: Netlist, net: str):
 
 
 def shared_fanin_gates(nl: Netlist, a: str, b: str):
-    ia = {inst.name: inst for inst in fanin_cone_instances(nl, a)}
-    ib = {inst.name for inst in fanin_cone_instances(nl, b)}
-    return [inst for name, inst in ia.items() if name in ib]
+    ga = {g.name for g in fanin_cone_gates(nl, a)}
+    gb = {g.name for g in fanin_cone_gates(nl, b)}
+    shared = ga & gb
+    return [g for g in nl.gates if g.name in shared]
 
 
 def largest_fanin_output(nl: Netlist, redirect_q: bool = False):
     """Return (output_net, gate_count) for the PO with the biggest fan-in cone."""
     best = None
     for po in sorted(nl.po):
-        n = len(fanin_cone_instances(nl, po, redirect_q))
+        n = len(fanin_cone_gates(nl, po, redirect_q))
         if best is None or n > best[1]:
             best = (po, n)
     return best if best else (None, 0)
