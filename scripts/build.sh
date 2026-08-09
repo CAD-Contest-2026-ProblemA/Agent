@@ -4,10 +4,20 @@
 #   scripts/build.sh [exec_name]        # default name: cada0001_alpha
 #   scripts/build.sh cada1125_alpha     # use YOUR team number
 #   WITH_LLM=0 scripts/build.sh cada1125_alpha   # lightweight: skip openai/anthropic
+#   NO_RULES=1 scripts/build.sh cada1125_alpha   # pure-LLM: rules off by default
 #
 # By default the openai/anthropic LLM fallback IS bundled. Set WITH_LLM=0 for a
 # smaller binary (the 40 public testcases never invoke the LLM, so the
 # lightweight build still passes them).
+#
+# NO_RULES=1 bundles a marker the binary reads at startup, so it behaves as if
+# --no-rules were always passed: the regex table is skipped and every request
+# line is routed by the LLM. This is a MEASUREMENT build, not a faster one --
+# it answers at the model's routing accuracy, spends one to three API calls per
+# request line, and fails the whole run if the key or the network is unavailable.
+# The binary still accepts --rules to put the table back for one run, prints a
+# line to stderr saying which mode it is in, and refuses to start rules-off with
+# no reachable LLM.
 #
 # Output:  dist/<exec_name>   (a single file; no Python/uv needed to run it)
 #
@@ -25,6 +35,17 @@ repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo"
 NAME="${1:-cada0001_alpha}"
 WITH_LLM="${WITH_LLM:-1}"
+NO_RULES="${NO_RULES:-0}"
+
+# The one combination that cannot work.  Without the provider SDK the LLM
+# client never initialises, and a rules-off binary with no router left answers
+# every line with the same "not mapped to a specific EDA operation" ack -- a
+# complete, well-formed, entirely empty transcript that exits 0.
+if [ "$NO_RULES" = 1 ] && [ "$WITH_LLM" != 1 ]; then
+  echo ">> ERROR: NO_RULES=1 needs WITH_LLM=1 — a rules-off binary with no" >&2
+  echo "          bundled provider SDK has nothing left to route with." >&2
+  exit 1
+fi
 
 # throwaway build venv with PyInstaller (kept out of the runtime .venv)
 bvroot="$(mktemp -d)"
@@ -46,6 +67,17 @@ fi
 extra=()
 if [ "$WITH_LLM" = 1 ]; then
   extra+=(--collect-all openai --collect-all anthropic)
+fi
+
+# Rules-off default.  The marker goes at the bundle root, which is one of the
+# directories cada/main.py already searches (sys._MEIPASS, then the directory
+# holding the binary), so no new lookup path is introduced.  Written under the
+# build venv's temp dir so nothing lands in the repo.
+if [ "$NO_RULES" = 1 ]; then
+  echo ">> building a PURE-LLM binary: --no-rules is the default (--rules overrides)"
+  marker="$bvroot/no_rules.flag"
+  printf 'built by scripts/build.sh with NO_RULES=1\n' > "$marker"
+  extra+=(--add-data "$marker:.")
 fi
 
 # Embed a statically-linked abc (fully self-contained executable).  Produce it
@@ -103,6 +135,10 @@ echo ">> running PyInstaller (name: $NAME) ..."
 
 echo ""
 echo "Built: $repo/dist/$NAME"
+if [ "$NO_RULES" = 1 ]; then
+  echo "Mode:  PURE-LLM — this binary routes every request through the LLM."
+  echo "       Pass --rules to use the regex table for a run."
+fi
 echo "Test it:  ./dist/$NAME --doctor"
 echo "          ./dist/$NAME -config configs/api_key.yaml < testcase/test01/prompt.txt"
 echo "(remember: abc/yosys are resolved at runtime — keep configs/tools.yaml next"

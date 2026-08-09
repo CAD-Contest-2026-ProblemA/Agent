@@ -17,6 +17,27 @@ from .agent.agent import Agent
 from . import toolpaths
 
 
+# A build can ship with the rule table off by default: NO_RULES=1
+# scripts/build.sh bundles this marker, and the flag below reads it.  A file
+# rather than a baked-in constant so the source and frozen paths share one
+# mechanism, and so an existing binary can be flipped by dropping the marker
+# next to it instead of being rebuilt.
+NO_RULES_MARKER = "no_rules.flag"
+
+
+def _default_no_rules() -> bool:
+    """Whether this build routes through the LLM unless told otherwise.
+
+    CADA_NO_RULES wins over the marker, so a pure-LLM binary can be put back on
+    the rules for one run without a rebuild (and the reverse).
+    """
+    env = os.environ.get("CADA_NO_RULES")
+    if env is not None:
+        return env.strip().lower() not in ("", "0", "false", "no", "off")
+    return any(os.path.isfile(os.path.join(d, NO_RULES_MARKER))
+               for d in _config_search_dirs())
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="LLM-assisted netlist EDA agent")
     p.add_argument("-config", "--config", dest="config", default=None,
@@ -27,9 +48,20 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Directory for <case_name>.log files")
     p.add_argument("--doctor", dest="doctor", action="store_true",
                    help="Run environment pre-flight checks and exit")
+    default_no_rules = _default_no_rules()
     p.add_argument("--no-rules", dest="no_rules", action="store_true",
+                   default=default_no_rules,
                    help="Skip the deterministic regex rules and route every "
-                        "request through the LLM (for testing LLM coverage)")
+                        "request through the LLM (for testing LLM coverage)"
+                        + (" [this build's default]" if default_no_rules else ""))
+    # The counter-flag is what keeps a pure-LLM build usable: without it the
+    # baked default cannot be undone at runtime, so the two modes could not be
+    # compared on one binary and the evaluator's rules-on run would silently be
+    # a rules-off run.
+    p.add_argument("--rules", dest="no_rules", action="store_false",
+                   help="Force the regex rules back on"
+                        + (" (this build defaults to --no-rules)" if default_no_rules
+                           else " [default]"))
     return p
 
 
@@ -86,6 +118,22 @@ def main(argv=None) -> int:
         return 2
     _configure_tools(config, args.tools)
     agent = Agent(config, use_rules=not args.no_rules)
+
+    # Announce the routing mode.  A rules-off run answers every line from the
+    # LLM, so it has a different accuracy, a different cost, and a different
+    # failure mode from a rules-on run -- and once a build can bake the default
+    # in, the two are indistinguishable from the command line.  Refuse the one
+    # combination that cannot work at all: with no reachable LLM, rules-off has
+    # nothing left to route with and would answer every line with the same ack.
+    if args.no_rules:
+        if not agent.llm.available:
+            sys.stderr.write(
+                "error: --no-rules needs a reachable LLM, and none is configured "
+                f"(provider '{config.provider}'; check the api_key and that the "
+                "provider SDK is installed in this build)\n")
+            return 2
+        sys.stderr.write(
+            "cada: rule table disabled — every request is routed by the LLM\n")
 
     def on_case_name(name: str):
         agent.state.case_name = name
