@@ -314,6 +314,22 @@ OPERATION SYNONYMS:
   names + clock wording → same_clock.  Two net names + value/equivalence
   wording → signals_equivalent.
 
+▸ threshold questions ("more than k", "exceeds k", "at most k")
+  The QUANTITY being compared picks the intent -- the threshold wording is
+  common to all of them and decides nothing.
+    depth of outputs      → outputs_depth_gt {k}
+    depth between two nets→ max_depth_between {a, b}
+    fanout of a named net → fanout {net} / max_fanout_of {net}
+    fanout of any PI      → highest_fanout_pi {}
+  outputs_depth_gt is the only intent whose name contains a threshold, which
+  makes it a magnet for every "exceeds k" sentence.  It answers ONE question:
+  how many primary outputs have a combinational depth greater than k.  A
+  request about FANOUT exceeding k is not that question, however similar the
+  sentence looks.
+  A yes/no threshold question is still answered by the intent that computes
+  the quantity: report the number and it settles the comparison.  Do not
+  reach for a different intent because the request ends in "answer yes or no".
+
 ▸ ANSWER SHAPE is a parameter, not a different intent
   Some questions select the same set of gates and differ only in what is
   reported.  Do NOT hunt for a second intent for the other shape -- pass
@@ -693,7 +709,7 @@ OPERATION SYNONYMS:
 - pi_to_dff_depth {}            # any primary input -> any DFF D-pin
 - reg_to_reg_depth {}           # any register output -> any register input
 - reg_to_po_depth {}            # any register/DFF output -> any primary output
-- outputs_depth_gt {k}
+- outputs_depth_gt {k}          # DEPTH only: how many POs sit deeper than k levels
 - deepest_output {}             # deepest cone (by depth)
 - largest_fanin_cone {}         # largest cone (by gate count)
 - gate_on_max_path {gate}
