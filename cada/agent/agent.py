@@ -2041,12 +2041,46 @@ class Agent:
             return f"Output {out} is constant and always 1 regardless of the inputs."
         return f"No. Output {out} is not constant; it depends on the inputs."
 
-    def op_depends_on(self, output, input):
+    def op_depends_on(self, output, input, kind=None):
+        """Does ``output`` depend on ``input``?  Functionally, by default.
+
+        The catalog has always described this intent as "asking functional
+        influence" ("will changing n4 ever change n32[0]"), but it called
+        functional.depends_on, whose own docstring says STRUCTURAL: is the
+        input anywhere in the fan-in cone.  Those differ exactly where the
+        question is interesting -- a net can sit in the cone and still be
+        masked, and a reference set asks precisely that, stating the
+        structural fact in the prompt and asking for the functional one.
+
+        Structural first, because it is cheap and one-directional: outside the
+        cone there is no path, so no influence, and no SAT call is needed.
+        Inside the cone the exact check decides.  If that cannot decide (no
+        solver, or it gave up) the structural answer is reported and labelled
+        as structural rather than silently passed off as functional.
+
+        ``kind="structural"`` asks for cone membership explicitly.
+        """
         if self._need_design():
             return self._need_design()
         out, inp = str(output), str(input)
-        r = functional.depends_on(self.state.current, out, inp)
-        return ("Yes." if r else "No.") + f" Output {out} {'depends' if r else 'does not depend'} on input {inp}."
+        nl = self.state.current
+        structural = functional.depends_on(nl, out, inp)
+        want = str(kind).strip().lower() if kind is not None else "functional"
+
+        if want.startswith("struct"):
+            return (("Yes." if structural else "No.")
+                    + f" {inp} is {'' if structural else 'not '}in the fan-in "
+                      f"cone of {out} (structural).")
+        if not structural:
+            return f"No. Output {out} does not depend on input {inp}."
+
+        exact = functional.truly_depends_on(nl, out, inp)
+        if exact is None:
+            return (f"Yes. {inp} is in the fan-in cone of {out} (structural); "
+                    f"functional dependence could not be decided.")
+        return (("Yes." if exact else "No.")
+                + f" Output {out} {'depends' if exact else 'does not depend'} "
+                  f"on input {inp}.")
 
     def op_boolean_equation(self, output):
         if self._need_design():

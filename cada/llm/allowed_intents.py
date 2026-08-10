@@ -277,6 +277,11 @@ OPERATION SYNONYMS:
     n32[0]".
   KEY RULE: gate name in the avoid/through position → dominator; net name there
   → path_exists.  Never choose between them on the phrasing.
+  depends_on answers FUNCTIONAL influence by default: can changing the input
+  ever change the output.  A net can sit in the fan-in cone and still have no
+  influence, so "X lies in the structural fanin cone of Y -- is Y functionally
+  sensitive to X?" is depends_on with the default kind, NOT a cone query.  Pass
+  kind="structural" only when the request asks about cone membership itself.
 
 ▸ is_cut vs articulation vs dominator
   "is_cut {wire}"          → is this ONE wire a cut between ANY primary input and
@@ -715,7 +720,7 @@ OPERATION SYNONYMS:
 - gate_on_max_path {gate}
 - signals_equivalent {a, b}
 - output_constant {output}
-- depends_on {output, input}
+- depends_on {output, input, kind}  # kind = functional (default) | structural
 - boolean_equation {output}
 - symmetric {output, a, b}
 - exists_nand_pair {target}
@@ -817,6 +822,7 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
+    "depends_on": {"kind"},
     "transitive_fanin": {"form"},
     "transitive_fanout": {"form"},
     "successors": {"form"},
