@@ -48,11 +48,14 @@ def main():
     args = ap.parse_args()
 
     if args.all:
-        for name in sorted(os.listdir(args.testcase_root)):
-            d = os.path.join(args.testcase_root, name)
-            if os.path.isdir(d):
-                print(f"########## {name} ##########")
-                print(run_case(d, args.config, args.out_dir))
+        # Not every directory under testcase/ is a case this can run: the
+        # routing fixtures (test81-171) ship a prompt and, mostly, no design.
+        # scoreable_cases() is the one definition of which ones are.
+        from evaluator.evaluate import scoreable_cases
+        for name in scoreable_cases(args.testcase_root):
+            print(f"########## {name} ##########")
+            print(run_case(os.path.join(args.testcase_root, name),
+                           args.config, args.out_dir))
     elif args.case:
         print(run_case(args.case, args.config, args.out_dir))
     else:

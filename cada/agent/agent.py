@@ -51,7 +51,11 @@ class Agent:
         self.config = config
         self.state = State()
         self.llm = LLMClient(config)
-        self.fallback = Fallback(self.llm)
+        # "auto" = dense retrieval when the model ships, BM25 otherwise, and
+        # None if even the example bank is missing.  Every step degrades to
+        # the catalog-only behaviour rather than failing the run.
+        from ..llm.retrieval import build_retriever
+        self.fallback = Fallback(self.llm, retriever=build_retriever("auto"))
         self.use_rules = use_rules
         self.rules = self._build_rules()
         self.const_nets = {}     # functionally-constant nets (from last report)
@@ -160,7 +164,7 @@ class Agent:
             # whose action is buffering (test36-style).
             (R(r"(shorten|reduce|minimi[sz]e|decrease|lower).*(worst-?case|critical|maximum|max).*(path|depth)"), self.h_opt_depth),
             (R(r"cost function is the maximum logic depth"), self.h_opt_depth),
-            (R(r"minimi[sz]e the total (number of gates|gate count)|(minimi[sz]e|reduce).*(number of gates|gate count).*without changing|cost function is the total gate count"), self.h_opt_area),
+            (R(r"minimi[sz]e (the )?total (number of gates|gate count)|(minimi[sz]e|reduce).*(number of gates|gate count).*without changing|cost function is the total gate count"), self.h_opt_area),
             # explicit resynthesis requests (the reverse-to-RTL/yosys/ABC
             # rebuild tool): scoped cone first, then area wording, then the
             # depth default.  "Reconstruct ... using only X" stays with the
@@ -203,14 +207,20 @@ class Agent:
             (R(r"(merge|find and merge).*(functionally equivalent|same function|structural duplicate|duplicate)"), self.h_merge),
             (R(r"(rename|change the identifier of|update the name of|change the name).*(gate|wire|signal)\s+(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename),
             (R(r"list all gates.*connect.*to the renamed signal (%s)" % NET), self.h_connected_renamed),
-            (R(r"(rename|update the name of|change the identifier of).*?(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename2),
+            # Anchored: "After that rename, what connects to renamed_sig?" is a
+            # question ABOUT a past rename, and the loose form matched
+            # "connects to renamed_sig" as the old/new pair.
+            (R(r"^\W*(?:please\s+)?(rename|update the name of|change the identifier of).*?(%s)\s+to\s+(%s)" % (NET, NET)), self.h_rename2),
 
             # equivalence verification (imperative)
             (R(r"(verify|prove|confirm|check).*(equivalen|equivalent).*(original|pre-transformation|last loaded|as last loaded|loaded netlist)"), self.h_verify),
             (R(r"(verify|prove).*(transformed|current).*(equivalent|equivalence)"), self.h_verify),
 
             (R(r"count all the gates|broken down by gate type"), self.h_count_all),
-            (R(r"total gate count|compute the total gate count"), self.h_total),
+            # Guarded: an optimisation request naming its cost function
+            # ("minimize total gate count") is a transform, not a query, and
+            # h_opt_area above owns it.
+            (R(r"^(?!.*\b(minimi[sz]e|reduce|optimi[sz]e|shrink|lower|cut)\b).*(total gate count|compute the total gate count)"), self.h_total),
             # "Report only ... instance names" is an exact-set contract, so these
             # answer with a bare name list.  They must precede the count-style
             # cone/fanout rules below, which would otherwise capture a stray
@@ -231,7 +241,10 @@ class Agent:
             (R(r"list all primary outputs?.*bit widths?"), self.h_list_po),
             (R(r"(number of|how many) primary inputs? and (primary )?outputs?"), self.h_count_ports),
             (R(r"determine the number of primary inputs and outputs"), self.h_count_ports),
-            (R(r"gates? (are )?in the (fanin |logic )?cone of (primary output |output )?(%s)" % NET), self.h_cone_gate_count),
+            # Requires the counting question.  Without it the rule fired inside
+            # transform requests that merely scope themselves to a cone
+            # ("Decompose every XOR gate in the fanin cone of n32[0] ...").
+            (R(r"(how many|number of)\s+gates?\s+(are )?in the (fanin |logic )?cone of (primary output |output )?(%s)" % NET), self.h_cone_gate_count),
             (R(r"list all gates.*tied to 1'b1|inputs tied to 1'b1"), self.h_const1_gates),
             (R(r"report any (\w+) gates? with (a )?constant"), self.h_report_const),
             (R(r"report any (\w+) gates? with constant inputs"), self.h_report_const),
@@ -246,7 +259,11 @@ class Agent:
             # rule below (whose 'enumerat' branch would otherwise capture the "e"
             # and "the" in "Enumerate the ..." as two path endpoints).
             (R(r"immediate successors of (?:gate )?(%s)" % NET), self.h_successors),
-            (R(r"(complete enumeration|list every path|find all combinational paths|enumerat).*?(%s).*?(%s)" % (NET, NET)), self.h_enum_paths),
+            # The bare "enumerat" branch used to fire on any "Enumerate X ... Y"
+            # sentence, swallowing successors / connected_to_net / reg_to_reg
+            # requests that merely start with the verb.  Require path wording:
+            # a miss costs one LLM call, a false match costs the wrong answer.
+            (R(r"(complete enumeration|list every path|find all combinational paths|enumerat\w*[^.]*\bpaths?\b).*?(%s).*?(%s)" % (NET, NET)), self.h_enum_paths),
             (R(r"paths? of length 0|direct wire connections from PI to PO"), self.h_len0),
             (R(r"does every path from (?:input )?(%s) to (?:output )?(%s) pass through (?:gate )?(%s)" % (NET, NET, NET)), self.h_dominator),
             (R(r"articulation points.*between (%s) and (%s)" % (NET, NET)), self.h_articulation),
@@ -447,8 +464,8 @@ class Agent:
                            line, re.IGNORECASE)
             if mm:
                 out = mm.group(1)
-                gs = cones.fanin_cone_instances(self.state.current, out)
-                n = sum(1 for g in gs if getattr(g, "type", "dff") == gtype)
+                gs = cones.fanin_cone_gates(self.state.current, out)
+                n = sum(1 for g in gs if g.type == gtype)
                 return (f"There are currently {n} {gtype.upper()} gates in "
                         f"the cone of {out}.")
             n = counts.count_of_type(self.state.current, gtype)
@@ -859,7 +876,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
-        gs = cones.fanin_cone_instances(self.state.current, net)
+        gs = cones.fanin_cone_gates(self.state.current, net)
         return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
 
     def h_tfanout(self, m, line):
@@ -908,7 +925,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
-        gs = [g.name for g in cones.fanin_cone_instances(self.state.current, net)]
+        gs = [g.name for g in cones.fanin_cone_gates(self.state.current, net)]
         return self._bare_names(gs, f"fanin_cone_{net}")
 
     def h_highest_fanout(self, m, line):
@@ -1605,8 +1622,8 @@ class Agent:
         scope = self._clean_opt(scope)
         if scope is not None:
             out = str(scope)
-            gs = cones.fanin_cone_instances(self.state.current, out)
-            n = sum(1 for g in gs if getattr(g, "type", "dff") == gtype)
+            gs = cones.fanin_cone_gates(self.state.current, out)
+            n = sum(1 for g in gs if g.type == gtype)
             return (f"There are currently {n} {gtype.upper()} gates in "
                     f"the cone of {out}.")
         n = counts.count_of_type(self.state.current, gtype)
@@ -1740,7 +1757,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = str(net)
-        gs = cones.fanin_cone_instances(self.state.current, net)
+        gs = cones.fanin_cone_gates(self.state.current, net)
         return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
 
     def op_transitive_fanout(self, net):

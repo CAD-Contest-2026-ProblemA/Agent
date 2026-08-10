@@ -12,7 +12,7 @@ The maximum combinational depth on any register-to-register path is 131.
 1796 flip-flop(s) implement an enable/hold structure in their D-input logic (next state depends on the register's own current state). Examples: g1259, g1261, g1263, g1265, g1267, g1269, g1271, g1273, g1274, g1275, g1276, g1277, g1278, g1279, g1280, g1281, g1282, g1283, g1284, g1285, g1286, g1287, g1288, g1289, g1290, g1291, g1292, g1293, g1294, g1295
 1796 flip-flops were found to have enable or hold structures in their D-input logic.
 Gate g0 is a NOT gate. Output: n11[7]; inputs: n18413.
-Output n11[16] has the largest fan-in cone (44 gates).
+Output n11[16] has the largest fan-in cone (37 gates).
 The cone of n14 is already optimal at depth 2; reported the original (equivalence preserved).
 The maximum logic depth of the cone of n14 is 2.
 The maximum combinational logic depth in the design is 131.

@@ -15,6 +15,10 @@ from ..io_.config import Config
 
 # Error signatures that never recover on retry (bad key, bad request).
 _FATAL_MARKERS = ("api_key", "authentication", "invalid_request", "not_found")
+# Rate limits recover, but only after the window refills — worth waiting out.
+_RATE_MARKERS = ("rate_limit", "429", "tokens per min", "overloaded", "too many requests")
+_ATTEMPTS = 3
+_RATE_ATTEMPTS = 7
 
 
 class LLMClient:
@@ -22,6 +26,11 @@ class LLMClient:
         self.config = config
         self._client = None
         self._kind = None
+        # Calls that exhausted their retries and returned None.  A degraded run
+        # still produces a complete-looking transcript of no-op acks, so this
+        # has to be observable — a score computed over a rate-limited run reads
+        # as a result and is not one.
+        self.degraded = 0
         self._init()
 
     def _init(self):
@@ -65,13 +74,20 @@ class LLMClient:
             kwargs.pop("temperature", None)
             return self._client.chat.completions.create(**kwargs)
 
-    def complete(self, system: str, user: str) -> Optional[str]:
+    def complete(self, system: str, user: str,
+                 dynamic: Optional[str] = None) -> Optional[str]:
+        """``system`` is the fixed catalog; ``dynamic`` varies per request.
+
+        Everything up to the cache breakpoint is reused across calls, so the
+        per-request half must come strictly after it — on both providers that
+        means appending, never interleaving.
+        """
         if self._client is None:
             return None
         cfg = self.config
         # Transient failures (rate limits, timeouts, 5xx) must not silently
         # turn one request line into a no-op — retry with backoff first.
-        for attempt in range(3):
+        for attempt in range(max(_ATTEMPTS, _RATE_ATTEMPTS)):
             try:
                 if self._kind == "anthropic":
                     # The intent catalog is byte-identical on every call and
@@ -79,18 +95,24 @@ class LLMClient:
                     # reads bill at ~0.1x.  Caching is a prefix match — anything
                     # per-request must stay in the user message, or the prefix
                     # stops matching and every call pays in full.
+                    blocks = [{"type": "text", "text": system,
+                               "cache_control": {"type": "ephemeral"}}]
+                    if dynamic:
+                        blocks.append({"type": "text", "text": dynamic})
                     msg = self._client.messages.create(
                         model=cfg.anthropic_model,
                         max_tokens=cfg.max_output_tokens,
                         temperature=cfg.temperature,
-                        system=[{"type": "text", "text": system,
-                                 "cache_control": {"type": "ephemeral"}}],
+                        system=blocks,
                         messages=[{"role": "user", "content": user}],
                     )
                     return "".join(
                         b.text for b in msg.content if getattr(b, "type", "") == "text")
                 else:
-                    msgs = [{"role": "system", "content": system},
+                    # OpenAI caches long prefixes automatically; keeping the
+                    # variable half last is what preserves the hit.
+                    sys_text = system if not dynamic else system + "\n\n" + dynamic
+                    msgs = [{"role": "system", "content": sys_text},
                             {"role": "user", "content": user}]
                     resp = self._openai_complete(cfg.openai_model,
                                                  cfg.max_output_tokens,
@@ -98,12 +120,22 @@ class LLMClient:
                     return resp.choices[0].message.content
             except Exception as e:
                 low = str(e).lower()
-                if attempt == 2 or any(m in low for m in _FATAL_MARKERS):
-                    # Surface the failure: a silent None here turns every
-                    # remaining request into a no-op ack that LOOKS like a
-                    # completed run (e.g. credit exhaustion mid-run).
+                if any(m in low for m in _FATAL_MARKERS):
                     import sys
+                    self.degraded += 1
+                    sys.stderr.write(f"[llm] fatal API error, degrading to no-op: {e}\n")
+                    return None
+                # A rate limit is not a failed request, it is a request that has
+                # not happened yet: three quick retries can expire inside one
+                # refill window and turn the line into a silent no-op that reads
+                # as a completed run.  Wait the window out instead.
+                rate = any(m in low for m in _RATE_MARKERS)
+                budget = _RATE_ATTEMPTS if rate else _ATTEMPTS
+                if attempt + 1 >= budget:
+                    import sys
+                    self.degraded += 1
                     sys.stderr.write(f"[llm] API call failed, degrading to no-op: {e}\n")
                     return None
-                time.sleep(2 * (attempt + 1))
+                # 2, 4, 8, ... capped at 60s
+                time.sleep(min(60, 2 ** (attempt + 1)) if rate else 2 * (attempt + 1))
         return None

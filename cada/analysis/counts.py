@@ -40,8 +40,8 @@ def count_of_type(nl: Netlist, gtype: str) -> int:
 
 def cone_type_counts(nl: Netlist, output: str) -> Counter:
     c = Counter()
-    for inst in cones.fanin_cone_instances(nl, output):
-        c[getattr(inst, "type", "dff")] += 1   # Dff carries no .type field
+    for g in cones.fanin_cone_gates(nl, output):
+        c[g.type] += 1
     return c
 
 
@@ -55,7 +55,7 @@ def cone_type_counts_text(nl: Netlist, output: str) -> str:
 
 
 def gates_in_fanin_cone(nl: Netlist, output: str) -> int:
-    return len(cones.fanin_cone_instances(nl, output))
+    return len(cones.fanin_cone_gates(nl, output))
 
 
 def list_gates_of_type(nl: Netlist, gtype: str) -> List:

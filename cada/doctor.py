@@ -300,6 +300,40 @@ def check_package(rep: Report):
         rep.fail("cada failed to import / parse", out.strip()[:200])
 
 
+def check_retrieval(rep: Report):
+    """Is the example bank actually reachable, and does it carry params?
+
+    A build that drops cada/llm/examples.jsonl does not crash: retrieval turns
+    itself off and the agent keeps answering, just less accurately and with
+    nothing in the output to say why.  That failure shipped once already, so it
+    gets a check rather than trust.
+    """
+    rep.section("Example retrieval")
+    try:
+        from cada.llm.retrieval import build_retriever, format_block
+    except Exception as exc:
+        rep.fail("cada.llm.retrieval failed to import", str(exc)[:200])
+        return
+    r = build_retriever("auto")
+    if r is None:
+        rep.fail("no example bank found — retrieval is DISABLED",
+                 "the binary was built without cada/llm/examples.jsonl; "
+                 "run scripts/export_examples.py and rebuild")
+        return
+    probe = "Does every path from n2 to n40 pass through gate g0?"
+    hits = r.top_k(probe, k=50)
+    if not hits:
+        rep.fail("example bank present but returned no hits", "bank may be empty")
+        return
+    withp = sum(1 for h in hits if h.get("params") is not None)
+    rep.ok(f"{type(r).__name__} loaded",
+           f"{len(hits)} examples for a probe query, {withp} with params")
+    block = format_block(hits)
+    if '"params"' not in block and "→ {" not in block:
+        rep.warn("retrieved examples render without params",
+                 "the prompt will teach intent names but not their arguments")
+
+
 def main(argv=None) -> int:
     print(_bold("CADA environment doctor"))
     print(_dim(f"project root: {ROOT}"))
@@ -308,6 +342,7 @@ def main(argv=None) -> int:
     check_tools(rep)
     check_config(rep)
     check_package(rep)
+    check_retrieval(rep)
 
     print("\n" + _bold("Summary"))
     if rep.fails == 0 and rep.warns == 0:

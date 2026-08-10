@@ -119,22 +119,27 @@ def downstream_instances(nl: Netlist, net: str):
     (reachable_gates_from, cones.fanout_cone_gates) must go through here so
     the two phrasings can never diverge again.
 
-    - A flip-flop counts as soon as the walk lands on any of its input pins
-      (D/CK/RN/SN): a DFF is one of the nine primitive gate types (Q&A A2)
-      and those pins are ordinary loads (Q&A A29).  The walk stops there --
-      it does not continue out of Q, which would cross the combinational
-      boundary (Q&A A21.2).
+    - A flip-flop IS collected once the walk lands on any of its input pins
+      (D/CK/RN/SN).  It is deliberately NOT the mirror image of
+      cones.fanin_cone_gates(), because the two walks meet a register at
+      opposite ends and the Q&A treats those ends differently: backward the
+      walk arrives at DFF.Q, which A21.2 and A50 make a pseudo-primary input
+      -- a source, dropped for the same reason a PI is; forward it arrives at
+      D/CK/RN/SN, which A29 calls ordinary fan-out loads, and a load this net
+      drives is downstream by any reading.  Nothing in the Q&A extends the
+      source rule to the load side; symmetry here would be an inference, and
+      one that contradicts A29.
+    - The walk stops at the register: it does not continue out of Q, which
+      would cross the combinational boundary (A21.2).
     - The driver of ``net`` itself is NOT downstream: a gate cannot lie in
       the fan-out of its own output, so the seed net is excluded before
       matching gate outputs.  The seed stays in the set for the flip-flop
       check -- a DFF whose input pin IS ``net`` is a direct load.
     """
     nets = graph.reachable_forward(nl, [net])
-    gate_outs = nets - {net}
-    out = [g for g in nl.gates if g.out in gate_outs]
-    out += [ff for ff in nl.dffs
-            if ff.d in nets or ff.clk in nets or ff.rn in nets or ff.sn in nets]
-    return out
+    return ([g for g in nl.gates if g.out in nets - {net}]
+            + [ff for ff in nl.dffs
+               if ff.d in nets or ff.clk in nets or ff.rn in nets or ff.sn in nets])
 
 
 def reachable_gates_from(nl: Netlist, net: str) -> List[str]:
