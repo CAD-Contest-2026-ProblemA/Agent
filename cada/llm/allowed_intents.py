@@ -314,6 +314,24 @@ OPERATION SYNONYMS:
   names + clock wording → same_clock.  Two net names + value/equivalence
   wording → signals_equivalent.
 
+▸ ANSWER SHAPE is a parameter, not a different intent
+  Some questions select the same set of gates and differ only in what is
+  reported.  Do NOT hunt for a second intent for the other shape -- pass
+  "form" instead:
+    form = "count"  when the request says how many / count / the number of
+    form = "list"   when it says list / name / enumerate / which gates /
+                    "report only the instance names"
+  Omit form when the request asks for neither in particular; the answer then
+  carries both.
+  Applies to: transitive_fanin, transitive_fanout, successors.
+    "How many gates are immediate successors of g36?"
+      → {"intent":"successors","params":{"gate":"g36","form":"count"}}
+    "List the instance names of all gates in the fanin cone of N426."
+      → {"intent":"transitive_fanin","params":{"net":"N426","form":"list"}}
+  KEY RULE: pick the intent from WHAT IS BEING ASKED ABOUT (the set), and the
+  form from HOW IT SHOULD BE REPORTED.  Choosing a neighbouring intent because
+  it happens to print the shape you want gives the wrong set.
+
 ▸ transitive_fanin vs reachable_from
   "transitive_fanin {net}" → everything UPSTREAM of the net.
     Triggers: "the full ancestry of n31[0]", "the complete upstream closure of
@@ -655,9 +673,9 @@ OPERATION SYNONYMS:
 - max_fanout_of {net}
 - connected_to_net {net}        # driver AND loads of a net (e.g. a renamed signal)
 - gates_driven_by {gate}
-- successors {gate}
-- transitive_fanin {net}
-- transitive_fanout {net}
+- successors {gate, form}       # form = count|list (see ANSWER SHAPE)
+- transitive_fanin {net, form}  # form = count|list
+- transitive_fanout {net, form} # form = count|list
 - reachable_from {net}
 - highest_fanout_pi {}
 - shared_cone {a, b}
@@ -783,6 +801,9 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
+    "transitive_fanin": {"form"},
+    "transitive_fanout": {"form"},
+    "successors": {"form"},
     "load_design": {"dir"},
     "count_type": {"scope"},
     "path_exists": {"avoid"},

@@ -346,6 +346,31 @@ class Agent:
     def _names(insts) -> str:
         return ", ".join(insts) if insts else "(none)"
 
+    # ---- answer shape -------------------------------------------------
+    # A query and its answer's SHAPE are separate choices: "how many gates are
+    # in the cone of X" and "list the gates in the cone of X" select the same
+    # set and differ only in what is reported.  Modelling that as two intents
+    # made the router pick between near-identical catalog entries, which is the
+    # single largest source of misroutes measured against the reference set --
+    # so the shape is a parameter and the set is the intent.
+    _COUNT_WORDS = ("count", "how many", "number")
+    _LIST_WORDS = ("list", "name", "enumerate", "report only", "which gates")
+
+    def _shaped(self, form, names, noun: str, hint: str):
+        """Render ``names`` per ``form``, or None if ``form`` says nothing.
+
+        Returning None for an absent/unrecognised form lets the caller keep its
+        original sentence verbatim.  That matters: evaluator/golden records the
+        pre-parameter wording for these ops, so a request that does not ask for
+        a shape must still answer exactly as it did before.
+        """
+        f = str(form).strip().lower() if form is not None else ""
+        if f in ("count", "how_many", "number"):
+            return f"{noun}: {len(list(names))} gate(s)."
+        if f in ("list", "names", "enumerate"):
+            return f"{noun}: " + self._names_or_file(names, hint)
+        return None
+
     def _names_or_file(self, names, hint: str) -> str:
         """Render a name list for an answer.
 
@@ -1743,29 +1768,38 @@ class Agent:
         return (f"Gate {g} drives {len(ds)} gate(s): "
                 + self._names_or_file(ds, f"driven_by_{g}"))
 
-    def op_successors(self, gate):
+    def op_successors(self, gate, form=None):
         if self._need_design():
             return self._need_design()
         g = str(gate)
         ds = connectivity.immediate_successors(self.state.current, g)
         if ds is None:
             return f"No instance named {g} exists."
-        return ("Immediate successors of %s: " % g
-                + self._names_or_file(ds, f"successors_{g}"))
+        out = self._shaped(form, ds, f"Immediate successors of {g}",
+                           f"successors_{g}")
+        return out if out is not None else (
+            "Immediate successors of %s: " % g
+            + self._names_or_file(ds, f"successors_{g}"))
 
-    def op_transitive_fanin(self, net):
+    def op_transitive_fanin(self, net, form=None):
         if self._need_design():
             return self._need_design()
         net = str(net)
         gs = cones.fanin_cone_gates(self.state.current, net)
-        return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
+        out = self._shaped(form, [g.name for g in gs],
+                           f"The fan-in cone of {net}", f"fanin_cone_{net}")
+        return out if out is not None else (
+            f"The transitive fan-in cone of {net} contains {len(gs)} gates.")
 
-    def op_transitive_fanout(self, net):
+    def op_transitive_fanout(self, net, form=None):
         if self._need_design():
             return self._need_design()
         net = str(net)
         gs = cones.fanout_cone_gates(self.state.current, net)
-        return f"The transitive fan-out cone of {net} contains {len(gs)} gates."
+        out = self._shaped(form, [g.name for g in gs],
+                           f"The fan-out cone of {net}", f"fanout_cone_{net}")
+        return out if out is not None else (
+            f"The transitive fan-out cone of {net} contains {len(gs)} gates.")
 
     def op_reachable_from(self, net):
         if self._need_design():
