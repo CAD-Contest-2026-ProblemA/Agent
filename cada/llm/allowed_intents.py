@@ -345,6 +345,22 @@ OPERATION SYNONYMS:
   (design).  Choose the PI version only when the request says "primary input"
   or "PI"; "signal", "net" and "over all nets" are the design-wide question.
 
+▸ "does the design contain any X" -- existence questions
+  There is no existence intent.  Ask for the COUNT of the thing and the number
+  answers the question; zero means no.
+    a gate type ("does this design contain any sequential element such as a
+      DFF", "are there any XOR gates", "does it use buffers")
+        → count_type {type}          type = and|or|not|nand|nor|xor|xnor|buf|dff
+    floating signals            → floating_count {}
+    constant-input gates        → report_const_gates {type}
+    a path between two nets     → path_exists {a, b}
+  KEY RULE: "does ... contain" is not a relation between two named objects.
+  depends_on takes an OUTPUT and an INPUT that must both be real nets, so
+  {"output":"design","input":"DFF"} is not a smaller mistake than picking the
+  wrong intent -- it names nothing that exists and the request is answered
+  with nothing at all.  A trailing "answer yes or no" does not change which
+  intent computes the fact.
+
 ▸ threshold questions ("more than k", "exceeds k", "at most k")
   The QUANTITY being compared picks the intent -- the threshold wording is
   common to all of them and decides nothing.
