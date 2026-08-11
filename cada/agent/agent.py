@@ -2335,6 +2335,32 @@ class Agent:
         self.state.record_delta("collapsed", info)
         return f"Collapsed {info} back-to-back inverter pair(s) into direct wires; equivalence verified."
 
+    def op_check_dangling(self, form=None):
+        """Report dangling gates WITHOUT touching the design.
+
+        The query and the transform were one intent, and it was the transform.
+        Asked whether a design has dangling gates, the agent deleted them --
+        an unrequested edit is worse than a wrong answer, because every later
+        line then runs against a netlist the caller never asked for.  The
+        regex table kept the two apart by reading the sentence for a removal
+        verb; nothing on the LLM path could, so the query half simply did not
+        exist there.
+        """
+        if self._need_design():
+            return self._need_design()
+        dead_g, dead_ff = cleanup.find_dangling(self.state.current)
+        names = [g.name for g in dead_g] + [f.name for f in dead_ff]
+        total = len(names)
+        if not total:
+            return ("No dangling gates were found; every gate contributes to a "
+                    "primary output.")
+        out = self._shaped(form, names,
+                           f"{total} dangling instance(s) do not affect any "
+                           f"primary output", "dangling")
+        return out if out is not None else (
+            f"Found {total} dangling instance(s) that do not affect any "
+            "primary output: " + self._names_or_file(names, "dangling"))
+
     def op_remove_dangling(self):
         if self._need_design():
             return self._need_design()

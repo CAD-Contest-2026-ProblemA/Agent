@@ -427,6 +427,20 @@ OPERATION SYNONYMS:
   A buffer is not dangling -- it is on a live path -- so remove_dangling
   removes none of them and reports success while every BUF is still there.
 
+▸ check_dangling vs remove_dangling -- asking is not instructing
+  "check_dangling {}"  → the request only ASKS: "does this design contain any
+    dangling gates", "are there gates that do not reach a primary output",
+    "report any unused logic".  The design is left untouched.
+  "remove_dangling {}" → the request INSTRUCTS: "remove them", "delete unused
+    gates", "prune the netlist".  Note that "Remove them if found" is an
+    instruction, not a question, even though it is conditional.
+  KEY RULE: choosing the transform for a question is not a wrong answer, it is
+  an unrequested EDIT -- every later request in the case then runs against a
+  netlist the caller never asked for, and an equivalence check against the
+  original will not flag it because removing dead logic preserves function.
+  The same asking/instructing split applies to report_const_gates vs
+  const_propagate.
+
 ▸ minimize_area vs remove_dangling
   "minimize_area {basis}" → RESYNTHESIZE the logic to reduce total gate count.
     Triggers: "minimize the total gate count", "rework the logic so the design
@@ -808,7 +822,8 @@ OPERATION SYNONYMS:
 - const_propagate {type}
 - collapse_inverters {}         # NOT(NOT(a)) pairs -> direct wire
 - remove_buffers {}             # delete every BUF, rewiring around it
-- remove_dangling {}
+- check_dangling {form}         # REPORT them, design untouched
+- remove_dangling {}            # DELETE them
 - merge_duplicates {}
 - rename {kind, old, new}       # kind = gate|wire|signal
 - insert_buffers {k, net, mode, scope} # mode = fanout|dedicated; scope = gate|signal
@@ -841,7 +856,8 @@ ALLOWED_INTENTS: Set[str] = {
     "nand_const1_to_inv",
     "report_const_gates", "const_propagate", "collapse_inverters",
     "remove_buffers",
-    "remove_dangling", "merge_duplicates", "rename", "insert_buffers",
+    "remove_dangling", "check_dangling", "merge_duplicates", "rename",
+    "insert_buffers",
     "minimize_depth", "minimize_area", "optimize_cone",
     "verify_equivalence", "begin_case", "noop",
 }
@@ -893,6 +909,7 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
+    "check_dangling": {"form"},
     "depends_on": {"kind"},
     "transitive_fanin": {"form"},
     "transitive_fanout": {"form"},
