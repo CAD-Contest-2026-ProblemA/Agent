@@ -365,11 +365,50 @@ class Agent:
         a shape must still answer exactly as it did before.
         """
         f = str(form).strip().lower() if form is not None else ""
+        names = list(names)
         if f in ("count", "how_many", "number"):
-            return f"{noun}: {len(list(names))} gate(s)."
+            return f"{noun}: {len(names)} gate(s)."
         if f in ("list", "names", "enumerate"):
             return f"{noun}: " + self._names_or_file(names, hint)
+        if f in ("yesno", "yes_no", "boolean", "bool"):
+            # A question answered "48" is not answered.  Lead with the word the
+            # request asked for and keep the number behind it, so the reply
+            # satisfies a yes/no reading without losing the evidence.
+            return (f"{'Yes' if names else 'No'}. {noun}: {len(names)} gate(s)."
+                    + (" " + self._names_or_file(names, hint) if names else ""))
         return None
+
+    _COMPARISONS = {
+        "at_most": lambda v, k: v <= k, "le": lambda v, k: v <= k,
+        "at_least": lambda v, k: v >= k, "ge": lambda v, k: v >= k,
+        "greater": lambda v, k: v > k, "gt": lambda v, k: v > k,
+        "exceeds": lambda v, k: v > k, "more_than": lambda v, k: v > k,
+        "less": lambda v, k: v < k, "lt": lambda v, k: v < k,
+        "equal": lambda v, k: v == k, "eq": lambda v, k: v == k,
+    }
+
+    def _threshold_answer(self, value, threshold, compare, sentence: str):
+        """Prefix a measured sentence with the yes/no the request asked for.
+
+        A threshold question ("is the depth at most 5", "does any net exceed 8
+        loads") is answered by a number the caller then has to compare
+        themselves, and a reply that never says yes or no does not answer it.
+        The comparison needs BOTH the threshold and the direction: the same
+        measurement answers yes to "at most 5" and no to "more than 5".
+
+        Returns None when either is missing or unrecognised, so the caller
+        keeps its plain measured sentence rather than guessing a verdict.
+        """
+        if threshold is None or compare is None:
+            return None
+        try:
+            k = float(str(threshold).strip())
+        except (TypeError, ValueError):
+            return None
+        cmp = self._COMPARISONS.get(str(compare).strip().lower().replace(" ", "_"))
+        if cmp is None or value is None:
+            return None
+        return f"{'Yes' if cmp(float(value), k) else 'No'}. {sentence}"
 
     def _names_or_file(self, names, hint: str) -> str:
         """Render a name list for an answer.
@@ -1657,7 +1696,7 @@ class Agent:
         n = counts.total_gate_count(self.state.current)
         return f"The total gate count of the design is {n}."
 
-    def op_count_type(self, type, scope=None):
+    def op_count_type(self, type, scope=None, form=None):
         if self._need_design():
             return self._need_design()
         gtype = self._norm_gate_type(type)
@@ -1666,10 +1705,15 @@ class Agent:
             out = str(scope)
             gs = cones.fanin_cone_gates(self.state.current, out)
             n = sum(1 for g in gs if g.type == gtype)
-            return (f"There are currently {n} {gtype.upper()} gates in "
-                    f"the cone of {out}.")
-        n = counts.count_of_type(self.state.current, gtype)
-        return f"There are currently {n} {gtype.upper()} gates in the design."
+            where = f"the cone of {out}"
+        else:
+            n = counts.count_of_type(self.state.current, gtype)
+            where = "the design"
+        sentence = f"There are currently {n} {gtype.upper()} gates in {where}."
+        # "does the design contain any X" is this count read as a boolean.
+        if str(form).strip().lower() in ("yesno", "yes_no", "boolean", "bool"):
+            return f"{'Yes' if n else 'No'}. {sentence}"
+        return sentence
 
     def op_delta_count(self, kind=""):
         low = str(kind or "").lower()
@@ -1832,7 +1876,7 @@ class Agent:
         name, f = connectivity.highest_fanout_pi(self.state.current)
         return f"Primary input {name} has the highest fanout ({f})."
 
-    def op_highest_fanout_net(self):
+    def op_highest_fanout_net(self, threshold=None, compare=None):
         """The busiest net in the whole design, not just among the PIs.
 
         Separate from op_highest_fanout_pi because the winner is usually an
@@ -1850,7 +1894,9 @@ class Agent:
         name, f = connectivity.highest_fanout_net(nl)
         drv = nl.driver(name)
         by = f", driven by {drv[1].name}" if drv and drv[0] == "gate" else ""
-        return f"Signal {name} drives the largest number of loads ({f}){by}."
+        sentence = f"Signal {name} drives the largest number of loads ({f}){by}."
+        # "does ANY net exceed k loads" is this measurement plus a comparison.
+        return self._threshold_answer(f, threshold, compare, sentence) or sentence
 
     def op_max_fanout_of(self, net):
         if self._need_design():
@@ -1859,13 +1905,18 @@ class Agent:
         f = connectivity.max_fanout_of(self.state.current, net)
         return f"The maximum fanout of {net} is now {f}."
 
-    def op_shared_cone(self, a, b):
+    def op_shared_cone(self, a, b, form=None):
         if self._need_design():
             return self._need_design()
         a, b = str(a), str(b)
         gs = cones.shared_fanin_gates(self.state.current, a, b)
-        return (f"{len(gs)} gate(s) are shared between the fan-in cones of "
-                f"{a} and {b}: " + self._names_or_file([g.name for g in gs], f"shared_{a}_{b}"))
+        names = [g.name for g in gs]
+        out = self._shaped(form, names,
+                           f"Gates shared between the fan-in cones of {a} and {b}",
+                           f"shared_{a}_{b}")
+        return out if out is not None else (
+            f"{len(gs)} gate(s) are shared between the fan-in cones of "
+            f"{a} and {b}: " + self._names_or_file(names, f"shared_{a}_{b}"))
 
     def op_connected_to_output(self, gate):
         if self._need_design():
@@ -1959,14 +2010,15 @@ class Agent:
                 f" Wire {w} {'is' if res else 'is not'} a cut between a primary input and a primary output.")
 
     # ----- depth ---------------------------------------------------------
-    def op_max_depth_between(self, a, b):
+    def op_max_depth_between(self, a, b, threshold=None, compare=None):
         if self._need_design():
             return self._need_design()
         a, b = str(a), str(b)
         d = depth.max_depth_from_to(self.state.current, a, b)
         if d is None:
             return f"There is no combinational path from {a} to {b} (depth 0)."
-        return f"The maximum combinational logic depth from {a} to {b} is {d}."
+        sentence = f"The maximum combinational logic depth from {a} to {b} is {d}."
+        return self._threshold_answer(d, threshold, compare, sentence) or sentence
 
     def op_cone_depth(self, output):
         if self._need_design():

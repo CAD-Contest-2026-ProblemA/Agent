@@ -374,6 +374,26 @@ OPERATION SYNONYMS:
   with nothing at all.  A trailing "answer yes or no" does not change which
   intent computes the fact.
 
+▸ "answer yes or no" -- form and threshold
+  A request that asks for a verdict is not answered by a measurement alone.
+  Two shapes, and the right one depends on whether a number is compared:
+    EXISTENCE ("do they share at least one gate", "does this design contain
+      any XOR gates", "are there dangling gates") -- the answer is whether the
+      set is non-empty, so pass form="yesno":
+        → {"intent":"shared_cone","params":{"a":"n1","b":"n2","form":"yesno"}}
+        → {"intent":"count_type","params":{"type":"dff","form":"yesno"}}
+    THRESHOLD ("is the depth at most 5", "does any net drive more than 8
+      loads") -- pass BOTH the number and the direction:
+        threshold = the number from the request
+        compare   = at_most | at_least | greater | less | equal
+        → {"intent":"max_depth_between","params":{"a":"g30","b":"g99",
+           "threshold":5,"compare":"at_most"}}
+  KEY RULE: the direction is not optional.  The same measurement answers yes
+  to "at most 5" and no to "more than 5", so a threshold without a direction
+  cannot be turned into a verdict and the reply falls back to the bare number.
+  Do not switch to a different intent because the request ends in "answer yes
+  or no" -- it describes the reply, not the operation.
+
 ▸ threshold questions ("more than k", "exceeds k", "at most k")
   The QUANTITY being compared picks the intent -- the threshold wording is
   common to all of them and decides nothing.
@@ -778,8 +798,8 @@ OPERATION SYNONYMS:
 - transitive_fanout {net, form} # form = count|list
 - reachable_from {net}
 - highest_fanout_pi {}          # PI-scoped ONLY
-- highest_fanout_net {}         # busiest net in the design, plus its driver
-- shared_cone {a, b}
+- highest_fanout_net {threshold, compare}  # busiest net in the design, plus its driver
+- shared_cone {a, b, form}
 - connected_to_output {gate}
 - path_exists {a, b, avoid}
 - enumerate_paths {a, b}
@@ -787,7 +807,7 @@ OPERATION SYNONYMS:
 - dominator {a, b, gate}
 - articulation {a, b}
 - is_cut {wire}
-- max_depth_between {a, b}      # both endpoints must be concrete net names
+- max_depth_between {a, b, threshold, compare}   # both endpoints concrete net names
 - cone_depth {output}
 - global_max_depth {}
 - pi_to_po_depth {}             # any primary input -> any primary output
@@ -909,13 +929,16 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
+    "shared_cone": {"form"},
+    "max_depth_between": {"threshold", "compare"},
+    "highest_fanout_net": {"threshold", "compare"},
     "check_dangling": {"form"},
     "depends_on": {"kind"},
     "transitive_fanin": {"form"},
     "transitive_fanout": {"form"},
     "successors": {"form"},
     "load_design": {"dir"},
-    "count_type": {"scope"},
+    "count_type": {"scope", "form"},
     "path_exists": {"avoid"},
     "convert_basis": {"basis", "scope"},
     "xor_to_nand": {"scope"},
