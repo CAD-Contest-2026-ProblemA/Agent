@@ -22,6 +22,14 @@ BASES = {
     "NOR_NOT": {"nor", "not"},
     "AND_NOT": {"and", "not"},
     "AND_OR_NOT": {"and", "or", "not"},
+    # Single-gate bases.  NAND and NOR are each functionally complete on their
+    # own, so a request for "only NAND gates, no other gate type" is
+    # satisfiable -- the inverter becomes the gate fed from both inputs,
+    # NOT(a) = NAND(a, a).  Kept distinct from NAND_NOT because a prompt that
+    # says "no gate type other than NAND" is checked against the final netlist
+    # and a NOT there fails it.
+    "NAND": {"nand"},
+    "NOR": {"nor"},
 }
 
 
@@ -54,17 +62,31 @@ def _expr_of_gate(g: Gate):
 def _make_basis_synth(basis: str, em: Emitter) -> Callable:
     gates = BASES[basis]
 
+    def emit_not(out, a):
+        """NOT, in whatever the basis actually allows.
+
+        With no "not" available the self-fed universal gate is the inverter:
+        NAND(a, a) = NOR(a, a) = !a.  This is what the reference netlist for a
+        NAND-only remap emits.
+        """
+        if "not" in gates:
+            em.not_(out, a)
+        elif "nand" in gates:
+            em.nand_(out, a, a)
+        else:
+            em.nor_(out, a, a)
+
     def emit_and(out, a, b):
         if "and" in gates:
             em.and_(out, a, b)
         elif "nand" in gates:           # AND = NOT(NAND)
             t = em.fresh_wire()
             em.nand_(t, a, b)
-            em.not_(out, t)
-        else:                            # NOR_NOT: AND = NOR(NOT a, NOT b)
+            emit_not(out, t)
+        else:                            # NOR / NOR_NOT: AND = NOR(NOT a, NOT b)
             na, nb = em.fresh_wire(), em.fresh_wire()
-            em.not_(na, a)
-            em.not_(nb, b)
+            emit_not(na, a)
+            emit_not(nb, b)
             em.nor_(out, na, nb)
 
     def emit_or(out, a, b):
@@ -73,17 +95,17 @@ def _make_basis_synth(basis: str, em: Emitter) -> Callable:
         elif "nor" in gates:            # OR = NOT(NOR)
             t = em.fresh_wire()
             em.nor_(t, a, b)
-            em.not_(out, t)
-        else:                            # NAND_NOT / AND_NOT
+            emit_not(out, t)
+        else:                            # NAND / NAND_NOT / AND_NOT
             na, nb = em.fresh_wire(), em.fresh_wire()
-            em.not_(na, a)
-            em.not_(nb, b)
+            emit_not(na, a)
+            emit_not(nb, b)
             if "nand" in gates:          # OR = NAND(NOT a, NOT b)
                 em.nand_(out, na, nb)
             else:                        # AND_NOT: OR = NOT(AND(NOT a, NOT b))
                 t = em.fresh_wire()
                 em.and_(t, na, nb)
-                em.not_(out, t)
+                emit_not(out, t)
 
     def operand(x) -> str:
         if isinstance(x, str):
@@ -95,7 +117,7 @@ def _make_basis_synth(basis: str, em: Emitter) -> Callable:
     def synth(expr, out):
         op = expr[0]
         if op == "NOT":
-            em.not_(out, operand(expr[1]))
+            emit_not(out, operand(expr[1]))
         elif op == "AND":
             emit_and(out, operand(expr[1]), operand(expr[2]))
         elif op == "OR":

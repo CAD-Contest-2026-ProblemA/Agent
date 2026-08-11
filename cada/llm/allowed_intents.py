@@ -142,6 +142,20 @@ OPERATION SYNONYMS:
   KEY RULE: bracket indices are part of the name: n31[1] and n31 are different nets.
   Copy the index if the request has one.
 
+▸ choosing the basis value: NAND vs NAND_NOT (and NOR vs NOR_NOT)
+  "NAND"      → the request allows ONE gate type: "using only 2-input NAND
+    gates", "so that the final design contains no gate type other than NAND",
+    "NAND-only".  Inverters are built as NAND(a, a), so the result really does
+    contain nothing else.
+  "NAND_NOT"  → the request names both: "using only NAND and NOT gates",
+    "rebuild it from NANDs and inverters".
+  Same split for NOR / NOR_NOT.
+  KEY RULE: count the gate types the request permits.  "only NAND" is one type
+  and "NAND and NOT" is two; picking NAND_NOT for a one-type request leaves
+  inverters in the netlist, and a prompt that says "no gate type other than
+  NAND" is checked against the FINAL netlist (Q&A A63/A64), so those inverters
+  fail it even though the logic is equivalent.
+
 ▸ targeted gate-type conversion vs convert_basis
   If the request names a SPECIFIC gate type to replace (XOR, XNOR, NAND-with-constant),
   use the targeted intent — xor_to_nand, xnor_to_nor, xor_to_aoi, nand_const1_to_inv —
@@ -752,7 +766,7 @@ OPERATION SYNONYMS:
 - reg_to_reg_paths {}
 - enable_hold_report {}
 - enable_hold_count {}
-- convert_basis {basis, scope}  # basis = NAND_NOT|NOR_NOT|AND_NOT|AND_OR_NOT
+- convert_basis {basis, scope}  # basis = NAND|NOR|NAND_NOT|NOR_NOT|AND_NOT|AND_OR_NOT
 - xor_to_nand {scope}
 - xnor_to_nor {scope}
 - xor_to_aoi {scope}
