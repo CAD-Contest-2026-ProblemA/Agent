@@ -123,6 +123,83 @@ def collapse_double_inverters(nl: Netlist) -> int:
     return collapsed
 
 
+def remove_buffers(nl: Netlist) -> int:
+    """Delete every BUF, rewiring around it.  Returns #removed.
+
+    A BUF computes the identity, so one of its two nets can absorb the other.
+    Which one depends on where the buffer sits, and getting that backwards is
+    why a first attempt removed nothing on a design whose buffers all drive
+    primary outputs:
+
+    * output is internal -- the output net is redundant, so loads move onto
+      the input net and the instance goes.
+    * output is a PRIMARY OUTPUT -- the output net cannot be dropped, it is a
+      port.  Substitute the other way instead: the gate feeding the buffer
+      takes the port's name and drives it directly.  This is what the
+      reference netlist does (its NAND2_384 drives N1324, and the internal
+      N1292 that fed the buffer is gone).
+
+    A buffer is kept only when neither direction is legal -- the input is a
+    port too (PI straight to PO, which structurally needs the buffer), or
+    either net is already spoken for by an earlier substitution.  Two buffers
+    sharing an input cannot both hand it a different port name.
+    """
+    nl.driver("__force_build__")
+    po, pi = set(nl.po), set(nl.pi)
+    subst: Dict[str, str] = {}
+    touched: Set[str] = set()          # nets already renamed, or renamed onto
+    keep, removed = [], 0
+
+    def free(*nets):
+        return all(n not in touched for n in nets)
+
+    for g in nl.gates:
+        if g.type != "buf":
+            keep.append(g)
+            continue
+        src, dst = g.ins[0], g.out
+        if src == dst:
+            removed += 1
+            continue
+        if dst not in po and free(src, dst):
+            subst[dst] = src                       # loads move to the input
+        elif src not in po and src not in pi and free(src, dst):
+            subst[src] = dst                       # driver takes the port name
+        else:
+            keep.append(g)
+            continue
+        touched.update((src, dst))
+        removed += 1
+
+    if not subst:
+        return removed
+
+    def resolve(n):
+        seen = 0
+        while n in subst and seen < 1_000_000:
+            n = subst[n]
+            seen += 1
+        return n
+
+    nl.gates = keep
+    for g in nl.gates:
+        g.ins = [resolve(i) for i in g.ins]
+        g.out = resolve(g.out)                     # the reverse case renames outputs
+    for ff in nl.dffs:
+        ff.d = resolve(ff.d)
+        ff.clk = resolve(ff.clk)
+        ff.rn = resolve(ff.rn)
+        ff.sn = resolve(ff.sn)
+        ff.q = resolve(ff.q)
+    nl.touch()
+    return removed
+
+
+def buffers_remaining(nl: Netlist):
+    """BUF instances remove_buffers() cannot legally remove (PI straight to PO)."""
+    return [g for g in nl.gates if g.type == "buf"]
+
+
 # ---- structural duplicate merge (fixpoint) -----------------------------
 _COMMUTATIVE = {"and", "or", "nand", "nor", "xor", "xnor"}
 

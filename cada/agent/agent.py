@@ -2274,6 +2274,20 @@ class Agent:
         tlabel = (rtype.upper() + " ") if rtype else ""
         return f"Constant propagation eliminated {info} {tlabel}gate(s); equivalence verified."
 
+    def op_remove_buffers(self):
+        """Delete every BUF, rewiring around it.  A transform, not a query."""
+        if self._need_design():
+            return self._need_design()
+        info, ok, reason = self._commit(lambda nl: cleanup.remove_buffers(nl))
+        if not ok:
+            return f"The buffer removal was reverted: {reason}."
+        self.state.record_delta("buffers_removed", info)
+        left = len(cleanup.buffers_remaining(self.state.current))
+        tail = (f" {left} buffer(s) remain, each driving a primary output "
+                f"straight from a primary input." if left else "")
+        return (f"Removed {info} buffer(s), connecting each buffered signal "
+                f"directly; equivalence verified.{tail}")
+
     def op_collapse_inverters(self):
         if self._need_design():
             return self._need_design()

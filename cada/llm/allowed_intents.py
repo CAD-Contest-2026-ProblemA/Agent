@@ -374,6 +374,16 @@ OPERATION SYNONYMS:
   of what drives it → transitive_fanin.  reachable / downstream / what it
   drives → reachable_from.
 
+▸ remove_buffers vs remove_dangling vs collapse_inverters
+  "remove_buffers {}"      → the request names BUF/buffer gates: "remove every
+    BUF gate by connecting each buffered signal directly to its destination",
+    "strip the buffers so no BUF remains".
+  "remove_dangling {}"     → gates that drive nothing / do not reach a PO.
+  "collapse_inverters {}"  → back-to-back NOT pairs.
+  KEY RULE: all three delete gates, but each names WHICH gates in the request.
+  A buffer is not dangling -- it is on a live path -- so remove_dangling
+  removes none of them and reports success while every BUF is still there.
+
 ▸ minimize_area vs remove_dangling
   "minimize_area {basis}" → RESYNTHESIZE the logic to reduce total gate count.
     Triggers: "minimize the total gate count", "rework the logic so the design
@@ -752,7 +762,8 @@ OPERATION SYNONYMS:
 - check_floating {}             # floating inputs / unconnected output ports?
 - floating_count {}             # how many floating signals were found
 - const_propagate {type}
-- collapse_inverters {}
+- collapse_inverters {}         # NOT(NOT(a)) pairs -> direct wire
+- remove_buffers {}             # delete every BUF, rewiring around it
 - remove_dangling {}
 - merge_duplicates {}
 - rename {kind, old, new}       # kind = gate|wire|signal
@@ -784,6 +795,7 @@ ALLOWED_INTENTS: Set[str] = {
     "enable_hold_report", "enable_hold_count", "convert_basis",
     "xor_to_nand", "xnor_to_nor", "xor_to_aoi", "nand_const1_to_inv",
     "report_const_gates", "const_propagate", "collapse_inverters",
+    "remove_buffers",
     "remove_dangling", "merge_duplicates", "rename", "insert_buffers",
     "minimize_depth", "minimize_area", "optimize_cone",
     "verify_equivalence", "begin_case", "noop",
