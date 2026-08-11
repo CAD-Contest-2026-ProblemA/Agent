@@ -901,7 +901,11 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
 
 
 GATE_TYPES = {"and", "or", "not", "nand", "nor", "xor", "xnor", "buf", "dff"}
-BASIS_VALUES = {"NAND_NOT", "NOR_NOT", "AND_NOT", "AND_OR_NOT"}
+# Must track cada.transform.rewrite.BASES.  A value accepted there and
+# rejected here reads as a routing failure: the model picks the right
+# intent with the right basis and the request is answered with nothing.
+BASIS_VALUES = {"NAND", "NOR",
+                "NAND_NOT", "NOR_NOT", "AND_NOT", "AND_OR_NOT"}
 LIST_PORT_DIRS = {"input", "output"}
 RENAME_KINDS = {"gate", "wire", "signal"}
 BUFFER_MODES = {"fanout", "dedicated"}
