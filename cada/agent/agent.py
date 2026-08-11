@@ -1572,6 +1572,16 @@ class Agent:
         }
         return aliases.get(b, b)
 
+    # Values that mean "no scope" rather than naming a cone.  A model asked to
+    # remap the ENTIRE design tends to fill the optional scope with a word for
+    # the design itself instead of leaving it out, and that word is not a net:
+    # the cone of it is empty, so the remap rewrites nothing and still reports
+    # success.  Treating them as absent keeps a correct intent with a correct
+    # basis from being turned into a no-op by a redundant parameter.
+    _WHOLE_DESIGN = {"design", "entire design", "whole design", "the design",
+                     "all", "everything", "netlist", "the netlist",
+                     "entire netlist", "whole netlist", "global", "none"}
+
     def _scope_from_param(self, scope):
         """Convert an LLM scope/output parameter into a gate-name set.
 
@@ -1581,9 +1591,16 @@ class Agent:
         scope = self._clean_opt(scope)
         if scope is None:
             return None
+        if str(scope).strip().lower() in self._WHOLE_DESIGN:
+            return None
         if self._need_design():
             return None
-        return {g.name for g in cones.fanin_cone_gates(self.state.current, str(scope))}
+        gates = {g.name for g in cones.fanin_cone_gates(self.state.current, str(scope))}
+        if not gates and self.state.current is not None \
+                and str(scope) not in self.state.current.all_nets():
+            # Names no net at all: scoping to it would silently rewrite nothing.
+            return None
+        return gates
 
     # ----- IO / testcase -------------------------------------------------
     def op_begin_case(self, name="case"):
