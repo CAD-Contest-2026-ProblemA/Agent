@@ -1815,6 +1815,26 @@ class Agent:
         name, f = connectivity.highest_fanout_pi(self.state.current)
         return f"Primary input {name} has the highest fanout ({f})."
 
+    def op_highest_fanout_net(self):
+        """The busiest net in the whole design, not just among the PIs.
+
+        Separate from op_highest_fanout_pi because the winner is usually an
+        internal signal: on the reference design the PI maximum is 8 while the
+        design maximum is 12, so answering a "which signal" question with the
+        PI-scoped intent reports a smaller number for a different net -- and
+        the number is what a threshold question then turns on.
+
+        The driver comes along because the question is normally asked about a
+        net whose driver the caller wants next.
+        """
+        if self._need_design():
+            return self._need_design()
+        nl = self.state.current
+        name, f = connectivity.highest_fanout_net(nl)
+        drv = nl.driver(name)
+        by = f", driven by {drv[1].name}" if drv and drv[0] == "gate" else ""
+        return f"Signal {name} drives the largest number of loads ({f}){by}."
+
     def op_max_fanout_of(self, net):
         if self._need_design():
             return self._need_design()

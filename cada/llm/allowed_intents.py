@@ -319,6 +319,18 @@ OPERATION SYNONYMS:
   names + clock wording → same_clock.  Two net names + value/equivalence
   wording → signals_equivalent.
 
+▸ highest_fanout_pi vs highest_fanout_net
+  "highest_fanout_pi {}"  → the question names primary inputs: "which primary
+    input drives the most loads", "which PI has the highest fanout".
+  "highest_fanout_net {}" → every driven net: "which signal drives the largest
+    number of loads", "the highest fanout over all nets in this design",
+    "which net has the highest fanout".  Also answers "report the driver and
+    the fanout count of <net>" for that net.
+  KEY RULE: the busiest net is usually INTERNAL, so the two return different
+  nets and different numbers -- on one reference design 8 (PI) against 12
+  (design).  Choose the PI version only when the request says "primary input"
+  or "PI"; "signal", "net" and "over all nets" are the design-wide question.
+
 ▸ threshold questions ("more than k", "exceeds k", "at most k")
   The QUANTITY being compared picks the intent -- the threshold wording is
   common to all of them and decides nothing.
@@ -698,7 +710,8 @@ OPERATION SYNONYMS:
 - transitive_fanin {net, form}  # form = count|list
 - transitive_fanout {net, form} # form = count|list
 - reachable_from {net}
-- highest_fanout_pi {}
+- highest_fanout_pi {}          # PI-scoped ONLY
+- highest_fanout_net {}         # busiest net in the design, plus its driver
 - shared_cone {a, b}
 - connected_to_output {gate}
 - path_exists {a, b, avoid}
@@ -758,6 +771,7 @@ ALLOWED_INTENTS: Set[str] = {
     "cone_gate_count", "cone_type_counts", "list_ports", "count_ports",
     "fanout", "gates_driven_by", "successors", "transitive_fanin",
     "transitive_fanout", "reachable_from", "highest_fanout_pi",
+    "highest_fanout_net",
     "max_fanout_of", "shared_cone", "connected_to_output", "path_exists",
     "enumerate_paths", "length_zero_paths", "dominator", "articulation",
     "is_cut", "max_depth_between", "cone_depth", "global_max_depth",
