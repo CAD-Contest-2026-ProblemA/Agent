@@ -156,9 +156,22 @@ OPERATION SYNONYMS:
   NAND" is checked against the FINAL netlist (Q&A A63/A64), so those inverters
   fail it even though the logic is equivalent.
 
+▸ picking the targeted conversion: the SOURCE type and the TARGET type
+  Four conversions exist and each names both ends.  Match BOTH, not just the
+  gate being replaced:
+    XOR  -> NAND      xor_to_nand {scope}
+    XOR  -> AOI       xor_to_aoi {scope}
+    XNOR -> NOR       xnor_to_nor {scope}
+    XNOR -> NAND      xnor_to_nand {scope}
+  KEY RULE: "replace all XNOR gates with NAND-only implementations" is
+  xnor_to_nand, not xnor_to_nor.  Both leave zero XNOR gates and both preserve
+  equivalence, so the answer looks right either way -- but the prompt named the
+  target basis and that is checked against the final netlist (Q&A A63).
+
 ▸ targeted gate-type conversion vs convert_basis
   If the request names a SPECIFIC gate type to replace (XOR, XNOR, NAND-with-constant),
-  use the targeted intent — xor_to_nand, xnor_to_nor, xor_to_aoi, nand_const1_to_inv —
+  use the targeted intent — xor_to_nand, xnor_to_nor, xnor_to_nand, xor_to_aoi,
+  nand_const1_to_inv —
   NOT convert_basis.  convert_basis rewrites EVERY gate and is only correct when the
   request says to rebuild the whole netlist (or a cone) using only the basis gates.
 
@@ -785,6 +798,7 @@ OPERATION SYNONYMS:
 - convert_basis {basis, scope}  # basis = NAND|NOR|NAND_NOT|NOR_NOT|AND_NOT|AND_OR_NOT
 - xor_to_nand {scope}
 - xnor_to_nor {scope}
+- xnor_to_nand {scope}
 - xor_to_aoi {scope}
 - nand_const1_to_inv {}
 - report_const_gates {type, value}
@@ -823,7 +837,8 @@ ALLOWED_INTENTS: Set[str] = {
     "output_constant", "depends_on", "boolean_equation", "symmetric",
     "exists_nand_pair", "ffs_on_clock", "same_clock", "reg_to_reg_paths",
     "enable_hold_report", "enable_hold_count", "convert_basis",
-    "xor_to_nand", "xnor_to_nor", "xor_to_aoi", "nand_const1_to_inv",
+    "xor_to_nand", "xnor_to_nor", "xnor_to_nand", "xor_to_aoi",
+    "nand_const1_to_inv",
     "report_const_gates", "const_propagate", "collapse_inverters",
     "remove_buffers",
     "remove_dangling", "merge_duplicates", "rename", "insert_buffers",
@@ -888,6 +903,7 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
     "convert_basis": {"basis", "scope"},
     "xor_to_nand": {"scope"},
     "xnor_to_nor": {"scope"},
+    "xnor_to_nand": {"scope"},
     "xor_to_aoi": {"scope"},
     "report_const_gates": {"type", "value"},
     "const_propagate": {"type"},

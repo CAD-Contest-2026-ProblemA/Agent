@@ -2224,6 +2224,27 @@ class Agent:
         return (f"Converted {info} XOR gate(s) to 4-NAND logic "
                 f"({added} NAND gates added); functional equivalence verified.")
 
+    def op_xnor_to_nand(self, scope=None):
+        """XNOR -> NAND-only, the sibling of op_xnor_to_nor.
+
+        rewrite.xnor_to_nand has always existed and only the regex table could
+        reach it, so on the LLM path xnor_to_nor was the only XNOR conversion
+        on offer and a request for NAND got NOR -- equivalent logic, and the
+        wrong gate type in the netlist the prompt constrains.
+        """
+        if self._need_design():
+            return self._need_design()
+        scope_gates = self._scope_from_param(scope)
+        before = counts.count_of_type(self.state.current, "nand")
+        info, ok, reason = self._commit(lambda nl: rewrite.xnor_to_nand(nl, scope_gates))
+        if not ok:
+            return f"The XNOR->NAND conversion was reverted: {reason}."
+        added = counts.count_of_type(self.state.current, "nand") - before
+        self.state.record_delta("nand_added", added)
+        self.state.record_delta("xnor_converted", info)
+        return (f"Converted {info} XNOR gate(s) to NAND-only logic "
+                f"({added} NAND gates added); functional equivalence verified.")
+
     def op_xnor_to_nor(self, scope=None):
         if self._need_design():
             return self._need_design()
