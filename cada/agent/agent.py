@@ -1433,6 +1433,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No {kind} named {old} was found to rename."
+        self.state.renames.append(("gate" if kind == "gate" else "wire", new))
         return f"Renamed {kind} {old} to {new} and updated all references."
 
     def h_rename2(self, m, line):
@@ -1447,6 +1448,7 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No object named {old} was found to rename."
+        self.state.renames.append(("gate" if kind == "gate" else "wire", new))
         return f"Renamed {kind} {old} to {new} and updated all references."
 
     def h_connected_renamed(self, m, line):
@@ -1748,11 +1750,15 @@ class Agent:
             return self._need_design()
         fname = str(file or f"{self.state.case_name or 'out'}_out.v").strip().strip("'\"")
         out_path = self._out_path(fname)
+        restored = naming.ensure_names(self.state.current, self.state.renames)
         try:
             writer.write_file(self.state.current, out_path)
         except Exception as exc:
             return f"Failed to write design to {out_path}: {exc}"
-        return f'Wrote the current netlist to "{out_path}" successfully.'
+        note = ("" if not restored else
+                f" Restored {len(restored)} identifier(s) that later "
+                f"optimization had removed: " + self._names(restored) + ".")
+        return f'Wrote the current netlist to "{out_path}" successfully.{note}'
 
     # ----- counts / reports ---------------------------------------------
     def op_count_gates(self):
@@ -2524,6 +2530,9 @@ class Agent:
         self.state.current.touch()
         if not ok:
             return f"No {word} named {old} was found to rename."
+        # Remember it: a later optimization can delete whatever carries this
+        # name, and the name still has to be in the netlist we write out.
+        self.state.renames.append(("gate" if kind == "gate" else "wire", new))
         return f"Renamed {word} {old} to {new} and updated all references."
 
     def op_insert_buffers(self, k=4, net=None, mode="fanout", scope=None):

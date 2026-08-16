@@ -67,7 +67,10 @@ def to_string(nl: Netlist) -> str:
     bus_min: Dict[str, int] = {}
     scalars: List[str] = []
     seen = set()
-    for net in _iter_nets(nl):
+    # Declared-but-unused wires come first: a wire an earlier request asked us
+    # to create can outlive the logic that used it (see naming.ensure_names),
+    # and it still has to appear in the netlist.
+    for net in list(getattr(nl, "forced_wires", ())) + list(_iter_nets(nl)):
         if is_const(net) or net in port_bits:
             continue
         base, idx = _base_index(net)
