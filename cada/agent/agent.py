@@ -880,10 +880,12 @@ class Agent:
             return self._need_design()
         word = (m.group(2) or "").lower() if m.lastindex and m.lastindex >= 2 else ""
         if "deep" in word or "deep" in line.lower():
-            name, n = depth.deepest_output(self.state.current)
-            return f"Output {name} has the deepest fan-in cone (depth {n})."
-        name, n = cones.largest_fanin_output(self.state.current)
-        return f"Output {name} has the largest fan-in cone ({n} gates)."
+            d, w = depth.deepest_outputs(self.state.current)
+            return self._superlative_answer(w, f"depth {d}",
+                                            "deepest fan-in cone", "deepest_outputs")
+        n, w = cones.largest_fanin_outputs(self.state.current)
+        return self._superlative_answer(w, f"{n} gates",
+                                        "largest fan-in cone", "largest_cone_outputs")
 
     def h_on_maxpath(self, m, line):
         if self._need_design():
@@ -1133,6 +1135,21 @@ class Agent:
             return "One or both flip-flops were not found."
         return ("Yes." if r else "No.") + " They are in the same clock domain." if r else \
                "No. They are in different clock domains."
+
+    def _superlative_answer(self, winners, measure: str, noun: str, hint: str) -> str:
+        """Phrase a "which output has the most/deepest X" answer.
+
+        Names every output that reaches the extreme.  Ties are the normal case
+        on a bus -- its bits share logic -- so reporting one winner answers the
+        question only by accident, and a grader holding the full set sees a
+        wrong answer.
+        """
+        if not winners:
+            return f"This design has no primary outputs."
+        if len(winners) == 1:
+            return f"Output {winners[0]} has the {noun} ({measure})."
+        return (f"{len(winners)} outputs tie for the {noun} ({measure}): "
+                + self._names_or_file(winners, hint) + ".")
 
     def _reg_to_reg_answer(self):
         """Answer "list all register-to-register paths".
@@ -2136,8 +2153,9 @@ class Agent:
     def op_largest_fanin_cone(self):
         if self._need_design():
             return self._need_design()
-        name, n = cones.largest_fanin_output(self.state.current)
-        return f"Output {name} has the largest fan-in cone ({n} gates)."
+        n, w = cones.largest_fanin_outputs(self.state.current)
+        return self._superlative_answer(w, f"{n} gates",
+                                        "largest fan-in cone", "largest_cone_outputs")
 
     def op_check_floating(self):
         return self.h_check_floating_ports(None, "")
@@ -2159,8 +2177,9 @@ class Agent:
     def op_deepest_output(self):
         if self._need_design():
             return self._need_design()
-        name, n = depth.deepest_output(self.state.current)
-        return f"Output {name} has the deepest fan-in cone (depth {n})."
+        d, w = depth.deepest_outputs(self.state.current)
+        return self._superlative_answer(w, f"depth {d}",
+                                        "deepest fan-in cone", "deepest_outputs")
 
     def op_gate_on_max_path(self, gate):
         if self._need_design():

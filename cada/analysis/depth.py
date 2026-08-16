@@ -104,15 +104,29 @@ def outputs_depth_greater_than(nl: Netlist, k: int) -> List[str]:
     return out
 
 
-def deepest_output(nl: Netlist, redirect_q: bool = False):
+def deepest_outputs(nl: Netlist, redirect_q: bool = False):
+    """Return (depth, [every PO at that depth]) -- all of them, not just one.
+
+    Same reasoning as cones.largest_fanin_outputs(): bus bits share logic, so
+    ties are the common case and naming a single winner answers the question
+    only by accident.
+    """
     lv = graph.forward_levels(nl)
-    best = None
+    best, winners = None, []
     for p in sorted(nl.po):
         sinks = cones.effective_sinks(nl, p, redirect_q)
         d = max((lv.get(s, 0) for s in sinks), default=0)
-        if best is None or d > best[1]:
-            best = (p, d)
-    return best if best else (None, 0)
+        if best is None or d > best:
+            best, winners = d, [p]
+        elif d == best:
+            winners.append(p)
+    return (best or 0), winners
+
+
+def deepest_output(nl: Netlist, redirect_q: bool = False):
+    """First tied winner only.  Prefer :func:`deepest_outputs`."""
+    d, w = deepest_outputs(nl, redirect_q)
+    return (w[0] if w else None), d
 
 
 def gate_on_max_depth_path(nl: Netlist, gate_name: str) -> Optional[bool]:
