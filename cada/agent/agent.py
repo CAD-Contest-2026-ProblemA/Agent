@@ -1326,9 +1326,10 @@ class Agent:
         left = len(cleanup.pairs_remaining(self.state.current))
         # "Find ALL pairs and collapse them" is not answered by a count of the
         # ones that happened to be collapsible.  Say what is still there.
-        tail = (f" {left} pair(s) remain: each drives a primary output whose "
-                f"source is itself a port, so removing them would need a buffer."
-                if left else "")
+        tail = (f" {left} pair(s) remain: each drives a primary output from a "
+                f"source that cannot take the port's name \u2014 a port itself, "
+                f"or a register output, which the equivalence check compares by "
+                f"name." if left else "")
         return (f"Collapsed {info} back-to-back inverter pair(s) into direct "
                 f"wires; equivalence verified.{tail}")
 
@@ -2439,9 +2440,10 @@ class Agent:
         left = len(cleanup.pairs_remaining(self.state.current))
         # "Find ALL pairs and collapse them" is not answered by a count of the
         # ones that happened to be collapsible.  Say what is still there.
-        tail = (f" {left} pair(s) remain: each drives a primary output whose "
-                f"source is itself a port, so removing them would need a buffer."
-                if left else "")
+        tail = (f" {left} pair(s) remain: each drives a primary output from a "
+                f"source that cannot take the port's name \u2014 a port itself, "
+                f"or a register output, which the equivalence check compares by "
+                f"name." if left else "")
         return (f"Collapsed {info} back-to-back inverter pair(s) into direct "
                 f"wires; equivalence verified.{tail}")
 
