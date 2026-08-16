@@ -1323,7 +1323,14 @@ class Agent:
         if not ok:
             return f"The inverter collapse was reverted: {reason}."
         self.state.record_delta("collapsed", info)
-        return f"Collapsed {info} back-to-back inverter pair(s) into direct wires; equivalence verified."
+        left = len(cleanup.pairs_remaining(self.state.current))
+        # "Find ALL pairs and collapse them" is not answered by a count of the
+        # ones that happened to be collapsible.  Say what is still there.
+        tail = (f" {left} pair(s) remain: each drives a primary output whose "
+                f"source is itself a port, so removing them would need a buffer."
+                if left else "")
+        return (f"Collapsed {info} back-to-back inverter pair(s) into direct "
+                f"wires; equivalence verified.{tail}")
 
     def h_dangling(self, m, line):
         if self._need_design():
@@ -2429,7 +2436,14 @@ class Agent:
         if not ok:
             return f"The inverter collapse was reverted: {reason}."
         self.state.record_delta("collapsed", info)
-        return f"Collapsed {info} back-to-back inverter pair(s) into direct wires; equivalence verified."
+        left = len(cleanup.pairs_remaining(self.state.current))
+        # "Find ALL pairs and collapse them" is not answered by a count of the
+        # ones that happened to be collapsible.  Say what is still there.
+        tail = (f" {left} pair(s) remain: each drives a primary output whose "
+                f"source is itself a port, so removing them would need a buffer."
+                if left else "")
+        return (f"Collapsed {info} back-to-back inverter pair(s) into direct "
+                f"wires; equivalence verified.{tail}")
 
     def op_check_dangling(self, form=None):
         """Report dangling gates WITHOUT touching the design.
