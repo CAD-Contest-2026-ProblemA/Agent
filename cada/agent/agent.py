@@ -608,7 +608,9 @@ class Agent:
         if path:
             return (f"{len(gs)} {gtype.upper()} gates. The complete list has been "
                     f"written to {path}.")
-        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items[:self.LIST_INLINE])
+        # File write failed: inline everything.  A truncated list that reads as
+        # complete is worse than a long answer (Q&A A16).
+        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items)
 
     def h_list_xor(self, m, line):
         return self.h_list_type(re.match(r"(xor)", "xor"), line)
@@ -735,7 +737,6 @@ class Agent:
         return f"No. There is no combinational path from {a} to {b}."
 
     PATH_INLINE = 50           # list inline up to this many paths
-    PATH_FILE_CAP = 2_000_000  # above this, listing literally is infeasible
 
     def h_enum_paths(self, m, line):
         if self._need_design():
@@ -756,19 +757,20 @@ class Agent:
                 lines.append("  " + a + " -> " + " -> ".join(p) + " -> " + b
                              if p else "  " + a + " -> " + b)
             return "\n".join(lines)
-        if count <= self.PATH_FILE_CAP:
-            fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
-            path = self._out_path(fname)
-            try:
-                with open(path, "w") as fh:
-                    paths.stream_paths(nl, a, b, fh, count + 1)
-                return (f"There are {count} combinational paths from {a} to {b}. "
-                        f"The complete enumeration has been written to {path}.")
-            except Exception as exc:
-                return (f"There are {count} combinational paths from {a} to {b} "
-                        f"(could not write the list file: {exc}).")
-        return (f"There are {count} combinational paths from {a} to {b} — too "
-                f"many to enumerate literally.")
+        fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
+        path = self._out_path(fname)
+        try:
+            with open(path, "w") as fh:
+                written = paths.stream_paths(nl, a, b, fh, count + 1)
+        except Exception as exc:
+            return (f"There are {count} combinational paths from {a} to {b} "
+                    f"(could not write the list file: {exc}).")
+        if written < count:
+            return (f"There are {count} combinational paths from {a} to {b}; "
+                    f"{written} of them were written to {path} before the "
+                    f"enumeration was cut short.")
+        return (f"There are {count} combinational paths from {a} to {b}. "
+                f"The complete enumeration has been written to {path}.")
 
     def h_len0(self, m, line):
         if self._need_design():
@@ -1137,10 +1139,18 @@ class Agent:
 
         The question asks for PATHS, not for (source, sink) register pairs --
         two different numbers, and on a real design they differ by orders of
-        magnitude.  It also says "list all", so the same three-tier rule
-        enumerate_paths already uses applies: inline while short, otherwise
-        write the complete enumeration to a file and name it (Q&A A16), and
-        only when even a file is infeasible say so instead of pretending.
+        magnitude.
+
+        "List all" is taken literally at every size.  Q&A A16/A21.3 say
+        complete enumeration means every path, and that a large result set goes
+        to a file whose path is given back -- there is no size at which the
+        answer becomes a count alone.  So there is no upper cap here: above the
+        inline threshold the whole set is streamed to disk however large it
+        gets.  On the biggest public design that is ~16.5M paths, and writing
+        them is the answer; refusing to would be an incomplete one.
+
+        Streamed rather than materialised, so memory stays flat no matter how
+        many paths there are -- the file is the only thing that grows.
         """
         nl = self.state.current
         count = sequential.reg_to_reg_path_count(nl)
@@ -1153,20 +1163,22 @@ class Agent:
                      f"combinational logic:"]
             lines += ["  " + ln for ln in buf.getvalue().splitlines()]
             return "\n".join(lines)
-        if count <= self.PATH_FILE_CAP:
-            fname = f"{self.state.case_name or 'case'}_register_paths.txt"
-            path = self._out_path(fname)
-            try:
-                with open(path, "w") as fh:
-                    sequential.stream_reg_to_reg_paths(nl, fh, count + 1)
-                return (f"There are {count} register-to-register paths through "
-                        f"combinational logic. The complete enumeration has been "
-                        f"written to {path}.")
-            except Exception as exc:
-                return (f"There are {count} register-to-register paths through "
-                        f"combinational logic (could not write the list file: {exc}).")
+        fname = f"{self.state.case_name or 'case'}_register_paths.txt"
+        path = self._out_path(fname)
+        try:
+            with open(path, "w") as fh:
+                written = sequential.stream_reg_to_reg_paths(nl, fh, count + 1)
+        except Exception as exc:
+            return (f"There are {count} register-to-register paths through "
+                    f"combinational logic (could not write the list file: {exc}).")
+        if written < count:
+            # Never report a partial file as complete.
+            return (f"There are {count} register-to-register paths through "
+                    f"combinational logic; {written} of them were written to "
+                    f"{path} before the enumeration was cut short.")
         return (f"There are {count} register-to-register paths through "
-                f"combinational logic \u2014 too many to enumerate literally.")
+                f"combinational logic. The complete enumeration has been "
+                f"written to {path}.")
 
     def h_reg2reg_paths(self, m, line):
         if self._need_design():
@@ -1180,8 +1192,8 @@ class Agent:
         self.state.record_delta("enable_hold", len(eh))
         return (f"{len(eh)} flip-flop(s) implement an enable/hold structure in "
                 f"their D-input logic (next state depends on the register's own "
-                f"current state). Examples: " +
-                self._names([f.name for f in eh[:30]]))
+                f"current state): " +
+                self._names_or_file([f.name for f in eh], "enable_hold"))
 
     def h_enable_hold_count(self, m, line):
         if self._need_design():
@@ -1808,7 +1820,9 @@ class Agent:
         if path:
             return (f"{len(gs)} {gtype.upper()} gates. The complete list has been "
                     f"written to {path}.")
-        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items[:self.LIST_INLINE])
+        # File write failed: inline everything.  A truncated list that reads as
+        # complete is worse than a long answer (Q&A A16).
+        return f"{len(gs)} {gtype.upper()} gates:\n" + "\n".join(items)
 
     def op_cone_gate_count(self, output):
         if self._need_design():
@@ -1992,19 +2006,20 @@ class Agent:
                 lines.append("  " + a + " -> " + " -> ".join(p) + " -> " + b
                              if p else "  " + a + " -> " + b)
             return "\n".join(lines)
-        if count <= self.PATH_FILE_CAP:
-            fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
-            path = self._out_path(fname)
-            try:
-                with open(path, "w") as fh:
-                    paths.stream_paths(nl, a, b, fh, count + 1)
-                return (f"There are {count} combinational paths from {a} to {b}. "
-                        f"The complete enumeration has been written to {path}.")
-            except Exception as exc:
-                return (f"There are {count} combinational paths from {a} to {b} "
-                        f"(could not write the list file: {exc}).")
-        return (f"There are {count} combinational paths from {a} to {b} — too "
-                f"many to enumerate literally.")
+        fname = f"{self.state.case_name or 'case'}_paths_{self._san_name(a)}_to_{self._san_name(b)}.txt"
+        path = self._out_path(fname)
+        try:
+            with open(path, "w") as fh:
+                written = paths.stream_paths(nl, a, b, fh, count + 1)
+        except Exception as exc:
+            return (f"There are {count} combinational paths from {a} to {b} "
+                    f"(could not write the list file: {exc}).")
+        if written < count:
+            return (f"There are {count} combinational paths from {a} to {b}; "
+                    f"{written} of them were written to {path} before the "
+                    f"enumeration was cut short.")
+        return (f"There are {count} combinational paths from {a} to {b}. "
+                f"The complete enumeration has been written to {path}.")
 
     def op_length_zero_paths(self):
         if self._need_design():
@@ -2261,8 +2276,8 @@ class Agent:
         self.state.record_delta("enable_hold", len(eh))
         return (f"{len(eh)} flip-flop(s) implement an enable/hold structure in "
                 f"their D-input logic (next state depends on the register's own "
-                f"current state). Examples: " +
-                self._names([f.name for f in eh[:30]]))
+                f"current state): " +
+                self._names_or_file([f.name for f in eh], "enable_hold"))
 
     def op_enable_hold_count(self):
         if self._need_design():
