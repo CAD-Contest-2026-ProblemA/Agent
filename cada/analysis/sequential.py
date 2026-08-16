@@ -24,6 +24,92 @@ def same_clock_domain(nl: Netlist, a_name: str, b_name: str):
     return fa.clk == fb.clk
 
 
+def reg_to_reg_path_count(nl: Netlist) -> int:
+    """How many distinct combinational PATHS run from a DFF.Q to a DFF.D.
+
+    Not the same question as :func:`reg_to_reg_pairs`, and the difference is
+    large: one (src, dst) pair can be joined by many paths, so on real designs
+    the two numbers differ by orders of magnitude.  "List all
+    register-to-register paths" asks for this one.
+
+    Counted by dynamic programming over the combinational fan-in of each D pin
+    -- paths(net) = 1 at a DFF.Q, otherwise the sum over the driving gate's
+    inputs -- so the count is exact and cheap even when the paths themselves
+    are far too numerous to write down.  A reconvergent net is visited once and
+    its subtotal reused, which is what keeps this linear where enumeration is
+    exponential.
+    """
+    qs = {ff.q for ff in nl.dffs}
+    nl.driver("__force_build__")
+    driver = nl._driver
+    memo = {}
+
+    def count(net: str) -> int:
+        if net in qs:
+            return 1
+        if net in memo:
+            return memo[net]
+        drv = driver.get(net)
+        if drv is None or drv[0] != "gate":
+            return 0
+        memo[net] = 0                      # cycle guard; combinational loops
+        memo[net] = sum(count(i) for i in drv[1].ins)
+        return memo[net]
+
+    return sum(count(ff.d) for ff in nl.dffs)
+
+
+def stream_reg_to_reg_paths(nl: Netlist, out_fh, cap: int) -> int:
+    """Write up to ``cap`` register-to-register paths, one per line.
+
+    Each line is ``srcFF -> gate -> ... -> dstFF``, walking forward from every
+    DFF.Q and stopping at the first DFF input pin reached -- the walk never
+    crosses a register, matching the combinational-only reading of Q&A A21.2.
+
+    Pruned to nets that can still reach some D pin, so the DFS does not
+    wander into logic that only feeds primary outputs.  Returns the number of
+    lines written.
+    """
+    import sys
+    sys.setrecursionlimit(max(sys.getrecursionlimit(), 200000))
+    nl.driver("__force_build__")
+    loads = nl._loads
+
+    d_pins = {}
+    for ff in nl.dffs:
+        d_pins.setdefault(ff.d, []).append(ff.name)
+    productive = graph.fanin_cone_nets(nl, list(d_pins))
+    written = [0]
+
+    def dfs(net: str, src: str, acc: List[str]):
+        if written[0] >= cap:
+            return
+        for dst in d_pins.get(net, ()):
+            out_fh.write(src + " -> " + " -> ".join(acc + [dst]) if acc
+                         else src + " -> " + dst)
+            out_fh.write("\n")
+            written[0] += 1
+            if written[0] >= cap:
+                return
+        for consumer in loads.get(net, []):
+            if consumer[0] != "gate":
+                continue
+            g = consumer[1]
+            if g.out not in productive:
+                continue
+            acc.append(g.name)
+            dfs(g.out, src, acc)
+            acc.pop()
+            if written[0] >= cap:
+                return
+
+    for ff in sorted(nl.dffs, key=lambda f: f.name):
+        dfs(ff.q, ff.name, [])
+        if written[0] >= cap:
+            break
+    return written[0]
+
+
 def reg_to_reg_pairs(nl: Netlist, limit: int = 200) -> Tuple[int, List[Tuple[str, str]]]:
     """Pairs (src_ff, dst_ff) where src.Q reaches dst.D through comb logic."""
     q_to_ffs = {}

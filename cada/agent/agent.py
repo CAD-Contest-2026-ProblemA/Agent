@@ -8,6 +8,7 @@ rollback-on-violation, and formats a direct answer.
 
 from __future__ import annotations
 
+import io
 import os
 import re
 from typing import Callable, List, Optional, Tuple
@@ -1131,14 +1132,46 @@ class Agent:
         return ("Yes." if r else "No.") + " They are in the same clock domain." if r else \
                "No. They are in different clock domains."
 
+    def _reg_to_reg_answer(self):
+        """Answer "list all register-to-register paths".
+
+        The question asks for PATHS, not for (source, sink) register pairs --
+        two different numbers, and on a real design they differ by orders of
+        magnitude.  It also says "list all", so the same three-tier rule
+        enumerate_paths already uses applies: inline while short, otherwise
+        write the complete enumeration to a file and name it (Q&A A16), and
+        only when even a file is infeasible say so instead of pretending.
+        """
+        nl = self.state.current
+        count = sequential.reg_to_reg_path_count(nl)
+        if count == 0:
+            return "There are no register-to-register paths through combinational logic."
+        if count <= self.PATH_INLINE:
+            buf = io.StringIO()
+            sequential.stream_reg_to_reg_paths(nl, buf, count + 1)
+            lines = [f"There are {count} register-to-register path(s) through "
+                     f"combinational logic:"]
+            lines += ["  " + ln for ln in buf.getvalue().splitlines()]
+            return "\n".join(lines)
+        if count <= self.PATH_FILE_CAP:
+            fname = f"{self.state.case_name or 'case'}_register_paths.txt"
+            path = self._out_path(fname)
+            try:
+                with open(path, "w") as fh:
+                    sequential.stream_reg_to_reg_paths(nl, fh, count + 1)
+                return (f"There are {count} register-to-register paths through "
+                        f"combinational logic. The complete enumeration has been "
+                        f"written to {path}.")
+            except Exception as exc:
+                return (f"There are {count} register-to-register paths through "
+                        f"combinational logic (could not write the list file: {exc}).")
+        return (f"There are {count} register-to-register paths through "
+                f"combinational logic \u2014 too many to enumerate literally.")
+
     def h_reg2reg_paths(self, m, line):
         if self._need_design():
             return self._need_design()
-        count, pairs = sequential.reg_to_reg_pairs(self.state.current)
-        head = f"There are {count} register-to-register connections through combinational logic."
-        if pairs:
-            head += " Examples: " + self._names([f"{a}->{b}" for a, b in pairs[:30]])
-        return head
+        return self._reg_to_reg_answer()
 
     def h_enable_hold(self, m, line):
         if self._need_design():
@@ -2219,11 +2252,7 @@ class Agent:
     def op_reg_to_reg_paths(self):
         if self._need_design():
             return self._need_design()
-        count, pairs = sequential.reg_to_reg_pairs(self.state.current)
-        head = f"There are {count} register-to-register connections through combinational logic."
-        if pairs:
-            head += " Examples: " + self._names([f"{a}->{b}" for a, b in pairs[:30]])
-        return head
+        return self._reg_to_reg_answer()
 
     def op_enable_hold_report(self):
         if self._need_design():
