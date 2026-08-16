@@ -86,14 +86,17 @@ def collapse_double_inverters(nl: Netlist) -> int:
       port's name and drives it directly.  No buffer is inserted, so a
       "NAND/NOT only" basis constraint still holds afterwards (Q&A A63).
 
-    A pair is left in place only when neither direction is legal.  The source
-    must be an ordinary gate output: renaming a PI or PO is renaming a port,
-    and renaming a DFF.Q silently changes the interface of the equivalence
-    check, because Q&A A30 compares combinationally with DFF.Q as an input --
-    a Q that used to be called ``a`` and is now called ``y`` no longer lines up
-    with its counterpart, and the check fails on a netlist that is in fact
-    correct.  A source already renamed onto some other port is also skipped:
-    one net cannot take two port names.  Note the asymmetry in that guard: many pairs may
+    A pair is left in place only when neither direction is legal: the source is
+    itself a port (a PI wired through two inverters to a PO structurally needs
+    them), or it was already renamed onto some other port -- one net cannot
+    take two port names.
+
+    A DFF.Q source IS renameable.  The A30 register cut identifies a REGISTER,
+    not the net it happens to drive, so giving that net the port's name leaves
+    the cut intact; both our BLIF export and the reference judge label the cut
+    __q_<instance>.  (An earlier version excluded it, because the equivalence
+    check compared Q nets rather than instances and rejected its own correct
+    output.)  Note the asymmetry in that guard: many pairs may
     share a source in the FORWARD direction, because they all substitute
     *towards* ``a`` and resolve() follows the chain; only the reverse direction
     is exclusive.  Callers report what remains rather than implying "all pairs"
@@ -124,8 +127,7 @@ def collapse_double_inverters(nl: Netlist) -> int:
             if y in subst:
                 continue
             subst[y] = a                 # loads move onto the source
-        elif (a not in po and a not in pi and a not in subst
-              and nl.driver(a)[0] == "gate"):
+        elif a not in po and a not in pi and a not in subst:
             subst[a] = y                 # the source takes the port's name
         else:
             continue

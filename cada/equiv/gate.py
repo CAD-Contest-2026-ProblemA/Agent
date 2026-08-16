@@ -18,10 +18,19 @@ from . import abc_bridge
 
 
 def _same_registers(a: Netlist, b: Netlist) -> bool:
-    ra = sorted((ff.q, ff.d) for ff in a.dffs)
-    rb = sorted((ff.q, ff.d) for ff in b.dffs)
-    # same Q set is what matters for the cut; D may differ (that's the point)
-    return sorted({ff.q for ff in a.dffs}) == sorted({ff.q for ff in b.dffs})
+    """Do both designs cut at the same registers?
+
+    Compared by INSTANCE name, not by the Q net.  The cut identifies a
+    register, and a transform may legitimately rename the net it drives --
+    collapsing a double inverter that feeds a primary output gives the register
+    the port's name.  Keying on the net rejected that as "different registers"
+    and failed designs that were in fact equivalent.  D is deliberately not
+    compared: differing next-state logic is the whole point of the check.
+
+    This matches the reference judge, which cuts at __q_<ff.name> /
+    __d_<ff.name> (harness/equiv.py compares {ff.name} sets).
+    """
+    return sorted(ff.name for ff in a.dffs) == sorted(ff.name for ff in b.dffs)
 
 
 def equivalent(before: Netlist, after: Netlist,
