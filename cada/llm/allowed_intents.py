@@ -142,9 +142,36 @@ OPERATION SYNONYMS:
   KEY RULE: bracket indices are part of the name: n31[1] and n31 are different nets.
   Copy the index if the request has one.
 
+▸ choosing the basis value: NAND vs NAND_NOT (and NOR vs NOR_NOT)
+  "NAND"      → the request allows ONE gate type: "using only 2-input NAND
+    gates", "so that the final design contains no gate type other than NAND",
+    "NAND-only".  Inverters are built as NAND(a, a), so the result really does
+    contain nothing else.
+  "NAND_NOT"  → the request names both: "using only NAND and NOT gates",
+    "rebuild it from NANDs and inverters".
+  Same split for NOR / NOR_NOT.
+  KEY RULE: count the gate types the request permits.  "only NAND" is one type
+  and "NAND and NOT" is two; picking NAND_NOT for a one-type request leaves
+  inverters in the netlist, and a prompt that says "no gate type other than
+  NAND" is checked against the FINAL netlist (Q&A A63/A64), so those inverters
+  fail it even though the logic is equivalent.
+
+▸ picking the targeted conversion: the SOURCE type and the TARGET type
+  Four conversions exist and each names both ends.  Match BOTH, not just the
+  gate being replaced:
+    XOR  -> NAND      xor_to_nand {scope}
+    XOR  -> AOI       xor_to_aoi {scope}
+    XNOR -> NOR       xnor_to_nor {scope}
+    XNOR -> NAND      xnor_to_nand {scope}
+  KEY RULE: "replace all XNOR gates with NAND-only implementations" is
+  xnor_to_nand, not xnor_to_nor.  Both leave zero XNOR gates and both preserve
+  equivalence, so the answer looks right either way -- but the prompt named the
+  target basis and that is checked against the final netlist (Q&A A63).
+
 ▸ targeted gate-type conversion vs convert_basis
   If the request names a SPECIFIC gate type to replace (XOR, XNOR, NAND-with-constant),
-  use the targeted intent — xor_to_nand, xnor_to_nor, xor_to_aoi, nand_const1_to_inv —
+  use the targeted intent — xor_to_nand, xnor_to_nor, xnor_to_nand, xor_to_aoi,
+  nand_const1_to_inv —
   NOT convert_basis.  convert_basis rewrites EVERY gate and is only correct when the
   request says to rebuild the whole netlist (or a cone) using only the basis gates.
 
@@ -277,6 +304,11 @@ OPERATION SYNONYMS:
     n32[0]".
   KEY RULE: gate name in the avoid/through position → dominator; net name there
   → path_exists.  Never choose between them on the phrasing.
+  depends_on answers FUNCTIONAL influence by default: can changing the input
+  ever change the output.  A net can sit in the fan-in cone and still have no
+  influence, so "X lies in the structural fanin cone of Y -- is Y functionally
+  sensitive to X?" is depends_on with the default kind, NOT a cone query.  Pass
+  kind="structural" only when the request asks about cone membership itself.
 
 ▸ is_cut vs articulation vs dominator
   "is_cut {wire}"          → is this ONE wire a cut between ANY primary input and
@@ -314,6 +346,88 @@ OPERATION SYNONYMS:
   names + clock wording → same_clock.  Two net names + value/equivalence
   wording → signals_equivalent.
 
+▸ highest_fanout_pi vs highest_fanout_net
+  "highest_fanout_pi {}"  → the question names primary inputs: "which primary
+    input drives the most loads", "which PI has the highest fanout".
+  "highest_fanout_net {}" → every driven net: "which signal drives the largest
+    number of loads", "the highest fanout over all nets in this design",
+    "which net has the highest fanout".  Also answers "report the driver and
+    the fanout count of <net>" for that net.
+  KEY RULE: the busiest net is usually INTERNAL, so the two return different
+  nets and different numbers -- on one reference design 8 (PI) against 12
+  (design).  Choose the PI version only when the request says "primary input"
+  or "PI"; "signal", "net" and "over all nets" are the design-wide question.
+
+▸ "does the design contain any X" -- existence questions
+  There is no existence intent.  Ask for the COUNT of the thing and the number
+  answers the question; zero means no.
+    a gate type ("does this design contain any sequential element such as a
+      DFF", "are there any XOR gates", "does it use buffers")
+        → count_type {type}          type = and|or|not|nand|nor|xor|xnor|buf|dff
+    floating signals            → floating_count {}
+    constant-input gates        → report_const_gates {type}
+    a path between two nets     → path_exists {a, b}
+  KEY RULE: "does ... contain" is not a relation between two named objects.
+  depends_on takes an OUTPUT and an INPUT that must both be real nets, so
+  {"output":"design","input":"DFF"} is not a smaller mistake than picking the
+  wrong intent -- it names nothing that exists and the request is answered
+  with nothing at all.  A trailing "answer yes or no" does not change which
+  intent computes the fact.
+
+▸ "answer yes or no" -- form and threshold
+  A request that asks for a verdict is not answered by a measurement alone.
+  Two shapes, and the right one depends on whether a number is compared:
+    EXISTENCE ("do they share at least one gate", "does this design contain
+      any XOR gates", "are there dangling gates") -- the answer is whether the
+      set is non-empty, so pass form="yesno":
+        → {"intent":"shared_cone","params":{"a":"n1","b":"n2","form":"yesno"}}
+        → {"intent":"count_type","params":{"type":"dff","form":"yesno"}}
+    THRESHOLD ("is the depth at most 5", "does any net drive more than 8
+      loads") -- pass BOTH the number and the direction:
+        threshold = the number from the request
+        compare   = at_most | at_least | greater | less | equal
+        → {"intent":"max_depth_between","params":{"a":"g30","b":"g99",
+           "threshold":5,"compare":"at_most"}}
+  KEY RULE: the direction is not optional.  The same measurement answers yes
+  to "at most 5" and no to "more than 5", so a threshold without a direction
+  cannot be turned into a verdict and the reply falls back to the bare number.
+  Do not switch to a different intent because the request ends in "answer yes
+  or no" -- it describes the reply, not the operation.
+
+▸ threshold questions ("more than k", "exceeds k", "at most k")
+  The QUANTITY being compared picks the intent -- the threshold wording is
+  common to all of them and decides nothing.
+    depth of outputs      → outputs_depth_gt {k}
+    depth between two nets→ max_depth_between {a, b}
+    fanout of a named net → fanout {net} / max_fanout_of {net}
+    fanout of any PI      → highest_fanout_pi {}
+  outputs_depth_gt is the only intent whose name contains a threshold, which
+  makes it a magnet for every "exceeds k" sentence.  It answers ONE question:
+  how many primary outputs have a combinational depth greater than k.  A
+  request about FANOUT exceeding k is not that question, however similar the
+  sentence looks.
+  A yes/no threshold question is still answered by the intent that computes
+  the quantity: report the number and it settles the comparison.  Do not
+  reach for a different intent because the request ends in "answer yes or no".
+
+▸ ANSWER SHAPE is a parameter, not a different intent
+  Some questions select the same set of gates and differ only in what is
+  reported.  Do NOT hunt for a second intent for the other shape -- pass
+  "form" instead:
+    form = "count"  when the request says how many / count / the number of
+    form = "list"   when it says list / name / enumerate / which gates /
+                    "report only the instance names"
+  Omit form when the request asks for neither in particular; the answer then
+  carries both.
+  Applies to: transitive_fanin, transitive_fanout, successors.
+    "How many gates are immediate successors of g36?"
+      → {"intent":"successors","params":{"gate":"g36","form":"count"}}
+    "List the instance names of all gates in the fanin cone of N426."
+      → {"intent":"transitive_fanin","params":{"net":"N426","form":"list"}}
+  KEY RULE: pick the intent from WHAT IS BEING ASKED ABOUT (the set), and the
+  form from HOW IT SHOULD BE REPORTED.  Choosing a neighbouring intent because
+  it happens to print the shape you want gives the wrong set.
+
 ▸ transitive_fanin vs reachable_from
   "transitive_fanin {net}" → everything UPSTREAM of the net.
     Triggers: "the full ancestry of n31[0]", "the complete upstream closure of
@@ -322,6 +436,30 @@ OPERATION SYNONYMS:
   KEY RULE: direction decides it.  ancestry / upstream / feeds-into / closure
   of what drives it → transitive_fanin.  reachable / downstream / what it
   drives → reachable_from.
+
+▸ remove_buffers vs remove_dangling vs collapse_inverters
+  "remove_buffers {}"      → the request names BUF/buffer gates: "remove every
+    BUF gate by connecting each buffered signal directly to its destination",
+    "strip the buffers so no BUF remains".
+  "remove_dangling {}"     → gates that drive nothing / do not reach a PO.
+  "collapse_inverters {}"  → back-to-back NOT pairs.
+  KEY RULE: all three delete gates, but each names WHICH gates in the request.
+  A buffer is not dangling -- it is on a live path -- so remove_dangling
+  removes none of them and reports success while every BUF is still there.
+
+▸ check_dangling vs remove_dangling -- asking is not instructing
+  "check_dangling {}"  → the request only ASKS: "does this design contain any
+    dangling gates", "are there gates that do not reach a primary output",
+    "report any unused logic".  The design is left untouched.
+  "remove_dangling {}" → the request INSTRUCTS: "remove them", "delete unused
+    gates", "prune the netlist".  Note that "Remove them if found" is an
+    instruction, not a question, even though it is conditional.
+  KEY RULE: choosing the transform for a question is not a wrong answer, it is
+  an unrequested EDIT -- every later request in the case then runs against a
+  netlist the caller never asked for, and an equivalence check against the
+  original will not flag it because removing dead logic preserves function.
+  The same asking/instructing split applies to report_const_gates vs
+  const_propagate.
 
 ▸ minimize_area vs remove_dangling
   "minimize_area {basis}" → RESYNTHESIZE the logic to reduce total gate count.
@@ -655,12 +793,13 @@ OPERATION SYNONYMS:
 - max_fanout_of {net}
 - connected_to_net {net}        # driver AND loads of a net (e.g. a renamed signal)
 - gates_driven_by {gate}
-- successors {gate}
-- transitive_fanin {net}
-- transitive_fanout {net}
+- successors {gate, form}       # form = count|list (see ANSWER SHAPE)
+- transitive_fanin {net, form}  # form = count|list
+- transitive_fanout {net, form} # form = count|list
 - reachable_from {net}
-- highest_fanout_pi {}
-- shared_cone {a, b}
+- highest_fanout_pi {}          # PI-scoped ONLY
+- highest_fanout_net {threshold, compare}  # busiest net in the design, plus its driver
+- shared_cone {a, b, form}
 - connected_to_output {gate}
 - path_exists {a, b, avoid}
 - enumerate_paths {a, b}
@@ -668,20 +807,20 @@ OPERATION SYNONYMS:
 - dominator {a, b, gate}
 - articulation {a, b}
 - is_cut {wire}
-- max_depth_between {a, b}      # both endpoints must be concrete net names
+- max_depth_between {a, b, threshold, compare}   # both endpoints concrete net names
 - cone_depth {output}
 - global_max_depth {}
 - pi_to_po_depth {}             # any primary input -> any primary output
 - pi_to_dff_depth {}            # any primary input -> any DFF D-pin
 - reg_to_reg_depth {}           # any register output -> any register input
 - reg_to_po_depth {}            # any register/DFF output -> any primary output
-- outputs_depth_gt {k}
+- outputs_depth_gt {k}          # DEPTH only: how many POs sit deeper than k levels
 - deepest_output {}             # deepest cone (by depth)
 - largest_fanin_cone {}         # largest cone (by gate count)
 - gate_on_max_path {gate}
 - signals_equivalent {a, b}
 - output_constant {output}
-- depends_on {output, input}
+- depends_on {output, input, kind}  # kind = functional (default) | structural
 - boolean_equation {output}
 - symmetric {output, a, b}
 - exists_nand_pair {target}
@@ -690,9 +829,10 @@ OPERATION SYNONYMS:
 - reg_to_reg_paths {}
 - enable_hold_report {}
 - enable_hold_count {}
-- convert_basis {basis, scope}  # basis = NAND_NOT|NOR_NOT|AND_NOT|AND_OR_NOT
+- convert_basis {basis, scope}  # basis = NAND|NOR|NAND_NOT|NOR_NOT|AND_NOT|AND_OR_NOT
 - xor_to_nand {scope}
 - xnor_to_nor {scope}
+- xnor_to_nand {scope}
 - xor_to_aoi {scope}
 - nand_const1_to_inv {}
 - report_const_gates {type, value}
@@ -700,8 +840,10 @@ OPERATION SYNONYMS:
 - check_floating {}             # floating inputs / unconnected output ports?
 - floating_count {}             # how many floating signals were found
 - const_propagate {type}
-- collapse_inverters {}
-- remove_dangling {}
+- collapse_inverters {}         # NOT(NOT(a)) pairs -> direct wire
+- remove_buffers {}             # delete every BUF, rewiring around it
+- check_dangling {form}         # REPORT them, design untouched
+- remove_dangling {}            # DELETE them
 - merge_duplicates {}
 - rename {kind, old, new}       # kind = gate|wire|signal
 - insert_buffers {k, net, mode, scope} # mode = fanout|dedicated; scope = gate|signal
@@ -719,6 +861,7 @@ ALLOWED_INTENTS: Set[str] = {
     "cone_gate_count", "cone_type_counts", "list_ports", "count_ports",
     "fanout", "gates_driven_by", "successors", "transitive_fanin",
     "transitive_fanout", "reachable_from", "highest_fanout_pi",
+    "highest_fanout_net",
     "max_fanout_of", "shared_cone", "connected_to_output", "path_exists",
     "enumerate_paths", "length_zero_paths", "dominator", "articulation",
     "is_cut", "max_depth_between", "cone_depth", "global_max_depth",
@@ -729,9 +872,12 @@ ALLOWED_INTENTS: Set[str] = {
     "output_constant", "depends_on", "boolean_equation", "symmetric",
     "exists_nand_pair", "ffs_on_clock", "same_clock", "reg_to_reg_paths",
     "enable_hold_report", "enable_hold_count", "convert_basis",
-    "xor_to_nand", "xnor_to_nor", "xor_to_aoi", "nand_const1_to_inv",
+    "xor_to_nand", "xnor_to_nor", "xnor_to_nand", "xor_to_aoi",
+    "nand_const1_to_inv",
     "report_const_gates", "const_propagate", "collapse_inverters",
-    "remove_dangling", "merge_duplicates", "rename", "insert_buffers",
+    "remove_buffers",
+    "remove_dangling", "check_dangling", "merge_duplicates", "rename",
+    "insert_buffers",
     "minimize_depth", "minimize_area", "optimize_cone",
     "verify_equivalence", "begin_case", "noop",
 }
@@ -783,12 +929,21 @@ REQUIRED_PARAMS: Mapping[str, Set[str]] = {
 
 
 OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
+    "shared_cone": {"form"},
+    "max_depth_between": {"threshold", "compare"},
+    "highest_fanout_net": {"threshold", "compare"},
+    "check_dangling": {"form"},
+    "depends_on": {"kind"},
+    "transitive_fanin": {"form"},
+    "transitive_fanout": {"form"},
+    "successors": {"form"},
     "load_design": {"dir"},
-    "count_type": {"scope"},
+    "count_type": {"scope", "form"},
     "path_exists": {"avoid"},
     "convert_basis": {"basis", "scope"},
     "xor_to_nand": {"scope"},
     "xnor_to_nor": {"scope"},
+    "xnor_to_nand": {"scope"},
     "xor_to_aoi": {"scope"},
     "report_const_gates": {"type", "value"},
     "const_propagate": {"type"},
@@ -802,7 +957,11 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
 
 
 GATE_TYPES = {"and", "or", "not", "nand", "nor", "xor", "xnor", "buf", "dff"}
-BASIS_VALUES = {"NAND_NOT", "NOR_NOT", "AND_NOT", "AND_OR_NOT"}
+# Must track cada.transform.rewrite.BASES.  A value accepted there and
+# rejected here reads as a routing failure: the model picks the right
+# intent with the right basis and the request is answered with nothing.
+BASIS_VALUES = {"NAND", "NOR",
+                "NAND_NOT", "NOR_NOT", "AND_NOT", "AND_OR_NOT"}
 LIST_PORT_DIRS = {"input", "output"}
 RENAME_KINDS = {"gate", "wire", "signal"}
 BUFFER_MODES = {"fanout", "dedicated"}

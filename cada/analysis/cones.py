@@ -79,11 +79,25 @@ def shared_fanin_gates(nl: Netlist, a: str, b: str):
     return [g for g in nl.gates if g.name in shared]
 
 
-def largest_fanin_output(nl: Netlist, redirect_q: bool = False):
-    """Return (output_net, gate_count) for the PO with the biggest fan-in cone."""
-    best = None
+def largest_fanin_outputs(nl: Netlist, redirect_q: bool = False):
+    """Return (gate_count, [every PO reaching it]) for the biggest fan-in cone.
+
+    All of them, because ties are ordinary rather than exceptional: outputs of
+    one bus are usually built from the same logic, so several share the maximum
+    and naming one of them answers "which output" only by accident.  The list
+    is in sorted PO order, so the answer does not depend on iteration order.
+    """
+    best, winners = None, []
     for po in sorted(nl.po):
         n = len(fanin_cone_gates(nl, po, redirect_q))
-        if best is None or n > best[1]:
-            best = (po, n)
-    return best if best else (None, 0)
+        if best is None or n > best:
+            best, winners = n, [po]
+        elif n == best:
+            winners.append(po)
+    return (best or 0), winners
+
+
+def largest_fanin_output(nl: Netlist, redirect_q: bool = False):
+    """First tied winner only.  Prefer :func:`largest_fanin_outputs`."""
+    n, w = largest_fanin_outputs(nl, redirect_q)
+    return (w[0] if w else None), n

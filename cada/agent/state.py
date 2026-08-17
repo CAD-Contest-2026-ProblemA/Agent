@@ -8,7 +8,7 @@ and the most recent "report" result that a following "simplify the reported
 
 from __future__ import annotations
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from ..netlist.ir import Netlist
 
@@ -27,6 +27,13 @@ class State:
         # a following "simplify the reported ..." instruction.
         self.last_report: List[str] = []
         self.last_report_kind: Optional[str] = None
+        # Identifiers an earlier request asked us to create, in request order.
+        # A later optimization may legitimately delete the object carrying one
+        # (Q&A A61 resolves later references in the CURRENT netlist), but the
+        # rename was itself a request, and Q&A A63 keeps an earlier request's
+        # structural requirement binding on the FINAL netlist -- so the name
+        # has to still be there when the design is written out.
+        self.renames: List[Tuple[str, str]] = []   # (kind, new_name)
 
     # ----- snapshots -----------------------------------------------------
     def set_loaded(self, nl: Netlist):

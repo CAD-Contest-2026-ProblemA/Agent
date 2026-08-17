@@ -109,6 +109,12 @@ class Netlist:
         # Declared wire base-names (for round-trip fidelity); not semantically
         # important but kept so the writer can reproduce a clean netlist.
         self.wire_decls: List[Tuple[str, Optional[int], Optional[int]]] = []
+        # Nets that must be DECLARED even when nothing uses them: an identifier
+        # an earlier request created (a rename) whose logic was later optimized
+        # away.  Kept apart from wire_decls, which mirrors the input file --
+        # emitting those unconditionally would resurrect wires the source
+        # happened to declare and the design no longer needs.
+        self.forced_wires: List[str] = []
         self.gates: List[Gate] = []
         self.dffs: List[Dff] = []
 

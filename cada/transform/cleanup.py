@@ -74,12 +74,39 @@ def remove_dangling(nl: Netlist) -> int:
 
 # ---- back-to-back inverter collapse ------------------------------------
 def collapse_double_inverters(nl: Netlist) -> int:
-    """Collapse NOT(NOT(a)) chains.  Returns #pairs collapsed."""
+    """Collapse NOT(NOT(a)) chains.  Returns #pairs collapsed.
+
+    Which of the two nets absorbs the other depends on where the pair sits,
+    the same asymmetry remove_buffers() has:
+
+    * the outer NOT's output is internal -- it is redundant, so its loads move
+      onto ``a`` and the gate goes.
+    * the outer NOT drives a PRIMARY OUTPUT -- that net is a port and cannot be
+      dropped.  Rename the other way instead: whatever drives ``a`` takes the
+      port's name and drives it directly.  No buffer is inserted, so a
+      "NAND/NOT only" basis constraint still holds afterwards (Q&A A63).
+
+    A pair is left in place only when neither direction is legal: the source is
+    itself a port (a PI wired through two inverters to a PO structurally needs
+    them), or it was already renamed onto some other port -- one net cannot
+    take two port names.
+
+    A DFF.Q source IS renameable.  The A30 register cut identifies a REGISTER,
+    not the net it happens to drive, so giving that net the port's name leaves
+    the cut intact; both our BLIF export and the reference judge label the cut
+    __q_<instance>.  (An earlier version excluded it, because the equivalence
+    check compared Q nets rather than instances and rejected its own correct
+    output.)  Note the asymmetry in that guard: many pairs may
+    share a source in the FORWARD direction, because they all substitute
+    *towards* ``a`` and resolve() follows the chain; only the reverse direction
+    is exclusive.  Callers report what remains rather than implying "all pairs"
+    were collapsed; see pairs_remaining().
+    """
     nl.driver("__force_build__")
     subst: Dict[str, str] = {}
     collapsed = 0
     remove: Set[int] = set()
-    po = nl.po
+    po, pi = set(nl.po), set(nl.pi)
 
     # map net -> driving NOT gate
     not_out = {g.out: g for g in nl.gates if g.type == "not"}
@@ -94,12 +121,16 @@ def collapse_double_inverters(nl: Netlist) -> int:
             continue
         a = first.ins[0]                 # g.out == NOT(NOT(a)) == a
         y = g.out
-        if y in po:
-            # Collapsing into a primary output would need the PO driven by a
-            # wire/buffer; a BUF would break a "NAND/NOT only" basis. Leave this
-            # pair as NOT(NOT(a)) (functionally identical, still in-basis).
+        if a == y:
             continue
-        subst[y] = a
+        if y not in po:
+            if y in subst:
+                continue
+            subst[y] = a                 # loads move onto the source
+        elif a not in po and a not in pi and a not in subst:
+            subst[a] = y                 # the source takes the port's name
+        else:
+            continue
         remove.add(g_index[id(g)])
         collapsed += 1
 
@@ -113,14 +144,24 @@ def collapse_double_inverters(nl: Netlist) -> int:
         nl.gates = [g for i, g in enumerate(nl.gates) if i not in remove]
         for g in nl.gates:
             g.ins = [resolve(i) for i in g.ins]
+            g.out = resolve(g.out)       # the reverse case renames an output
         for ff in nl.dffs:
             ff.d = resolve(ff.d)
             ff.clk = resolve(ff.clk)
             ff.rn = resolve(ff.rn)
             ff.sn = resolve(ff.sn)
+            ff.q = resolve(ff.q)
         nl.touch()
         # a leading inverter that became unused is swept by remove_dangling
     return collapsed
+
+
+def pairs_remaining(nl: Netlist):
+    """Back-to-back NOT pairs collapse_double_inverters() could not remove."""
+    not_out = {g.out: g for g in nl.gates if g.type == "not"}
+    return [(g.name, not_out[g.ins[0]].name)
+            for g in nl.gates
+            if g.type == "not" and g.ins[0] in not_out]
 
 
 # ---- structural duplicate merge (fixpoint) -----------------------------
