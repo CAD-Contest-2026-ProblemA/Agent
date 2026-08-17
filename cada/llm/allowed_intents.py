@@ -99,12 +99,13 @@ OPERATION SYNONYMS:
   "articulation point", use articulation, NOT enumerate_paths.
 
 ▸ cone_gate_count vs enumerate_paths
-  "cone_gate_count {output}" → list every gate that feeds (contributes to) ONE output net.
-    Triggers: "fanin cone of X", "supply cone of X", "logic cone of X",
-              "trace back from X", "gates contributing to X", "transitive fanin of X".
+  "cone_gate_count {output}" → count how many gates feed (contribute to) ONE output net.
+    Triggers: "how many gates are in the fanin cone of X", "size of the supply
+              cone of X", "number of gates contributing to X".
   "enumerate_paths {a, b}" → paths between TWO DISTINCT nodes.
-  KEY RULE: if only ONE net is named and the request is about its cone/contributors,
-  use cone_gate_count, not enumerate_paths.
+  KEY RULE: if only ONE net is named and the request asks HOW MANY gates its
+  cone contains, use cone_gate_count, not enumerate_paths.  If it asks to LIST
+  the gates in that cone, use transitive_fanin instead.
 
 ▸ report_const_gates vs const_propagate
   "report_const_gates {type}" → QUERY only: find/locate/list/identify gates whose inputs
@@ -650,7 +651,7 @@ OPERATION SYNONYMS:
 → {"intent":"cone_type_counts","params":{"output":"n14"}}
 
 "Trace back from n14 and enumerate every gate in its supply cone."
-→ {"intent":"cone_gate_count","params":{"output":"n14"}}
+→ {"intent":"transitive_fanin","params":{"net":"n14","form":"list"}}
 
 "How many gates are in the logic cone of output n12?"
 → {"intent":"cone_gate_count","params":{"output":"n12"}}   (plain count; cone_type_counts only when a per-type breakdown is asked)
