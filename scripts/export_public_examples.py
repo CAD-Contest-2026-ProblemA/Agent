@@ -42,6 +42,9 @@ from cada.llm.allowed_intents import (  # noqa: E402
     GATE_TYPES,
     validate_intent_object,
 )
+from cada.llm.example_contract import (  # noqa: E402
+    INTENT_ONLY_EXCEPTIONS, validate_example_banks,
+)
 from cada.main import _configure_tools  # noqa: E402
 from scripts.label_params import extract as extract_params  # noqa: E402
 from scripts.label_params import verify as verify_params  # noqa: E402
@@ -257,10 +260,9 @@ def _params_for(text: str, handler: str, intent: str,
             "new": match.group(4),
         }
     elif handler == "h_buffers_fanout":
-        low = text.lower()
         params = {
-            "k": int(re.findall(r"(\d+)", text)[-1]),
-            "scope": "signal" if "signal" in low or "net" in low else "gate",
+            "k": int(match.group(3)),
+            "scope": "signal" if match.group(1).lower() in ("signal", "net") else "gate",
         }
     elif handler == "h_buffers_signal":
         params = {"net": match.group(1), "k": int(match.group(2))}
@@ -278,14 +280,13 @@ def _params_for(text: str, handler: str, intent: str,
     clean, err = validate_intent_object({"intent": intent, "params": params})
     if err or clean is None:
         raise ExportError(f"runtime validation failed for {intent}: {err}; {text!r}")
-    if set(clean["params"]) != set(params):
-        dropped = sorted(set(params) - set(clean["params"]))
+    dropped = sorted(set(params) - set(clean["params"]))
+    if dropped:
         raise ExportError(f"runtime validator silently dropped params {dropped} for {intent}")
-    # validate_intent_object builds its result by iterating a set of allowed
-    # keys, whose order varies with Python's per-process hash seed.  Preserve
-    # the extractor's deterministic insertion order so byte-for-byte --check
-    # does not report a stale bank merely because params keys were shuffled.
-    return {key: clean["params"][key] for key in params}
+    # Preserve the extractor's deterministic insertion order, then append any
+    # canonical defaults materialized by production validation.
+    ordered = list(params) + sorted(set(clean["params"]) - set(params))
+    return {key: clean["params"][key] for key in ordered}
 
 
 def build_rows() -> List[dict]:
@@ -333,6 +334,21 @@ def build_rows() -> List[dict]:
 
 def _serialize(rows: List[dict]) -> str:
     return "".join(json.dumps(row, ensure_ascii=False) + "\n" for row in rows)
+
+
+def _check_contract(rows: List[dict]) -> None:
+    main_path = ROOT / "cada" / "llm" / "examples.jsonl"
+    try:
+        main_rows = [json.loads(line) for line in
+                     main_path.read_text(encoding="utf-8").splitlines()
+                     if line.strip()]
+        stats = validate_example_banks(
+            {"examples": main_rows, "public_examples": rows},
+            allow_intent_only=INTENT_ONLY_EXCEPTIONS)
+    except (OSError, ValueError) as exc:
+        raise ExportError(f"example contract failed: {exc}") from exc
+    print(f"contract: PASS ({stats['rows']} rows / "
+          f"{stats['unique_texts']} normalized texts)")
 
 
 def _check_bank(path: Path, expected: str) -> None:
@@ -501,6 +517,7 @@ def main(argv=None) -> int:
 
     try:
         rows = build_rows()
+        _check_contract(rows)
         serialized = _serialize(rows)
         if args.check:
             _check_bank(out, serialized)

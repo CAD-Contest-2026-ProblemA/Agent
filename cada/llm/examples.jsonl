@@ -1,5 +1,5 @@
 {"case": "test91", "line": 1, "text": "This is the beginning of a new testcase. The case name is test91.", "op": "begin_case", "kind": "safe", "params": {"name": "test91"}}
-{"case": "test91", "line": 2, "text": "Please load the design from the file test91.v located in the directory testcase/test91/.", "op": "load_design", "kind": "safe", "params": {"file": "test91.v", "dir": "testcase/test91/"}}
+{"case": "test91", "line": 2, "text": "Please load the design from the file test91.v located in the directory testcase/test91/.", "op": "load_design", "kind": "safe", "params": {"file": "test91.v", "dir": "testcase/test91"}}
 {"case": "test91", "line": 3, "text": "Find all articulation points in the combinational graph between n2 and n40.", "op": "articulation", "kind": "safe", "params": {"a": "n2", "b": "n40"}}
 {"case": "test91", "line": 4, "text": "Give me a formula for n30[0] built out of the input pins.", "op": "boolean_equation", "kind": "hard", "params": {"output": "n30[0]"}}
 {"case": "test91", "line": 5, "text": "Check if there are any floating inputs or unconnected outputs in the design.", "op": "check_floating", "kind": "safe", "params": {}}
@@ -31,7 +31,7 @@
 {"case": "test91", "line": 31, "text": "Determine how many gates are driven by g0.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g0"}}
 {"case": "test91", "line": 32, "text": "What is the tallest gate stack in the whole design?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test91", "line": 33, "text": "Which primary input has the highest fanout in this design?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
-{"case": "test91", "line": 34, "text": "Cap the drive burden at 3 loads per gate by sprinkling in buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
+{"case": "test91", "line": 34, "text": "Cap the drive burden at 3 loads per gate by sprinkling in buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3, "scope": "gate"}}
 {"case": "test91", "line": 35, "text": "Determine whether the wire n1200 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n1200"}}
 {"case": "test91", "line": 36, "text": "Which output's upstream machinery is the bulkiest?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test91", "line": 37, "text": "Find all the paths of length 0 (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
@@ -70,7 +70,7 @@
 {"case": "test91", "line": 70, "text": "XOR cells: rebuild them from NANDs alone.", "op": "xor_to_nand", "kind": "hard", "params": {}}
 {"case": "test91", "line": 71, "text": "Please write the current design to the output file test91_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test91_out.v"}}
 {"case": "test92", "line": 1, "text": "This is the beginning of a new testcase. The case name is test92.", "op": "begin_case", "kind": "safe", "params": {"name": "test92"}}
-{"case": "test92", "line": 2, "text": "Please load the design from the file test92.v located in the directory testcase/test92/.", "op": "load_design", "kind": "safe", "params": {"file": "test92.v", "dir": "testcase/test92/"}}
+{"case": "test92", "line": 2, "text": "Please load the design from the file test92.v located in the directory testcase/test92/.", "op": "load_design", "kind": "safe", "params": {"file": "test92.v", "dir": "testcase/test92"}}
 {"case": "test92", "line": 3, "text": "List all gates that now connect to the signal renamed_sig.", "op": "connected_to_net", "kind": "safe", "params": {"net": "renamed_sig"}}
 {"case": "test92", "line": 4, "text": "Name the loads sitting on the output of g1.", "op": "connected_to_output", "kind": "hard", "params": {"gate": "g1"}}
 {"case": "test92", "line": 5, "text": "List the gates with one or more inputs tied to 1'b1.", "op": "const1_gates", "kind": "safe", "params": {}}
@@ -141,7 +141,7 @@
 {"case": "test92", "line": 70, "text": "Give a per-type census of the gates upstream of n31[0].", "op": "cone_type_counts", "kind": "hard", "params": {"output": "n31[0]"}}
 {"case": "test92", "line": 71, "text": "Please write the current design to the output file test92_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test92_out.v"}}
 {"case": "test93", "line": 1, "text": "This is the beginning of a new testcase. The case name is test93.", "op": "begin_case", "kind": "safe", "params": {"name": "test93"}}
-{"case": "test93", "line": 2, "text": "Please load the design from the file test93.v located in the directory testcase/test93/.", "op": "load_design", "kind": "safe", "params": {"file": "test93.v", "dir": "testcase/test93/"}}
+{"case": "test93", "line": 2, "text": "Please load the design from the file test93.v located in the directory testcase/test93/.", "op": "load_design", "kind": "safe", "params": {"file": "test93.v", "dir": "testcase/test93"}}
 {"case": "test93", "line": 3, "text": "How many NOT gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "not"}}
 {"case": "test93", "line": 4, "text": "Which output sits atop the tallest stack of logic?", "op": "deepest_output", "kind": "hard", "params": {}}
 {"case": "test93", "line": 5, "text": "How many NAND gates were eliminated by constant propagation?", "op": "delta_count", "kind": "safe", "params": {"kind": "const_eliminated"}}
@@ -159,7 +159,7 @@
 {"case": "test93", "line": 17, "text": "Determine the number of gates directly driven by g2.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g2"}}
 {"case": "test93", "line": 18, "text": "Ignoring the registers entirely, what is the deepest chain of gates running from an input pin to an output pin?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test93", "line": 19, "text": "Which primary input has the highest fanout in the design?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
-{"case": "test93", "line": 20, "text": "Nobody should drive more than 5 listeners — add buffers where that is violated.", "op": "insert_buffers", "kind": "hard", "params": {"k": 5}}
+{"case": "test93", "line": 20, "text": "Nobody should drive more than 5 listeners — add buffers where that is violated.", "op": "insert_buffers", "kind": "hard", "params": {"k": 5, "scope": "gate"}}
 {"case": "test93", "line": 21, "text": "Determine whether wire n1202 is a cut between a primary input and a primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n1202"}}
 {"case": "test93", "line": 22, "text": "The most gates feed into which output?", "op": "largest_fanin_cone", "kind": "hard", "params": {}}
 {"case": "test93", "line": 23, "text": "Find all paths of length 0 (direct wire connections from PI to PO).", "op": "length_zero_paths", "kind": "safe", "params": {}}
@@ -212,7 +212,7 @@
 {"case": "test93", "line": 70, "text": "How many signals enter this design and how many leave it?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test93", "line": 71, "text": "Please write the current design to the output file test93_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test93_out.v"}}
 {"case": "test94", "line": 1, "text": "This is the beginning of a new testcase. The case name is test94.", "op": "begin_case", "kind": "safe", "params": {"name": "test94"}}
-{"case": "test94", "line": 2, "text": "Please load the design from the file test94.v located in the directory testcase/test94/.", "op": "load_design", "kind": "safe", "params": {"file": "test94.v", "dir": "testcase/test94/"}}
+{"case": "test94", "line": 2, "text": "Please load the design from the file test94.v located in the directory testcase/test94/.", "op": "load_design", "kind": "safe", "params": {"file": "test94.v", "dir": "testcase/test94"}}
 {"case": "test94", "line": 3, "text": "Find all combinational paths from primary input n5 to primary output n43 and list each path showing the gates traversed.", "op": "enumerate_paths", "kind": "safe", "params": {"a": "n5", "b": "n43"}}
 {"case": "test94", "line": 4, "text": "Can one NAND over existing wires reproduce n33[0]?", "op": "exists_nand_pair", "kind": "hard", "params": {"target": "n33[0]"}}
 {"case": "test94", "line": 5, "text": "What is the fanout of primary input n5? List the gates that n5 drives directly.", "op": "fanout", "kind": "safe", "params": {"net": "n5"}}
@@ -223,7 +223,7 @@
 {"case": "test94", "line": 10, "text": "How big is the direct audience of g3?", "op": "gates_driven_by", "kind": "hard", "params": {"gate": "g3"}}
 {"case": "test94", "line": 11, "text": "What is the maximum combinational logic depth in the design now?", "op": "global_max_depth", "kind": "safe", "params": {}}
 {"case": "test94", "line": 12, "text": "Which input fans out to the most gates?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test94", "line": 13, "text": "Insert buffers so that no gate drives more than 6 loads. Ensure functional equivalence is preserved.", "op": "insert_buffers", "kind": "safe", "params": {"k": 6}}
+{"case": "test94", "line": 13, "text": "Insert buffers so that no gate drives more than 6 loads. Ensure functional equivalence is preserved.", "op": "insert_buffers", "kind": "safe", "params": {"k": 6, "scope": "gate"}}
 {"case": "test94", "line": 14, "text": "Would the design split apart if we removed n1203?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1203"}}
 {"case": "test94", "line": 15, "text": "Which output has the largest fanin cone of the design?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test94", "line": 16, "text": "Are any outputs just straight wires from an input? List them.", "op": "length_zero_paths", "kind": "hard", "params": {}}
@@ -283,7 +283,7 @@
 {"case": "test94", "line": 70, "text": "Inspect each flop's D input: any mux-style self-feedback in there?", "op": "enable_hold_report", "kind": "hard", "params": {}}
 {"case": "test94", "line": 71, "text": "Please write the current design to the output file test94_out.v.", "op": "write_design", "kind": "safe", "params": {"file": "test94_out.v"}}
 {"case": "test95", "line": 1, "text": "This is the beginning of a new testcase. The case name is test95.", "op": "begin_case", "kind": "safe", "params": {"name": "test95"}}
-{"case": "test95", "line": 2, "text": "Please load the design from the file test95.v located in the directory testcase/test95/.", "op": "load_design", "kind": "safe", "params": {"file": "test95.v", "dir": "testcase/test95/"}}
+{"case": "test95", "line": 2, "text": "Please load the design from the file test95.v located in the directory testcase/test95/.", "op": "load_design", "kind": "safe", "params": {"file": "test95.v", "dir": "testcase/test95"}}
 {"case": "test95", "line": 3, "text": "Determine the number of gates driven by g4.", "op": "gates_driven_by", "kind": "safe", "params": {"gate": "g4"}}
 {"case": "test95", "line": 4, "text": "Setting the flip-flops aside for a moment, what is the longest run of gates anywhere in this design, from one pin through to another?", "op": "global_max_depth", "kind": "hard", "params": {}}
 {"case": "test95", "line": 5, "text": "Which primary input has the highest fanout?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
@@ -419,13 +419,13 @@
 {"case": "test96", "line": 64, "text": "How many cells take their marching orders from g5?", "op": "gates_driven_by", "kind": "hard", "params": {"gate": "g5"}}
 {"case": "test96", "line": 65, "text": "What is the maximum combinational logic depth in the design?", "op": "global_max_depth", "kind": "safe", "params": {}}
 {"case": "test96", "line": 66, "text": "Who is the busiest primary input?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test96", "line": 67, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4}}
+{"case": "test96", "line": 67, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4, "scope": "gate"}}
 {"case": "test96", "line": 68, "text": "Is all of some output's traffic riding on n1205?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1205"}}
 {"case": "test96", "line": 69, "text": "Which output has the largest fanin cone?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test96", "line": 70, "text": "Which outputs connect to an input with zero gates in between?", "op": "length_zero_paths", "kind": "hard", "params": {}}
 {"case": "test96", "line": 71, "text": "Persist the netlist as it stands to test96_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test96_out.v"}}
 {"case": "test97", "line": 1, "text": "We are starting over with a new exercise named test97.", "op": "begin_case", "kind": "hard", "params": {"name": "test97"}}
-{"case": "test97", "line": 2, "text": "Open test97.v from testcase/test97/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test97.v", "dir": "testcase/test97/"}}
+{"case": "test97", "line": 2, "text": "Open test97.v from testcase/test97/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test97.v", "dir": "testcase/test97"}}
 {"case": "test97", "line": 3, "text": "Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.", "op": "nand_const1_to_inv", "kind": "safe", "params": {}}
 {"case": "test97", "line": 4, "text": "Only the cone of n36[0]: restructure it for fewer levels.", "op": "optimize_cone", "kind": "hard", "params": {"output": "n36[0]"}}
 {"case": "test97", "line": 5, "text": "Is output n36[0] always 0 regardless of the inputs? Report yes or no.", "op": "output_constant", "kind": "safe", "params": {"output": "n36[0]"}}
@@ -567,7 +567,7 @@
 {"case": "test98", "line": 70, "text": "From the PI boundary to the PO boundary, how many levels max, with no registers involved?", "op": "pi_to_po_depth", "kind": "hard", "params": {}}
 {"case": "test98", "line": 71, "text": "Save what we have now as test98_out.v.", "op": "write_design", "kind": "hard", "params": {"file": "test98_out.v"}}
 {"case": "test99", "line": 1, "text": "Spin up a clean testcase under the name test99.", "op": "begin_case", "kind": "hard", "params": {"name": "test99"}}
-{"case": "test99", "line": 2, "text": "Ingest test99.v (it lives in testcase/test99/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test99.v", "dir": "testcase/test99/"}}
+{"case": "test99", "line": 2, "text": "Ingest test99.v (it lives in testcase/test99/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test99.v", "dir": "testcase/test99"}}
 {"case": "test99", "line": 3, "text": "Do flip-flops g8 and g58 share the same clock signal? Report yes or no.", "op": "same_clock", "kind": "safe", "params": {"a": "g8", "b": "g58"}}
 {"case": "test99", "line": 4, "text": "Where do the cones of n38[0] and n38[1] overlap?", "op": "shared_cone", "kind": "hard", "params": {"a": "n38[0]", "b": "n38[1]"}}
 {"case": "test99", "line": 5, "text": "Determine whether the signals n10 and n48 are functionally equivalent.", "op": "signals_equivalent", "kind": "safe", "params": {"a": "n10", "b": "n48"}}
@@ -596,7 +596,7 @@
 {"case": "test99", "line": 28, "text": "What are the PI and PO counts?", "op": "count_ports", "kind": "hard", "params": {}}
 {"case": "test99", "line": 29, "text": "How many NAND gates are currently in the design?", "op": "count_type", "kind": "safe", "params": {"type": "nand"}}
 {"case": "test99", "line": 30, "text": "Name the output with the most levels of logic beneath it.", "op": "deepest_output", "kind": "hard", "params": {}}
-{"case": "test99", "line": 31, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "dangling"}}
+{"case": "test99", "line": 31, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "removed"}}
 {"case": "test99", "line": 32, "text": "Is n38[0] sensitive to n10 at all?", "op": "depends_on", "kind": "hard", "params": {"output": "n38[0]", "input": "n10"}}
 {"case": "test99", "line": 33, "text": "Does every combinational path from input n10 to output n48 pass through gate g8? Report yes or no.", "op": "dominator", "kind": "safe", "params": {"a": "n10", "b": "n48", "gate": "g8"}}
 {"case": "test99", "line": 34, "text": "What is the tally of enable-gated registers?", "op": "enable_hold_count", "kind": "hard", "params": {}}
@@ -675,7 +675,7 @@
 {"case": "test100", "line": 36, "text": "How many gates does g9 push directly?", "op": "gates_driven_by", "kind": "hard", "params": {"gate": "g9"}}
 {"case": "test100", "line": 37, "text": "What is the maximum combinational logic depth of the design now?", "op": "global_max_depth", "kind": "safe", "params": {}}
 {"case": "test100", "line": 38, "text": "Of all the inputs, which one drives the biggest crowd?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
-{"case": "test100", "line": 39, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4}}
+{"case": "test100", "line": 39, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4, "scope": "gate"}}
 {"case": "test100", "line": 40, "text": "Is n1209 load-bearing for the input-to-output connectivity?", "op": "is_cut", "kind": "hard", "params": {"wire": "n1209"}}
 {"case": "test100", "line": 41, "text": "Which output has the largest fan-in cone?", "op": "largest_fanin_cone", "kind": "safe", "params": {}}
 {"case": "test100", "line": 42, "text": "Any pass-through connections from the input side to the output side?", "op": "length_zero_paths", "kind": "hard", "params": {}}
@@ -1067,7 +1067,7 @@
 {"case": "test118", "line": 17, "text": "Give the delta in cells attributable to the last edit.", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test118", "line": 18, "text": "What is the difference in gate count relative to before the transformation?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
 {"case": "test118", "line": 19, "text": "How many components did we just lose?", "op": "delta_count", "kind": "hard", "params": {"kind": "net_change"}}
-{"case": "test118", "line": 20, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "dangling"}}
+{"case": "test118", "line": 20, "text": "How many dangling gates were removed?", "op": "delta_count", "kind": "safe", "params": {"kind": "removed"}}
 {"case": "test119", "line": 1, "text": "Establish whether n3 is a function of n0[2] under any input scenario.", "op": "depends_on", "kind": "hard", "params": {"output": "n3", "input": "n0[2]"}}
 {"case": "test119", "line": 2, "text": "If I wiggle n12, can n63[1] ever notice?", "op": "depends_on", "kind": "hard", "params": {"input": "n12", "output": "n63[1]"}}
 {"case": "test119", "line": 3, "text": "Does output n16 depend on the input n0[2]? Report yes or no.", "op": "depends_on", "kind": "safe", "params": {"output": "n16", "input": "n0[2]"}}
@@ -1349,25 +1349,25 @@
 {"case": "test132", "line": 19, "text": "Which primary input of this design has the highest fanout?", "op": "highest_fanout_pi", "kind": "safe", "params": {}}
 {"case": "test132", "line": 20, "text": "The busiest doorway into the chip: which input is it?", "op": "highest_fanout_pi", "kind": "hard", "params": {}}
 {"case": "test133", "line": 1, "text": "Each gate reading n15 should get the signal via a personal BUF — set that up.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n15", "mode": "dedicated"}}
-{"case": "test133", "line": 2, "text": "Bring in BUFs until every driver is within 3 loads.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
+{"case": "test133", "line": 2, "text": "Bring in BUFs until every driver is within 3 loads.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3, "scope": "gate"}}
 {"case": "test133", "line": 3, "text": "Shield n1214: one dedicated buffer per consumer.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n1214", "mode": "dedicated"}}
-{"case": "test133", "line": 4, "text": "Deploy buffering to cap per-driver loading at 3.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
-{"case": "test133", "line": 5, "text": "Insert buffers so that no gate drives more than 5 loads. Ensure functional equivalence is preserved.", "op": "insert_buffers", "kind": "safe", "params": {"k": 5}}
-{"case": "test133", "line": 6, "text": "Retrofit the design with buffers wherever a driver exceeds 6 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
-{"case": "test133", "line": 7, "text": "Too much on one driver is bad practice — enforce a 3-load maximum using buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
+{"case": "test133", "line": 4, "text": "Deploy buffering to cap per-driver loading at 3.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3, "scope": "gate"}}
+{"case": "test133", "line": 5, "text": "Insert buffers so that no gate drives more than 5 loads. Ensure functional equivalence is preserved.", "op": "insert_buffers", "kind": "safe", "params": {"k": 5, "scope": "gate"}}
+{"case": "test133", "line": 6, "text": "Retrofit the design with buffers wherever a driver exceeds 6 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6, "scope": "gate"}}
+{"case": "test133", "line": 7, "text": "Too much on one driver is bad practice — enforce a 3-load maximum using buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3, "scope": "gate"}}
 {"case": "test133", "line": 8, "text": "Please insert a BUF gate on signal n1214 so that every load of n1214 is driven through a dedicated buffer. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n1214", "mode": "dedicated"}}
-{"case": "test133", "line": 9, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4}}
-{"case": "test133", "line": 10, "text": "Add repeater stages so that no single cell pushes beyond 8 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 8}}
+{"case": "test133", "line": 9, "text": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.", "op": "insert_buffers", "kind": "safe", "params": {"k": 4, "scope": "gate"}}
+{"case": "test133", "line": 10, "text": "Add repeater stages so that no single cell pushes beyond 8 sinks.", "op": "insert_buffers", "kind": "hard", "params": {"k": 8, "scope": "gate"}}
 {"case": "test133", "line": 11, "text": "Stage the loading on n10[0] through fresh BUF cells, one per receiver.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n10[0]", "mode": "dedicated"}}
 {"case": "test133", "line": 12, "text": "Isolate each consumer of n1214 behind its own buffer.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n1214", "mode": "dedicated"}}
 {"case": "test133", "line": 13, "text": "Fan n10[0] out through individual BUFs, one per load.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n10[0]", "mode": "dedicated"}}
 {"case": "test133", "line": 14, "text": "Interpose a dedicated buffer between n15 and every one of its loads.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n15", "mode": "dedicated"}}
-{"case": "test133", "line": 15, "text": "Insert buffers wherever needed so that no gate drives more than 3 loads. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"k": 3}}
+{"case": "test133", "line": 15, "text": "Insert buffers wherever needed so that no gate drives more than 3 loads. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"k": 3, "scope": "gate"}}
 {"case": "test133", "line": 16, "text": "Please insert a BUF gate on signal n1214 so that each load of n1214 is driven through a dedicated buffer. Ensure the design functionality does not change.", "op": "insert_buffers", "kind": "safe", "params": {"net": "n1214", "mode": "dedicated"}}
-{"case": "test133", "line": 17, "text": "Break up the heavy nets: add buffers so the 3-load rule holds design-wide.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3}}
-{"case": "test133", "line": 18, "text": "Nobody should drive more than 6 listeners — add buffers where that is violated.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
+{"case": "test133", "line": 17, "text": "Break up the heavy nets: add buffers so the 3-load rule holds design-wide.", "op": "insert_buffers", "kind": "hard", "params": {"k": 3, "scope": "signal"}}
+{"case": "test133", "line": 18, "text": "Nobody should drive more than 6 listeners — add buffers where that is violated.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6, "scope": "gate"}}
 {"case": "test133", "line": 19, "text": "Give every load of n0 its own private repeater.", "op": "insert_buffers", "kind": "hard", "params": {"net": "n0", "mode": "dedicated"}}
-{"case": "test133", "line": 20, "text": "Cap the drive burden at 6 loads per gate by sprinkling in buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6}}
+{"case": "test133", "line": 20, "text": "Cap the drive burden at 6 loads per gate by sprinkling in buffers.", "op": "insert_buffers", "kind": "hard", "params": {"k": 6, "scope": "gate"}}
 {"case": "test134", "line": 1, "text": "Determine whether the wire n10239 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n10239"}}
 {"case": "test134", "line": 2, "text": "Determine whether wire n848 is a cut between any primary input and any primary output. Report yes or no.", "op": "is_cut", "kind": "safe", "params": {"wire": "n848"}}
 {"case": "test134", "line": 3, "text": "Test n55104: a bottleneck whose removal splits the I/O flow, or redundant?", "op": "is_cut", "kind": "hard", "params": {"wire": "n55104"}}
@@ -1468,26 +1468,26 @@
 {"case": "test138", "line": 18, "text": "Name every XOR gate in the design.", "op": "list_type", "kind": "hard", "params": {"type": "xor"}}
 {"case": "test138", "line": 19, "text": "List all NOR gates in this design with their input and output signals.", "op": "list_type", "kind": "safe", "params": {"type": "nor"}}
 {"case": "test138", "line": 20, "text": "Every XOR instance, called out by name.", "op": "list_type", "kind": "hard", "params": {"type": "xor"}}
-{"case": "test139", "line": 1, "text": "Please load the design from the file test139.v in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
-{"case": "test139", "line": 2, "text": "Source the circuit from test139.v under testcase/test139/ and hold it as the current design.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
-{"case": "test139", "line": 3, "text": "Open test139.v from testcase/test139/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
-{"case": "test139", "line": 4, "text": "Please load the design from the file test139.v, located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 1, "text": "Please load the design from the file test139.v in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 2, "text": "Source the circuit from test139.v under testcase/test139/ and hold it as the current design.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 3, "text": "Open test139.v from testcase/test139/ and read the circuit in.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 4, "text": "Please load the design from the file test139.v, located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 5, "text": "Parse testcase/test139/test139.v and let that be our working netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
-{"case": "test139", "line": 6, "text": "Please load the design from the file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
-{"case": "test139", "line": 7, "text": "Mount test139.v (directory testcase/test139/) as the active circuit.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 6, "text": "Please load the design from the file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139"}}
+{"case": "test139", "line": 7, "text": "Mount test139.v (directory testcase/test139/) as the active circuit.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 8, "text": "Our subject is the netlist at testcase/test139/test139.v — take it in.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 9, "text": "The netlist to study sits at testcase/test139/test139.v — load away.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 10, "text": "Fetch the Verilog living at testcase/test139/test139.v into the session.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 11, "text": "Pull in the netlist stored at testcase/test139/test139.v and make it the working design.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
-{"case": "test139", "line": 12, "text": "Please load the design from file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 12, "text": "Please load the design from file test139.v located in the directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 13, "text": "Read the Verilog at testcase/test139/test139.v into memory.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 14, "text": "Bring up the design description in testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 15, "text": "The file testcase/test139/test139.v holds today's design; absorb it.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 16, "text": "Consume testcase/test139/test139.v; everything after this refers to it.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
-{"case": "test139", "line": 17, "text": "Please load the design from the file test139.v located in directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 17, "text": "Please load the design from the file test139.v located in directory testcase/test139/.", "op": "load_design", "kind": "safe", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 18, "text": "Stand up the design described in testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test139", "line": 19, "text": "Initialize the working design from the file testcase/test139/test139.v.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
-{"case": "test139", "line": 20, "text": "Ingest test139.v (it lives in testcase/test139/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139/"}}
+{"case": "test139", "line": 20, "text": "Ingest test139.v (it lives in testcase/test139/) as our current netlist.", "op": "load_design", "kind": "hard", "params": {"file": "test139.v", "dir": "testcase/test139"}}
 {"case": "test140", "line": 1, "text": "How far apart are n24[2] and n475, measured in logic depth?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n24[2]", "b": "n475"}}
 {"case": "test140", "line": 2, "text": "The depth of the longest logic run linking n12 with n117[1] is what?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n12", "b": "n117[1]"}}
 {"case": "test140", "line": 3, "text": "Between the endpoints n12 and n4, what is the maximum chain length in gates?", "op": "max_depth_between", "kind": "hard", "params": {"a": "n12", "b": "n4"}}

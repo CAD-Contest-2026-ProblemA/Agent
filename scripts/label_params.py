@@ -16,9 +16,8 @@ Checks applied to every candidate:
     allowed_intents accepts
   * k must be an integer that occurs in the sentence
   * the assembled object must pass validate_intent_object
-  * delta_count's free-form `kind` is pushed through a mirror of
-    op_delta_count's own dispatch, so the label is checked against the code
-    that will consume it rather than against my reading of that code
+  * delta_count.kind is normalized through the production canonical enum,
+    shared by the validator, exporter and handler
   * the direction-carrying ops (depends_on / symmetric / path_exists, plus the
     a/b pairs) are labelled twice: once by the pattern tables below, once by
     hand in HAND_CHECK, and the bank is not written unless the two agree
@@ -47,11 +46,16 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 
 from cada.llm.allowed_intents import (  # noqa: E402
-    BASIS_VALUES, GATE_TYPES, LIST_PORT_DIRS, OPTIONAL_PARAMS, REQUIRED_PARAMS,
-    RENAME_KINDS, validate_intent_object,
+    BASIS_VALUES, DELTA_KINDS, GATE_TYPES, LIST_PORT_DIRS, OPTIONAL_PARAMS,
+    REQUIRED_PARAMS, RENAME_KINDS, canonicalize_delta_kind,
+    infer_delta_kind, validate_intent_object,
+)
+from cada.llm.example_contract import (  # noqa: E402
+    INTENT_ONLY_EXCEPTIONS, validate_example_banks,
 )
 
 BANK = os.path.join(ROOT, "cada", "llm", "examples.jsonl")
+PUBLIC_BANK = os.path.join(ROOT, "cada", "llm", "public_examples.jsonl")
 
 NAME_KEYS = {"net", "gate", "output", "wire", "input", "a", "b", "target",
              "clk", "old", "new", "scope"}
@@ -264,79 +268,17 @@ def _dir(text: str) -> Optional[str]:
 # ---------------------------------------------------------------------------
 # delta_count
 #
-# `kind` is not an enum: op_delta_count() substring-matches it against the tags
-# a transform recorded, and falls back to the most recent delta when nothing
-# matches.  That fallback is a feature -- for a question that names no
-# particular transform ("how many gates disappeared?") the most recent delta IS
-# the answer, so a neutral kind is RIGHT and a specific one like "removed" is
-# wrong: it would pin the lookup to a tag the preceding step never wrote.
+# A question naming a specific transform gets that transform's recorded metric.
+# A generic follow-up uses ``net_change``, the explicit canonical value for the
+# most recently recorded metric.  This preserves the existing contest behaviour
+# without teaching the model arbitrary strings that merely trigger a fallback.
 # ---------------------------------------------------------------------------
-DELTA_TAGS = {"buffers_added", "nand_added", "nor_added", "xor_converted",
-              "xnor_converted", "nand_to_inv", "const_eliminated", "merged",
-              "collapsed", "removed", "floating", "enable_hold", "basis_remap"}
 NEUTRAL_KIND = "net_change"
-
-
-def _kind_tag(kind: str) -> Optional[str]:
-    """Which delta tag op_delta_count() would resolve `kind` to (None = fallback).
-
-    Mirrors cada/agent/agent.py::op_delta_count so a label can be checked
-    against the code that will consume it instead of against my reading of it.
-    """
-    low = kind.lower()
-    if low in DELTA_TAGS:
-        return low
-    if "buf" in low or "buffer" in low:
-        return "buffers_added"
-    if "nand" in low and "added" in low:
-        return "nand_added"
-    if "nor" in low and "xnor" not in low and "added" in low:
-        return "nor_added"
-    if "const" in low or "eliminated" in low or "propagation" in low:
-        return "const_eliminated"
-    if "merge" in low or "duplicate" in low:
-        return "merged"
-    if "collapse" in low or "inverter" in low:
-        return "collapsed"
-    if "enable" in low or "hold" in low:
-        return "enable_hold"
-    if ("remove" in low or "dangling" in low or "redundant" in low
-            or "floating" in low):
-        return "removed"
-    return None
 
 
 def _delta_kind(text: str) -> str:
     """The kind word for a "how many were added/removed" question."""
-    low = text.lower()
-    if "buf" in low or "buffer" in low or "repeater" in low:
-        return "buffers_added"
-    # "How many NOR gates were added by replacing the XNOR gates?" names two
-    # types; only the one attached to "added" was actually added.
-    m = re.search(rf"\b({_TYPE_ALT})\s+(?:gate|cell)s?\s+(?:\w+\s+)?added", low)
-    if m and f"{m.group(1)}_added" in DELTA_TAGS:
-        return f"{m.group(1)}_added"
-    if ("eliminated" in low or "constant propagation" in low
-            or "constant folding" in low or "constant-folding" in low):
-        return "const_eliminated"
-    if "merge" in low or "duplicate" in low:
-        return "merged"
-    if "collapse" in low or "inverter" in low or "back-to-back" in low:
-        return "collapsed"
-    if "enable" in low and ("hold" in low or "found" in low):
-        return "enable_hold"
-    if "dangling" in low:
-        return "dangling"
-    # "did the last operation add or remove?" names removal but does not mean
-    # it: the question is two-sided, so pinning kind to the removal tag would
-    # answer the wrong half whenever the step added gates.  A sentence that
-    # mentions both directions gets the neutral kind and the recent-delta path.
-    two_sided = re.search(r"\badd\w*\b.*\bremov|\bremov\w*\b.*\badd|"
-                          r"grow or shrink|gain or shed|up or down", low)
-    if not two_sided and ("redundant" in low or "floating" in low
-                          or re.search(r"\bremov", low)):
-        return "removed"
-    return NEUTRAL_KIND
+    return infer_delta_kind(text)
 
 
 # ---------------------------------------------------------------------------
@@ -490,7 +432,7 @@ HAND_CHECK = {
     "eliminated by constant propagation": {"kind": "const_eliminated"},
     "inverter-pair collapse": {"kind": "collapsed"},
     "did the merge shave off": {"kind": "merged"},
-    "How many dangling gates were removed": {"kind": "dangling"},
+    "How many dangling gates were removed": {"kind": "removed"},
     "the last operation add or remove": {"kind": NEUTRAL_KIND},
     "how many gates disappeared": {"kind": NEUTRAL_KIND},
     "rewritten by the conversion": {"kind": NEUTRAL_KIND},
@@ -616,6 +558,13 @@ def extract(text: str, op: str) -> Optional[Dict]:
         p = {"k": k}
         if len(names) == 1:
             p["net"] = names[0]
+        else:
+            signal_wide = re.search(
+                r"\bno\s+(?:signal|net)s?\b|"
+                r"\b(?:signal|net)s?\s+(?:drives?|has|pushes?|exceeds?)\b|"
+                r"\bheavy\s+nets?\b",
+                text, re.I)
+            p["scope"] = "signal" if signal_wide else "gate"
         return p
 
     # --- name-valued -----------------------------------------------------
@@ -790,8 +739,8 @@ def extract(text: str, op: str) -> Optional[Dict]:
         if b:
             p["basis"] = b
     # scope is two different types under one key: an enum for insert_buffers,
-    # a net name everywhere else.  Only the net-valued form is quoted from the
-    # sentence, and the enum form is left to the required-param path.
+    # a net name everywhere else.  The insert-buffer enum was handled in its
+    # dedicated extraction branch above; only net-valued scopes reach here.
     if "scope" in opt and op != "insert_buffers":
         s = _cone_scope(text)
         if not _scope_is_decidable(text, s):
@@ -838,11 +787,11 @@ def verify(text: str, op: str, params: Dict) -> Optional[str]:
             elif val not in text:
                 return f"scope={val!r} does not occur in the sentence"
         if key == "kind" and op == "delta_count":
-            tag = _kind_tag(val)
-            if tag is not None and tag not in DELTA_TAGS:
-                return f"kind={val!r} resolves to unknown delta tag {tag!r}"
-            if val != NEUTRAL_KIND and tag is None:
-                return f"kind={val!r} matches no delta tag and is not neutral"
+            canonical = canonicalize_delta_kind(val)
+            if canonical not in DELTA_KINDS:
+                return f"kind={val!r} is not a recognized delta metric"
+            if canonical != val:
+                return f"kind={val!r} is not canonical; use {canonical!r}"
         if key == "file" and not val.endswith(".v"):
             return f"file={val!r} is not a Verilog filename"
         if key == "type" and val not in GATE_TYPES:
@@ -889,7 +838,10 @@ def main() -> int:
             skipped += 1
             reasons[r["op"]] = reasons.get(r["op"], 0) + 1
         else:
-            err = verify(r["text"], r["op"], p)
+            clean, err = validate_intent_object({"intent": r["op"], "params": p})
+            if err is None and clean is not None:
+                p = clean["params"]
+                err = verify(r["text"], r["op"], p)
             if err:
                 skipped += 1
                 reasons[f"{r['op']}: {err[:40]}"] = reasons.get(r["op"], 0) + 1
@@ -934,6 +886,24 @@ def main() -> int:
     print("\n交叉檢查(手讀 vs 規則):")
     hand_bad = run_hand_check(out)
 
+    contract_bad = False
+    try:
+        contract_banks = {os.path.relpath(args.bank, ROOT): out}
+        if (os.path.abspath(args.bank) == os.path.abspath(BANK)
+                and os.path.isfile(PUBLIC_BANK)):
+            with open(PUBLIC_BANK, encoding="utf-8") as public_file:
+                contract_banks[os.path.relpath(PUBLIC_BANK, ROOT)] = [
+                    json.loads(line) for line in public_file if line.strip()]
+        validate_example_banks(
+            contract_banks,
+            allow_intent_only=(
+                INTENT_ONLY_EXCEPTIONS
+                if os.path.abspath(args.bank) == os.path.abspath(BANK) else ()))
+        print("  canonical contract: PASS")
+    except (OSError, ValueError) as exc:
+        contract_bad = True
+        print(f"  canonical contract: FAIL\n{exc}")
+
     if args.sample:
         import random
         random.seed(11)
@@ -943,9 +913,10 @@ def main() -> int:
             print(f"  {r['op']:20s} {json.dumps(r['params'], ensure_ascii=False):46s} "
                   f"| {r['text'][:58]}")
 
-    if hand_bad and not args.dry_run:
-        print(f"\nABORT: {hand_bad} hand-check disagreement(s); bank left "
-              f"untouched. Fix the rule or the expectation before writing.")
+    if hand_bad or contract_bad:
+        action = "check failed" if args.dry_run else "bank left untouched"
+        print(f"\nABORT: hand-check or canonical-contract failure; {action}. "
+              f"Fix the rule or expectation before continuing.")
         return 1
 
     if not args.dry_run:

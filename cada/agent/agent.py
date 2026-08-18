@@ -23,6 +23,7 @@ from ..optimize import abc_opt
 from ..equiv import gate as equiv_gate
 from ..guards import validators
 from .state import State
+from ..llm.allowed_intents import canonicalize_delta_kind, infer_delta_kind
 from ..llm.client import LLMClient
 from ..llm.fallback import Fallback
 
@@ -540,31 +541,7 @@ class Agent:
     def h_delta(self, m, line):
         """Answer a 'how many X were added/removed/...' question from the delta
         recorded by the immediately-preceding transform."""
-        low = line.lower()
-        gtype = None
-        for t in ("nand", "nor", "not", "xnor", "xor", "and", "or", "buf"):
-            if re.search(r"\b%s\b" % t, low):
-                gtype = t
-                break
-        d = self.state.deltas
-        val = None
-        if "buf" in low or "buffer" in low:
-            val = d.get("buffers_added")
-        elif "added" in low and gtype:
-            val = d.get(f"{gtype}_added")
-        elif ("eliminated" in low or "constant propagation" in low):
-            val = d.get("const_eliminated")
-        elif "merged" in low:
-            val = d.get("merged")
-        elif "collapsed" in low or "back-to-back" in low or "inverter" in low:
-            val = d.get("collapsed")
-        elif "removed" in low or "dangling" in low or "redundant" in low or "floating" in low:
-            val = d.get("removed")
-        elif "found" in low and "enable" in low:
-            val = d.get("enable_hold")
-        if val is None and d:
-            val = d[list(d)[-1]]      # fall back to the most recent delta
-        return f"{val if val is not None else 0}"
+        return self.op_delta_count(infer_delta_kind(line))
 
     def h_cone_type(self, m, line):
         if self._need_design():
@@ -1462,11 +1439,10 @@ class Agent:
     def h_buffers_fanout(self, m, line):
         if self._need_design():
             return self._need_design()
-        k = int(re.findall(r"(\d+)", line)[-1])
+        k = int(m.group(3))
         # "no gate ..." bounds gate outputs and DFF.Q (a flip-flop is a gate,
         # Q&A A2).  "no signal/net ..." is broader and adds primary inputs.
-        low = line.lower()
-        include_pi = "signal" in low or "net" in low
+        include_pi = m.group(1).lower() in ("signal", "net")
         info, ok, reason = self._commit(
             lambda nl: buffering.limit_fanout(nl, k, include_pi=include_pi),
             max_fanout=k, max_fanout_pi=include_pi)
@@ -1792,7 +1768,7 @@ class Agent:
         return sentence
 
     def op_delta_count(self, kind=""):
-        low = str(kind or "").lower()
+        low = str(canonicalize_delta_kind(kind) or "").lower()
         d = self.state.deltas
         val = None
         if low in d:

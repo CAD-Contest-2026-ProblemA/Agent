@@ -3,14 +3,15 @@
 Place this file next to fallback.py, for example:
     cada/llm/allowed_intents.py
 
-The important detail is that validation is intent-aware.  For example,
-load_design.dir may be "testcase/test41/", while list_ports.dir must be
-"input" or "output".  Therefore we must not globally validate every key named
-"dir" as a port direction.
+The important detail is that validation is intent-aware.  For example, a raw
+load_design.dir may be "testcase/test41/" and is normalized as a filesystem
+path, while list_ports.dir must be "input" or "output".  Therefore we must not
+globally validate every key named "dir" as a port direction.
 """
 
 from __future__ import annotations
 
+import re
 from typing import Any, Dict, Mapping, Optional, Set, Tuple
 
 
@@ -83,6 +84,9 @@ OPERATION SYNONYMS:
   "delta_count {kind}" → change from the PREVIOUS operation (added/removed count).
     Triggers: "how many were excised/absorbed/swept/collapsed/eliminated/deleted/removed",
               "tally of X gates absorbed", "gates removed in last step".
+  kind must use the canonical metric recorded by that operation, for example:
+    buffers_added, buffers_removed, nand_added, nor_added, const_eliminated,
+    merged, collapsed, removed, or net_change for the most recently recorded metric.
   KEY RULE: if the request contains a past-tense verb referring to the last action
   (excised, absorbed, swept, folded, eliminated, inserted, removed, merged), use
   delta_count, not count_gates.  Adjectives like "redundant", "duplicate",
@@ -612,13 +616,13 @@ OPERATION SYNONYMS:
 → {"intent":"remove_dangling","params":{}}
 
 "How many gates were excised in the previous step?"
-→ {"intent":"delta_count","params":{"kind":"dangling"}}
+→ {"intent":"delta_count","params":{"kind":"removed"}}
 
 "How many redundant gates were removed?"
 → {"intent":"delta_count","params":{"kind":"removed"}}
 
 "Give the tally of NAND gates absorbed by constant folding."
-→ {"intent":"delta_count","params":{"kind":"nand"}}
+→ {"intent":"delta_count","params":{"kind":"const_eliminated"}}
 
 "Identify all zero gate-hop paths from primary inputs to primary outputs."
 → {"intent":"length_zero_paths","params":{}}
@@ -783,7 +787,7 @@ OPERATION SYNONYMS:
 - count_gates {}
 - total_gate_count {}
 - count_type {type, scope}      # scope = optional output net: count only inside its fanin cone
-- delta_count {kind}
+- delta_count {kind}             # canonical recorded metric; use net_change for the latest one
 - gate_info {gate}
 - list_type {type}
 - cone_gate_count {output}
@@ -969,6 +973,120 @@ BUFFER_MODES = {"fanout", "dedicated"}
 EQUIV_TARGETS = {"original", "pre", "last_loaded"}
 CONST_VALUES = {"0", "1", "1'b0", "1'b1"}
 
+# ``State.deltas`` keys are the contract consumed by ``op_delta_count``.
+# ``net_change`` is the one deliberate pseudo-key: it means "the most recently
+# recorded delta metric", preserving the contest's generic follow-up questions.
+DELTA_KINDS = {
+    "net_change", "basis_remap", "buffers_added", "buffers_removed",
+    "collapsed", "const_eliminated", "enable_hold", "floating", "merged",
+    "nand_added", "nand_to_inv", "nor_added", "removed",
+    "xnor_converted", "xor_converted",
+}
+DELTA_KIND_ALIASES = {
+    "buffer_added": "buffers_added",
+    "buf_added": "buffers_added",
+    "buffer_removed": "buffers_removed",
+    "buf_removed": "buffers_removed",
+    "dangling": "removed",
+    "redundant": "removed",
+    "gates_removed": "removed",
+    "constant_eliminated": "const_eliminated",
+    "constant_propagation": "const_eliminated",
+    "constant_folding": "const_eliminated",
+    "merge": "merged",
+    "duplicates_merged": "merged",
+    "inverters_collapsed": "collapsed",
+    "inverter_pairs_removed": "collapsed",
+    "nand_gates_added": "nand_added",
+    "nor_gates_added": "nor_added",
+    "latest": "net_change",
+    "last_delta": "net_change",
+    "recent_delta": "net_change",
+}
+
+
+def canonicalize_delta_kind(value: Any) -> Any:
+    """Return the canonical ``delta_count.kind`` or an invalid value as-is.
+
+    Keeping unknown values visible lets validation reject them and trigger the
+    existing corrective LLM retry instead of silently reading an unrelated
+    recent delta.  Accepted aliases are intentionally finite.
+    """
+    if not isinstance(value, str):
+        return value
+    kind = re.sub(r"[\s-]+", "_", value.strip().lower())
+    if kind in DELTA_KIND_ALIASES:
+        return DELTA_KIND_ALIASES[kind]
+    # The model sometimes preserves the queried gate type in phrases such as
+    # ``or_eliminated``.  All such labels refer to constant propagation's one
+    # recorded metric, not to a per-type delta key.
+    if kind in {f"{gate}_eliminated" for gate in GATE_TYPES}:
+        return "const_eliminated"
+    return kind
+
+
+def infer_delta_kind(text: str) -> str:
+    """Map a rule-routed delta question to one recorded metric.
+
+    This is shared by the regex handler and the example exporter so wording
+    about removing buffers cannot drift back to ``buffers_added``.  Ambiguous
+    follow-ups intentionally use ``net_change`` (the most recent metric).
+    """
+    low = str(text or "").lower()
+    two_sided = re.search(
+        r"\badd\w*\b.*\bremov|\bremov\w*\b.*\badd|"
+        r"grow or shrink|gain or shed|up or down", low)
+    if two_sided:
+        return "net_change"
+
+    # An explicitly named constant transform owns its one aggregate metric,
+    # even if the question happens to mention that some eliminated gates were
+    # buffers.  With no such transform named, removal wording around BUF/
+    # buffer/repeater means the dedicated remove_buffers operation.
+    if ("constant propagation" in low or "constant folding" in low
+            or "constant-folding" in low):
+        return "const_eliminated"
+    buffer_word = r"(?:buf(?:fer)?s?|repeaters?)"
+    remove_word = (
+        r"(?:remov(?:e[sd]?|ing|al(?:s)?)|strip(?:s|ped|ping)?|"
+        r"delet(?:e[sd]?|ing|ion(?:s)?)|excis(?:e[sd]?|ing|ion(?:s)?)|"
+        r"eliminat(?:e[sd]?|ing|ion(?:s)?)|prun(?:e[sd]?|ing)|"
+        r"swe(?:ep(?:s|ing)?|pt))"
+    )
+    buffer_removal = (
+        re.search(r"\bbuffer[-\s]+removal\b", low)
+        or re.search(
+            rf"\b{remove_word}\b(?:\s+\w+){{0,5}}\s+\b{buffer_word}\b", low)
+        or re.search(
+            rf"\b{buffer_word}\b(?:\s+\w+){{0,5}}\s+\b{remove_word}\b", low)
+    )
+    if buffer_removal:
+        return "buffers_removed"
+
+    gate_alt = "|".join(sorted(GATE_TYPES, key=len, reverse=True))
+    match = re.search(
+        rf"\b({gate_alt})\s+(?:gate|cell)s?\s+(?:\w+\s+)?added\b", low)
+    if match and f"{match.group(1)}_added" in DELTA_KINDS:
+        return f"{match.group(1)}_added"
+    if re.search(rf"\b{buffer_word}\b", low) \
+            and re.search(r"\b(?:add\w*|insert\w*)\b", low):
+        return "buffers_added"
+    if "eliminated" in low:
+        return "const_eliminated"
+    if "merge" in low or "duplicate" in low:
+        return "merged"
+    if "collapse" in low or "inverter" in low or "back-to-back" in low:
+        return "collapsed"
+    if "enable" in low and ("hold" in low or "found" in low):
+        return "enable_hold"
+    if "dangling" in low:
+        return "removed"
+
+    if ("redundant" in low or "floating" in low
+            or re.search(r"\bremov", low)):
+        return "removed"
+    return "net_change"
+
 
 def validate_intent_object(obj: Any) -> Tuple[Optional[Dict[str, Any]], Optional[str]]:
     """Validate and normalize one LLM-produced intent object.
@@ -1004,7 +1122,10 @@ def validate_intent_object(obj: Any) -> Tuple[Optional[Dict[str, Any]], Optional
     # dedicated branch into the design-wide default bound, which on test31
     # turns 2 requested buffers into 649 and reports the wrong count for the
     # rest of the case.
-    if intent == "insert_buffers" and raw_params.get("mode") == "dedicated":
+    raw_mode = raw_params.get("mode")
+    dedicated = (isinstance(raw_mode, str)
+                 and raw_mode.strip().lower() == "dedicated")
+    if intent == "insert_buffers" and dedicated:
         required = (required - {"k"}) | {"net"}
 
     missing = [k for k in sorted(required) if _is_missing(raw_params.get(k))]
@@ -1012,9 +1133,19 @@ def validate_intent_object(obj: Any) -> Tuple[Optional[Dict[str, Any]], Optional
         return None, f'Missing required param(s) for intent "{intent}": {", ".join(missing)}.'
 
     clean_params: Dict[str, Any] = {}
-    for key in allowed_keys:
-        if key in raw_params and not _is_missing(raw_params[key]):
-            clean_params[key] = _normalize_param(intent, key, raw_params[key])
+    # Preserve the model/exporter's key order.  Iterating ``allowed_keys`` (a
+    # set) made otherwise-identical JSON serialization vary with PYTHONHASHSEED.
+    for key, value in raw_params.items():
+        if key in allowed_keys and not _is_missing(value):
+            clean_params[key] = _normalize_param(intent, key, value)
+
+    # The execution API has always treated an omitted design-wide buffering
+    # scope as ``gate``.  Materialize that default in the canonical object so
+    # examples, predictions and exact-object evaluation all use one shape.
+    # Named-net and dedicated forms do not consume ``scope`` and stay compact.
+    if (intent == "insert_buffers" and not dedicated
+            and "net" not in clean_params and "scope" not in clean_params):
+        clean_params["scope"] = "gate"
 
     err = _validate_param_values(intent, clean_params)
     if err:
@@ -1037,8 +1168,15 @@ def _normalize_param(intent: str, key: str, value: Any) -> Any:
         return value.lower()
     if intent == "list_ports" and key == "dir" and isinstance(value, str):
         return value.lower()
+    if intent == "load_design" and key == "dir" and isinstance(value, str):
+        # A directory's trailing slash is operationally irrelevant to
+        # os.path.join, but used to create two distinct routing labels.
+        trimmed = value.rstrip("/")
+        return trimmed or "/"
     if intent == "rename" and key == "kind" and isinstance(value, str):
         return value.lower()
+    if intent == "delta_count" and key == "kind":
+        return canonicalize_delta_kind(value)
     if intent == "insert_buffers" and key in ("mode", "scope") and isinstance(value, str):
         return value.lower()
     if intent == "verify_equivalence" and key == "against" and isinstance(value, str):
@@ -1088,6 +1226,12 @@ def _validate_param_values(intent: str, params: Dict[str, Any]) -> Optional[str]
         against = params["against"]
         if against not in EQUIV_TARGETS:
             return f'Invalid equivalence target "{against}".'
+
+    if intent == "delta_count":
+        kind = params.get("kind")
+        if not isinstance(kind, str) or kind not in DELTA_KINDS:
+            values = ", ".join(sorted(DELTA_KINDS))
+            return f'Invalid delta kind "{kind}". Expected one of: {values}.'
 
     if intent == "report_const_gates" and "value" in params:
         value = params["value"]
