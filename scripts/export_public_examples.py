@@ -264,6 +264,12 @@ def _params_for(text: str, handler: str, intent: str,
             "k": int(match.group(3)),
             "scope": "signal" if match.group(1).lower() in ("signal", "net") else "gate",
         }
+        # The fanout bound and its independent scoring metric are orthogonal.
+        # Keep the canonical replay aligned with both the rule handler and the
+        # generic label extractor when the request explicitly scores gates.
+        labelled = extract_params(text, intent)
+        if labelled and "objective" in labelled:
+            params["objective"] = labelled["objective"]
     elif handler == "h_buffers_signal":
         params = {"net": match.group(1), "k": int(match.group(2))}
     elif handler == "h_buffers_dedicated":

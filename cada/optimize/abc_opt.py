@@ -20,13 +20,13 @@ import tempfile
 from typing import Dict, List, Optional, Tuple
 
 from ..netlist.ir import Gate, Netlist, is_const
-from ..netlist.blif_export import _TT, _live_registers
+from ..netlist.blif_export import _TT
 from ..transform import rewrite
 from ..transform.base import Emitter
 from ..equiv import abc_bridge, gate as equiv_gate
 
-# The recipe portfolios live in .resynth (DEPTH_PORTFOLIO / AREA_PORTFOLIO);
-# minimize_* below delegate there and this module provides the ABC plumbing.
+# The adaptive transform-family scheduler lives in .resynth; minimize_* below
+# delegate there and this module provides the ABC plumbing.
 
 _CONST_BUF_INV = ("GATE zero 0 O=CONST0;\n"
                   "GATE one 0 O=CONST1;\n"
@@ -34,6 +34,21 @@ _CONST_BUF_INV = ("GATE zero 0 O=CONST0;\n"
                   "GATE inv 1 O=!a; PIN * INV 1 999 1 0 1 0\n")
 
 _GATE_DEFS = {
+    # The contest's area metric is primitive gate count, not transistor area:
+    # every legal primitive therefore has area 1.  The old 2/3 weights made
+    # ABC optimize a different objective from the judge (especially XOR/XNOR).
+    "and": "GATE and 1 O=a*b; PIN * NONINV 1 999 1 0 1 0\n",
+    "or": "GATE or 1 O=a+b; PIN * NONINV 1 999 1 0 1 0\n",
+    "nand": "GATE nand 1 O=!(a*b); PIN * INV 1 999 1 0 1 0\n",
+    "nor": "GATE nor 1 O=!(a+b); PIN * INV 1 999 1 0 1 0\n",
+    "xor": "GATE xor 1 O=(a*!b)+(!a*b); PIN * UNKNOWN 1 999 1 0 1 0\n",
+    "xnor": "GATE xnor 1 O=(a*b)+(!a*!b); PIN * UNKNOWN 1 999 1 0 1 0\n",
+}
+
+# Delay mapping still needs a useful area tie-break between equal-depth cuts.
+# The historic 2/3 weights empirically preserve shallower XOR-rich structures;
+# gate-count objectives use the exact unit weights above instead.
+_DEPTH_GATE_DEFS = {
     "and": "GATE and 2 O=a*b; PIN * NONINV 1 999 1 0 1 0\n",
     "or": "GATE or 2 O=a+b; PIN * NONINV 1 999 1 0 1 0\n",
     "nand": "GATE nand 2 O=!(a*b); PIN * INV 1 999 1 0 1 0\n",
@@ -52,45 +67,54 @@ _BASIS_CELLS = {
 }
 
 
-def _genlib(basis) -> str:
+def _genlib(basis, unit_area: bool = False) -> str:
     lib = _CONST_BUF_INV
+    defs = _GATE_DEFS if unit_area else _DEPTH_GATE_DEFS
     for c in _BASIS_CELLS.get(basis, _BASIS_CELLS[None]):
-        lib += _GATE_DEFS[c]
+        lib += defs[c]
     return lib
 
 _GENLIB = _genlib(None)
 
 
-def _san(net: str) -> str:
-    return net.replace("[", "__").replace("]", "")
-
-
 def _opt_blif(nl: Netlist):
-    """Return (blif_text, {po_label: po_net}, {d_label: q_net})."""
-    inputs = sorted(nl.pi)
-    live = _live_registers(nl)
-    q_nets = sorted(live)
-    all_inputs = inputs + [q for q in q_nets if q not in set(inputs)]
-    in_set = set(all_inputs)
+    """Return ``(blif, po-label map, register-pin-label map)`` for the cut.
 
+    Pin labels map to flip-flop *instance names* and pin attributes, because the
+    boundary is per register and D/CK/RN/SN must all survive resynthesis.
+    """
     nl.driver("__force_build__")
     driver = nl._driver
+    inputs = sorted(nl.pi)
+    q_nets = sorted({ff.q for ff in nl.dffs})
+    # Undriven nets are free combinational sources in the reference harness,
+    # not implicit zeroes.  Declare them as BLIF inputs so optimization cannot
+    # silently specialize their logic (including dead-register next state).
+    floating = sorted(n for n in nl.all_nets()
+                      if not is_const(n) and nl.driver(n)[0] == "undriven")
+    all_inputs = list(dict.fromkeys(inputs + q_nets + floating))
 
     po_out: Dict[str, str] = {}
-    d_out: Dict[str, str] = {}
-    rep_d: Dict[str, str] = {}
-    for ff in nl.dffs:
-        if ff.q in live and ff.q not in rep_d:
-            rep_d[ff.q] = ff.d
-
+    pin_out: Dict[str, Tuple[str, str]] = {}
     out_labels: List[str] = []
     body: List[str] = []
+    used_labels = set(nl.all_nets())
+
+    def fresh_label(kind: str, index: int) -> str:
+        label = f"__cada_{kind}_{index}"
+        while label in used_labels:
+            label += "_"
+        used_labels.add(label)
+        return label
+
+    const0 = fresh_label("const", 0)
+    const1 = fresh_label("const", 1)
 
     def ref(net: str) -> str:
         if net == "1'b0":
-            return "__const0"
+            return const0
         if net == "1'b1":
-            return "__const1"
+            return const1
         return net
 
     for g in nl.gates:
@@ -100,31 +124,32 @@ def _opt_blif(nl: Netlist):
         body.append(".names " + " ".join([ref(i) for i in g.ins] + [g.out]))
         body.extend(tt)
 
-    for p in sorted(nl.po):
+    for po_idx, p in enumerate(sorted(nl.po)):
         drv = driver.get(p)
         # Only combinationally-driven POs belong to the comb block.  A PO that
         # is a register Q is driven by its flip-flop (preserved separately); a
         # PO that is a PI is a direct pass-through left untouched.  Adding a
         # buffer for those would create a second driver.
         if drv is not None and drv[0] == "gate":
-            label = "PO_" + _san(p)
+            label = fresh_label("po", po_idx)
             po_out[label] = p
             out_labels.append(label)
             body.append(f".names {ref(p)} {label}")
             body.append("1 1")
-    for q in sorted(rep_d):
-        label = "D_" + _san(q)
-        d_out[label] = q
-        out_labels.append(label)
-        body.append(f".names {ref(rep_d[q])} {label}")
-        body.append("1 1")
+    for ff_idx, ff in enumerate(sorted(nl.dffs, key=lambda f: f.name)):
+        for attr in ("d", "clk", "rn", "sn"):
+            label = fresh_label(attr, ff_idx)
+            pin_out[label] = (ff.name, attr)
+            out_labels.append(label)
+            body.append(f".names {ref(getattr(ff, attr))} {label}")
+            body.append("1 1")
 
     head = [".model opt",
             ".inputs " + " ".join(all_inputs),
             ".outputs " + " ".join(out_labels),
-            ".names __const0",
-            ".names __const1", "1"]
-    return "\n".join(head + body) + "\n.end\n", po_out, d_out
+            f".names {const0}",
+            f".names {const1}", "1"]
+    return "\n".join(head + body) + "\n.end\n", po_out, pin_out
 
 
 def _parse_gate_blif(text: str):
@@ -134,8 +159,31 @@ def _parse_gate_blif(text: str):
     """
     gates: List[Tuple[str, str, List[str]]] = []
     const: Dict[str, str] = {}
-    for raw in text.splitlines():
+    lines = text.splitlines()
+    for pos, raw in enumerate(lines):
         line = raw.strip()
+        # ABC normally emits mapped cells as .gate, but direct output aliases
+        # and constants can remain as simple .names nodes.  Preserve the
+        # unambiguous 0/1-input forms instead of silently rebuilding them as
+        # undriven wires (or zero-valued fallbacks).
+        if line.startswith(".names"):
+            nets = line.split()[1:]
+            table = []
+            scan = pos + 1
+            while scan < len(lines):
+                row = lines[scan].strip()
+                if row.startswith("."):
+                    break
+                if row and not row.startswith("#"):
+                    table.append(row)
+                scan += 1
+            if len(nets) == 1:
+                const[nets[0]] = "1'b1" if table == ["1"] else "1'b0"
+            elif len(nets) == 2 and table == ["1 1"]:
+                gates.append(("buf", nets[1], [nets[0]]))
+            elif len(nets) == 2 and table == ["0 1"]:
+                gates.append(("not", nets[1], [nets[0]]))
+            continue
         if not line.startswith(".gate"):
             continue
         toks = line.split()[1:]
@@ -165,19 +213,22 @@ def _parse_gate_blif(text: str):
 
 def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
                   timeout: int = 280,
-                  prepared: Optional[Tuple[str, Dict[str, str], Dict[str, str]]] = None,
+                  area_mode: bool = False,
+                  unit_area: Optional[bool] = None,
+                  prepared: Optional[Tuple[
+                      str, Dict[str, str], Dict[str, Tuple[str, str]]]] = None,
                   ) -> Optional[Netlist]:
     """Optimise the comb core of ``nl`` with an ABC ``recipe`` and map it onto
     the unit-delay library of ``basis``.
 
-    ``prepared`` may carry a pre-computed ``(blif_text, po_out, d_out)``
+    ``prepared`` may carry a pre-computed ``(blif_text, po_out, pin_out)``
     export — e.g. reused across the recipe portfolio, or a yosys-resynthesised
     variant of the same export (the labels must be those of ``_opt_blif(nl)``).
     """
     if prepared is not None:
-        blif, po_out, d_out = prepared
+        blif, po_out, pin_out = prepared
     else:
-        blif, po_out, d_out = _opt_blif(nl)
+        blif, po_out, pin_out = _opt_blif(nl)
     d = tempfile.mkdtemp(prefix="cada_opt_")
     pin = os.path.join(d, "in.blif")
     pout = os.path.join(d, "out.blif")
@@ -186,9 +237,12 @@ def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
         with open(pin, "w") as f:
             f.write(blif)
         with open(plib, "w") as f:
-            f.write(_genlib(basis))
+            f.write(_genlib(basis, unit_area=(area_mode if unit_area is None
+                                              else unit_area)))
+        mapper = "map -a -s" if area_mode else "map"
         cmds = ([f'read_blif "{pin}"', "strash"] + recipe +
-                [f'read_library "{plib}"', "map", f'write_blif "{pout}"'])
+                [f'read_library "{plib}"', mapper,
+                 f'write_blif "{pout}"'])
         ok, out = abc_bridge.run_abc(cmds, timeout=timeout)
         if not ok or not os.path.exists(pout):
             return None
@@ -212,12 +266,35 @@ def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
     rename: Dict[str, str] = {}
     for label, po in po_out.items():
         rename[label] = po
-    qd_net: Dict[str, str] = {}
     new = nl.snapshot()
-    for label, q in d_out.items():
-        nd = new.fresh_name("nd")
-        rename[label] = nd
-        qd_net[q] = nd
+    gate_by_out = {out: (gtype, ins) for gtype, out, ins in gates}
+    skip_outputs = set()
+    mapped_pins: Dict[Tuple[str, str], str] = {}
+    for label, (ff_name, attr) in pin_out.items():
+        # ABC can legally collapse a register-pin output straight to a
+        # constant.  In that case there is no mapped gate to drive a fresh
+        # wire; attach the pin to the constant itself.  Treating the label like
+        # an ordinary mapped output left an undriven pin which a
+        # constant-zero CEC happened to mask.
+        resolved = resolve(label)
+        if is_const(resolved):
+            mapped_pins[(ff_name, attr)] = resolved
+        elif (resolved in gate_by_out
+              and gate_by_out[resolved][0] == "buf"
+              and len(gate_by_out[resolved][1]) == 1):
+            # The pseudo-output alias itself is not real circuit logic.  ABC
+            # often maps a direct PI/constant/internal-net -> pin connection as
+            # one BUF per register pin; reconnect the preserved D/CK/RN/SN pin
+            # to that source and do not charge/materialize the interface BUF.
+            # Only the gate whose output is the private pseudo label is skipped;
+            # an ordinary internal BUF feeding it remains part of the design.
+            skip_outputs.add(resolved)
+            mapped_pins[(ff_name, attr)] = resolve(
+                gate_by_out[resolved][1][0])
+        else:
+            mapped = new.fresh_name("np")
+            rename[label] = mapped
+            mapped_pins[(ff_name, attr)] = mapped
 
     def remap(net: str) -> str:
         # apply constant substitution, then output-label rename (a label may be
@@ -227,6 +304,8 @@ def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
     new.gates = []
     em = Emitter(new)
     for (gtype, out, ins) in gates:
+        if out in skip_outputs:
+            continue
         real_out = rename.get(out, out)
         real_ins = [remap(i) for i in ins]
         em.emit(gtype, real_out, real_ins)
@@ -241,8 +320,10 @@ def optimize_comb(nl: Netlist, recipe: List[str], basis=None,
             new.gates.append(Gate("buf", new.fresh_name("cg"),
                                   po, [src if src != label else "1'b0"]))
     for ff in new.dffs:
-        if ff.q in qd_net:
-            ff.d = qd_net[ff.q]
+        for attr in ("d", "clk", "rn", "sn"):
+            key = (ff.name, attr)
+            if key in mapped_pins:
+                setattr(ff, attr, remap(mapped_pins[key]))
     new.touch()
     return new
 
@@ -261,27 +342,55 @@ def _finalize(nl, cand, basis, timeout):
 
 
 def minimize_depth(nl: Netlist, basis: Optional[str] = None,
-                   timeout: int = 280) -> Tuple[Netlist, bool]:
+                   timeout: int = 290,
+                   basis_output: Optional[str] = None) -> Tuple[Netlist, bool]:
     from . import resynth
     res, improved, _info = resynth.resynthesize(
-        nl, objective="depth", basis=basis, timeout=timeout)
+        nl, objective="depth", basis=basis, basis_output=basis_output,
+        timeout=timeout)
     return res, improved
 
 
 def minimize_area(nl: Netlist, basis: Optional[str] = None,
-                  timeout: int = 280) -> Tuple[Netlist, bool]:
+                  timeout: int = 290,
+                  basis_output: Optional[str] = None) -> Tuple[Netlist, bool]:
     from . import resynth
     res, improved, _info = resynth.resynthesize(
-        nl, objective="area", basis=basis, timeout=timeout)
+        nl, objective="area", basis=basis, basis_output=basis_output,
+        timeout=timeout)
     return res, improved
 
 
+def minimize_buffered_area(nl: Netlist, fanout_limit: int,
+                           include_pi: bool = False, timeout: int = 290,
+                           ) -> Tuple[Netlist, int, bool]:
+    """Minimize the *post-buffer* primitive count, then insert the provably
+    minimal fanout trees required by ``fanout_limit``.
+
+    Ranking plain area first can choose a highly shared netlist that needs more
+    buffers than it saved.  The resynthesis objective therefore includes the
+    exact buffer lower bound/construction cost for every candidate.
+    """
+    if fanout_limit < 2:
+        raise ValueError("buffered-area optimization requires fanout_limit >= 2")
+    from . import resynth
+    from ..transform import buffering
+    res, improved, _info = resynth.resynthesize(
+        nl, objective="buffered_area", fanout_limit=fanout_limit,
+        fanout_include_pi=include_pi, timeout=timeout)
+    added = buffering.limit_fanout(
+        res, fanout_limit, include_pi=include_pi)
+    return res, added, improved
+
+
 def optimize_cone_depth(nl: Netlist, output: str, basis: Optional[str] = None,
-                        timeout: int = 280) -> Tuple[Netlist, bool]:
+                        timeout: int = 290,
+                        basis_output: Optional[str] = None,
+                        ) -> Tuple[Netlist, bool]:
     """Depth-optimise the comb block and keep it only if the cone of ``output``
     got shallower (and the design stays equivalent / in basis)."""
     from . import resynth
     res, improved, _info = resynth.resynthesize(
         nl, objective="cone_depth", output=output, basis=basis,
-        timeout=timeout)
+        basis_output=basis_output, timeout=timeout)
     return res, improved

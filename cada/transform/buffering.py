@@ -73,13 +73,9 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
                  only_nets: Optional[Set[str]] = None) -> int:
     """Ensure no driver fans out to more than ``k`` loads.  Returns #buffers.
 
-    Gate outputs and DFF Q outputs are always bounded: a flip-flop is one of
-    the nine primitive gate types (Q&A A2), so "no gate drives more than K
-    loads" covers its Q just as it covers an AND's output.
-
-    ``include_pi`` additionally bounds primary inputs, which is the broader
-    "no signal/net drives more than K" phrasing -- a PI is a net but not a
-    gate, so it is in scope only there.  Constants are exempt.
+    The judge's gate scope bounds combinational gate outputs.  ``include_pi``
+    selects the broader "no signal/net drives more than K" scope and also
+    bounds primary inputs and DFF Q outputs.  Constants are exempt.
 
     Raises ValueError for k < 2, which is not a bound this can meet.  The check
     is here, before the first edit, and not only in _buffer_one_net: callers
@@ -107,9 +103,9 @@ def limit_fanout(nl: Netlist, k: int, include_pi: bool = False,
 
         for g in nl.gates:
             add(g.out)
-        for q in sorted({ff.q for ff in nl.dffs}):
-            add(q)
         if include_pi:
+            for q in sorted({ff.q for ff in nl.dffs}):
+                add(q)
             for p in sorted(nl.pi):
                 add(p)
     total = 0
