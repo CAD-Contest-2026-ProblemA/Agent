@@ -228,8 +228,17 @@ OPERATION SYNONYMS:
 ▸ deepest_output vs largest_fanin_cone
   "DEEPEST fan-in cone / deepest logic cone" (by logic DEPTH) → deepest_output {}
   "LARGEST/BIGGEST fan-in cone" (by GATE COUNT)               → largest_fanin_cone {}
+  Both take NO parameters.  A "which ..." question may narrow the field by
+  naming the candidates -- "which output (n7 or n8) has the largest fanin
+  logic cone" -- and those names are the CHOICE SET, not arguments.  Two nets
+  in the sentence do not make it a two-net operation: shared_cone {a, b} asks
+  what two cones have in common, which is a different question and returns a
+  different kind of answer.
+    "Which output (n7 or n8) has the largest fanin logic cone?"
+      → {"intent":"largest_fanin_cone","params":{}}
   KEY RULE: "deepest" asks about depth, not size — never answer it with
-  largest_fanin_cone.
+  largest_fanin_cone.  And a superlative ("which X has the most/deepest ...")
+  is always a ranking over candidates, never a pairwise comparison.
 
 ▸ enable/hold structures (flip-flop D-input logic)
   "enable or hold structures", "D input logic ... enable or hold" are NOT net names.
