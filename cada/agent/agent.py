@@ -465,6 +465,25 @@ class Agent:
     _COUNT_WORDS = ("count", "how many", "number")
     _LIST_WORDS = ("list", "name", "enumerate", "report only", "which gates")
 
+    def _boundary_note(self, net: str) -> str:
+        """Why a cone is empty, when the reason is a register.
+
+        "0 gates" is the right number and half the answer: it does not
+        distinguish a net with no logic behind it from one sitting on the
+        register boundary, and those mean different things.  Q&A A21.2/A65 make
+        DFF.Q a boundary, so when the queried net is a register output the
+        flip-flop is named -- the count is untouched, the reason is stated.
+        Empty for any other reason adds nothing, so nothing is added.
+        """
+        nl = self.state.current
+        if nl is None:
+            return ""
+        ffs = sorted(ff.name for ff in nl.dffs if ff.q == net)
+        if not ffs:
+            return ""
+        return (f"{net} is driven by flip-flop {self._names(ffs)}, which "
+                f"bounds the cone rather than sitting inside it.")
+
     def _shaped(self, form, names, noun: str, hint: str):
         """Render ``names`` per ``form``, or None if ``form`` says nothing.
 
@@ -478,7 +497,11 @@ class Agent:
         if f in ("count", "how_many", "number"):
             return f"{noun}: {len(names)} gate(s)."
         if f in ("list", "names", "enumerate"):
-            return f"{noun}: " + self._names_or_file(names, hint)
+            # Keep the count even when listing.  An empty set rendered as a bare
+            # "(none)" drops the one fact the reader can check, and it is a step
+            # back from the sentence this form replaced ("contains 0 gates").
+            return (f"{noun} contains {len(names)} gate(s): "
+                    + self._names_or_file(names, hint))
         if f in ("yesno", "yes_no", "boolean", "bool"):
             # A question answered "48" is not answered.  Lead with the word the
             # request asked for and keep the number behind it, so the reply
@@ -2031,7 +2054,13 @@ class Agent:
     def op_cone_type_counts(self, output):
         if self._need_design():
             return self._need_design()
-        return counts.cone_type_counts_text(self.state.current, str(output))
+        out = str(output)
+        text = counts.cone_type_counts_text(self.state.current, out)
+        if not cones.fanin_cone_gates(self.state.current, out):
+            note = self._boundary_note(out)
+            if note:
+                text += "\n" + note      # its own line, not glued to "DFF: 0"
+        return text
 
     def op_list_ports(self, dir="input"):
         if self._need_design():
@@ -2091,10 +2120,14 @@ class Agent:
             return self._need_design()
         net = str(net)
         gs = cones.fanin_cone_gates(self.state.current, net)
+        note = self._boundary_note(net) if not gs else ""
+        tail = (" " + note) if note else ""
         out = self._shaped(form, [g.name for g in gs],
                            f"The fan-in cone of {net}", f"fanin_cone_{net}")
-        return out if out is not None else (
-            f"The transitive fan-in cone of {net} contains {len(gs)} gates.")
+        if out is not None:
+            return out.rstrip(".") + "." + tail
+        return (f"The transitive fan-in cone of {net} contains "
+                f"{len(gs)} gates.{tail}")
 
     def op_transitive_fanout(self, net, form=None):
         if self._need_design():
