@@ -465,6 +465,22 @@ class Agent:
     _COUNT_WORDS = ("count", "how many", "number")
     _LIST_WORDS = ("list", "name", "enumerate", "report only", "which gates")
 
+    # "A gate with a constant input" is read STRUCTURALLY: an input pin wired to
+    # 1'b0 / 1'b1.  functional.constant_nets() implements the other reading --
+    # A21.1 defines a signal as constant when it "provably remains 0 or 1" --
+    # and we used it here, which made us the only team reporting six NOR gates
+    # on a design where two others reported none and were scored correct.  The
+    # six inputs are gate-driven nets that a SAT check proves constant; nothing
+    # in that netlist is wired to a literal.
+    #
+    # A21.1 answers a different question (when is a SIGNAL constant, for
+    # "always 0" queries).  This one asks what an input pin is TIED TO, and the
+    # scored answer is the literal reading.  The functional detector is left in
+    # place; flipping this one method back restores the other reading if the
+    # organisers rule the other way.
+    def _const_extra(self) -> dict:
+        return {}
+
     def _boundary_note(self, net: str) -> str:
         """Why a cone is empty, when the reason is a register.
 
@@ -791,8 +807,7 @@ class Agent:
             val = "1'b1"
         elif "constant 0" in line.lower() or "constant-0" in line.lower():
             val = "1'b0"
-        # "constant" = structural literal OR functionally constant (Q&A A21.1)
-        self.const_nets = functional.constant_nets(self.state.current)
+        self.const_nets = self._const_extra()
         gs = constprop.gates_with_const_input(
             self.state.current,
             gtype if gtype in ("and", "or", "nand", "nor") else None,
@@ -1429,9 +1444,8 @@ class Agent:
             rtype = mm.group(1).lower()
         elif self.state.last_report_kind:
             rtype = self.state.last_report_kind
-        # reuse the functional-constant set from the preceding "report" (A21.1);
-        # if absent (simplify without a prior report), detect now
-        extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
+        # Same reading as the report that precedes it -- see _const_extra().
+        extra = self._const_extra()
         info, ok, reason = self._commit(
             lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
         if not ok:
@@ -2615,7 +2629,7 @@ class Agent:
             val = "1'b0"
         elif value in (1, "1", "1'b1"):
             val = "1'b1"
-        self.const_nets = functional.constant_nets(self.state.current)
+        self.const_nets = self._const_extra()
         gs = constprop.gates_with_const_input(
             self.state.current,
             gtype if gtype in ("and", "or", "nand", "nor") else None,
@@ -2631,7 +2645,7 @@ class Agent:
         if self._need_design():
             return self._need_design()
         rtype = self._norm_gate_type(type) if type else self.state.last_report_kind
-        extra = self.const_nets if self.const_nets else functional.constant_nets(self.state.current)
+        extra = self._const_extra()
         info, ok, reason = self._commit(
             lambda nl: constprop.const_propagate(nl, rtype, extra_const=extra))
         if not ok:
