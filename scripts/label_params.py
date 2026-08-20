@@ -172,14 +172,31 @@ _DIR_WORDS = {
 
 def _basis(text: str) -> Optional[str]:
     low = text.lower()
-    has = lambda *w: all(re.search(rf"\b{x}\b", low) for x in w)
-    if has("nand", "not"):
-        return "NAND_NOT"
-    if has("nor", "not"):
-        return "NOR_NOT"
-    if has("and", "or", "not"):
+    has = lambda value: bool(re.search(rf"\b{value}\b", low))
+
+    def positive(value: str) -> bool:
+        return has(value) and not re.search(
+            rf"\b(?:not|without|excluding?|except)\s+(?:use\s+)?{value}\b",
+            low)
+
+    has_inv = (has("inverter") or has("inverters") or bool(re.search(
+        r"(?:[,/&+]\s*|\band\s+)not\b"
+        r"(?!\s+(?:nand|nor|and|or|xor|xnor)\b)|"
+        r"\bnot\b(?=\s*(?:gates?|cells?|logic|[,;/.)]|$))", low)))
+    if positive("nand"):
+        return "NAND_NOT" if has_inv else "NAND"
+    if positive("nor"):
+        return "NOR_NOT" if has_inv else "NOR"
+
+    def listed(value: str) -> bool:
+        return positive(value) and bool(re.search(
+            rf"\b(?:only|using|use|from|contains?|maintains?|remains?|to)"
+            rf"\s+(?:only\s+)?{value}\b|"
+            rf"\b{value}\b\s*(?:gates?\b|[,/+]|\band\b)", low))
+
+    if listed("and") and listed("or") and has_inv:
         return "AND_OR_NOT"
-    if has("and", "not") and "nand" not in low and "nor" not in low:
+    if listed("and") and has_inv:
         return "AND_NOT"
     return None
 
@@ -189,7 +206,7 @@ def _basis(text: str) -> Optional[str]:
 # not matched — the net is not being named as a cone here, and guessing turns a
 # scoped request into a whole-design remap or the reverse.
 _CONE_PATTERNS = (
-    rf"\b(?:fan-?in\s+)?cone\s+of\s+(?:primary\s+)?(?:output\s+)?({N})",
+    rf"\b(?:fan-?in\s+)?cone(?:\s+of)?\s+(?:primary\s+)?(?:output\s+)?({N})",
     rf"\bwithin\s+({N})'s\s+(?:fan-?in\s+)?cone",
     rf"\b({N})'s\s+(?:fan-?in\s+)?cone",
     rf"\b(?:the\s+)?logic\s+(?:of|under|behind|feeding)\s+({N})",
@@ -197,14 +214,53 @@ _CONE_PATTERNS = (
 )
 
 
+def _explicit_global_scope(text: str) -> bool:
+    clauses = re.split(
+        r";|(?<=[.!?])\s+|\bwhile\b|\b(?:and\s+)?ensur(?:e|ing)\b",
+        text, flags=re.IGNORECASE)
+    basis_clauses = [clause for clause in clauses if _basis(clause)]
+    candidates = basis_clauses or [text]
+    return any(
+        re.search(r"\b(?:the\s+)?netlist\s+remains\b|"
+                  r"\b(?:entire|whole|final)\s+(?:design|netlist|circuit)\b",
+                  clause, re.I)
+        or re.search(r"\b(?:keep|keeping|kept)\s+(?:the\s+)?"
+                     r"(?:design|netlist|circuit)\b.*\bonly\b", clause, re.I)
+        or re.search(r"\b(?:all|every)\s+(?:logic\s+)?gates?\b.*\bonly\b",
+                     clause, re.I)
+        for clause in candidates)
+
+
+def _gate_count_objective(text: str) -> bool:
+    metric = (r"(?:(?:final\s+|total\s+)?(?:gate\s+count|"
+              r"number\s+of\s+(?:primitive\s+)?gates)|(?:final\s+)?area)")
+    return bool(
+        re.search(r"\b(?:cost(?:\s+function|\s+metric)?|objective|score)\b"
+                  r".{0,40}?\b(?:is|uses?|based\s+on|measured\s+by)\b"
+                  r".{0,50}?\b" + metric + r"\b", text, re.I)
+        or re.search(r"\b(?:minimi[sz]e|optimi[sz]e|reduce|lower|decrease|shrink)\b"
+                     r".{0,50}?\b" + metric + r"\b", text, re.I))
+
+
 def _cone_scope(text: str) -> Optional[str]:
     """The net a conversion is scoped to, or None for a design-wide request."""
-    hits = set()
+    # An output can name the optimization target while the structural basis is
+    # explicitly global ("the netlist remains ...").  The global qualifier is
+    # authoritative; labelling that output as ``scope`` would weaken the
+    # constraint on canonical/LLM dispatch.
+    if _explicit_global_scope(text):
+        return None
+    clauses = re.split(
+        r";|(?<=[.!?])\s+|\bwhile\b|\b(?:and\s+)?ensur(?:e|ing)\b",
+        text, flags=re.IGNORECASE)
+    basis_clauses = [clause for clause in clauses if _basis(clause)]
+    scope_text = basis_clauses[-1] if basis_clauses else text
+    hits = []
     for rx in _CONE_PATTERNS:
-        for m in re.finditer(rx, text, re.I):
+        for m in re.finditer(rx, scope_text, re.I):
             if _looks_like_net(m.group(1)):
-                hits.add(m.group(1))
-    return hits.pop() if len(hits) == 1 else None
+                hits.append((m.start(), m.group(1)))
+    return max(hits)[1] if hits else None
 
 
 def _scope_is_decidable(text: str, scope: Optional[str]) -> bool:
@@ -216,7 +272,8 @@ def _scope_is_decidable(text: str, scope: Optional[str]) -> bool:
     row is dropped instead.  Anaphoric scoping ("just that output's logic")
     names no net and is left alone -- there is nothing there to get wrong.
     """
-    return scope is not None or not any(_looks_like_net(t) for t in named_idents(text))
+    return (scope is not None or _explicit_global_scope(text)
+            or not any(_looks_like_net(t) for t in named_idents(text)))
 
 
 # Ordered: "the netlist before the transformation" also contains "netlist", and
@@ -565,6 +622,8 @@ def extract(text: str, op: str) -> Optional[Dict]:
                 r"\bheavy\s+nets?\b",
                 text, re.I)
             p["scope"] = "signal" if signal_wide else "gate"
+        if _gate_count_objective(text):
+            p["objective"] = "gate_count"
         return p
 
     # --- name-valued -----------------------------------------------------

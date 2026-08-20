@@ -188,7 +188,7 @@ OPERATION SYNONYMS:
   NAND and NOT gates"), use minimize_depth with that basis: {"basis":"NAND_NOT"}.
   KEY RULE: "minimize (maximum) path depth, ensuring the cone of X continues to
   use only <basis>" — the TARGET is the whole design, the cone is only the
-  constraint → minimize_depth {"basis":<basis>}, NOT optimize_cone.  Choosing
+    constraint → minimize_depth {"basis":<basis>,"scope":X}, NOT optimize_cone.  Choosing
   optimize_cone here silently skips the requested design-level optimization.
 
 ▸ cone CONVERSION vs cone OPTIMIZATION
@@ -221,6 +221,9 @@ OPERATION SYNONYMS:
   (one buffer per load, no numeric bound stated) → {"net":X, "mode":"dedicated"}.
   mode is ONLY for this dedicated-per-load form.  Either way this is ALWAYS
   insert_buffers, never noop — it is a structural transform.
+  If the request says its cost function is final gate count, also emit
+  {"objective":"gate_count"}; the optimizer must minimize logic plus the
+  buffers needed for the bound, not merely buffer the current topology.
 
 ▸ deepest_output vs largest_fanin_cone
   "DEEPEST fan-in cone / deepest logic cone" (by logic DEPTH) → deepest_output {}
@@ -565,7 +568,7 @@ OPERATION SYNONYMS:
 → {"intent":"insert_buffers","params":{"k":4,"net":"n1"}}
 
 "Insert buffers wherever needed so that no signal drives more than 16 loads. Make sure nothing changes functionally. The cost function is the total gate count of the final design; smaller is better."
-→ {"intent":"insert_buffers","params":{"k":16,"scope":"signal"}}
+→ {"intent":"insert_buffers","params":{"k":16,"scope":"signal","objective":"gate_count"}}
 
 "What is the current peak load count on signal n1?"
 → {"intent":"max_fanout_of","params":{"net":"n1"}}
@@ -851,10 +854,10 @@ OPERATION SYNONYMS:
 - remove_dangling {}            # DELETE them
 - merge_duplicates {}
 - rename {kind, old, new}       # kind = gate|wire|signal
-- insert_buffers {k, net, mode, scope} # mode = fanout|dedicated; scope = gate|signal
-- minimize_depth {basis}
-- minimize_area {basis}
-- optimize_cone {output, basis}
+- insert_buffers {k, net, mode, scope, objective} # objective = gate_count when explicitly scored
+- minimize_depth {basis, scope}
+- minimize_area {basis, scope}
+- optimize_cone {output, basis, scope}
 - verify_equivalence {against}  # against = original|pre|last_loaded
 - noop {}
 """
@@ -953,10 +956,10 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
     "report_const_gates": {"type", "value"},
     "const_propagate": {"type"},
     "rename": {"kind"},
-    "insert_buffers": {"net", "mode", "scope"},
-    "minimize_depth": {"basis"},
-    "minimize_area": {"basis"},
-    "optimize_cone": {"basis"},
+    "insert_buffers": {"net", "mode", "scope", "objective"},
+    "minimize_depth": {"basis", "scope"},
+    "minimize_area": {"basis", "scope"},
+    "optimize_cone": {"basis", "scope"},
     "verify_equivalence": {"against"},
 }
 
@@ -970,6 +973,7 @@ BASIS_VALUES = {"NAND", "NOR",
 LIST_PORT_DIRS = {"input", "output"}
 RENAME_KINDS = {"gate", "wire", "signal"}
 BUFFER_MODES = {"fanout", "dedicated"}
+BUFFER_OBJECTIVES = {"gate_count"}
 EQUIV_TARGETS = {"original", "pre", "last_loaded"}
 CONST_VALUES = {"0", "1", "1'b0", "1'b1"}
 
@@ -1177,8 +1181,13 @@ def _normalize_param(intent: str, key: str, value: Any) -> Any:
         return value.lower()
     if intent == "delta_count" and key == "kind":
         return canonicalize_delta_kind(value)
-    if intent == "insert_buffers" and key in ("mode", "scope") and isinstance(value, str):
-        return value.lower()
+    if intent == "insert_buffers" and key in ("mode", "scope", "objective") \
+            and isinstance(value, str):
+        normalized = re.sub(r"[\s-]+", "_", value.lower())
+        if key == "objective" and normalized in {
+                "area", "gates", "total_gate_count", "number_of_gates"}:
+            return "gate_count"
+        return normalized
     if intent == "verify_equivalence" and key == "against" and isinstance(value, str):
         return value.lower()
     if key == "basis" and isinstance(value, str):
@@ -1221,6 +1230,12 @@ def _validate_param_values(intent: str, params: Dict[str, Any]) -> Optional[str]
         scope = params["scope"]
         if scope not in ("gate", "signal"):
             return f'Invalid buffer scope "{scope}". Expected gate or signal.'
+
+    if intent == "insert_buffers" and "objective" in params:
+        objective = params["objective"]
+        if objective not in BUFFER_OBJECTIVES:
+            return (f'Invalid buffer objective "{objective}". '
+                    'Expected gate_count.')
 
     if intent == "verify_equivalence" and "against" in params:
         against = params["against"]

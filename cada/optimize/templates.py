@@ -31,6 +31,7 @@ from __future__ import annotations
 
 import random
 import re
+import time
 from typing import Dict, List, Optional, Sequence, Set, Tuple
 
 from ..netlist.ir import Gate, Netlist, is_const
@@ -39,8 +40,9 @@ from ..analysis import graph
 from ..transform.base import Emitter
 from ..equiv import abc_bridge
 
-# guard rails: skip template detection entirely on huge designs
-MAX_GATES = 120_000
+# Work caps bound individual target analysis; the absolute deadline is the
+# design-wide guard, avoiding a sharp size cutoff at which nearly-identical
+# hidden designs would receive completely different algorithms.
 MAX_TARGET_BUSES = 96
 MAX_CONE_GATES = 40_000       # per-target cone bound for support DFS
 MAX_SCALAR_TARGETS = 128      # 1-bit targets (comparators, hold bits, wires)
@@ -58,6 +60,7 @@ ECHO_WORDS = 2   # trailing sample words where same-index bus bits are echoed
 
 def simulate(nl: Netlist, words: int = SIM_WORDS, seed: int = 2026,
              echo_bits: Optional[Dict[str, int]] = None,
+             deadline: Optional[float] = None,
              ) -> Optional[Dict[str, List[int]]]:
     """Random-vector simulation of the combinational core.
 
@@ -85,7 +88,10 @@ def simulate(nl: Netlist, words: int = SIM_WORDS, seed: int = 2026,
         return echo_stream[key]
 
     n_echo = min(ECHO_WORDS, words - 1) if echo_bits else 0
-    for src in graph.comb_sources(nl):
+    for src_idx, src in enumerate(graph.comb_sources(nl)):
+        if (src_idx & 255) == 0 and deadline is not None \
+                and time.monotonic() >= deadline:
+            return None
         if src not in val:
             v = [rng.getrandbits(64) for _ in range(words)]
             if echo_bits and src in echo_bits:
@@ -96,7 +102,10 @@ def simulate(nl: Netlist, words: int = SIM_WORDS, seed: int = 2026,
     order = graph.topo_nets(nl)
     nl.driver("__force_build__")
     driver = nl._driver
-    for net in order:
+    for net_idx, net in enumerate(order):
+        if (net_idx & 255) == 0 and deadline is not None \
+                and time.monotonic() >= deadline:
+            return None
         if net in val:
             continue
         drv = driver.get(net)
@@ -210,6 +219,7 @@ def target_words(nl: Netlist) -> List[Word]:
     register bank's D vector (ordered by its Q bus index)."""
     nl.driver("__force_build__")
     driver = nl._driver
+    levels = graph.forward_levels(nl)
 
     def all_gate_driven(bits: Sequence[str]) -> bool:
         return all((driver.get(b) or ("undriven",))[0] == "gate" for b in bits)
@@ -236,6 +246,18 @@ def target_words(nl: Netlist) -> List[Word]:
             if all_gate_driven(bits) and len(set(bits)) == w:
                 out.append(Word(base + "$D", bits, "d"))
 
+    def priority(word: Word):
+        bit_levels = [levels.get(bit, 0) for bit in word.bits]
+        # A deeper target has more potential depth headroom; width and total
+        # level are name-independent tie-breakers.  Lexical name is used only
+        # for reproducibility after all structural terms tie.
+        return (-max(bit_levels, default=0), -sum(bit_levels),
+                -word.width, word.name)
+
+    # Bound work by selecting the most structurally promising buses instead of
+    # rejecting every template when a design happens to expose many targets.
+    out = sorted(out, key=priority)[:MAX_TARGET_BUSES]
+
     # 1-bit targets: scalar POs and scalar-register D nets (comparator
     # outputs, hold/enable bits, plain rewires).  Capped — control bits are
     # numerous on big designs and their cones are meant to be small.
@@ -250,7 +272,7 @@ def target_words(nl: Netlist) -> List[Word]:
         seen_q.add(ff.q)
         if all_gate_driven([ff.d]):
             scalars.append(Word(ff.q + "$D", [ff.d], "d"))
-    out.extend(scalars[:MAX_SCALAR_TARGETS])
+    out.extend(sorted(scalars, key=priority)[:MAX_SCALAR_TARGETS])
     return out
 
 
@@ -374,27 +396,33 @@ def _match_projection(tgt: Word, val: Dict[str, List[int]],
     return Match(tgt, "perm", [], extra=plan)
 
 
-def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
+def detect(nl: Netlist, val: Dict[str, List[int]],
+           deadline: Optional[float] = None) -> List[Match]:
     """Sample-match every target word against the function bank."""
     ops, scalars = operand_words(nl)
     targets = target_words(nl)
-    n_bus_targets = sum(1 for t in targets if t.width > 1)
-    if not ops or not targets or n_bus_targets > MAX_TARGET_BUSES:
+    if not ops or not targets:
         return []
 
     op_samples: Dict[str, List[int]] = {}
     for o in ops:
+        if deadline is not None and time.monotonic() >= deadline:
+            return []
         s = _word_samples(val, o.bits)
         if s is not None:
             op_samples[o.name] = s
     sc_samples: Dict[str, List[int]] = {}
     for s in scalars:
+        if deadline is not None and time.monotonic() >= deadline:
+            return []
         v = val.get(s)
         if v is not None:
             sc_samples[s] = _word_samples(val, [s])
 
     matches: List[Match] = []
     for tgt in targets:
+        if deadline is not None and time.monotonic() >= deadline:
+            break
         tgt_s = _word_samples(val, tgt.bits)
         if tgt_s is None:
             continue
@@ -413,7 +441,7 @@ def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
             cand_cins = [s for s in scalars if s in sup and s in sc_samples]
             w = tgt.width
             m = _match_target(tgt, tgt_s, w, cand_ops, op_samples,
-                              cand_cins, sc_samples)
+                              cand_cins, sc_samples, deadline=deadline)
         if m is not None:
             matches.append(m)
     return matches
@@ -422,6 +450,7 @@ def detect(nl: Netlist, val: Dict[str, List[int]]) -> List[Match]:
 def _match_target(tgt: Word, tgt_s: List[int], w: int,
                   cand_ops: List[Word], op_samples: Dict[str, List[int]],
                   cand_cins: List[str], sc_samples: Dict[str, List[int]],
+                  deadline: Optional[float] = None,
                   ) -> Optional[Match]:
     """Operands narrower than the target are zero-extended (their sampled
     values already are); the 512-sample agreement decides validity, and the
@@ -430,6 +459,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
 
     # unary
     for a in cand_ops:
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
         av = op_samples[a.name]
         for fname, fn in FUNCS_UNARY.items():
             if all(fn(x, w) == y for x, y in zip(av, tgt_s)):
@@ -437,7 +468,11 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
 
     # binary (multiply, arithmetic, bitwise, carry-in adds)
     for i, a in enumerate(cand_ops):
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
         for b in cand_ops[i:]:
+            if deadline is not None and time.monotonic() >= deadline:
+                return None
             av, bv = op_samples[a.name], op_samples[b.name]
             if a is b:
                 if all(((x * x) & mk) == t for x, t in zip(av, tgt_s)):
@@ -465,6 +500,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
     n = len(cand_ops)
     if 2 <= n <= 10:
         for i in range(n):
+            if deadline is not None and time.monotonic() >= deadline:
+                return None
             av = op_samples[cand_ops[i].name]
             for j in range(i, n):
                 bv = op_samples[cand_ops[j].name]
@@ -476,6 +513,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
                         return Match(tgt, "mac",
                                      [cand_ops[i], cand_ops[j], c])
         for i in range(n):
+            if deadline is not None and time.monotonic() >= deadline:
+                return None
             av = op_samples[cand_ops[i].name]
             for j in range(i + 1, n):
                 ab = [x + y for x, y in
@@ -496,6 +535,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
 
     # ---- select family: max/min/absdiff, word mux, variable shifts ----
     for i, a in enumerate(cand_ops):
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
         av = op_samples[a.name]
         for j in range(i + 1, len(cand_ops)):
             b = cand_ops[j]
@@ -515,6 +556,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
                        for x, y, s, t in zip(av, bv, sv, tgt_s)):
                     return Match(tgt, "mux", [b, a], cin=sel)
     for a in cand_ops:
+        if deadline is not None and time.monotonic() >= deadline:
+            return None
         av = op_samples[a.name]
         for s in cand_ops:
             if s is a or s.width > 6:
@@ -534,6 +577,8 @@ def _match_target(tgt: Word, tgt_s: List[int], w: int,
     # single-bit comparisons (unsigned, zero-extended)
     if w == 1:
         for i, a in enumerate(cand_ops):
+            if deadline is not None and time.monotonic() >= deadline:
+                return None
             for b in cand_ops[i + 1:]:
                 av, bv = op_samples[a.name], op_samples[b.name]
                 for fname, fn in FUNCS_CMP.items():
@@ -877,14 +922,30 @@ def _cone_blif(nl: Netlist, out_bits: Sequence[str], inputs: Sequence[str],
     return "\n".join(lines) + "\n.end\n"
 
 
-def _verify_match(nl: Netlist, m: Match, timeout: int = 60) -> Optional[List[Gate]]:
+def _verify_match(nl: Netlist, m: Match, timeout: int = 60,
+                  deadline: Optional[float] = None) -> Optional[List[Gate]]:
     """Build the template cone and cec it against the existing cone.
     Returns the new gates on success, else None."""
+    if deadline is not None:
+        left = deadline - time.monotonic()
+        if left <= 1:
+            return None
+        # Avoid entering an uninterruptible Python template build that cannot
+        # plausibly finish inside its scheduler slice.  This is a structural
+        # work estimate (quadratic for multipliers/MACs, near-linear otherwise),
+        # not a testcase/width cutoff.
+        width = max(1, m.target.width)
+        work = (6 * width * width if m.func in ("mul", "mac")
+                else 20 * width * max(1, width.bit_length()))
+        if work > max(2_000, int(left * 20_000)):
+            return None
     scratch = Netlist()
     em = Emitter(scratch)
     try:
         build_match(em, m)
     except Exception:
+        return None
+    if deadline is not None and time.monotonic() >= deadline:
         return None
     # rename intermediate wires to a namespace no real design uses, so the
     # template cone can never collide with nets of the design under check
@@ -911,7 +972,13 @@ def _verify_match(nl: Netlist, m: Match, timeout: int = 60) -> Optional[List[Gat
     old_gates = graph.fanin_cone_gates(nl, m.target.bits)
     blif_old = _cone_blif(nl, m.target.bits, inputs, old_gates, "cone_old")
     blif_new = _cone_blif(nl, m.target.bits, inputs, new_gates, "cone_new")
-    if abc_bridge.cec_blif(blif_old, blif_new, timeout=timeout) is True:
+    if deadline is not None:
+        left = deadline - time.monotonic()
+        if left <= 0:
+            return None
+        timeout = max(1, min(timeout, int(left)))
+    if timeout > 0 and abc_bridge.cec_blif(
+            blif_old, blif_new, timeout=timeout) is True:
         return new_gates
     return None
 
@@ -921,28 +988,36 @@ def rebuild_via_templates(nl: Netlist, timeout: int = 120,
     """Detect known word-level functions and rebuild their cones from
     depth-optimal templates.  Returns (candidate netlist, notes) or None when
     nothing matched."""
-    if len(nl.gates) > MAX_GATES:
-        return None
+    deadline = time.monotonic() + max(1, timeout)
     ops, _scalars = operand_words(nl)
     echo_bits: Dict[str, int] = {}
     for o in ops:
         for idx, bit in enumerate(o.bits):
             echo_bits.setdefault(bit, idx)
-    val = simulate(nl, echo_bits=echo_bits)
+    if time.monotonic() >= deadline:
+        return None
+    val = simulate(nl, echo_bits=echo_bits, deadline=deadline)
     if val is None:
         return None
-    matches = detect(nl, val)
+    if time.monotonic() >= deadline:
+        return None
+    matches = detect(nl, val, deadline=deadline)
     if not matches:
         return None
 
     cand = nl.snapshot()
     cand.touch()
     applied: List[str] = []
-    per_match_to = max(10, timeout // max(1, len(matches)))
+    per_match_to = max(1, timeout // max(1, len(matches)))
     for m in matches:
+        left = deadline - time.monotonic()
+        if left <= 1:
+            break
         # verify against (and splice into) the evolving candidate so the
         # sampled match stays valid even after earlier replacements
-        new_gates = _verify_match(cand, m, timeout=per_match_to)
+        new_gates = _verify_match(
+            cand, m, timeout=max(1, min(per_match_to, int(left))),
+            deadline=deadline)
         if new_gates is None:
             continue
         targets = set(m.target.bits)

@@ -5,11 +5,12 @@ our bridge to ABC.  ABC's ``cec`` matches primary inputs/outputs *by name*, so
 two BLIFs produced from the same net-naming scheme can be compared directly.
 
 Sequential designs are handled by a *register cut*: each flip-flop's Q net
-becomes a pseudo-primary-input and its D net a pseudo-primary-output, yielding a
-purely combinational projection.  Two designs with identical register
-boundaries are functionally equivalent iff their cut projections are
-combinationally equivalent (this is exactly what we need to validate structural
-combinational transforms).  Aliasing cases are handled:
+becomes a pseudo-primary-input and each input pin (D/CK/RN/SN) becomes a
+pseudo-primary-output, yielding a purely combinational projection.  Comparing
+only D is insufficient when a clock or asynchronous-control pin is driven by
+combinational logic.  Two designs with identical register boundaries are
+functionally equivalent iff their cut projections are combinationally
+equivalent.  Aliasing cases are handled:
 
 * a Q net that is also a module output -> emit a buffered copy as the output;
 * a D net that is also a declared output -> emit once;
@@ -68,14 +69,51 @@ def _live_registers(nl: Netlist):
     return live_q
 
 
-def to_blif(nl: Netlist, model: str = "top", register_cut: bool = True) -> str:
+_SyntheticLabels = Dict[Tuple[str, str], str]
+
+
+def shared_synthetic_labels(*netlists: Netlist) -> _SyntheticLabels:
+    """Allocate collision-free BLIF names shared by several designs.
+
+    Equivalence compares independently rebuilt netlists.  Choosing a fresh
+    cut-label suffix independently on each side is unsafe because a transform
+    may remove a user net that collided on only one side.  Allocate against
+    the union and pass the same map to both exporters instead.
+    """
+    used = {net for nl in netlists for net in nl.all_nets()}
+    labels: _SyntheticLabels = {}
+
+    def allocate(key: Tuple[str, str], base: str) -> None:
+        label = base
+        while label in used:
+            label += "_"
+        used.add(label)
+        labels[key] = label
+
+    allocate(("const", "0"), "__const0")
+    allocate(("const", "1"), "__const1")
+    ff_names = sorted({ff.name for nl in netlists for ff in nl.dffs})
+    for name in ff_names:
+        allocate(("ffq", name), "__q_" + name)
+        for attr, prefix in (("d", "__d_"), ("clk", "__ck_"),
+                             ("rn", "__rn_"), ("sn", "__sn_")):
+            allocate(("ffpin", f"{name}:{attr}"), prefix + name)
+    for po in sorted({po for nl in netlists for po in nl.po}):
+        allocate(("po-copy", po), po + "$PO")
+    return labels
+
+
+def to_blif(nl: Netlist, model: str = "top", register_cut: bool = True,
+            synthetic_labels: Optional[_SyntheticLabels] = None) -> str:
+    if synthetic_labels is None:
+        synthetic_labels = shared_synthetic_labels(nl)
     lines: List[str] = [f".model {model}"]
 
     inputs = sorted(nl.pi)
     outputs = list(sorted(nl.po))
 
     q_nets: List[str] = []
-    d_outputs: List[Tuple[str, str]] = []  # (d_net, output_label)
+    pin_outputs: List[Tuple[str, str]] = []  # (pin_net, output_label)
     out_set = set(outputs)
 
     # Q net -> its cut pseudo-input label.  Labelled by the register's INSTANCE
@@ -88,19 +126,31 @@ def to_blif(nl: Netlist, model: str = "top", register_cut: bool = True) -> str:
     q_label: Dict[str, str] = {}
 
     if register_cut and nl.dffs:
-        live = _live_registers(nl)
-        seen_q = set()
+        # Cut every register instance, not merely state that currently reaches
+        # a primary output.  Omitting a "dead" input pin lets optimization erase
+        # or disconnect its logic while a weakened CEC still reports
+        # equivalence.  CK/RN/SN matter just as much as D when their drivers are
+        # combinational rather than direct PIs/constants.
         for ff in sorted(nl.dffs, key=lambda f: f.name):
-            if ff.q not in live or ff.q in seen_q:
-                continue
-            seen_q.add(ff.q)
-            lbl = "__q_" + ff.name
-            q_label[ff.q] = lbl
-            q_nets.append(lbl)
-            d_outputs.append((ff.d, "__d_" + ff.name))
+            if ff.q not in q_label:
+                lbl = synthetic_labels[("ffq", ff.name)]
+                q_label[ff.q] = lbl
+                q_nets.append(lbl)
+            pin_outputs.extend((
+                (ff.d, synthetic_labels[("ffpin", f"{ff.name}:d")]),
+                (ff.clk, synthetic_labels[("ffpin", f"{ff.name}:clk")]),
+                (ff.rn, synthetic_labels[("ffpin", f"{ff.name}:rn")]),
+                (ff.sn, synthetic_labels[("ffpin", f"{ff.name}:sn")]),
+            ))
 
-    # assemble input list (PI + Q pseudo-inputs)
-    all_inputs = inputs + [q for q in q_nets if q not in set(inputs)]
+    # The reference checker treats every undriven net as a free combinational
+    # source.  Expose the same universe here; tying a floating D/PO/gate input
+    # to zero would otherwise make the internal CEC weaker than the judge.
+    floating = sorted(n for n in nl.all_nets()
+                      if not is_const(n) and nl.driver(n)[0] == "undriven")
+
+    # assemble input list (PI + Q pseudo-inputs + floating sources)
+    all_inputs = list(dict.fromkeys(inputs + q_nets + floating))
 
     # assemble output list
     all_outputs = list(outputs)
@@ -117,27 +167,29 @@ def to_blif(nl: Netlist, model: str = "top", register_cut: bool = True) -> str:
             buffered.append((o, o))
             final_outputs.append(o)
         elif o in q_in:
-            lbl = o + "$PO"
+            lbl = synthetic_labels[("po-copy", o)]
             buffered.append((o, lbl))
             final_outputs.append(lbl)
         else:
             final_outputs.append(o)
-    for d, lbl in d_outputs:
+    for _pin_net, lbl in pin_outputs:
         final_outputs.append(lbl)
 
     lines.append(".inputs " + " ".join(all_inputs) if all_inputs else ".inputs")
     lines.append(".outputs " + " ".join(final_outputs) if final_outputs else ".outputs")
 
     # constants
-    lines.append(".names __const0")
-    lines.append(".names __const1")
+    const0 = synthetic_labels[("const", "0")]
+    const1 = synthetic_labels[("const", "1")]
+    lines.append(f".names {const0}")
+    lines.append(f".names {const1}")
     lines.append("1")
 
     def ref(net: str) -> str:
         if net == "1'b0":
-            return "__const0"
+            return const0
         if net == "1'b1":
-            return "__const1"
+            return const1
         return q_label.get(net, net)
 
     in_set = set(all_inputs)
@@ -156,9 +208,9 @@ def to_blif(nl: Netlist, model: str = "top", register_cut: bool = True) -> str:
         lines.append(f".names {ref(src)} {lbl}")
         lines.append("1 1")
         driven.add(lbl)
-    # D pseudo-outputs are aliases of the D net
-    for d, lbl in d_outputs:
-        lines.append(f".names {ref(d)} {lbl}")
+    # Register-input pseudo-outputs are aliases of their pin nets.
+    for pin_net, lbl in pin_outputs:
+        lines.append(f".names {ref(pin_net)} {lbl}")
         lines.append("1 1")
         driven.add(lbl)
 

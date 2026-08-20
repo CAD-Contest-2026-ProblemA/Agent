@@ -13,7 +13,11 @@ from __future__ import annotations
 from typing import Optional
 
 from ..netlist.ir import Netlist
-from ..netlist.blif_export import to_blif, signal_blif
+from ..netlist.blif_export import (
+    shared_synthetic_labels,
+    signal_blif,
+    to_blif,
+)
 from . import abc_bridge
 
 
@@ -27,8 +31,8 @@ def _same_registers(a: Netlist, b: Netlist) -> bool:
     and failed designs that were in fact equivalent.  D is deliberately not
     compared: differing next-state logic is the whole point of the check.
 
-    This matches the reference judge, which cuts at __q_<ff.name> /
-    __d_<ff.name> (harness/equiv.py compares {ff.name} sets).
+    The BLIF projection additionally exposes D/CK/RN/SN for every matched
+    instance, so equal instance sets cannot hide a changed control-pin cone.
     """
     return sorted(ff.name for ff in a.dffs) == sorted(ff.name for ff in b.dffs)
 
@@ -36,8 +40,13 @@ def _same_registers(a: Netlist, b: Netlist) -> bool:
 def equivalent(before: Netlist, after: Netlist,
                timeout: int = 280) -> Optional[bool]:
     """True/False, or None if undecidable by the available tools."""
+    if not _same_registers(before, after):
+        return False
     try:
-        res = abc_bridge.cec_blif(to_blif(before), to_blif(after), timeout=timeout)
+        labels = shared_synthetic_labels(before, after)
+        res = abc_bridge.cec_blif(
+            to_blif(before, synthetic_labels=labels),
+            to_blif(after, synthetic_labels=labels), timeout=timeout)
     except Exception:
         res = None
     if res is not None:
