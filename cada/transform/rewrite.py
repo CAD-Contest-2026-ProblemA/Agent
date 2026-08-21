@@ -129,13 +129,22 @@ def _make_basis_synth(basis: str, em: Emitter) -> Callable:
 
 
 def to_basis(nl: Netlist, basis: str,
-             scope_gates: Optional[Set[str]] = None) -> int:
-    """Remap gates to the given 2/3-gate basis.  Returns #gates rewritten."""
+             scope_gates: Optional[Set[str]] = None,
+             only_types: Optional[Set[str]] = None) -> int:
+    """Remap gates to the given 2/3-gate basis.  Returns #gates rewritten.
+
+    only_types: when given, ONLY gates of these types are rewritten — the
+    targeted "Replace all <TYPE> gates ... with <basis>" request.  Everything
+    else is preserved even when it is outside the basis, so the result is NOT
+    guaranteed basis-pure (callers must not record a basis guard).
+    """
     assert basis in BASES
     gates = BASES[basis]
 
     def keep(g: Gate) -> bool:
         if scope_gates is not None and g.name not in scope_gates:
+            return True
+        if only_types is not None and g.type not in only_types:
             return True
         return g.type in gates
 

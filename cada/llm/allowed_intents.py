@@ -177,8 +177,18 @@ OPERATION SYNONYMS:
   If the request names a SPECIFIC gate type to replace (XOR, XNOR, NAND-with-constant),
   use the targeted intent — xor_to_nand, xnor_to_nor, xnor_to_nand, xor_to_aoi,
   nand_const1_to_inv —
-  NOT convert_basis.  convert_basis rewrites EVERY gate and is only correct when the
-  request says to rebuild the whole netlist (or a cone) using only the basis gates.
+  NOT convert_basis.  convert_basis with no only_types rewrites EVERY gate and is
+  only correct when the request says to rebuild the whole netlist (or a cone)
+  using only the basis gates.
+  For any OTHER named type with no dedicated intent ("Replace all OR/NOR/AND
+  gates ... with logic built only from <basis>"), use convert_basis WITH
+  only_types — only that type is rewritten, every other gate is preserved:
+    "Replace all 2-input OR gates in the cone of X with equivalent logic built
+     only from NAND and NOT gates"
+      → convert_basis {"basis":"NAND_NOT","scope":X,"only_types":["or"]}
+  KEY RULE: "replace all <TYPE> gates" names WHAT to rewrite → pass only_types;
+  "rebuild/convert ... using only <basis>" names the TARGET FORM of everything
+  in scope → omit only_types.
 
 ▸ minimize_depth vs optimize_cone
   "optimize_cone {output}" only when the CONE ITSELF is the thing being optimized
@@ -613,7 +623,7 @@ OPERATION SYNONYMS:
 → {"intent":"convert_basis","params":{"basis":"NAND_NOT","scope":"n8"}}
 
 "Replace all 2-input OR gates in the cone of n11[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change."
-→ {"intent":"convert_basis","params":{"basis":"NAND_NOT","scope":"n11[0]"}}
+→ {"intent":"convert_basis","params":{"basis":"NAND_NOT","scope":"n11[0]","only_types":["or"]}}
 
 "What is the maximum logic depth from any primary input to any primary output?"
 → {"intent":"global_max_depth","params":{}}
@@ -957,7 +967,7 @@ OPTIONAL_PARAMS: Mapping[str, Set[str]] = {
     "load_design": {"dir"},
     "count_type": {"scope", "form"},
     "path_exists": {"avoid"},
-    "convert_basis": {"basis", "scope"},
+    "convert_basis": {"basis", "scope", "only_types"},
     "xor_to_nand": {"scope"},
     "xnor_to_nor": {"scope"},
     "xnor_to_nand": {"scope"},

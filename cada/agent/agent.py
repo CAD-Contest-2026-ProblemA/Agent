@@ -1354,6 +1354,11 @@ class Agent:
             return {g.name for g in cones.fanin_cone_gates(self.state.current, out)}
         return None
 
+    _ONLY_TYPES_RX = re.compile(
+        r"\b(?:replace|convert|rewrite|substitute|translate|decompose)\s+"
+        r"(?:all|every|each)\s+(?:\d+-input\s+)?"
+        r"(and|or|nand|nor|xor|xnor|not|buf|inverter)\s+gates?\b", re.I)
+
     def h_basis(self, m, line):
         if self._need_design():
             return self._need_design()
@@ -1361,17 +1366,27 @@ class Agent:
         if basis is None:
             return "Could not determine the target gate basis."
         scope = self._scope_gates(line)
+        # "Replace all <TYPE> gates ..." is a targeted conversion: rewrite only
+        # that type, keep everything else (contest §4.3 example wording).
+        tm = self._ONLY_TYPES_RX.search(line)
+        only = self._norm_only_types(tm.group(1)) if tm else None
         before = self.state.current.type_counts()
-        # scoped (cone) conversion: only equivalence is required, not whole-design
-        # basis purity; full-design conversion enforces basis purity.
+        # scoped/targeted conversion: only equivalence is required, not
+        # whole-design basis purity; full-design conversion enforces purity.
         info, ok, reason = self._commit(
-            lambda nl: rewrite.to_basis(nl, basis, scope),
-            basis=(None if scope is not None else basis))
+            lambda nl: rewrite.to_basis(nl, basis, scope, only),
+            basis=(None if (scope is not None or only is not None) else basis))
         if not ok:
             return f"The basis remap was reverted: {reason}."
         self.state.record_delta("basis_remap", info)
         b = basis.replace("_", "+")
-        return (f"Remapped {'the cone' if scope is not None else 'the entire design'} to "
+        where = "the cone" if scope is not None else "the entire design"
+        if only is not None:
+            t = "/".join(sorted(x.upper() for x in only))
+            return (f"Replaced {info} {t} gate(s) in {where} with equivalent {b} "
+                    "logic; all other gates were left unchanged; functional "
+                    "equivalence verified.")
+        return (f"Remapped {where} to "
                 f"{b} gates ({info} gates rewritten); functional equivalence verified.")
 
     def h_xnor_nor(self, m, line):
@@ -2535,21 +2550,47 @@ class Agent:
         return f"{n} flip-flops were found to have enable or hold structures in their D-input logic."
 
     # ----- transforms ----------------------------------------------------
-    def op_convert_basis(self, basis=None, scope=None):
+    @staticmethod
+    def _norm_only_types(val):
+        """Normalise an only_types param ("OR", "or gates", ["or","nor"]) into
+        a set of gate-type names, or None when absent/unrecognised."""
+        if val is None:
+            return None
+        if isinstance(val, str):
+            val = re.split(r"[,/\s]+", val)
+        syn = {"inverter": "not", "inv": "not", "buffer": "buf"}
+        out = set()
+        for v in val:
+            t = str(v).strip().lower().replace("gates", "").replace("gate", "").strip()
+            t = syn.get(t, t)
+            if t in ("and", "or", "nand", "nor", "xor", "xnor", "not", "buf"):
+                out.add(t)
+        return out or None
+
+    def op_convert_basis(self, basis=None, scope=None, only_types=None):
         if self._need_design():
             return self._need_design()
         basis = self._norm_basis(basis)
         if basis is None:
             return "Could not determine the target gate basis."
         scope_gates = self._scope_from_param(scope)
+        only = self._norm_only_types(only_types)
+        # a targeted replacement keeps the other types in place, so the result
+        # is not basis-pure: never record a basis guard for it
         info, ok, reason = self._commit(
-            lambda nl: rewrite.to_basis(nl, basis, scope_gates),
-            basis=(None if scope_gates is not None else basis))
+            lambda nl: rewrite.to_basis(nl, basis, scope_gates, only),
+            basis=(None if (scope_gates is not None or only is not None) else basis))
         if not ok:
             return f"The basis remap was reverted: {reason}."
         self.state.record_delta("basis_remap", info)
         b = basis.replace("_", "+")
-        return (f"Remapped {'the cone' if scope_gates is not None else 'the entire design'} to "
+        where = "the cone" if scope_gates is not None else "the entire design"
+        if only is not None:
+            t = "/".join(sorted(x.upper() for x in only))
+            return (f"Replaced {info} {t} gate(s) in {where} with equivalent {b} "
+                    "logic; all other gates were left unchanged; functional "
+                    "equivalence verified.")
+        return (f"Remapped {where} to "
                 f"{b} gates ({info} gates rewritten); functional equivalence verified.")
 
     def op_xor_to_nand(self, scope=None):
