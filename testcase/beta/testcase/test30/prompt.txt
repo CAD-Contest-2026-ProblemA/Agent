@@ -1,0 +1,5 @@
+This is the beginning of a new testcase. The case name is test30.
+Please load the design from the file test30.v located in the directory testcase/test30/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Remove all dangling gates and nets not connected to any primary output. Make sure nothing changes functionally.
+Please write the current design to the output file test30_out.v.

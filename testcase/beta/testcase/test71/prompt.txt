@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test71.
+Please load the design from the file test71.v located in the directory testcase/test71/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Report any AND gates with a constant 0 input in this design.
+Simplify the reported AND gates by propagating their constant 0 input. Ensure the design functionality does not change.
+How many AND gates were eliminated by constant-0 propagation?
+Verify functional equivalence between the current design and the original loaded netlist.
+Please write the current design to the output file test71_out.v.

@@ -1,0 +1,6 @@
+This is the beginning of a new testcase. The case name is test63.
+Please load the design from the file test63.v located in the directory testcase/test63/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Try to restructure the logic cone of output n12[0] using only NAND and NOT gates while preserving functional equivalence. Ensure the design functionality does not change.
+Optimize the depth of the cone of n12[0] while ensuring the cone of n12[0] maintains only NAND and NOT gates. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n12[0]; smaller is better.
+Please write the current design to the output file test63_out.v.

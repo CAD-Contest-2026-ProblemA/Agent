@@ -1,0 +1,6 @@
+This is the beginning of a new testcase. The case name is test31.
+Please load the design from the file test31.v located in the directory testcase/test31/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Convert the logic cone of n8[0] to use only NOR and NOT gates while preserving functional equivalence.
+Reduce critical path depth through logic restructuring, ensuring the cone of n8[0] maintains only NOR and NOT gates. Preserve functional equivalence. Report original if already optimal. The cost function is the maximum logic depth of the final design; smaller is better.
+Please write the current design to the output file test31_out.v.

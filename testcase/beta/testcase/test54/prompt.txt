@@ -1,0 +1,6 @@
+This is the beginning of a new testcase. The case name is test54.
+Please load the design from the file test54.v located in the directory testcase/test54/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Try to replace all 2-input NAND gates that have one input tied to constant 1 with inverters. Ensure the design functionality does not change.
+How many NOT gates are currently in the design?
+Please write the current design to the output file test54_out.v.

@@ -1,0 +1,15 @@
+This is the beginning of a new testcase. The case name is test76.
+Please load the design from the file test76.v located in the directory testcase/test76/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+List all register-to-register paths in this design through combinational logic.
+What is the maximum combinational logic depth on any register-to-register path in this design?
+How many primary inputs and primary outputs does this design have?
+List all primary outputs of this design with their bit widths.
+Which primary output has the largest fanin logic cone?
+List all XNOR gates in this design.
+Report the number of each gate type in the logic cone of output n4[0].
+Report the number of each gate type in the logic cone of output n5[0].
+Report the number of each gate type in the logic cone of output n6[0].
+What is the fanout of primary input n0 (clock)? List every gate that n0 drives directly.
+What is the fanout of primary input n1 (reset)? List every gate that n1 drives directly.
+Please write the current design to the output file test76_out.v.

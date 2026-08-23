@@ -23,6 +23,8 @@ Usage:
     python3 scripts/route_eval.py --cases test91-100   # the other split
     python3 scripts/route_eval.py --eval-bank cada/llm/public_examples.jsonl \
         --cases test01-40 --sample 20 --retriever bm25
+    python3 scripts/route_eval.py --eval-bank cada/llm/public_examples.jsonl \
+        --cases beta0813_test21-91 --sample 20 --retriever bm25
 """
 
 from __future__ import annotations
@@ -59,14 +61,22 @@ def load_bank(path=BANK):
 
 
 def select(rows, spec: str):
-    """Select an inclusive range such as ``test101-171`` or ``test01-40``."""
-    m = re.fullmatch(r"test(\d+)-(\d+)", spec)
+    """Select an inclusive range within one case-ID family.
+
+    The suffix after the dash is only the upper numeric bound, so
+    ``beta0813_test21-91`` selects ``beta0813_test21`` through
+    ``beta0813_test91`` without also selecting the unrelated ``test21`` rows.
+    """
+    m = re.fullmatch(r"([A-Za-z0-9_]*test)(\d+)-(\d+)", spec)
     if not m:
-        raise SystemExit(f"error: bad --cases {spec!r}; expected e.g. test101-171")
-    lo, hi = int(m.group(1)), int(m.group(2))
+        raise SystemExit(
+            f"error: bad --cases {spec!r}; expected e.g. test101-171 "
+            "or beta0813_test21-91")
+    family, lo_text, hi_text = m.groups()
+    lo, hi = int(lo_text), int(hi_text)
     out = []
     for r in rows:
-        n = re.fullmatch(r"test(\d+)", r["case"])
+        n = re.fullmatch(re.escape(family) + r"(\d+)", r["case"])
         if n and lo <= int(n.group(1)) <= hi:
             out.append(r)
     return out

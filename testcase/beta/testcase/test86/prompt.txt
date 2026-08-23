@@ -1,0 +1,8 @@
+This is the beginning of a new testcase. The case name is test86.
+Please load the design from the file test86.v located in the directory testcase/test86/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Report any NOR gates with constant inputs in this design.
+Simplify the reported NOR gates by propagating their constant inputs. Ensure the design functionality does not change.
+How many NOR gates were eliminated by constant propagation?
+Verify functional equivalence between the current design and the original loaded netlist.
+Please write the current design to the output file test86_out.v.

@@ -1,0 +1,6 @@
+This is the beginning of a new testcase. The case name is test26.
+Please load the design from the file test26.v located in the directory testcase/test26/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Change the identifier of gate g0 to renamed_gate and update all references. Ensure the design functionality does not change.
+Change the identifier of wire n74 to renamed_wire and update all references. Ensure the design functionality does not change.
+Please write the current design to the output file test26_out.v.

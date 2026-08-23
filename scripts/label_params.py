@@ -201,6 +201,28 @@ def _basis(text: str) -> Optional[str]:
     return None
 
 
+# Keep this in lockstep with Agent._ONLY_TYPES_RX.  The phrase names the gate
+# type to rewrite, not the target basis: "replace all OR gates ... with NAND
+# and NOT" therefore carries only_types=["or"], never ["nand", "not"].
+_ONLY_TYPES_RX = re.compile(
+    r"\b(?:replace|convert|rewrite|substitute|translate|decompose)\s+"
+    r"(?:all|every|each)\s+(?:\d+-input\s+)?"
+    r"(and|or|nand|nor|xor|xnor|not|buf|inverter)\s+gates?\b", re.I)
+_ONLY_TYPE_VALUES = frozenset(
+    ("and", "or", "nand", "nor", "xor", "xnor", "not", "buf"))
+
+
+def _only_types(text: str) -> Optional[list]:
+    """Canonical targeted source types, or None for a whole-scope remap."""
+    match = _ONLY_TYPES_RX.search(text)
+    if not match:
+        return None
+    gate_type = match.group(1).lower()
+    if gate_type == "inverter":
+        gate_type = "not"
+    return [gate_type]
+
+
 # A cone-scoped request names the cone's output; anything else is design-wide.
 # Anaphora ("just that output's logic", "the logic under n11[0]") is deliberately
 # not matched — the net is not being named as a cone here, and guessing turns a
@@ -789,9 +811,10 @@ def extract(text: str, op: str) -> Optional[Dict]:
     # --- optional params, only when unambiguous --------------------------
     # Reached by every op, including the ones with no required params at all.
     # Those are exactly the ops whose whole payload is optional -- convert_basis
-    # carries basis and scope, xor_to_* carry scope, verify_equivalence carries
-    # against -- so skipping them left 270 examples demonstrating an empty
-    # params object for sentences that state the value outright.
+    # carries basis, scope and only_types; xor_to_* carry scope;
+    # verify_equivalence carries against -- so skipping them left 270 examples
+    # demonstrating an empty params object for sentences that state the value
+    # outright.
     opt = set(OPTIONAL_PARAMS.get(op, ()))
     if "basis" in opt:
         b = _basis(text)
@@ -818,6 +841,10 @@ def extract(text: str, op: str) -> Optional[Dict]:
         v = _const_value(text)
         if v:
             p["value"] = v
+    if "only_types" in opt:
+        only_types = _only_types(text)
+        if only_types:
+            p["only_types"] = only_types
 
     return p
 
@@ -828,6 +855,20 @@ def verify(text: str, op: str, params: Dict) -> Optional[str]:
     if err:
         return err
     for key, val in params.items():
+        if key == "only_types":
+            if op != "convert_basis":
+                return "only_types is only valid for convert_basis"
+            if not isinstance(val, list) or not val:
+                return f"only_types={val!r} is not a non-empty list"
+            if any(not isinstance(t, str) or t not in _ONLY_TYPE_VALUES for t in val):
+                return f"only_types={val!r} is not a canonical gate-type list"
+            if len(set(val)) != len(val):
+                return f"only_types={val!r} contains duplicates"
+            expected = _only_types(text)
+            if val != expected:
+                return (f"only_types={val!r} does not match the targeted gate "
+                        f"type in the sentence ({expected!r})")
+            continue
         # "dir" is two different things: a filesystem path for load_design, an
         # enum for list_ports.  Only the former is quoted from the sentence.
         if key == "dir" and op != "load_design":

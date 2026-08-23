@@ -395,6 +395,11 @@ class Agent:
             # connectivity
             (R(r"fanout of (?:primary input )?(%s).*list (all|every) gate" % NET), self.h_fanout),
             (R(r"(number of gates driven by|gates? driven by) (%s)" % NET), self.h_driven_by),
+            (R(r"compute the (?:transitive )?fanin (?:logic )?cone of "
+               r"(?:output )?(%s).*\band\s+(?:also\s+)?"
+               r"(?:list|name|enumerate|show)\s+"
+               r"(?:(?:all|every|the)\s+)?gates?\b" % NET),
+             self.h_tfanin_list),
             (R(r"transitive fanin cone of (?:output )?(%s)" % NET), self.h_tfanin),
             (R(r"transitive fanout (cone )?of (?:input |primary input )?(%s)" % NET), self.h_tfanout),
             (R(r"(all gates reachable from|determine all gates reachable from|reachable from) (%s)" % NET), self.h_reachable),
@@ -690,10 +695,7 @@ class Agent:
         return self.op_delta_count(infer_delta_kind(line))
 
     def h_cone_type(self, m, line):
-        if self._need_design():
-            return self._need_design()
-        out = m.group(1)
-        return counts.cone_type_counts_text(self.state.current, out)
+        return self.op_cone_type_counts(m.group(1))
 
     def h_gate_info(self, m, line):
         if self._need_design():
@@ -1069,6 +1071,9 @@ class Agent:
         net = m.group(1)
         gs = cones.fanin_cone_gates(self.state.current, net)
         return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
+
+    def h_tfanin_list(self, m, line):
+        return self.op_transitive_fanin(m.group(1), form="list")
 
     def h_tfanout(self, m, line):
         if self._need_design():

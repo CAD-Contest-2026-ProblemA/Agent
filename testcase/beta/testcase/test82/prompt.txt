@@ -1,0 +1,9 @@
+This is the beginning of a new testcase. The case name is test82.
+Please load the design from the file test82.v located in the directory testcase/test82/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Which primary input has the highest fanout in this design?
+Find all paths of length 0 (direct wire connections from PI to PO).
+Find all articulation points in the combinational graph between n2 and n14.
+Report the number of each gate type in the cone of n14.
+Compute the fanin logic cone of output n14 and list all gates that contribute to this output.
+Please write the current design to the output file test82_out.v.

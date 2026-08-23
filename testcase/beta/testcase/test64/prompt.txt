@@ -1,0 +1,11 @@
+This is the beginning of a new testcase. The case name is test64.
+Please load the design from the file test64.v located in the directory testcase/test64/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Find all paths of length 0 (direct wire connections from PI to PO).
+Check if there are any dangling gates in this design that do not contribute to any primary output. Remove them if found. Ensure the design functionality does not change.
+Check whether internal signals n55146 and n55104 are functionally equivalent for all input combinations. Report yes or no.
+List every path originating at primary input n3 and terminating at primary output n9.
+Does output n8 depend on input n1? Report yes or no.
+Determine whether wire n55104 is a cut between any primary input and any primary output. Report yes or no.
+Please list all the primary inputs of this design with their bit widths.
+Please write the current design to the output file test64_out.v.

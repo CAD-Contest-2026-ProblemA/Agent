@@ -1,0 +1,11 @@
+This is the beginning of a new testcase. The case name is test73.
+Please load the design from the file test73.v located in the directory testcase/test73/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Determine whether wire n10239 is a cut between any primary input and any primary output. Report yes or no.
+What type of gate is g0? Report its gate type and pin connections.
+What is the maximum logic depth from any primary input to any DFF D-pin in this design?
+Check whether the function at n11 is symmetric with respect to inputs n3 and n9[0].
+List all flip-flops driven by clock n0.
+Which primary input has the highest fanout in this design?
+What is the fanout of primary input n0? List every gate that n0 drives directly.
+Please write the current design to the output file test73_out.v.

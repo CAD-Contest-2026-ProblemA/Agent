@@ -1,0 +1,5 @@
+This is the beginning of a new testcase. The case name is test33.
+Please load the design from the file test33.v located in the directory testcase/test33/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Find all back-to-back inverter pairs and collapse them into a wire. Make sure nothing changes functionally.
+Please write the current design to the output file test33_out.v.

@@ -1,0 +1,14 @@
+This is the beginning of a new testcase. The case name is test53.
+Please load the design from the file test53.v located in the directory testcase/test53/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Determine all gates reachable from n2.
+What is the fanout of primary input n0? List every gate that n0 drives directly.
+Is output n16 always 0 regardless of all inputs? Report yes or no.
+Report all gates shared between the fanin cones of n16 and n17.
+Derive the Boolean equation for output n16 in terms of its primary inputs.
+Report every gate connected to the output of g0.
+What is the maximum logic depth from any primary input to any DFF D-pin in this design?
+How many outputs have a logic depth greater than 4?
+What type of gate is g0? Report its gate type and pin connections.
+Check functional equivalence between internal signals n1287 and n2404.
+Please write the current design to the output file test53_out.v.

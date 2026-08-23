@@ -1,0 +1,6 @@
+This is the beginning of a new testcase. The case name is test35.
+Please load the design from the file test35.v located in the directory testcase/test35/.
+Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).
+Decompose all XOR gates in the fanin cone of n2281 into AND, OR, and NOT gates without changing functionality.
+Optimize the logic to minimize maximum path depth, ensuring the cone of n2281 contains only AND, OR, and NOT gates. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.
+Please write the current design to the output file test35_out.v.
