@@ -4,9 +4,9 @@
 Calls only ``Fallback.translate()`` — no handler runs and no netlist is loaded,
 so it can score labels from either routing-only or ordinary testcases.
 
-The evaluation target and retrieval bank are deliberately separate.  This
-allows a public testcase export to be scored while retrieval still uses the
-original examples.jsonl bank (and without changing runtime retrieval).
+The evaluation target and retrieval bank are deliberately separate.  The
+legacy evaluation split remains in ``examples.jsonl`` while retrieval follows
+the production default, ``public_examples.jsonl``.
 
 Failures are split into the two kinds that need different fixes:
 
@@ -47,13 +47,14 @@ from cada.llm.client import LLMClient
 from cada.llm.fallback import Fallback
 from cada.llm.retrieval import build_retriever
 
-BANK = os.path.join(ROOT, "cada", "llm", "examples.jsonl")
+EVAL_BANK = os.path.join(ROOT, "cada", "llm", "examples.jsonl")
+RETRIEVAL_BANK = os.path.join(ROOT, "cada", "llm", "public_examples.jsonl")
 # USD per million tokens (input, output), for the pre-run estimate only.
 PRICES = {"claude-haiku-4-5": (1.00, 5.00), "claude-sonnet-5": (3.00, 15.00),
           "claude-opus-5": (5.00, 25.00), "gpt-4o-mini": (0.15, 0.60)}
 
 
-def load_bank(path=BANK):
+def load_bank(path=EVAL_BANK):
     if not os.path.isfile(path):
         raise SystemExit(f"error: evaluation/retrieval bank missing: {path}")
     with open(path, encoding="utf-8") as fh:
@@ -116,11 +117,11 @@ def main() -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--cases", default="test101-171")
     ap.add_argument("--eval-bank", "--evaluation-bank", "--bank", dest="eval_bank",
-                    default=BANK,
+                    default=EVAL_BANK,
                     help="JSONL to score (default: cada/llm/examples.jsonl)")
-    ap.add_argument("--retrieval-bank", default=BANK,
+    ap.add_argument("--retrieval-bank", default=RETRIEVAL_BANK,
                     help="independent JSONL used only for retrieval "
-                         "(default: cada/llm/examples.jsonl)")
+                         "(default: cada/llm/public_examples.jsonl)")
     ap.add_argument("--limit", type=int, default=None, help="evaluate only the first N")
     ap.add_argument("--sample", type=int, default=None,
                     help="deterministic sample of N spread across the selected rows "

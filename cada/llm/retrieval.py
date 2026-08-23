@@ -1,9 +1,9 @@
 """Retrieve previously-classified requests similar to the incoming line.
 
-The catalog can only carry a few dozen hand-written examples, but
-``examples.jsonl`` holds 2130 labelled (sentence, op) pairs — far more than
-fits in a prompt.  Retrieving the nearest ones per request puts that whole
-bank within reach of a fixed-size prompt.
+The catalog can only carry a few dozen hand-written examples, while
+``public_examples.jsonl`` holds the labelled public-release requests.  The
+retriever selects the nearest ones per request so that bank stays independent
+on disk while a fixed-size subset reaches the prompt.
 
 This is deliberately *additive*: the full op list and every disambiguation
 rule stay in the static prompt, so a bad retrieval costs nothing but a few
@@ -28,7 +28,7 @@ import re
 from collections import Counter, defaultdict
 from typing import Dict, List, Optional, Sequence
 
-BANK_NAME = "examples.jsonl"
+BANK_NAME = "public_examples.jsonl"
 VECS_NAME = "example_vecs.npy"
 _TOKEN = re.compile(r"[a-z]+")
 
@@ -107,9 +107,9 @@ class Retriever:
             # must not supply its own answer or the measurement is meaningless.
             if exclude_case and row.get("case") == exclude_case:
                 continue
-            # The bank repeats 354 of its 2130 sentences across testcases, so
-            # an undeduplicated top-50 carried ~42 distinct examples — 15% of
-            # the budget spent showing the model the same line twice.
+            # The public bank repeats 409 of its 940 text/intent pairs across
+            # testcases.  Do not spend prompt budget showing the same route
+            # demonstration more than once.
             key = (row["text"], row["op"])
             if key in seen:
                 continue
@@ -285,11 +285,11 @@ def build_retriever(prefer: str = "auto",
     if not rows:
         # Say so.  Without the bank routing still works, just at the accuracy
         # it had before retrieval existed — and a frozen binary that forgot to
-        # bundle examples.jsonl would otherwise look completely healthy.
+        # bundle public_examples.jsonl would otherwise look completely healthy.
         import sys
         sys.stderr.write(
             f"[retrieval] no example bank at {bank_path()} — routing from the "
-            "catalog alone. If this is a packaged build, examples.jsonl was "
+            f"catalog alone. If this is a packaged build, {BANK_NAME} was "
             "not bundled (see scripts/spec_assets.py).\n")
         return None
     if prefer in ("union", "union-rrf"):

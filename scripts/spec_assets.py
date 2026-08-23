@@ -23,7 +23,7 @@ import os
 from typing import List, Tuple
 
 PKG = os.path.join("cada", "llm")
-BANK = "examples.jsonl"
+BANK = "public_examples.jsonl"
 VECS = "example_vecs.npy"
 MODEL_DIR = "embed_model"
 DENSE_IMPORTS = ["numpy", "onnxruntime", "tokenizers"]
@@ -54,7 +54,7 @@ def retrieval_assets(root: str, dense: bool = False
         datas.append((bank, PKG))
     else:
         _note(f"WARNING: {bank} missing — the binary will have NO example "
-              f"retrieval. Run scripts/export_examples.py first.")
+              f"retrieval. Run scripts/export_public_examples.py first.")
 
     model = os.path.join(root, PKG, MODEL_DIR)
     vecs = os.path.join(root, PKG, VECS)

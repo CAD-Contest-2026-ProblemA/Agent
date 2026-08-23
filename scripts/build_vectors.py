@@ -2,7 +2,7 @@
 """Precompute the example bank's embeddings so runtime only encodes the query.
 
 Run at build time, after scripts/fetch_embed_model.py.  The .npy this writes
-ships beside the binary; encoding 2130 sentences on every start would cost
+ships beside the binary; encoding the whole bank on every start would cost
 seconds and defeat the point.
 
 Also verifies the round trip: it re-encodes a few sentences and checks each
@@ -40,7 +40,9 @@ def main() -> int:
 
     bank = load_bank()
     if not bank:
-        sys.exit(f"error: empty bank at {bank_path()} — run scripts/export_examples.py")
+        sys.exit(
+            f"error: empty bank at {bank_path()} — "
+            "run scripts/export_public_examples.py")
     print(f"bank      {len(bank)} sentences")
 
     if args.check:

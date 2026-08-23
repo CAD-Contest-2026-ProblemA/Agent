@@ -303,10 +303,10 @@ def check_package(rep: Report):
 def check_retrieval(rep: Report):
     """Is the example bank actually reachable, and does it carry params?
 
-    A build that drops cada/llm/examples.jsonl does not crash: retrieval turns
-    itself off and the agent keeps answering, just less accurately and with
-    nothing in the output to say why.  That failure shipped once already, so it
-    gets a check rather than trust.
+    A build that drops cada/llm/public_examples.jsonl does not crash: retrieval
+    turns itself off and the agent keeps answering, just less accurately and
+    with nothing in the output to say why.  That failure shipped once already,
+    so it gets a check rather than trust.
     """
     rep.section("Example retrieval")
     try:
@@ -317,8 +317,8 @@ def check_retrieval(rep: Report):
     r = build_retriever("auto")
     if r is None:
         rep.fail("no example bank found — retrieval is DISABLED",
-                 "the binary was built without cada/llm/examples.jsonl; "
-                 "run scripts/export_examples.py and rebuild")
+                 "the binary was built without cada/llm/public_examples.jsonl; "
+                 "run scripts/export_public_examples.py and rebuild")
         return
     probe = "Does every path from n2 to n40 pass through gate g0?"
     hits = r.top_k(probe, k=50)

@@ -8,9 +8,8 @@ their question-route ground truth; lifecycle lines are derived from the
 deterministic router.  Beta test01-test20 are checked byte/text/route-for-route
 against the legacy public cases and intentionally not duplicated in the bank.
 
-This bank is suitable for reproducible routing evaluation, not as a replacement
-for ``examples.jsonl`` and not as an automatic input to the production BM25
-retriever.
+This bank remains separate from ``examples.jsonl`` and is the production BM25
+retriever's default input as well as a reproducible routing-evaluation source.
 
 Every generated param object is checked by both the conservative labeller in
 ``scripts/label_params.py`` and the runtime intent validator.  The exporter

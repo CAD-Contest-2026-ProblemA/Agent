@@ -104,7 +104,8 @@ else
 fi
 
 # Example bank for retrieval.  --collect-submodules gathers Python modules,
-# not data files, so without this the frozen binary finds no examples.jsonl,
+# not data files, so without this the frozen binary finds no
+# public_examples.jsonl,
 # silently disables retrieval and routes at the pre-retrieval accuracy with
 # nothing to say why.  scripts/spec_assets.py is the single source of truth
 # (the .spec files use the same module) so the two build paths cannot drift.
@@ -118,7 +119,7 @@ mapfile -t retrieval_args < <(
 )
 if [ "${#retrieval_args[@]}" -eq 0 ]; then
   echo ">> ERROR: no retrieval assets resolved — the binary would ship without" >&2
-  echo "          the example bank. Run scripts/export_examples.py first." >&2
+  echo "          the example bank. Run scripts/export_public_examples.py first." >&2
   exit 1
 fi
 

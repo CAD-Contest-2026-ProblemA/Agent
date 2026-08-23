@@ -254,7 +254,7 @@ stdin ─► io_/protocol ─► agent/agent (regex router; LLM fallback)
 | Transform | `transform/*` | basis remap, XOR/XNOR decomposition, constant propagation, dangling removal, fixpoint duplicate merge, buffer trees, renaming |
 | Optimize | `optimize/abc_opt.py` | Depth/area minimisation via ABC + unit-delay genlib mapping, basis-preserving, cec-guarded |
 | Agent | `agent/*` | rule router, request state + snapshots + transform deltas |
-| LLM | `llm/*` | thin dual-provider client + cached fallback translator; retrieves the nearest labelled requests from `examples.jsonl` into the prompt (`retrieval.py`, stdlib BM25 by default) |
+| LLM | `llm/*` | thin dual-provider client + cached fallback translator; retrieves the nearest labelled requests from `public_examples.jsonl` into the prompt (`retrieval.py`, stdlib BM25 by default) |
 
 ## Correctness model
 
