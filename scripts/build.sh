@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 # Package the agent into a single standalone executable with PyInstaller.
 #
-#   scripts/build.sh [exec_name]        # default name: cada0001_alpha
-#   scripts/build.sh cada1125_alpha     # use YOUR team number
-#   WITH_LLM=0 scripts/build.sh cada1125_alpha   # lightweight: skip openai/anthropic
-#   NO_RULES=1 scripts/build.sh cada1125_alpha   # pure-LLM: rules off by default
+#   scripts/build.sh [exec_name]        # pure-LLM; default name: cada0001_alpha
+#   scripts/build.sh cada1125_alpha     # pure-LLM; use YOUR team number
+#   NO_RULES=0 scripts/build.sh cada1125_alpha   # regex first, LLM fallback
+#   NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # regex-only, smaller
 #
-# By default the openai/anthropic LLM fallback IS bundled. Set WITH_LLM=0 for a
-# smaller binary (the 40 public testcases never invoke the LLM, so the
-# lightweight build still passes them).
+# By default the openai/anthropic clients ARE bundled and the regex table is
+# skipped, so every request is routed by the LLM.  Set NO_RULES=0 to build the
+# hybrid rules-first mode instead.  WITH_LLM=0 is valid only with NO_RULES=0.
 #
-# NO_RULES=1 bundles a marker the binary reads at startup, so it behaves as if
-# --no-rules were always passed: the regex table is skipped and every request
-# line is routed by the LLM. This is a MEASUREMENT build, not a faster one --
-# it answers at the model's routing accuracy, spends one to three API calls per
-# request line, and fails the whole run if the key or the network is unavailable.
+# The default NO_RULES=1 bundles a marker the binary reads at startup, so it
+# behaves as if --no-rules were always passed: the regex table is skipped and
+# every request line is routed by the LLM. This is a MEASUREMENT build, not a
+# faster one -- it answers at the model's routing accuracy and spends one to
+# three API calls per request line. Missing SDK/key fails at startup;
+# request-time provider errors are reported and may degrade a line to a no-op.
 # The binary still accepts --rules to put the table back for one run, prints a
 # line to stderr saying which mode it is in, and refuses to start rules-off with
 # no reachable LLM.
@@ -35,7 +36,7 @@ repo="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$repo"
 NAME="${1:-cada0001_alpha}"
 WITH_LLM="${WITH_LLM:-1}"
-NO_RULES="${NO_RULES:-0}"
+NO_RULES="${NO_RULES:-1}"
 
 # The one combination that cannot work.  Without the provider SDK the LLM
 # client never initialises, and a rules-off binary with no router left answers

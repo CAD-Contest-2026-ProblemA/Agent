@@ -17,8 +17,8 @@ from .agent.agent import Agent
 from . import toolpaths
 
 
-# A build can ship with the rule table off by default: NO_RULES=1
-# scripts/build.sh bundles this marker, and the flag below reads it.  A file
+# The standard build ships with the rule table off by default: scripts/build.sh
+# uses NO_RULES=1 and bundles this marker, which the flag below reads.  A file
 # rather than a baked-in constant so the source and frozen paths share one
 # mechanism, and so an existing binary can be flipped by dropping the marker
 # next to it instead of being rebuilt.

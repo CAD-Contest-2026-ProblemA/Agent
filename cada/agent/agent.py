@@ -1,9 +1,9 @@
-"""The agent: rule-first natural-language router over the deterministic EDA
-engine, with an LLM fallback for unrecognised phrasings.
+"""The agent: configurable natural-language router over the deterministic EDA
+engine, supporting both regex-first and pure-LLM operation.
 
-Each request is mapped to one intent + params (by regex first, LLM second),
-then dispatched to a handler that runs the engine, applies transforms with
-rollback-on-violation, and formats a direct answer.
+Each request is mapped to one intent + params (by regex first when rules are
+enabled, otherwise by the LLM), then dispatched to a handler that runs the
+engine, applies transforms with rollback-on-violation, and formats an answer.
 """
 
 from __future__ import annotations
@@ -1789,15 +1789,15 @@ class Agent:
         return f"Could not conclusively verify equivalence to the {label}."
 
     # ===================================================================
-    # intent dispatch (LLM fallback path)
+    # intent dispatch (pure-LLM or fallback path)
     # ===================================================================
     def _dispatch_intent(self, intent, params, line):
         """Dispatch a structured LLM intent directly to op_* methods.
 
-        The original natural-language line has already failed the regex router
-        in handle(), so do not run the same rule table on that original line
-        again.  The LLM fallback returns an intent plus extracted parameters;
-        this method sends those parameters to the corresponding op_* function.
+        The original line either skipped the disabled regex router or failed
+        to match it in handle(), so do not run that table on the line again.
+        The LLM returns an intent plus extracted parameters; this method sends
+        those parameters to the corresponding op_* function.
         """
         if intent in (None, "noop"):
             return self._default_ack(line)

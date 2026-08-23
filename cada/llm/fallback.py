@@ -1,9 +1,10 @@
 """LLM fallback: translate one NL line into a structured intent.
 
-Used only when the deterministic regex router fails to recognise a line.  The
-LLM is constrained to emit exactly one JSON object {"intent", "params"}; the
-result is validated and cached so temperature noise does not make behaviour
-non-deterministic within a run.
+Used for every line in pure-LLM mode, or when the deterministic regex router
+fails to recognise a line in hybrid mode.  The LLM is constrained to emit
+exactly one JSON object {"intent", "params"}; the result is validated and
+cached so temperature noise does not make behaviour non-deterministic within a
+run.
 """
 
 from __future__ import annotations

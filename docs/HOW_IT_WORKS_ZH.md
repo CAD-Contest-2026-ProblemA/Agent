@@ -12,7 +12,7 @@
 
 - 真正在做電路分析/轉換/驗證的,是我們自己寫的 Python(在自寫的網表 IR 上跑圖演算法)。
 - ABC / yosys 只當兩種「裁判」:**判斷兩個電路等不等價**、**幫忙做成本最小化的最佳化**。它們不負責命名、不當答案來源。
-- LLM(gpt-4o-mini / claude-haiku)只在「規則認不出這句話」時才出場,把那句話翻成 `{intent, params}`。實測 40 個 testcase 全部都被規則認出來了,**LLM 一次都沒被叫到**(所以不放 API key 也能跑)。
+- 打包的 binary 預設讓 LLM(gpt-4o-mini / claude-haiku)處理每一句;加 `--rules` 才會先走 regex、沒命中再交給 LLM。LLM 只把句子翻成 `{intent, params}`,不做電路推理。
 
 ---
 
@@ -37,8 +37,8 @@ cada/io_/protocol.py (REPL)        ── 從 stdin 一行一行讀
         ▼
 cada/agent/agent.py : handle(line)
         │
-        │  (1) 規則 router:一張 regex 表,由上到下比對,第一個命中的就呼叫它的 handler
-        │  (2) 沒命中 → LLM fallback:把這行丟給小模型翻成 {intent, params}(有 cache)→ dispatch
+        │  (1) rules-on 時:先由上到下比對 regex 表,命中就呼叫對應 handler
+        │  (2) rules-off 或 regex 沒命中:由 LLM 翻成 {intent, params}(有 cache)→ dispatch
         │  (3) 還是不行 → 安全 no-op(回「已收到、設計不變」)
         ▼
    對應的 handler 做事(分三類,見下)
@@ -138,7 +138,7 @@ Inserted 30 buffer(s) so that no driver exceeds 4 loads; max-fanout bound and eq
 
 ## 五、evaluator 怎麼檢查(`evaluator/`)
 
-執行:`python evaluator/evaluate.py`(**預設在拋棄式 sandbox 裡跑**,不會留下 `*_out.v`)。
+執行:`python evaluator/evaluate.py`(**預設在拋棄式 sandbox 裡跑**,不會留下 `*_out.v`)。用 `--exe` 時,evaluator 預設會明確傳 `--rules`,不依賴 binary 的 routing 預設;加 evaluator 的 `--no-rules` 才會改測純 LLM。
 
 流程(對每個 case):
 ```
@@ -186,5 +186,5 @@ test28   HARD 4/4  DERIVED 1/1  GOLDEN ✓  OPT 130
 
 ## 六、一句話總結
 
-- **agent**:stdin 進來一句話 → 規則翻成指令(LLM 當後備)→ deterministic EDA 引擎做事(轉換一定過等價/界限/basis 三關才 commit)→ stdout 出去一段答案 + `#RESPONSE/#END`。
+- **agent**:stdin 進來一句話 → 預設由 LLM 翻成指令(可用 `--rules` 切成 regex 優先)→ deterministic EDA 引擎做事(轉換一定過等價/界限/basis 三關才 commit)→ stdout 出去一段答案 + `#RESPONSE/#END`。
 - **evaluator**:重跑一遍,**獨立**驗硬性要求(等價/界限/basis/計數),其餘用 golden 做回歸;預設 sandbox、不污染 repo。

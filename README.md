@@ -11,12 +11,12 @@ streams answers back as `#RESPONSE <id>` … `#END <id>` frames (mirrored to
 ## Design in one sentence
 
 A **deterministic gate-level EDA engine** wrapped in a **thin natural-language
-front end**: a rule-based regex router maps each (highly templated) request to
-one structured intent, and an LLM is used *only* as a fallback translator that
-turns an unrecognised line into one `{"intent", "params"}` object — it never
-reasons about the circuit.  All correctness-critical work (parsing, analysis,
-transforms, equivalence) is deterministic Python; ABC/yosys are used only as
-equivalence / cost-ranked-synthesis oracles.
+front end**.  The packaged binary defaults to pure-LLM routing; an optional
+regex-first mode handles templated requests before falling back to the LLM.
+Either way, the LLM only translates a request into one `{"intent", "params"}`
+object and never reasons about the circuit.  All correctness-critical work
+(parsing, analysis, transforms, equivalence) is deterministic Python;
+ABC/yosys are used only as equivalence / cost-ranked-synthesis oracles.
 
 ## Requirements
 
@@ -28,9 +28,9 @@ equivalence / cost-ranked-synthesis oracles.
   they exist on the machine.  ABC is used by 24/40 testcases (test01–16 are pure
   Python and never call it); yosys is only a fallback when ABC's cec can't
   decide — exercised by 0/40.
-* Optional Python packages: `openai` / `anthropic` (LLM fallback only — the
-  benchmark never calls the LLM) and `PyYAML` (config parsing; falls back to a
-  built-in mini-parser if absent).
+* `openai` / `anthropic` is required for the packaged pure-LLM default; it is
+  optional in regex-first mode when every request matches a rule.  `PyYAML` is
+  optional (config parsing falls back to a built-in mini-parser).
 * Example retrieval (which nearest labelled requests go into the LLM prompt)
   needs **nothing extra** — the default BM25 retriever is stdlib.  A dense
   encoder is available via `requirements-retrieval.txt` +
@@ -80,9 +80,10 @@ pip install -r requirements.txt     # only needed for the LLM fallback
 ./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
-The benchmark runs fully **offline** with no third-party packages — the config
-parser falls back to a built-in mini-parser, and the regex router covers all 40
-testcases (the LLM is never invoked on them).
+The 40 public testcases can run fully **offline in regex-first mode**: the
+config parser has a built-in mini-parser and all their requests match the regex
+router, so the LLM is never invoked.  The packaged default is pure LLM and
+therefore requires the provider SDK, API key, and network.
 
 ### Single-file binary (optional)
 
@@ -90,12 +91,15 @@ To ship one self-contained executable (no Python/uv needed on the target),
 package it with PyInstaller:
 
 ```bash
-scripts/build.sh cada1125_alpha           # -> dist/cada1125_alpha (use YOUR team no.)
-WITH_LLM=0 scripts/build.sh cada1125_alpha   # lightweight: skip the openai/anthropic fallback
+scripts/build.sh cada1125_alpha              # pure LLM -> dist/cada1125_alpha
+NO_RULES=0 scripts/build.sh cada1125_alpha   # regex first, LLM fallback
+NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # regex-only, smaller
 ```
 
-The openai/anthropic LLM fallback is **bundled by default**; `WITH_LLM=0` makes
-a smaller binary (the 40 public testcases never invoke the LLM either way).
+The standard packaged binary is **pure LLM by default**: every request skips
+the regex table and goes through the LLM.  `NO_RULES=0` builds the hybrid
+rules-first mode instead.  Because pure LLM needs a provider client,
+`WITH_LLM=0` is accepted only together with `NO_RULES=0`.
 
 * **glibc:** PyInstaller bundles Python but not the C library — build on a
   machine whose glibc is ≤ the target's (ideally the contest machine, which has
@@ -132,9 +136,10 @@ generation:
 Then run with `-config configs/api_key.yaml`.  The agent **errors out** (non-zero
 exit) if `-config` is missing, the file does not exist, or no `api_key` is set
 for the chosen `provider` — an API key is always required.  You only need the key
-for the provider you select.  Pass `--no-rules` to skip the deterministic regex
-rules and route every request through the LLM (useful for testing LLM coverage;
-by default the rules run first and the LLM only handles unmatched lines).
+for the provider you select.  Binaries produced by `scripts/build.sh` default
+to pure LLM; pass `--rules` to enable the deterministic regex-first router for
+one run.  Conversely, the source launcher defaults to rules-first and accepts
+`--no-rules` to force every request through the LLM.
 
 ## Pre-flight check (doctor)
 
@@ -230,7 +235,7 @@ correctness.  Drop the organizers' answers into `evaluator/golden/<case>.txt`
 ## Architecture
 
 ```
-stdin ─► io_/protocol ─► agent/agent (regex router; LLM fallback)
+stdin ─► io_/protocol ─► agent/agent (pure LLM by packaged default; rules optional)
                               │
             ┌─────────────────┼──────────────────────────┐
             ▼                 ▼                           ▼
@@ -253,8 +258,8 @@ stdin ─► io_/protocol ─► agent/agent (regex router; LLM fallback)
 | Analysis | `analysis/*` | counts, cones, depth, connectivity, paths (DP, never materialised), functional (ABC/SAT), sequential |
 | Transform | `transform/*` | basis remap, XOR/XNOR decomposition, constant propagation, dangling removal, fixpoint duplicate merge, buffer trees, renaming |
 | Optimize | `optimize/abc_opt.py` | Depth/area minimisation via ABC + unit-delay genlib mapping, basis-preserving, cec-guarded |
-| Agent | `agent/*` | rule router, request state + snapshots + transform deltas |
-| LLM | `llm/*` | thin dual-provider client + cached fallback translator; retrieves the nearest labelled requests from `public_examples.jsonl` into the prompt (`retrieval.py`, stdlib BM25 by default) |
+| Agent | `agent/*` | configurable NL router, request state + snapshots + transform deltas |
+| LLM | `llm/*` | thin dual-provider client + cached intent translator; retrieves the nearest labelled requests from `public_examples.jsonl` into the prompt (`retrieval.py`, stdlib BM25 by default) |
 
 ## Correctness model
 

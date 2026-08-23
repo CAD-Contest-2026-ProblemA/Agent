@@ -6,13 +6,13 @@
 
 ## 一句話設計
 
-**一個 deterministic 的 gate-level EDA 引擎,外面包一層極薄的自然語言前端。** 規則式 regex router 先把(高度模板化的)請求對應到一個結構化 intent;LLM 只當 fallback,負責把「沒對應到規則」的句子翻成一個 `{"intent", "params"}` JSON,**絕不對電路做推理**。所有攸關正確性的工作(parse、分析、轉換、等價驗證)都是 deterministic 的 Python;ABC / yosys 只當「等價判定」與「成本排名合成」的 oracle。
+**一個 deterministic 的 gate-level EDA 引擎,外面包一層極薄的自然語言前端。** 打包出來的 binary 預設每一句都由 LLM routing;也可切回 regex 優先、沒命中才交給 LLM 的混合模式。無論哪種模式,LLM 只負責把句子翻成 `{"intent", "params"}` JSON,**絕不對電路做推理**。所有攸關正確性的工作(parse、分析、轉換、等價驗證)都是 deterministic 的 Python;ABC / yosys 只當「等價判定」與「成本排名合成」的 oracle。
 
 ## 環境需求
 
 * Python 直譯器 — **3.8 以上**(benchmark 路徑本身只用標準函式庫)。
 * **`abc`(必要)** 與 **`yosys`(備援)** 在 `PATH` 上(或用環境變數 `ABC_BIN` 指向 ABC 執行檔)——當作等價 / 最佳化後端。注意:`setup.sh` / pip / uv **都不會幫你裝這兩個外部執行檔**,要自己確認機器上有。實測 ABC 被 24/40 個 testcase 使用(test01–16 純 Python 不碰 ABC);yosys 只在 ABC 無法判定時當 fallback,實測 0/40。
-* 選用的 Python 套件:`openai` / `anthropic`(只有 LLM fallback 會用到;benchmark 不會呼叫 LLM)、`PyYAML`(設定檔解析,沒裝會自動退回內建 mini-parser)。
+* 打包預設的純 LLM 模式需要 `openai` / `anthropic`;regex 優先模式若每句都命中規則,則不需要它們。`PyYAML` 是選用套件(設定檔解析沒裝會自動退回內建 mini-parser)。
 
 ## 取得程式碼
 
@@ -51,18 +51,19 @@ pip install -r requirements.txt     # 只有要用 LLM fallback 才需要
 ./cada1125_alpha -config configs/api_key.yaml < testcase/test01/prompt.txt
 ```
 
-benchmark **完全可離線執行、不需任何第三方套件**——config parser 內建了一個 mini-parser fallback,而 regex router 已涵蓋全部 40 個 testcase(在這些測資上 LLM 完全不會被呼叫)。
+40 個 public testcase 在 **regex 優先模式下可完全離線執行**:config parser 有內建 mini-parser,而這些測資全部命中 regex,不會呼叫 LLM。打包預設為純 LLM,所以需要 provider SDK、API key 與網路。
 
 ### 打包成單一執行檔(選用)
 
 想要一個自包含的執行檔(目標機器不需要 Python / uv),用 PyInstaller 打包:
 
 ```bash
-scripts/build.sh cada1125_alpha           # -> dist/cada1125_alpha(用你自己的隊號)
-WITH_LLM=0 scripts/build.sh cada1125_alpha   # 輕量版:不包 openai/anthropic
+scripts/build.sh cada1125_alpha              # 預設純 LLM -> dist/cada1125_alpha
+NO_RULES=0 scripts/build.sh cada1125_alpha   # regex 優先、LLM fallback
+NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # 純 regex 輕量版
 ```
 
-openai/anthropic 的 LLM fallback **預設就會包進去**;加 `WITH_LLM=0` 才會做比較小的 binary(反正這 40 題兩種都用不到 LLM)。
+標準打包結果**預設是純 LLM**:每一筆 request 都跳過 regex table、直接交給 LLM。加 `NO_RULES=0` 才會建置 regex 優先、LLM fallback 的混合模式。純 LLM 必須包含 provider client,所以 `WITH_LLM=0` 只能和 `NO_RULES=0` 一起使用。
 
 * **glibc 注意**:PyInstaller 會包 Python 但不包 C library——要在 glibc ≤ 目標機器的環境上 build(最好直接在比賽機器上 build,它有 uv),不然 binary 會起不來。
 * `abc`/`yosys` 仍是**外部程式**(執行時透過 binary 旁邊的 `configs/tools.yaml`、`-config` 的 `tools:` 區段、`ABC_BIN`/`YOSYS_BIN`、或 `$PATH` 解析)。
@@ -90,7 +91,7 @@ generation:
   max_output_tokens: 4096
 ```
 
-然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;API key 一律必填。只需填你選用那個 provider 的 key。加 `--no-rules` 可跳過確定性 regex 規則、讓每一行請求都走 LLM(用來測試 LLM 覆蓋率;預設是規則優先、沒命中的才交給 LLM)。
+然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;API key 一律必填。只需填你選用那個 provider 的 key。`scripts/build.sh` 產生的 binary 預設為純 LLM,單次執行可加 `--rules` 恢復 regex 優先;原始碼 launcher 則仍預設 regex 優先,可加 `--no-rules` 強制全部交給 LLM。
 
 ## 環境自檢(doctor)
 
@@ -159,7 +160,7 @@ tools:
 ## 架構
 
 ```
-stdin ─► io_/protocol ─► agent/agent (regex router;LLM fallback)
+stdin ─► io_/protocol ─► agent/agent (打包預設純 LLM;regex 可選)
                               │
             ┌─────────────────┼──────────────────────────┐
             ▼                 ▼                           ▼
@@ -182,8 +183,8 @@ stdin ─► io_/protocol ─► agent/agent (regex router;LLM fallback)
 | 分析 | `analysis/*` | 計數、cone、depth、連通性、path(DP 計數,永不列舉)、functional(ABC/SAT)、sequential |
 | 轉換 | `transform/*` | basis remap、XOR/XNOR 分解、常數傳遞、dangling 移除、fixpoint 重複合併、buffer 樹、改名 |
 | 最佳化 | `optimize/abc_opt.py` | 用 ABC + 單位延遲 genlib mapping 做深度/面積最小化,保 basis,過 cec |
-| Agent | `agent/*` | 規則 router、請求狀態 + 快照 + transform delta |
-| LLM | `llm/*` | 輕量雙 provider client + 帶 cache 的 fallback 翻譯器 |
+| Agent | `agent/*` | 可切換的自然語言 router、請求狀態 + 快照 + transform delta |
+| LLM | `llm/*` | 輕量雙 provider client + 帶 cache 的 intent 翻譯器 |
 
 ## 正確性模型
 

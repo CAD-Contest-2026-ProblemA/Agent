@@ -185,9 +185,11 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
     # run the executable in the current (sandbox) cwd; out.v lands here
     exe_error = ""
     try:
-        cmd = [os.path.abspath(exe), "-config", config_path]
-        if not use_rules:
-            cmd.append("--no-rules")
+        # Make the mode explicit.  Packaged binaries default to pure LLM while
+        # the source wrapper defaults to rules-first; relying on either default
+        # would make one evaluator command test two different modes.
+        cmd = [os.path.abspath(exe), "-config", config_path,
+               "--rules" if use_rules else "--no-rules"]
         proc = subprocess.run(cmd,
                               input="\n".join(raw) + "\n",
                               capture_output=True, text=True, timeout=timeout)
