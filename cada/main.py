@@ -23,6 +23,7 @@ from . import toolpaths
 # mechanism, and so an existing binary can be flipped by dropping the marker
 # next to it instead of being rebuilt.
 NO_RULES_MARKER = "no_rules.flag"
+NO_BM25_MARKER = "no_bm25.flag"
 
 
 def _default_no_rules() -> bool:
@@ -36,6 +37,19 @@ def _default_no_rules() -> bool:
         return env.strip().lower() not in ("", "0", "false", "no", "off")
     return any(os.path.isfile(os.path.join(d, NO_RULES_MARKER))
                for d in _config_search_dirs())
+
+
+def _default_bm25() -> bool:
+    """Whether BM25 examples are appended to LLM requests by default.
+
+    CADA_BM25 wins over the build marker.  The example bank remains bundled in
+    a BM25-off build, so ``--bm25`` can enable it for one run without rebuilding.
+    """
+    env = os.environ.get("CADA_BM25")
+    if env is not None:
+        return env.strip().lower() not in ("", "0", "false", "no", "off")
+    return not any(os.path.isfile(os.path.join(d, NO_BM25_MARKER))
+                   for d in _config_search_dirs())
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -62,6 +76,14 @@ def build_arg_parser() -> argparse.ArgumentParser:
                    help="Force the regex rules back on"
                         + (" (this build defaults to --no-rules)" if default_no_rules
                            else " [default]"))
+    default_bm25 = _default_bm25()
+    p.add_argument("--bm25", dest="bm25", action="store_true",
+                   default=default_bm25,
+                   help="Append BM25-retrieved public examples to LLM requests"
+                        + (" [default]" if default_bm25 else ""))
+    p.add_argument("--no-bm25", dest="bm25", action="store_false",
+                   help="Do not append retrieved examples to LLM requests"
+                        + (" [this build's default]" if not default_bm25 else ""))
     return p
 
 
@@ -101,7 +123,7 @@ def main(argv=None) -> int:
     args = build_arg_parser().parse_args(argv)
     if args.doctor:
         from .doctor import main as doctor_main
-        return doctor_main()
+        return doctor_main(use_rules=not args.no_rules, use_bm25=args.bm25)
 
     # Fail loud on misconfiguration instead of silently degrading to defaults.
     if not args.config:
@@ -117,7 +139,7 @@ def main(argv=None) -> int:
             f"       set {config.provider}.api_key\n")
         return 2
     _configure_tools(config, args.tools)
-    agent = Agent(config, use_rules=not args.no_rules)
+    agent = Agent(config, use_rules=not args.no_rules, use_bm25=args.bm25)
 
     # Announce the routing mode.  A rules-off run answers every line from the
     # LLM, so it has a different accuracy, a different cost, and a different
@@ -132,8 +154,9 @@ def main(argv=None) -> int:
                 f"(provider '{config.provider}'; check the api_key and that the "
                 "provider SDK is installed in this build)\n")
             return 2
-        sys.stderr.write(
-            "cada: rule table disabled — every request is routed by the LLM\n")
+    route_mode = "regex-first" if not args.no_rules else "pure-LLM (no-rules)"
+    bm25_mode = "enabled" if args.bm25 else "disabled (static catalog only)"
+    sys.stderr.write(f"cada: routing={route_mode}; BM25={bm25_mode}\n")
 
     def on_case_name(name: str):
         agent.state.case_name = name

@@ -1,10 +1,10 @@
 """PyInstaller entry point — bundles the agent into a single executable.
 
-The packaged binary does not need a system Python / uv venv.  Its routing
-default is selected by the marker added in ``scripts/build.sh`` (pure LLM by
-default); ``--rules`` and ``--no-rules`` remain runtime overrides.  abc and
-yosys are still external programs, resolved at runtime via configs/tools.yaml
-(next to the binary), the -config file's ``tools:`` section, env vars, or PATH.
+The packaged binary does not need a system Python / uv venv.  Its routing and
+BM25 defaults are selected by markers added in ``scripts/build.sh`` (pure LLM
+with BM25 by default); ``--rules`` / ``--no-rules`` and ``--bm25`` /
+``--no-bm25`` remain runtime overrides.  abc and yosys are still external,
+resolved via configs/tools.yaml, the -config ``tools:`` section, env, or PATH.
 """
 
 import sys

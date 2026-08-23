@@ -14,7 +14,8 @@ produced by scripts/fetch_embed_model.py and scripts/build_vectors.py, so a
 fresh clone has neither.  When they are absent the build still succeeds and
 the binary uses the stdlib BM25 retriever — a missing model degrades retrieval
 quality rather than breaking the build.  The example bank always ships;
-without it there is no retrieval at all.
+without it there is no retrieval at all.  It also ships in a BM25-off build so
+the runtime ``--bm25`` override remains usable.
 """
 
 from __future__ import annotations

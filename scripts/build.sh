@@ -4,6 +4,7 @@
 #   scripts/build.sh [exec_name]        # pure-LLM; default name: cada0001_alpha
 #   scripts/build.sh cada1125_alpha     # pure-LLM; use YOUR team number
 #   NO_RULES=0 scripts/build.sh cada1125_alpha   # regex first, LLM fallback
+#   WITH_BM25=0 scripts/build.sh cada1125_alpha  # no retrieved examples
 #   NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # regex-only, smaller
 #
 # By default the openai/anthropic clients ARE bundled and the regex table is
@@ -19,6 +20,10 @@
 # The binary still accepts --rules to put the table back for one run, prints a
 # line to stderr saying which mode it is in, and refuses to start rules-off with
 # no reachable LLM.
+#
+# BM25 example retrieval is ON by default.  WITH_BM25=0 bakes in an off marker,
+# so LLM requests contain only the static intent catalog.  The small public
+# bank still ships, allowing --bm25 to turn retrieval back on for one run.
 #
 # Output:  dist/<exec_name>   (a single file; no Python/uv needed to run it)
 #
@@ -37,6 +42,12 @@ cd "$repo"
 NAME="${1:-cada0001_alpha}"
 WITH_LLM="${WITH_LLM:-1}"
 NO_RULES="${NO_RULES:-1}"
+WITH_BM25="${WITH_BM25:-1}"
+
+if [ "$WITH_BM25" != 0 ] && [ "$WITH_BM25" != 1 ]; then
+  echo ">> ERROR: WITH_BM25 must be 0 or 1 (got: $WITH_BM25)" >&2
+  exit 1
+fi
 
 # The one combination that cannot work.  Without the provider SDK the LLM
 # client never initialises, and a rules-off binary with no router left answers
@@ -81,6 +92,16 @@ if [ "$NO_RULES" = 1 ]; then
   extra+=(--add-data "$marker:.")
 fi
 
+# BM25-off default.  Keep the public bank in the bundle so --bm25 remains a
+# useful runtime override; this marker controls whether Agent constructs the
+# retriever and appends a dynamic example block to each LLM request.
+if [ "$WITH_BM25" = 0 ]; then
+  echo ">> building with BM25 DISABLED by default (--bm25 overrides)"
+  bm25_marker="$bvroot/no_bm25.flag"
+  printf 'built by scripts/build.sh with WITH_BM25=0\n' > "$bm25_marker"
+  extra+=(--add-data "$bm25_marker:.")
+fi
+
 # Embed a statically-linked abc (fully self-contained executable).  Produce it
 # once with scripts/build_static_abc.sh; if absent the binary still works but
 # needs an external abc (tools.yaml / ABC_BIN / ~/abc/abc / $PATH).
@@ -104,7 +125,9 @@ else
   echo ">> NOTE: dist/yosys_static/yosys not found — yosys will NOT be embedded"
 fi
 
-# Example bank for retrieval.  --collect-submodules gathers Python modules,
+# Example bank for retrieval.  It is bundled even with WITH_BM25=0 so a user
+# can enable retrieval for one run with --bm25.  --collect-submodules gathers
+# Python modules,
 # not data files, so without this the frozen binary finds no
 # public_examples.jsonl,
 # silently disables retrieval and routes at the pre-retrieval accuracy with
@@ -138,8 +161,14 @@ echo ">> running PyInstaller (name: $NAME) ..."
 echo ""
 echo "Built: $repo/dist/$NAME"
 if [ "$NO_RULES" = 1 ]; then
-  echo "Mode:  PURE-LLM — this binary routes every request through the LLM."
-  echo "       Pass --rules to use the regex table for a run."
+  echo "Routing: PURE-LLM (pass --rules to use regex-first for one run)"
+else
+  echo "Routing: REGEX-FIRST (pass --no-rules to use pure LLM for one run)"
+fi
+if [ "$WITH_BM25" = 1 ]; then
+  echo "BM25:    ENABLED (pass --no-bm25 to omit retrieved examples)"
+else
+  echo "BM25:    DISABLED (pass --bm25 to append retrieved examples)"
 fi
 echo "Test it:  ./dist/$NAME --doctor"
 echo "          ./dist/$NAME -config configs/api_key.yaml < testcase/test01/prompt.txt"

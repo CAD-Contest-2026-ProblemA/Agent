@@ -97,12 +97,13 @@ BOLD = lambda s: _c("1", s)
 
 
 # ----- run one case, capturing per-step responses and snapshots ----------
-def run_case(case: str, config_path, use_rules: bool = True):
+def run_case(case: str, config_path, use_rules: bool = True,
+             use_bm25: bool = True):
     case_dir = os.path.join(TC_ROOT, case)
     prompt = os.path.join(case_dir, "prompt.txt")
     cfg = load_config(config_path)
     _configure_tools(cfg, None)
-    agent = Agent(cfg, use_rules=use_rules)
+    agent = Agent(cfg, use_rules=use_rules, use_bm25=use_bm25)
 
     lines, responses, specs, snaps = [], [], [], {}
     transform_seen_before = []  # whether a transform happened before line i
@@ -142,7 +143,7 @@ def _parse_frames(stdout: str, n: int):
 
 
 def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
-                 use_rules: bool = True):
+                 use_rules: bool = True, use_bm25: bool = True):
     """Drive the REAL executable (the PyInstaller binary or the wrapper) as a
     subprocess and evaluate its actual stdout + written netlist.
 
@@ -189,7 +190,8 @@ def run_case_exe(case: str, exe: str, config_path: str, timeout: int = 320,
         # the source wrapper defaults to rules-first; relying on either default
         # would make one evaluator command test two different modes.
         cmd = [os.path.abspath(exe), "-config", config_path,
-               "--rules" if use_rules else "--no-rules"]
+               "--rules" if use_rules else "--no-rules",
+               "--bm25" if use_bm25 else "--no-bm25"]
         proc = subprocess.run(cmd,
                               input="\n".join(raw) + "\n",
                               capture_output=True, text=True, timeout=timeout)
@@ -379,6 +381,8 @@ def main(argv=None) -> int:
                          "./cada1125_alpha) as a subprocess instead of in-process")
     ap.add_argument("--no-rules", dest="no_rules", action="store_true",
                     help="route every request through the LLM (skip the regex rules)")
+    ap.add_argument("--no-bm25", dest="no_bm25", action="store_true",
+                    help="do not append retrieved examples to LLM requests")
     args = ap.parse_args(argv)
     if args.exe:
         args.exe = os.path.abspath(args.exe)
@@ -407,9 +411,12 @@ def _run_cases(args, cases) -> int:
         try:
             if args.exe:
                 run = run_case_exe(case, args.exe, args.config,
-                                   use_rules=not args.no_rules)
+                                   use_rules=not args.no_rules,
+                                   use_bm25=not args.no_bm25)
             else:
-                run = run_case(case, args.config, use_rules=not args.no_rules)
+                run = run_case(case, args.config,
+                               use_rules=not args.no_rules,
+                               use_bm25=not args.no_bm25)
             results = evaluate_case(run, GOLDEN_DIR, args.update_golden)
         except Exception as exc:
             print(f"{BOLD(case)}  {RED('ERROR')} {exc}")

@@ -10,6 +10,7 @@
 # -config is missing, the file does not exist, or no api_key is set for the
 # chosen `provider` — an API key is always required.  Pass --no-rules to force
 # pure-LLM routing, or --rules to force the deterministic regex-first router.
+# Pass --no-bm25 to omit retrieved examples, or --bm25 to force them on.
 
 provider: "openai"          # or: "anthropic"
 

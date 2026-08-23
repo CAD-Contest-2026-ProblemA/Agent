@@ -13,6 +13,7 @@
 * Python 直譯器 — **3.8 以上**(benchmark 路徑本身只用標準函式庫)。
 * **`abc`(必要)** 與 **`yosys`(備援)** 在 `PATH` 上(或用環境變數 `ABC_BIN` 指向 ABC 執行檔)——當作等價 / 最佳化後端。注意:`setup.sh` / pip / uv **都不會幫你裝這兩個外部執行檔**,要自己確認機器上有。實測 ABC 被 24/40 個 testcase 使用(test01–16 純 Python 不碰 ABC);yosys 只在 ABC 無法判定時當 fallback,實測 0/40。
 * 打包預設的純 LLM 模式需要 `openai` / `anthropic`;regex 優先模式若每句都命中規則,則不需要它們。`PyYAML` 是選用套件(設定檔解析沒裝會自動退回內建 mini-parser)。
+* BM25 預設開啟且只用標準庫。build 時設 `WITH_BM25=0`,或執行時加 `--no-bm25`,可讓 LLM query 不附加任何檢索例句。
 
 ## 取得程式碼
 
@@ -60,10 +61,11 @@ pip install -r requirements.txt     # 只有要用 LLM fallback 才需要
 ```bash
 scripts/build.sh cada1125_alpha              # 預設純 LLM -> dist/cada1125_alpha
 NO_RULES=0 scripts/build.sh cada1125_alpha   # regex 優先、LLM fallback
+WITH_BM25=0 scripts/build.sh cada1125_alpha  # 純 LLM,不附加檢索例句
 NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # 純 regex 輕量版
 ```
 
-標準打包結果**預設是純 LLM**:每一筆 request 都跳過 regex table、直接交給 LLM。加 `NO_RULES=0` 才會建置 regex 優先、LLM fallback 的混合模式。純 LLM 必須包含 provider client,所以 `WITH_LLM=0` 只能和 `NO_RULES=0` 一起使用。
+標準打包結果**預設是純 LLM + BM25**:每一筆 request 都跳過 regex table、由 BM25 附加相似例句後交給 LLM。加 `NO_RULES=0` 會建置 regex 優先的混合模式;`WITH_BM25=0` 會把預設改成只使用固定 intent catalog。純 LLM 必須包含 provider client,所以 `WITH_LLM=0` 只能和 `NO_RULES=0` 一起使用。public bank 仍會被打包,讓同一支 binary 可用 `--bm25` 臨時開啟。
 
 * **glibc 注意**:PyInstaller 會包 Python 但不包 C library——要在 glibc ≤ 目標機器的環境上 build(最好直接在比賽機器上 build,它有 uv),不然 binary 會起不來。
 * `abc`/`yosys` 仍是**外部程式**(執行時透過 binary 旁邊的 `configs/tools.yaml`、`-config` 的 `tools:` 區段、`ABC_BIN`/`YOSYS_BIN`、或 `$PATH` 解析)。
@@ -91,7 +93,7 @@ generation:
   max_output_tokens: 4096
 ```
 
-然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;API key 一律必填。只需填你選用那個 provider 的 key。`scripts/build.sh` 產生的 binary 預設為純 LLM,單次執行可加 `--rules` 恢復 regex 優先;原始碼 launcher 則仍預設 regex 優先,可加 `--no-rules` 強制全部交給 LLM。
+然後用 `-config configs/api_key.yaml` 執行。若 **`-config` 沒給、檔案不存在、或選定的 `provider` 沒有 `api_key`**,agent 會**直接報錯離開(non-zero exit)**;API key 一律必填。只需填你選用那個 provider 的 key。`scripts/build.sh` 產生的 binary 預設為純 LLM,單次執行可加 `--rules` 恢復 regex 優先;原始碼 launcher 則仍預設 regex 優先,可加 `--no-rules` 強制全部交給 LLM。`--bm25` / `--no-bm25` 可獨立控制 LLM query 是否附加檢索例句;固定 intent catalog 不會被移除。
 
 ## 環境自檢(doctor)
 
@@ -101,7 +103,7 @@ generation:
 ./cada1125_alpha --doctor        # 或:.venv/bin/python -m cada.doctor / .venv/bin/python scripts/doctor.py
 ```
 
-依序檢查:**Python**(先看有沒有裝 uv → 有的話看 `.venv/` 在不在 → 套件都查 `.venv` 裡的;只要 uv 或 `.venv` 不在,這段直接 fail,**不會去檢查 host 的 Python**);**外部工具**(`abc` 必要、`yosys` 備援,用跟 agent 一樣的順序解析路徑後**實際執行一次**,所以「檔案在但跑不起來」例如 glibc/架構不合也會被抓出來);**設定檔**與選用的 LLM key;以及 **agent 套件本身**(import + 解析一個 testcase)。有 hard failure 時 exit code 非 0。
+doctor 會先列出這次實際生效的 **routing mode**(純 LLM 或 regex-first)與 **BM25 enabled/disabled**,包含 runtime override。之後依序檢查:**Python**(先看有沒有裝 uv → 有的話看 `.venv/` 在不在 → 套件都查 `.venv` 裡的;只要 uv 或 `.venv` 不在,這段直接 fail,**不會去檢查 host 的 Python**);**外部工具**(`abc` 必要、`yosys` 備援,用跟 agent 一樣的順序解析路徑後**實際執行一次**,所以「檔案在但跑不起來」例如 glibc/架構不合也會被抓出來);**設定檔**與選用的 LLM key;以及 **agent 套件本身**(import + 解析一個 testcase)。有 hard failure 時 exit code 非 0。
 
 ## 指定外部工具位置(不靠 $PATH)
 

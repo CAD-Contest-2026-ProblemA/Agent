@@ -6,6 +6,7 @@ Run it before an evaluation to see what's installed/missing:
     ./cada0001_alpha --doctor
 
 Checks, in order:
+  * Effective runtime modes: pure LLM vs regex-first, and BM25 on vs off.
   * Python: uv installed?  -> .venv present?  -> packages inside .venv.
     If uv or .venv is missing, the whole Python section FAILS and the host
     Python is intentionally NOT inspected (by design).
@@ -106,6 +107,23 @@ def _pkg_version(python: str, module: str):
 
 
 # ----- sections ----------------------------------------------------------
+def check_runtime_modes(rep: Report, use_rules: bool, use_bm25: bool):
+    """Report the modes that would apply to this invocation."""
+    rep.section("Runtime modes")
+    if use_rules:
+        rep.ok("routing: regex-first",
+               "matching rules run first; the LLM handles unmatched requests")
+    else:
+        rep.ok("routing: pure LLM (no-rules)",
+               "every request is classified by the LLM")
+    if use_bm25:
+        rep.ok("BM25: enabled",
+               "up to 50 public examples are appended to requests sent to the LLM")
+    else:
+        rep.ok("BM25: disabled",
+               "LLM requests use the static intent catalog without retrieved examples")
+
+
 def check_python(rep: Report):
     rep.section("Python environment (uv + .venv)")
     if getattr(sys, "frozen", False):
@@ -300,7 +318,7 @@ def check_package(rep: Report):
         rep.fail("cada failed to import / parse", out.strip()[:200])
 
 
-def check_retrieval(rep: Report):
+def check_retrieval(rep: Report, use_bm25: bool = True):
     """Is the example bank actually reachable, and does it carry params?
 
     A build that drops cada/llm/public_examples.jsonl does not crash: retrieval
@@ -309,12 +327,15 @@ def check_retrieval(rep: Report):
     so it gets a check rather than trust.
     """
     rep.section("Example retrieval")
+    if not use_bm25:
+        rep.skip("BM25 bank probe skipped (disabled for this run)")
+        return
     try:
         from cada.llm.retrieval import build_retriever, format_block
     except Exception as exc:
         rep.fail("cada.llm.retrieval failed to import", str(exc)[:200])
         return
-    r = build_retriever("auto")
+    r = build_retriever("bm25")
     if r is None:
         rep.fail("no example bank found — retrieval is DISABLED",
                  "the binary was built without cada/llm/public_examples.jsonl; "
@@ -334,15 +355,25 @@ def check_retrieval(rep: Report):
                  "the prompt will teach intent names but not their arguments")
 
 
-def main(argv=None) -> int:
+def main(argv=None, use_rules=None, use_bm25=None) -> int:
+    if use_rules is None or use_bm25 is None:
+        # Direct ``python -m cada.doctor`` calls do not pass through the agent
+        # argument parser.  Resolve the same marker/env defaults here; calls
+        # from cada.main pass the already-parsed effective values instead.
+        from .main import _default_bm25, _default_no_rules
+        if use_rules is None:
+            use_rules = not _default_no_rules()
+        if use_bm25 is None:
+            use_bm25 = _default_bm25()
     print(_bold("CADA environment doctor"))
     print(_dim(f"project root: {ROOT}"))
     rep = Report()
+    check_runtime_modes(rep, use_rules=use_rules, use_bm25=use_bm25)
     check_python(rep)
     check_tools(rep)
     check_config(rep)
     check_package(rep)
-    check_retrieval(rep)
+    check_retrieval(rep, use_bm25=use_bm25)
 
     print("\n" + _bold("Summary"))
     if rep.fails == 0 and rep.warns == 0:

@@ -32,7 +32,9 @@ ABC/yosys are used only as equivalence / cost-ranked-synthesis oracles.
   optional in regex-first mode when every request matches a rule.  `PyYAML` is
   optional (config parsing falls back to a built-in mini-parser).
 * Example retrieval (which nearest labelled requests go into the LLM prompt)
-  needs **nothing extra** — the default BM25 retriever is stdlib.  A dense
+  needs **nothing extra** — BM25 is enabled by default and is stdlib.  Build
+  with `WITH_BM25=0`, or run with `--no-bm25`, to send no retrieved examples.
+  A dense
   encoder is available via `requirements-retrieval.txt` +
   `scripts/fetch_embed_model.py`, but it measured within one sentence in 1420
   of the stdlib one, so it is opt-in.
@@ -93,13 +95,16 @@ package it with PyInstaller:
 ```bash
 scripts/build.sh cada1125_alpha              # pure LLM -> dist/cada1125_alpha
 NO_RULES=0 scripts/build.sh cada1125_alpha   # regex first, LLM fallback
+WITH_BM25=0 scripts/build.sh cada1125_alpha  # pure LLM, no retrieved examples
 NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # regex-only, smaller
 ```
 
 The standard packaged binary is **pure LLM by default**: every request skips
 the regex table and goes through the LLM.  `NO_RULES=0` builds the hybrid
 rules-first mode instead.  Because pure LLM needs a provider client,
-`WITH_LLM=0` is accepted only together with `NO_RULES=0`.
+`WITH_LLM=0` is accepted only together with `NO_RULES=0`.  BM25 is enabled by
+default; `WITH_BM25=0` makes catalog-only prompts the binary default while
+still bundling the public bank so a one-off `--bm25` override works.
 
 * **glibc:** PyInstaller bundles Python but not the C library — build on a
   machine whose glibc is ≤ the target's (ideally the contest machine, which has
@@ -139,7 +144,10 @@ for the chosen `provider` — an API key is always required.  You only need the 
 for the provider you select.  Binaries produced by `scripts/build.sh` default
 to pure LLM; pass `--rules` to enable the deterministic regex-first router for
 one run.  Conversely, the source launcher defaults to rules-first and accepts
-`--no-rules` to force every request through the LLM.
+`--no-rules` to force every request through the LLM.  `--bm25` and
+`--no-bm25` independently control whether requests sent to the LLM receive a
+dynamic block of retrieved public examples; the fixed intent catalog is always
+present.
 
 ## Pre-flight check (doctor)
 
@@ -149,7 +157,9 @@ Before running an evaluation, check the environment:
 ./cada1125_alpha --doctor        # or:  .venv/bin/python -m cada.doctor  /  .venv/bin/python scripts/doctor.py
 ```
 
-It verifies, in order: **Python** (uv installed → `.venv` present → packages
+It first prints the effective **routing mode** (pure LLM or regex-first) and
+whether **BM25 is enabled**, including runtime overrides.  It then verifies:
+**Python** (uv installed → `.venv` present → packages
 inside `.venv`; if uv or `.venv` is missing the section fails and the host Python
 is *not* inspected); **external tools** (`abc` required, `yosys` fallback —
 resolved the same way the agent resolves them, then actually executed, so a

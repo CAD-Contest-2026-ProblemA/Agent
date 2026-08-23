@@ -138,7 +138,7 @@ Inserted 30 buffer(s) so that no driver exceeds 4 loads; max-fanout bound and eq
 
 ## 五、evaluator 怎麼檢查(`evaluator/`)
 
-執行:`python evaluator/evaluate.py`(**預設在拋棄式 sandbox 裡跑**,不會留下 `*_out.v`)。用 `--exe` 時,evaluator 預設會明確傳 `--rules`,不依賴 binary 的 routing 預設;加 evaluator 的 `--no-rules` 才會改測純 LLM。
+執行:`python evaluator/evaluate.py`(**預設在拋棄式 sandbox 裡跑**,不會留下 `*_out.v`)。用 `--exe` 時,evaluator 會明確傳 `--rules` 與 `--bm25`,不依賴 binary 的預設;加 evaluator 的 `--no-rules` 或 `--no-bm25` 才切換對應模式。
 
 流程(對每個 case):
 ```

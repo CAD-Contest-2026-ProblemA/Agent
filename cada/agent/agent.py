@@ -146,16 +146,19 @@ def _has_gate_count_objective(text: str) -> bool:
 
 
 class Agent:
-    def __init__(self, config: Config, use_rules: bool = True):
+    def __init__(self, config: Config, use_rules: bool = True,
+                 use_bm25: bool = True):
         self.config = config
         self.state = State()
         self.llm = LLMClient(config)
-        # "auto" = dense retrieval when the model ships, BM25 otherwise, and
-        # None if even the example bank is missing.  Every step degrades to
-        # the catalog-only behaviour rather than failing the run.
+        # With BM25 disabled, Fallback receives no retriever and therefore
+        # sends no dynamic example block on any query.  The static intent
+        # catalog remains because it defines the allowed output contract.
         from ..llm.retrieval import build_retriever
-        self.fallback = Fallback(self.llm, retriever=build_retriever("auto"))
+        retriever = build_retriever("bm25") if use_bm25 else None
+        self.fallback = Fallback(self.llm, retriever=retriever)
         self.use_rules = use_rules
+        self.use_bm25 = use_bm25
         self.rules = self._build_rules()
         self.const_nets = {}     # functionally-constant nets (from last report)
 
