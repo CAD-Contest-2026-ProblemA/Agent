@@ -607,9 +607,11 @@ def _buffered_gate_count(nl: Netlist, k: int, include_pi: bool) -> int:
     if k < 2:
         return len(nl.gates)
     targets = {g.out for g in nl.gates}
+    # Same scope as buffering.limit_fanout, or the ranking prices a candidate
+    # by fewer buffers than the transform will actually insert.
+    targets.update(ff.q for ff in nl.dffs)
     if include_pi:
         targets.update(nl.pi)
-        targets.update(ff.q for ff in nl.dffs)
     extra = 0
     for net in targets:
         if net in ("1'b0", "1'b1"):

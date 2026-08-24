@@ -32,16 +32,20 @@ def check(before: Netlist, after: Netlist, *,
             return False, f"basis violation: found {sorted(bad)} outside {basis}"
 
     if max_fanout is not None:
-        # "no gate drives more than K" bounds gate outputs only; "no signal..."
-        # additionally bounds primary inputs and DFF Q outputs.
+        # "no gate drives more than K" bounds gate outputs AND DFF Q outputs --
+        # a flip-flop is one of the nine primitive gate types (Q&A A2).  Only
+        # the broader "no signal/net..." adds primary inputs, which are nets and
+        # not gates.  This must match buffering.limit_fanout: when the guard was
+        # the looser of the two it silently passed a netlist the transform had
+        # left over the bound.
         mx = 0
         for g in after.gates:
             mx = max(mx, connectivity.fanout_count(after, g.out, include_po=False))
+        for ff in after.dffs:
+            mx = max(mx, connectivity.fanout_count(after, ff.q, include_po=False))
         if max_fanout_pi:
             for p in after.pi:
                 mx = max(mx, connectivity.fanout_count(after, p, include_po=False))
-            for ff in after.dffs:
-                mx = max(mx, connectivity.fanout_count(after, ff.q, include_po=False))
         if mx > max_fanout:
             return False, f"max-fanout {mx} exceeds {max_fanout}"
 
