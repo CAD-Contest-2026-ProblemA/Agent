@@ -1300,8 +1300,16 @@ def _validate_param_values(intent: str, params: Dict[str, Any]) -> Optional[str]
 
     if "k" in params:
         k = params["k"]
-        if not isinstance(k, int) or k < 1:
-            return f'Invalid bound k="{k}". Expected positive integer.'
+        # Two intents share the name and mean different things by it.  For
+        # insert_buffers k is a fanout capacity, so k < 1 is meaningless (and
+        # k == 1 is separately unsatisfiable, below).  For outputs_depth_gt it
+        # is a DEPTH THRESHOLD in "outputs deeper than k", where k = 0 is an
+        # ordinary question -- how many outputs have any logic behind them at
+        # all.  Rejecting it left that request with no valid object at all, so
+        # it fell through to noop and the case answered nothing.
+        floor = 0 if intent == "outputs_depth_gt" else 1
+        if not isinstance(k, int) or k < floor:
+            return (f'Invalid bound k="{k}". Expected an integer >= {floor}.')
 
     # A fanout bound of 1 is not satisfiable: bounding every driver to a single
     # load turns the buffer tree into a path, which can reach exactly one sink.
