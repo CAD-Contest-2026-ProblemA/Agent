@@ -522,16 +522,42 @@ OPERATION SYNONYMS:
               lands on how many gates".
   "connected_to_output {gate}" → WHICH gates.  "which cells receive their
     signal straight off the back of g1259".
-  "cone_gate_count {output}"   → HOW MANY gates the fanin cone holds.
+  "cone_gate_count {output}"   → HOW MANY gates the FAN-IN cone holds.  This
+    op only ever walks UPSTREAM; it has no downstream mode.
     Triggers: "what is the size of the machinery upstream of n11[0]", "the
               number of gates ancestral to n12 is what", "how many gates are
               inside the fence around everything n11[0] depends on".
   "transitive_fanin {net}"     → the cone itself ("compute the transitive
     fanin of n30[0]", "the full ancestry of n31[0]", "the complete upstream
     closure of n33[0]").
-  KEY RULE: "how many" / "the number of" / "the size of" / "count" asks for a
-  number — take the counting op.  "which" / "name them" / "list" / "compute
-  the cone" asks for the objects.
+  "transitive_fanout {net, form}" → the DOWNSTREAM cone, in either shape:
+    form="count" for a number, form="list" for the names.
+    Triggers: "how many gates are contained in the FANOUT cone of n9[0]",
+              "the size of everything n1 reaches", "how many gates does this
+              primary input feed into".
+  KEY RULE: TWO independent choices, and both must be made.  First DIRECTION:
+  upstream / fanin / ancestry / feeds-into / depends-on → the fanin ops;
+  downstream / fanout / reaches / drives / what it feeds → the fanout ops.
+  Only then SHAPE: "how many" / "the number of" / "the size of" / "count"
+  asks for a number; "which" / "name them" / "list" / "compute the cone" asks
+  for the objects.
+  The two directions do not offer the same ops, so the shape is expressed
+  differently on each side:
+    UPSTREAM   count → cone_gate_count {output}      (the dedicated counter;
+                                                      prefer it over
+                                                      transitive_fanin+form)
+               names → transitive_fanin {net}
+    DOWNSTREAM count → transitive_fanout {net, form:"count"}
+               names → transitive_fanout {net, form:"list"}
+  There is no downstream twin of cone_gate_count.  Getting the shape right
+  cannot rescue the wrong direction: "How many gates are in the FANOUT cone
+  of X" is a downstream question, so it is transitive_fanout with
+  form="count" -- NEVER cone_gate_count, which silently answers about the
+  fanin cone and so returns 0 for every primary input.
+    "How many gates are contained in the fanout cone of primary input n9[0]?"
+      → {"intent":"transitive_fanout","params":{"net":"n9[0]","form":"count"}}
+    "What is the size of the machinery upstream of n11[0]?"
+      → {"intent":"cone_gate_count","params":{"output":"n11[0]"}}
 
 ▸ connected_to_net vs connected_to_output
   "connected_to_net {net}"     → the named thing is a NET: every gate touching
