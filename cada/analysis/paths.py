@@ -139,11 +139,30 @@ def length_zero_paths(nl: Netlist) -> List[str]:
 
 
 def is_cut_pi_po(nl: Netlist, wire: str) -> bool:
-    """True iff removing ``wire`` makes some primary output unreachable from the
-    set of primary inputs that previously reached it."""
-    pos_before = graph.reachable_forward(nl, list(nl.pi)) & nl.po
-    pos_after = graph.reachable_forward(nl, list(nl.pi), avoid={wire}) & nl.po
-    return len(pos_after) < len(pos_before)
+    """True iff removing ``wire`` disconnects at least one previously
+    connected PI-to-PO pair (Q&A A51, option A — the pair-local reading).
+
+    A pair (pi, po) is broken exactly when every pi->po path crosses the
+    wire, so only PIs that reach the wire and POs the wire reaches can be
+    part of a broken pair; other pairs keep their connectivity untouched.
+    The earlier reading here — some PO losing ALL of its PI connectivity —
+    was stricter than A51: a pair can be severed while its PO stays
+    reachable from another input, and A51 counts that as a cut."""
+    upstream = graph.fanin_cone_nets(nl, [wire])
+    pis = [p for p in nl.pi if p in upstream or p == wire]
+    if not pis:
+        return False
+    downstream_pos = graph.reachable_forward(nl, [wire]) & nl.po
+    if not downstream_pos:
+        return False
+    for pi in pis:
+        before = graph.reachable_forward(nl, [pi]) & downstream_pos
+        if not before:
+            continue
+        after = graph.reachable_forward(nl, [pi], avoid={wire})
+        if before - after:
+            return True
+    return False
 
 
 def enumerate_paths(nl: Netlist, a: str, b: str,
