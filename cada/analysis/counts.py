@@ -42,6 +42,11 @@ def cone_type_counts(nl: Netlist, output: str) -> Counter:
     c = Counter()
     for g in cones.fanin_cone_gates(nl, output):
         c[g.type] += 1
+    # A74: when the queried signal is a DFF.Q, that flip-flop itself is in the
+    # cone.  Q pins met deeper in the walk stay boundaries (A65/A21.2).
+    drv = nl.driver(output)
+    if drv[0] == "dff":
+        c["dff"] += 1
     return c
 
 
