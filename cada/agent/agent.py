@@ -1172,7 +1172,7 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return (f"Gates connected to the output of {g}: "
+        return (f"{len(ds)} gate(s) are connected to the output of {g}: "
                 + self._names_or_file(ds, f"connected_out_{g}"))
 
     # ===================================================================
@@ -2272,7 +2272,7 @@ class Agent:
         ds = connectivity.gates_driven_by_gate(self.state.current, g)
         if ds is None:
             return f"No gate named {g} exists."
-        return (f"Gates connected to the output of {g}: "
+        return (f"{len(ds)} gate(s) are connected to the output of {g}: "
                 + self._names_or_file(ds, f"connected_out_{g}"))
 
     # ----- paths ---------------------------------------------------------
