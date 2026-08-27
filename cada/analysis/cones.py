@@ -50,17 +50,30 @@ def fanin_cone_nets(nl: Netlist, net: str, redirect_q: bool = False) -> Set[str]
 
 
 def fanin_cone_gates(nl: Netlist, net: str, redirect_q: bool = False):
-    """The gates in the cone — every instance in it, and the only ones.
+    """The COMBINATIONAL gates in the cone — the set a cone-scoped rewrite may
+    touch, which excludes flip-flops precisely because a transform must never
+    restructure one.
 
-    Flip-flops whose Q feeds the cone bound it rather than belong to it, so
-    they are not here; see the module docstring for the ruling.  This is both
-    "how many gates are in the fan-in cone of X" and the set a cone-scoped
-    rewrite may touch, which is the same set precisely because a DFF is
-    outside the combinational subgraph and a transform must never restructure
-    one.
+    For COUNTING and LISTING answers use :func:`fanin_cone_instances` instead:
+    A94 rules that the flip-flops bounding the cone are counted as members.
     """
     nets = fanin_cone_nets(nl, net, redirect_q)
     return [g for g in nl.gates if g.out in nets]
+
+
+def fanin_cone_instances(nl: Netlist, net: str):
+    """(combinational gates, bounding flip-flops) of the cone, for answers.
+
+    A94: the walk stops at every DFF.Q it meets, and each of those registers
+    is counted inside the cone — including the driver when the queried net is
+    itself a Q (A74/A94.3, where the cone is exactly that one DFF).  The
+    combinational half is byte-identical to :func:`fanin_cone_gates`, so
+    rewrite scoping and this counting view cannot drift apart.
+    """
+    nets = fanin_cone_nets(nl, net)
+    gates = [g for g in nl.gates if g.out in nets]
+    dffs = [ff for ff in sorted(nl.dffs, key=lambda f: f.name) if ff.q in nets]
+    return gates, dffs
 
 
 def transitive_fanin(nl: Netlist, net: str) -> Set[str]:
@@ -73,10 +86,13 @@ def fanout_cone_gates(nl: Netlist, net: str):
 
 
 def shared_fanin_gates(nl: Netlist, a: str, b: str):
-    ga = {g.name for g in fanin_cone_gates(nl, a)}
-    gb = {g.name for g in fanin_cone_gates(nl, b)}
+    ga_g, ga_d = fanin_cone_instances(nl, a)
+    gb_g, gb_d = fanin_cone_instances(nl, b)
+    ga = {g.name for g in ga_g} | {ff.name for ff in ga_d}
+    gb = {g.name for g in gb_g} | {ff.name for ff in gb_d}
     shared = ga & gb
-    return [g for g in nl.gates if g.name in shared]
+    return ([g for g in nl.gates if g.name in shared]
+            + [ff for ff in nl.dffs if ff.name in shared])
 
 
 def largest_fanin_outputs(nl: Netlist, redirect_q: bool = False):
@@ -89,7 +105,8 @@ def largest_fanin_outputs(nl: Netlist, redirect_q: bool = False):
     """
     best, winners = None, []
     for po in sorted(nl.po):
-        n = len(fanin_cone_gates(nl, po, redirect_q))
+        gates, dffs = fanin_cone_instances(nl, po)
+        n = len(gates) + len(dffs)
         if best is None or n > best:
             best, winners = n, [po]
         elif n == best:

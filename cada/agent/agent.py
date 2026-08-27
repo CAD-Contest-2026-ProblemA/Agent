@@ -692,8 +692,9 @@ class Agent:
                            line, re.IGNORECASE)
             if mm:
                 out = mm.group(1)
-                gs = cones.fanin_cone_gates(self.state.current, out)
-                n = sum(1 for g in gs if g.type == gtype)
+                gs, ffs = cones.fanin_cone_instances(self.state.current, out)
+                n = (len(ffs) if gtype == "dff"
+                     else sum(1 for g in gs if g.type == gtype))
                 return (f"There are currently {n} {gtype.upper()} gates in "
                         f"the cone of {out}.")
             n = counts.count_of_type(self.state.current, gtype)
@@ -1077,8 +1078,9 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
-        gs = cones.fanin_cone_gates(self.state.current, net)
-        return f"The transitive fan-in cone of {net} contains {len(gs)} gates."
+        gs, ffs = cones.fanin_cone_instances(self.state.current, net)
+        return (f"The transitive fan-in cone of {net} contains "
+                f"{len(gs) + len(ffs)} gates.")
 
     def h_tfanin_list(self, m, line):
         return self.op_transitive_fanin(m.group(1), form="list")
@@ -1129,7 +1131,8 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = m.group(1)
-        gs = [g.name for g in cones.fanin_cone_gates(self.state.current, net)]
+        gates, ffs = cones.fanin_cone_instances(self.state.current, net)
+        gs = [g.name for g in gates] + [ff.name for ff in ffs]
         return self._bare_names(gs, f"fanin_cone_{net}")
 
     def h_highest_fanout(self, m, line):
@@ -2036,8 +2039,9 @@ class Agent:
         scope = self._clean_opt(scope)
         if scope is not None:
             out = str(scope)
-            gs = cones.fanin_cone_gates(self.state.current, out)
-            n = sum(1 for g in gs if g.type == gtype)
+            gs, ffs = cones.fanin_cone_instances(self.state.current, out)
+            n = (len(ffs) if gtype == "dff"
+                 else sum(1 for g in gs if g.type == gtype))
             where = f"the cone of {out}"
         else:
             n = counts.count_of_type(self.state.current, gtype)
@@ -2184,15 +2188,16 @@ class Agent:
         if self._need_design():
             return self._need_design()
         net = str(net)
-        gs = cones.fanin_cone_gates(self.state.current, net)
-        note = self._boundary_note(net) if not gs else ""
+        gates, ffs = cones.fanin_cone_instances(self.state.current, net)
+        note = self._boundary_note(net) if not gates else ""
         tail = (" " + note) if note else ""
-        out = self._shaped(form, [g.name for g in gs],
+        names = [g.name for g in gates] + [ff.name for ff in ffs]
+        out = self._shaped(form, names,
                            f"The fan-in cone of {net}", f"fanin_cone_{net}")
         if out is not None:
             return out.rstrip(".") + "." + tail
         return (f"The transitive fan-in cone of {net} contains "
-                f"{len(gs)} gates.{tail}")
+                f"{len(names)} gates.{tail}")
 
     def op_transitive_fanout(self, net, form=None):
         if self._need_design():

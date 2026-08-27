@@ -39,14 +39,15 @@ def count_of_type(nl: Netlist, gtype: str) -> int:
 
 
 def cone_type_counts(nl: Netlist, output: str) -> Counter:
+    # A74/A94: the flip-flops bounding the cone count as members -- the
+    # driver when the queried signal is itself a Q, and every DFF.Q the
+    # backward walk stops at in a deeper cone.
+    gates, dffs = cones.fanin_cone_instances(nl, output)
     c = Counter()
-    for g in cones.fanin_cone_gates(nl, output):
+    for g in gates:
         c[g.type] += 1
-    # A74: when the queried signal is a DFF.Q, that flip-flop itself is in the
-    # cone.  Q pins met deeper in the walk stay boundaries (A65/A21.2).
-    drv = nl.driver(output)
-    if drv[0] == "dff":
-        c["dff"] += 1
+    if dffs:
+        c["dff"] += len(dffs)
     return c
 
 
@@ -60,7 +61,8 @@ def cone_type_counts_text(nl: Netlist, output: str) -> str:
 
 
 def gates_in_fanin_cone(nl: Netlist, output: str) -> int:
-    return len(cones.fanin_cone_gates(nl, output))
+    gates, dffs = cones.fanin_cone_instances(nl, output)
+    return len(gates) + len(dffs)
 
 
 def list_gates_of_type(nl: Netlist, gtype: str) -> List:
