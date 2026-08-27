@@ -194,7 +194,7 @@ def _sim_disproves_unate(nl: Netlist, d: str, q: str, words: int = 4) -> bool:
     return False
 
 
-def enable_hold_ffs(nl: Netlist, budget: float = 240.0) -> List:
+def enable_hold_ffs(nl: Netlist, budget: float = 240.0, detail: bool = False):
     """Flip-flops with an enable/hold structure on their D input.
 
     Q&A A46 settles that the structure is recognised by the *function* of D,
@@ -217,21 +217,30 @@ def enable_hold_ffs(nl: Netlist, budget: float = 240.0) -> List:
 
     ``budget`` caps the solver stage.  If it runs out, the remaining candidates
     fall back to the simulation verdict rather than the whole query failing.
+
+    With ``detail`` the return value is ``(members, feedback_count)`` where
+    ``feedback_count`` is how many flip-flops have Q-to-D feedback at all --
+    enough for callers to partition the population into members, feedback
+    non-members, and no-feedback registers.
     """
     t0 = time.time()
-    cand = [ff for ff in nl.dffs
-            if ff.q in cones.transitive_fanin(nl, ff.d)
-            and not _sim_disproves_unate(nl, ff.d, ff.q)]
+    feedback = [ff for ff in nl.dffs
+                if ff.q in cones.transitive_fanin(nl, ff.d)]
+
+    def _ret(members):
+        return (members, len(feedback)) if detail else members
+
+    cand = [ff for ff in feedback if not _sim_disproves_unate(nl, ff.d, ff.q)]
     if not cand:
-        return []
+        return _ret([])
 
     unate = functional.cofactors_empty_batch(
         nl, [(ff.d, ff.q, "viol") for ff in cand])
     keep = [ff for ff, u in zip(cand, unate) if u is not False]
 
     if time.time() - t0 > budget or not keep:
-        return keep                          # degrade to the simulation verdict
+        return _ret(keep)                    # degrade to the simulation verdict
 
     dep = functional.cofactors_empty_batch(
         nl, [(ff.d, ff.q, "diff") for ff in keep])
-    return [ff for ff, empty in zip(keep, dep) if empty is not True]
+    return _ret([ff for ff, empty in zip(keep, dep) if empty is not True])

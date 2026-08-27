@@ -490,13 +490,14 @@ class Agent:
         return {}
 
     def _boundary_note(self, net: str) -> str:
-        """Why a cone is empty, when the reason is a register.
+        """Why a cone holds no combinational gates: the reason is a register.
 
         "0 gates" is the right number and half the answer: it does not
         distinguish a net with no logic behind it from one sitting on the
         register boundary, and those mean different things.  Q&A A21.2/A65 make
-        DFF.Q a boundary, so when the queried net is a register output the
-        flip-flop is named -- the count is untouched, the reason is stated.
+        DFF.Q a boundary and A74 counts the driving flip-flop inside its own
+        cone, so the note must not deny membership -- it states there are no
+        combinational gates and places the named DFF at the boundary.
         Empty for any other reason adds nothing, so nothing is added.
         """
         nl = self.state.current
@@ -505,8 +506,9 @@ class Agent:
         ffs = sorted(ff.name for ff in nl.dffs if ff.q == net)
         if not ffs:
             return ""
-        return (f"{net} is driven by flip-flop {self._names(ffs)}, which "
-                f"bounds the cone rather than sitting inside it.")
+        return (f"No combinational gates sit inside this cone: {net} comes "
+                f"straight from flip-flop {self._names(ffs)}, the single DFF "
+                f"on the cone boundary.")
 
     def _shaped(self, form, names, noun: str, hint: str):
         """Render ``names`` per ``form``, or None if ``form`` says nothing.
@@ -769,12 +771,9 @@ class Agent:
         if self._need_design():
             return self._need_design()
         nl = self.state.current
-        ni = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "input")
-        no = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "output")
         bi = len(nl.pi)
         bo = len(nl.po)
-        return (f"The design has {bi} primary inputs and {bo} primary outputs "
-                f"(across {ni} input port(s) and {no} output port(s)).")
+        return f"The design has {bi} primary inputs and {bo} primary outputs."
 
     def h_cone_gate_count(self, m, line):
         if self._need_design():
@@ -1332,24 +1331,45 @@ class Agent:
             return self._need_design()
         return self._reg_to_reg_answer()
 
+    def _enable_hold_partition(self):
+        """(members, feedback-non-members, no-feedback, total), cached in deltas."""
+        nl = self.state.current
+        eh, fb = sequential.enable_hold_ffs(nl, detail=True)
+        self.state.record_delta("enable_hold", len(eh))
+        self.state.record_delta("enable_hold_fb", fb)
+        return eh, fb - len(eh), len(nl.dffs) - fb, len(nl.dffs)
+
+    @staticmethod
+    def _enable_hold_breakdown(m, rej, nofb, total):
+        return (f"Across all {total} DFFs: {m} confirmed enable/hold, {rej} "
+                f"feed their Q back into D without forming an enable/hold "
+                f"function, and {nofb} never see their own Q at D "
+                f"({m} + {rej} + {nofb} = {total}).")
+
     def h_enable_hold(self, m, line):
         if self._need_design():
             return self._need_design()
-        eh = sequential.enable_hold_ffs(self.state.current)
-        self.state.record_delta("enable_hold", len(eh))
+        eh, rej, nofb, total = self._enable_hold_partition()
         return (f"{len(eh)} flip-flop(s) implement an enable/hold structure in "
                 f"their D-input logic (next state depends on the register's own "
                 f"current state): " +
-                self._names_or_file([f.name for f in eh], "enable_hold"))
+                self._names_or_file([f.name for f in eh], "enable_hold")
+                + "\n" + self._enable_hold_breakdown(len(eh), rej, nofb, total))
 
     def h_enable_hold_count(self, m, line):
         if self._need_design():
             return self._need_design()
         n = self.state.get_delta("enable_hold")
-        if not n:
-            eh = sequential.enable_hold_ffs(self.state.current)
+        fb = self.state.get_delta("enable_hold_fb")
+        if not n or fb < n:
+            eh, rej, nofb, total = self._enable_hold_partition()
             n = len(eh)
-        return f"{n} flip-flops were found to have enable or hold structures in their D-input logic."
+        else:
+            total = len(self.state.current.dffs)
+            rej, nofb = fb - n, total - fb
+        return (f"{n} flip-flops were found to have enable or hold structures "
+                f"in their D-input logic. "
+                + self._enable_hold_breakdown(n, rej, nofb, total))
 
     # ===================================================================
     # transforms
@@ -2116,12 +2136,9 @@ class Agent:
         if self._need_design():
             return self._need_design()
         nl = self.state.current
-        ni = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "input")
-        no = sum(1 for n in nl.port_order if nl.ports.get(n) and nl.ports[n].direction == "output")
         bi = len(nl.pi)
         bo = len(nl.po)
-        return (f"The design has {bi} primary inputs and {bo} primary outputs "
-                f"(across {ni} input port(s) and {no} output port(s)).")
+        return f"The design has {bi} primary inputs and {bo} primary outputs."
 
     # ----- connectivity --------------------------------------------------
     def op_fanout(self, net):
@@ -2539,23 +2556,10 @@ class Agent:
         return self._reg_to_reg_answer()
 
     def op_enable_hold_report(self):
-        if self._need_design():
-            return self._need_design()
-        eh = sequential.enable_hold_ffs(self.state.current)
-        self.state.record_delta("enable_hold", len(eh))
-        return (f"{len(eh)} flip-flop(s) implement an enable/hold structure in "
-                f"their D-input logic (next state depends on the register's own "
-                f"current state): " +
-                self._names_or_file([f.name for f in eh], "enable_hold"))
+        return self.h_enable_hold(None, "")
 
     def op_enable_hold_count(self):
-        if self._need_design():
-            return self._need_design()
-        n = self.state.get_delta("enable_hold")
-        if not n:
-            eh = sequential.enable_hold_ffs(self.state.current)
-            n = len(eh)
-        return f"{n} flip-flops were found to have enable or hold structures in their D-input logic."
+        return self.h_enable_hold_count(None, "")
 
     # ----- transforms ----------------------------------------------------
     @staticmethod
