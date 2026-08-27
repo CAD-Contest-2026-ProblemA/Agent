@@ -1,0 +1,70 @@
+{
+  "case": "test01",
+  "max_score": 3,
+  "team_scores": {"Team2": 3, "Team3": 3, "Team4": 3, "Team7": 3},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test01.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase \"test01\" has been initialized; subsequent responses will be recorded for this case.",
+        "notes": "All four full-score teams simply acknowledged testcase initialization. Any response indicating the testcase test01 has begun/been set is correct."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test01\". Responses will be recorded to test01.log.",
+        "Team3": "The new testcase named \"test01\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test01\". All subsequent responses will be recorded to test01.log. Design state is empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test01\". All subsequent responses will be recorded to test01.log. Design state is empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test01.v located in the directory testcase/test01/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test01/test01.v successfully (1794 gates).",
+        "notes": "Grading only requires a successful-load claim. Optional stats differ by presentation: Team3/Team4/Team7 report 1794 gates (authoritative gate count for the original netlist); Team7 additionally reports PI=24, PO=40, DFF=0; Team2 reports file size/lines instead of gate count. All scored full, so extra stats are not graded, but if a checker wants a sanity number: gates=1794, PI=24, PO=40, DFF=0."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test01/test01.v successfully. Stored 2024 lines (65903 bytes) as the current design.",
+        "Team3": "Design successfully loaded from testcase/test01/test01.v, containing a total of 1794 gates.",
+        "Team4": "Loaded test01.v successfully. Contains 1,794 gates. Single top module (flat netlist); design state updated.",
+        "Team7": "Loaded test01.v successfully. Module: top | PI: 24 | PO: 40 | Gates: 1794 | DFFs: 0"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please write the current design to the output file test01_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test01_out.v successfully.",
+        "notes": "All four full-score teams confirm the write succeeded. Any response indicating the design was written to test01_out.v is correct; the actual output netlist is verified separately."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test01_out.v\" successfully.",
+        "Team3": "The design has been successfully written to the output file test01_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to test01_out.v successfully.",
+        "Team7": "Design written to test01_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

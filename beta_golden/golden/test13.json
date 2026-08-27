@@ -1,0 +1,259 @@
+{
+  "case": "test13",
+  "max_score": 12,
+  "team_scores": {"Team2": 11, "Team3": 12, "Team4": 12, "Team7": 12},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test13.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test13\"; responses will be recorded to test13.log.",
+        "notes": "Any acknowledgment that the testcase test13 has been started/initialized is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test13; responses recorded to test13.log.",
+        "Team3": "The new testcase named test13 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test13; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test13; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test13.v located in the directory testcase/test13/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test13/test13.v successfully (299 gates, 0 DFFs).",
+        "notes": "Must indicate successful load of test13.v. Gate count (299) is optional detail; Team2 reported line/byte counts instead of gate count and still got broad credit (its single lost point is more plausibly line 8/9). Full-score teams reported 299 gates."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 339 lines (10311 bytes) as current design.",
+        "Team3": "Successfully loaded; total 299 gates.",
+        "Team4": "Loaded successfully; contains 299 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 55 | PO: 52 | Gates: 299 | DFFs: 0"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [299, 62, 99, 36, 0, 4, 7, 67, 24, 0],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 299 gates: AND=62, OR=99, NOT=36, NAND=0, NOR=4, XOR=7, XNOR=67, BUF=24, DFF=0.",
+        "notes": "All four teams reported identical breakdowns; independently verified against test13.v by grep (62 and, 99 or, 36 not, 0 nand, 4 nor, 7 xor, 67 xnor, 24 buf, 0 dff = 299 total). DFF=0 is correct here (purely combinational netlist)."
+      },
+      "team_answers": {
+        "Team2": "AND 62, OR 99, NOT 36, NAND 0, NOR 4, XOR 7, XNOR 67, BUF 24, DFF 0; total 299.",
+        "Team3": "Total 299: AND 62, OR 99, NOT 36, NAND 0, NOR 4, XOR 7, XNOR 67, BUF 24, DFF 0.",
+        "Team4": "299 gates: AND 62, OR 99, NOT 36, NAND 0, NOR 4, XOR 7, XNOR 67, BUF 24, DFF 0.",
+        "Team7": "Total 299: AND 62, OR 99, NOT 36, NAND 0, NOR 4, XOR 7, XNOR 67, BUF 24, DFF 0; no DFFs present."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n2 to n5[0] exists that does not traverse node n58.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n2 to n5[0] exists that does not traverse node n58 (e.g. n2 -> g277 -> g267 -> g265 -> n5[0]).",
+        "notes": "All four teams answered yes. Consistent with line 8 (depth-3 path n2->g277->g267->g265->n5[0] reported by Team7)."
+      },
+      "team_answers": {
+        "Team2": "Yes. A path from n2 to n5[0] avoiding n58 exists.",
+        "Team3": "Yes, such a path exists.",
+        "Team4": "Yes. A path avoiding n58 exists.",
+        "Team7": "A path from n2 to n5[0] not traversing n58 exists."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n3 to output n5[1] exists while avoiding n208.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No, there is no path from n3 to n5[1] avoiding n208 (in fact no path from n3 to n5[1] exists at all, per line 6).",
+        "notes": "All four teams answered no. Consistent with line 6 where zero n3->n5[1] paths exist, so the avoid-n208 query is vacuously no."
+      },
+      "team_answers": {
+        "Team2": "No. No path from n3 to n5[1] avoiding n208 exists.",
+        "Team3": "No, such a path does not exist.",
+        "Team4": "No. No path avoiding n208 exists.",
+        "Team7": "A path from n3 to n5[1] avoiding n208 does not exist."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n3 and terminating at primary output n5[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no paths from n3 to n5[1] (0 paths found).",
+        "notes": "The enumeration result is an empty set. Response must state that no paths exist (equivalently 'found 0 paths'). All four teams agree; do not require any path listing."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n3 to n5[1].",
+        "Team3": "There are no paths from n3 to n5[1].",
+        "Team4": "Found 0 combinational paths from n3 to n5[1].",
+        "Team7": "There are no paths from n3 to n5[1]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n4 and n5[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no paths from n4 to n5[0] (0 paths found).",
+        "notes": "The enumeration result is an empty set. Response must state that no paths exist (equivalently 'found 0 paths'). All four teams agree."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n4 to n5[0].",
+        "Team3": "There are no paths from n4 to n5[0].",
+        "Team4": "Found 0 combinational paths from n4 to n5[0].",
+        "Team7": "There are no paths from n4 to n5[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n2 to output n5[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [3],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from n2 to n5[0] is 3 (longest path n2 -> g277 -> g267 -> g265 -> n5[0]).",
+        "notes": "All four teams reported 3. Team2 phrased it as 'maximum logic depth of the current design is 3', which gives the right number but describes the whole design instead of the n2->n5[0] pair; this loose phrasing (here or on line 9) is the most likely location of Team2's single lost point."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of the current design is 3 gate levels.",
+        "Team3": "Maximum logic depth from n2 to n5[0] is 3.",
+        "Team4": "Maximum combinational logic depth from n2 to n5[0] is 3.",
+        "Team7": "Depth is 3; longest path n2 -> g277 -> g267 -> g265 -> n5[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Determine the longest combinational path depth from n3 to n5[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists from n3 to n5[1]; the depth is 0 / undefined.",
+        "notes": "Full-score teams answered either '0, indicating no path exists' (Team3) or 'no path exists, depth undefined' (Team4/Team7) — both were credited, so accept 0 OR undefined as long as the no-path conclusion is present. Team2 answered 'maximum logic depth of the current design is 0 gate levels' — the value 0 matches but it neither names the pin pair nor states no-path, and claiming the whole design has depth 0 contradicts its own line 8; this is the other candidate for Team2's lost point."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of the current design is 0 gate levels (no pin pair or no-path statement).",
+        "Team3": "Depth is 0, indicating no path exists between these points.",
+        "Team4": "No combinational path exists from n3 to n5[1].",
+        "Team7": "No path exists; the logic depth is undefined."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Calculate the critical path depth between n4 and n5[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists from n4 to n5[0]; the critical path depth is 0 / undefined.",
+        "notes": "Same convention as line 9: accept depth 0 or 'undefined' provided the no-path conclusion is stated. All four teams gave the no-path conclusion here."
+      },
+      "team_answers": {
+        "Team2": "No path from n4 to n5[0]; reported critical-path depth is 0.",
+        "Team3": "Depth is 0, indicating no path exists between these points.",
+        "Team4": "No combinational path exists from n4 to n5[0].",
+        "Team7": "No path exists; critical path depth is undefined."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "Determine the number of gates driven by g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "Gate g0 drives 1 gate (its output net n253 feeds only g138, an XNOR).",
+        "notes": "Verified in test13.v: 'and g0(n253, n5[25], n203)' and n253 appears only in 'xnor g138(n70, n253, n1[25])'. All four teams reported 1; naming g138 (Team7) is optional extra detail, not required."
+      },
+      "team_answers": {
+        "Team2": "g0 has 1 immediate successor gate.",
+        "Team3": "The number of gates driven by g0 is 1.",
+        "Team4": "Found 1 successor gate.",
+        "Team7": "g0 drives 1 gate, instance g138 of type XNOR."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 12,
+      "prompt": "Please write the current design to the output file test13_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test13_out.v successfully.",
+        "notes": "Must indicate successful write of test13_out.v. Since no transforms were requested, the output netlist should be equivalent to the loaded design; actual verification happens on the file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test13_out.v successfully.",
+        "Team3": "Successfully written to test13_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test13_out.v successfully.",
+        "Team7": "Design written to test13_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,260 @@
+{
+  "case": "test65",
+  "max_score": 12,
+  "team_scores": {"Team2": 12, "Team3": 12, "Team4": 12, "Team7": 12},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test65.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test65 initialized; responses will be recorded to test65.log.",
+        "notes": "All four full-score teams simply acknowledge the new testcase. Any clear acknowledgment naming test65 passes."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test65. Responses recorded to test65.log.",
+        "Team3": "The new testcase has been set to test65.",
+        "Team4": "Acknowledged. Initialized testcase test65. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test65. Responses recorded to test65.log."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test65.v located in the directory testcase/test65/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test65/test65.v successfully; design has 24101 gates total (20299 combinational + 3802 DFFs), 284 PIs, 343 POs.",
+        "notes": "Success claim is the gradable essence. Optional stats varied (Team2: 26702 lines; Team3/Team4: 24,101 gates; Team7: PI 284 / PO 343 / comb gates 20299 / DFF 3802) and all were accepted."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 26702 lines (1185926 bytes).",
+        "Team3": "Loaded successfully, total 24,101 gates.",
+        "Team4": "Loaded successfully, 24,101 gates, single top module.",
+        "Team7": "Loaded successfully. Module top | PI 284 | PO 343 | Gates 20299 | DFFs 3802."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 178, 572, 16982, 1749, 37, 780, 1, 3802, 24101],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 178, NOT: 572, NAND: 16982, NOR: 1749, XOR: 37, XNOR: 780, BUF: 1, DFF: 3802; total 24101 gates.",
+        "notes": "All four full-score teams report the identical breakdown. Total 24101 = 20299 combinational + 3802 DFFs. Every per-type count must match."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 178, NOT 572, NAND 16982, NOR 1749, XOR 37, XNOR 780, BUF 1, DFF 3802; total 24101.",
+        "Team3": "Total 24,101: AND 0, OR 178, NOT 572, NAND 16982, NOR 1749, XOR 37, XNOR 780, BUF 1, DFF 3802.",
+        "Team4": "24,101 gates: AND 0, OR 178, NOT 572, NAND 16982, NOR 1749, XOR 37, XNOR 780, BUF 1, DFF 3802.",
+        "Team7": "Total 24,101: AND 0, OR 178, NOT 572, NAND 16982, NOR 1749, XOR 37, XNOR 780, BUF 1, DFF 3802."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Remapped 19727 combinational gates to the AND/NOT basis; functional equivalence preserved.",
+        "notes": "All four teams claim success and equivalence; all report 19727 gates matched/remapped. Post-transform totals differ by implementation (Team2 delta +26733; Team3 delta +27514; Team4 after-total 50055 comb; Team7 after 51311 total, NOT 29951 + AND 21360) - any self-consistent total is fine. Checker should verify the output netlist contains only AND/NOT (+DFF/BUF) and is equivalent."
+      },
+      "team_answers": {
+        "Team2": "Done. Matched/remapped 19727 gates to AND,NOT basis; delta +26733; equivalence preserved.",
+        "Team3": "Successfully reconstructed with AND/NOT only; 19,727 remapped, delta 27,514 gates; equivalence preserved.",
+        "Team4": "Matched 19,727 gates and remapped 19,727 to the AND,NOT basis.",
+        "Team7": "Rewrote 19,727 gates; after: NOT 29,951 + AND 21,360 (total 51,311); equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many AND gates are now in the reconstructed netlist?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The reconstructed netlist contains 21360 AND gates (Team2's self-consistent 21361 was also accepted).",
+        "notes": "Post-transform count, so it depends on each team's remapping. 3/4 full-score teams (Team3/Team4/Team7) report 21360; Team2 reports 21361 and still got full score, so the grader accepts the team's own self-consistent value. Checker: number must match AND-gate count in the team's own current/output netlist; expected around 21360-21361.",
+        "team_answers": {"Team2": 21361, "Team3": 21360, "Team4": 21360, "Team7": 21360}
+      },
+      "team_answers": {
+        "Team2": "The current design contains 21361 AND gates.",
+        "Team3": "The reconstructed netlist now contains 21,360 AND gates.",
+        "Team4": "50,055 gates total; AND: 21360.",
+        "Team7": "The reconstructed netlist contains 21,360 AND gates."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Check whether the current netlist is functionally equivalent to the netlist as last loaded from disk.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the current netlist is functionally equivalent to the netlist as last loaded from disk.",
+        "notes": "All four teams answer yes/equivalent. Team7 adds '3,791 affected outputs' detail; extra detail is fine. Essence: an affirmative equivalence conclusion."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "The current netlist is functionally equivalent to the last-loaded netlist.",
+        "Team4": "Yes. Equivalent to snapshot last_loaded.",
+        "Team7": "Equivalent; verification confirmed equivalence with 3,791 affected outputs."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Write the logic expression for n30 using only the primary input names.",
+      "category": "analysis",
+      "golden": {
+        "rule": "llm_judge",
+        "must_numbers": null,
+        "must_names": ["n30"],
+        "expected": null,
+        "reference": "n30 is a registered (DFF-driven) primary output with zero combinational logic to the POs, so it has no combinational Boolean function over the primary inputs; the expression degenerates to the register output n30 itself.",
+        "notes": "Team3 and Team4 (verified full-score) answered literally 'n30' (the output is fed directly by a DFF, comb depth 0); Team7 (verified full-score) instead explained it is registered and gave the next-state expression n30_next over PIs n2, n20[0..9] and register outputs - also accepted. Team2's exchanged-run log also answers 'n30', corroborating but non-authoritative (different run than its graded one). Grader should accept either 'n30' or an explanation that n30 is register-driven with no PI-only combinational expression (optionally with the next-state function)."
+      },
+      "team_answers": {
+        "Team2": "The Boolean expression for n30 over the primary inputs is: n30",
+        "Team3": "The logic expression for n30 using only the primary input names is n30.",
+        "Team4": "The Boolean expression for n30 is: n30",
+        "Team7": "n30 is a registered output with no comb function over PIs; gave next-state expression n30_next = (n42 * ((!n2 * n30) + ...)) over n2, n20[0..9] and register outputs n20559-n20561."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 8,
+      "prompt": "Does a combinational path from n2 to n30 exist that avoids n4552?",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No combinational path from n2 to n30 exists that avoids n4552 (n30 is register-driven, so no combinational path from n2 reaches it at all).",
+        "notes": "All four full-score teams answer No. Unanimous."
+      },
+      "team_answers": {
+        "Team2": "No. No combinational path from n2 to n30 exists while avoiding n4552.",
+        "Team3": "No combinational path exists from n2 to n30 that avoids n4552.",
+        "Team4": "No. No such path exists.",
+        "Team7": "No, a combinational path from n2 to n30 avoiding n4552 does not exist."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "What is the maximum combinational depth from any primary input to any primary output in the entire design?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum combinational depth from any primary input to any primary output is 0 (every primary output is driven directly by a DFF, so no PI-to-PO combinational path exists).",
+        "notes": "Team3, Team4 and Team7 (all verified full-score) unanimously answer 0 - every primary output is driven directly by a DFF, so no PI-to-PO combinational path exists. Team2's exchanged log shows only a Netkit planner error here, but that log is a DIFFERENT run than Team2's graded one, so no scoring inference (lenient or otherwise) can be drawn from it. A checker should require 0 (or an equivalent 'no combinational PI-to-PO path' statement); do not accept a bare tool-error as correct."
+      },
+      "team_answers": {
+        "Team2": "Planner error: could not execute a valid Netkit command (logic_depth src='to' not a loaded signal). No numeric answer given.",
+        "Team3": "The maximum combinational depth from any PI to any PO is 0.",
+        "Team4": "The maximum combinational logic depth from primary_inputs to primary_outputs is 0.",
+        "Team7": "Maximum combinational depth is 0; lists all 343 endpoint outputs at depth 0."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Which output bit has the deepest fanin logic cone?",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": [0],
+        "must_names": ["n30"],
+        "expected": null,
+        "reference": "All 343 primary outputs tie at combinational fanin depth 0 (each is driven directly by a DFF); canonical witness/first output: n30.",
+        "notes": "All outputs tie at depth 0, so any tied output is technically correct. Team3/Team4 name n30 alone; Team2/Team7 list the full 343-output tie set (which includes n30, Team7 names n30 as witness). Checker: accept 'n30' or any answer that reports the depth-0 tie and includes n30; the depth value 0 should be stated."
+      },
+      "team_answers": {
+        "Team2": "Deepest output fanin-cone depth is 0; lists all 343 tied outputs (n30, n31, ..., n61[3]).",
+        "Team3": "The output bit with the deepest fanin cone is n30 with a depth of 0.",
+        "Team4": "The output with the deepest fan-in cone is n30, with combinational depth 0.",
+        "Team7": "All 343 candidates tie at max combinational depth 0 (full list given). Witness: n30."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "What is the fanout of primary input n0? List every gate that n0 drives directly.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [3802],
+        "must_names": null,
+        "expected": null,
+        "reference": "Primary input n0 has a fanout of 3802: it directly drives all 3802 DFFs (clock pins, instances g90, g91, g92, ... per the netlist); the full gate list is provided inline or written to a file.",
+        "notes": "All four full-score teams report 3802 (n0 is the clock feeding every DFF - consistent with the DFF count of 3802). The gradable objective number is 3802; the list may be given inline (Team4 enumerates g90...) or dumped to a file (Team2/Team3/Team7). Per domain prior, DFF loads MUST be counted - a 'DFF: 0' style answer would be wrong. Team7's inline 'Full list:' field was empty but pointed to test65_R5.txt and was still accepted."
+      },
+      "team_answers": {
+        "Team2": "n0 directly drives 3802 gates. Full list at netkit-output/test65-fanout_gates-0.txt.",
+        "Team3": "n0 drives 3802 gates directly; list written to testcase/test65/fanout_gates.txt.",
+        "Team4": "n0 drives 3,802 gate loads; enumerates driven gates inline (g90, g91, g92, ...).",
+        "Team7": "Fanout of n0 is 3802: all DFF control-pin loads (.CK/.RN/.SN); list written to test65_R5.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 12,
+      "prompt": "Please write the current design to the output file test65_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test65_out.v successfully.",
+        "notes": "All four teams confirm the write succeeded. Actual netlist correctness (AND/NOT-only basis, equivalence) is verified on the output file, not in the log."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test65_out.v successfully.",
+        "Team3": "The current design has been successfully written to test65_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to .../test65_out.v successfully.",
+        "Team7": "Design written to test65_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

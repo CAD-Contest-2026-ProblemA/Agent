@@ -1,0 +1,175 @@
+{
+  "case": "test58",
+  "max_score": 8,
+  "team_scores": {"Team2": 8, "Team3": 8, "Team4": 7, "Team7": 8},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test58.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test58\"; responses will be recorded to test58.log.",
+        "notes": "Any acknowledgment of starting testcase test58 is acceptable. All four teams gave a standard ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test58. Responses recorded to test58.log.",
+        "Team3": "The new testcase named test58 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test58. Responses recorded to test58.log. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase test58. Responses recorded to test58.log. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test58.v located in the directory testcase/test58/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test58/test58.v successfully (flat netlist, 128 gates including 8 DFFs).",
+        "notes": "Response must indicate a successful load. Gate-count detail is optional; Team3/Team4 said 128 gates, Team7 said 120 comb gates + 8 DFFs (same design, different bucketing), Team2 reported file size only. All accepted."
+      },
+      "team_answers": {
+        "Team2": "Loaded gate-level Verilog from testcase/test58/test58.v successfully. 152 lines (4684 bytes).",
+        "Team3": "Successfully loaded from testcase/test58/test58.v, containing 128 gates.",
+        "Team4": "Loaded successfully. Contains 128 gates. Single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 13 | PO: 10 | Gates: 120 | DFFs: 8."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 8, 15, 67, 23, 2, 5, 0, 8, 128],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 128 gates: AND 0, OR 8, NOT 15, NAND 67, NOR 23, XOR 2, XNOR 5, BUF 0, DFF 8.",
+        "notes": "All four teams report the identical breakdown; unanimous objective counts on the original netlist. Total 128 = 120 combinational + 8 DFFs."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 8, NOT 15, NAND 67, NOR 23, XOR 2, XNOR 5, BUF 0, DFF 8. Total 128.",
+        "Team3": "Total 128: AND 0, OR 8, NOT 15, NAND 67, NOR 23, XOR 2, XNOR 5, BUF 0, DFF 8.",
+        "Team4": "Total 128: AND 0, OR 8, NOT 15, NAND 67, NOR 23, XOR 2, XNOR 5, BUF 0, DFF 8.",
+        "Team7": "Total 128 (120 comb + 8 DFF): AND 0, OR 8, NOT 15, NAND 67, NOR 23, XOR 2, XNOR 5, BUF 0, DFF 8."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "List all register-to-register paths in this design through combinational logic.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [107],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 107 register-to-register paths through combinational logic; the full list is written to a file.",
+        "notes": "Gradable part in the log is the path count: 107 (Team2, Team3, Team7 all full-score, all agree; full listing typically dumped to a file). Team4 instead enumerated 36 reachable ordered DFF-instance pairs with one shortest representative route per pair and still received credit (its single lost point maps to line 6), so a pair-level enumeration with explicit routes appears acceptable to the grader; canonical answer remains 107 paths."
+      },
+      "team_answers": {
+        "Team2": "107 register-to-register combinational paths; list at netkit-output/test58-register_paths_paths-0.txt.",
+        "Team3": "107 register-to-register paths written to testcase/test58/register_paths_paths.txt.",
+        "Team4": "36 reachable ordered DFF-instance pairs, one shortest representative route per pair, routes listed inline (g15=>g15 etc.).",
+        "Team7": "107 register-to-register paths total; full list via result_page(R1), written to test58_R1.txt."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "What is the maximum combinational logic depth on any register-to-register path in this design?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [12],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum combinational logic depth on any register-to-register path is 12 (deepest endpoint g21).",
+        "notes": "Team3, Team4, Team7 all report 12 (Team3 and Team7 are full-score anchors). Anomaly: Team2 emitted a Netkit planner-failure message (no numeric answer) yet still scored 8/8 on this case, implying grading leniency or score noise on this line; a strict checker should require 12."
+      },
+      "team_answers": {
+        "Team2": "FAILED: planner could not execute a valid Netkit command (logic_depth src='register_paths' is not a loaded signal).",
+        "Team3": "Maximum combinational logic depth is 12.",
+        "Team4": "Maximum combinational logic depth is 12.",
+        "Team7": "Maximum depth is 12, deepest endpoint g21."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Which output (n7 or n8) has the largest fanin logic cone?",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": null,
+        "must_names": ["n8"],
+        "expected": null,
+        "reference": "Output n8 has the largest fanin logic cone (16 gates including the 8 boundary DFFs; 8 combinational gates vs 7 for n7).",
+        "notes": "The gradable essence is the name n8. Cone size is presentation-dependent among full-score teams: Team2/Team3 report 16 gates (comb gates + boundary DFFs, consistent with the official convention of counting DFFs in the cone), Team7 reports 8 gates depth 6 (comb-only) vs n7's 7 gates depth 5 — both accepted. Team4 failed to translate the request (semantic_validation_failed) and this is its one lost point on the case."
+      },
+      "team_answers": {
+        "Team2": "n8 has the largest fanin cone, containing 16 gates.",
+        "Team3": "n8, which has 16 gates in its cone.",
+        "Team4": "FAILED: could not translate request after 4 attempts (semantic_validation_failed: n7, n8 missing from command arguments).",
+        "Team7": "n8: 8 gates, max depth 6; n7: 7 gates, depth 5. n8 is largest."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Derive the Boolean equation for output n7. Express it in terms of the primary inputs.",
+      "category": "analysis",
+      "golden": {
+        "rule": "llm_judge",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "n7 = ~(n6[7] | n6[6] | n6[5] | n6[4] | n6[3] | n6[2] | n6[1] | n6[0]), i.e. n7 = 1 iff all bits of register bus n6[7:0] are 0 (equivalently the AND of all complements !n6[0]&...&!n6[7]).",
+        "notes": "All four teams give logically equivalent equations. Team2/Team3/Team4 give the structural nested form ~((n6[6]|n6[5])|(n6[4]|(n6[7]|~(~(n6[3]|n6[2])&~(n6[1]|n6[0]))))); Team7 gives the flattened product-of-complements form. Both simplify to NOR of n6[7:0]. Note all full-score teams express n7 in terms of register outputs n6[*] treated as primary inputs for combinational analysis (contest convention) — accept any logically equivalent expression over n6[7:0]."
+      },
+      "team_answers": {
+        "Team2": "n7 = (~((n6[6]|n6[5]) | (n6[4]|(n6[7]|(~((~(n6[3]|n6[2])) & (~(n6[1]|n6[0]))))))))",
+        "Team3": "n7 = ~((n6[6] | n6[5]) | (n6[4] | (n6[7] | ~(~(n6[3] | n6[2]) & ~(n6[1] | n6[0]))))) (same nested NOR form; log renders OR/AND as \\lor/\\land)",
+        "Team4": "n7 = (~((n6[6]|n6[5]) | (n6[4]|(n6[7]|(~((~(n6[3]|n6[2])) & (~(n6[1]|n6[0]))))))))",
+        "Team7": "n7 = !n6[0]*!n6[7]*!n6[5]*!n6[6]*!n6[2]*!n6[4]*!n6[1]*!n6[3] (register outputs treated as PIs)"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Please write the current design to the output file test58_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test58_out.v successfully.",
+        "notes": "Response must claim a successful write of test58_out.v; actual verification happens on the output netlist. All four teams succeeded."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test58_out.v successfully.",
+        "Team3": "Successfully written to test58_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to .../test58_out.v successfully.",
+        "Team7": "Design written to test58_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

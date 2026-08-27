@@ -1,0 +1,280 @@
+{
+  "case": "test14",
+  "max_score": 13,
+  "team_scores": {"Team2": 13, "Team3": 13, "Team4": 11, "Team7": 13},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test14.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test14 initialized; responses will be recorded to test14.log.",
+        "notes": "Any acknowledgment of starting testcase test14 is acceptable. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test14. Responses recorded to test14.log.",
+        "Team3": "The new testcase test14 has been set successfully.",
+        "Team4": "Acknowledged. Initialized testcase test14. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test14. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test14.v located in the directory testcase/test14/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test14/test14.v successfully (flat netlist, 15245 gates, 0 DFFs).",
+        "notes": "Response must indicate successful load. Gate total 15245 if reported must match. Team7 additionally reports PI: 977, PO: 46 (unverified by others but plausible). Path prefix differences (absolute vs relative) are irrelevant."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 17163 lines (633816 bytes) stored.",
+        "Team3": "Loaded successfully; total of 15,245 gates.",
+        "Team4": "Loaded successfully; 15,245 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully; Module top, PI 977, PO 46, Gates 15245, DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [2545, 3496, 3729, 2, 1465, 257, 3445, 306, 0, 15245],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 15245 gates: AND 2545, OR 3496, NOT 3729, NAND 2, NOR 1465, XOR 257, XNOR 3445, BUF 306, DFF 0.",
+        "notes": "All four teams report identical breakdown. DFF 0 is correct here (design is purely combinational), so the include-DFF prior does not change anything. All nine per-type counts plus total 15245 must match."
+      },
+      "team_answers": {
+        "Team2": "AND 2545, OR 3496, NOT 3729, NAND 2, NOR 1465, XOR 257, XNOR 3445, BUF 306, DFF 0; total 15245.",
+        "Team3": "Total 15,245: AND 2545, OR 3496, NOT 3729, NAND 2, NOR 1465, XOR 257, XNOR 3445, BUF 306, DFF 0.",
+        "Team4": "Total 15,245: AND 2545, OR 3496, NOT 3729, NAND 2, NOR 1465, XOR 257, XNOR 3445, BUF 306, DFF 0.",
+        "Team7": "Total 15,245: AND 2545, OR 3496, NOT 3729, NAND 2, NOR 1465, XOR 257, XNOR 3445, BUF 306, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n61 to n63[0] exists that does not traverse node n4363.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n61 to n63[0] exists that avoids n4363.",
+        "notes": "All four teams (three at full score) say the path exists. Response must affirm existence while avoiding n4363."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n61 to n63[0] exists avoiding n4363.",
+        "Team3": "Yes, such a path exists.",
+        "Team4": "Yes. A path avoiding n4363 exists.",
+        "Team7": "A path exists that does not traverse n4363 (affirmative)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n0[0] to output n63[1] exists while avoiding n141.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a path from n0[0] to n63[1] exists that avoids n141.",
+        "notes": "All four teams affirm existence. Response must affirm a path avoiding n141."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0[0] to n63[1] exists avoiding n141.",
+        "Team3": "Yes, such a path exists.",
+        "Team4": "Yes. A path avoiding n141 exists.",
+        "Team7": "A path exists while avoiding n141 (affirmative)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n0[0] and terminating at primary output n63[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [289366],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 289366 paths from n0[0] to n63[1]; the complete list was written to a file.",
+        "notes": "Per the register-path prior, the gradable part is the path COUNT: 289366, unanimously reported. Full list is expected in a file; file name/location is team-dependent. Team4 (11/13) additionally dumped a 50-path inline preview -- one of the two most likely spots Team4 lost a point (log format), since its count matches the full-score teams."
+      },
+      "team_answers": {
+        "Team2": "289366 paths; list at netkit-output/test14-list_paths_paths-0.txt.",
+        "Team3": "289,366 paths; list written to testcase/test14/list_paths_paths.txt.",
+        "Team4": "289,366 paths; file test14_resp6_list_paths.txt plus inline preview of first 50 paths.",
+        "Team7": "289366 paths; list written to test14_paths_n0_0__n63_1_.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n0[1] and n63[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [203810],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 203810 paths from n0[1] to n63[0]; the complete list was written to a file.",
+        "notes": "Gradable number is the path count 203810, unanimously reported. Team4's inline 50-path preview here is the other likely spot for its 2-point loss (format), since its count also matches the full-score teams."
+      },
+      "team_answers": {
+        "Team2": "203810 paths; list at netkit-output/test14-list_paths_paths-1.txt.",
+        "Team3": "203,810 paths; list written to testcase/test14/list_paths_paths_2.txt.",
+        "Team4": "203,810 paths; file test14_resp7_list_paths.txt plus inline preview of first 50 paths.",
+        "Team7": "203810 paths; list written to test14_paths_n0_1__n63_0_.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n61 to output n63[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [5],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from n61 to n63[0] is 5.",
+        "notes": "All four teams report 5. Team7 gives the witness path n61 -> g15232 -> g15223 -> g15222 -> g15216 -> g15240 -> n63[0] (5 gates). Team2 phrased it as depth 'of the current design' but still scored full, so the bare number 5 is what is graded."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 5 gate levels.",
+        "Team3": "Maximum logic depth from n61 to n63[0] is 5.",
+        "Team4": "Maximum combinational logic depth is 5.",
+        "Team7": "Depth 5; longest path n61->g15232->g15223->g15222->g15216->g15240->n63[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Determine the longest combinational path depth from n0[0] to n63[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [54],
+        "must_names": null,
+        "expected": null,
+        "reference": "The longest combinational path depth from n0[0] to n63[1] is 54.",
+        "notes": "All four teams report 54."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 54 gate levels.",
+        "Team3": "Longest combinational path depth is 54.",
+        "Team4": "Maximum combinational logic depth is 54.",
+        "Team7": "Depth 54; full path list stored (R1)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Calculate the critical path depth between n0[1] and n63[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [51],
+        "must_names": null,
+        "expected": null,
+        "reference": "The critical path depth between n0[1] and n63[0] is 51.",
+        "notes": "All four teams report 51."
+      },
+      "team_answers": {
+        "Team2": "Critical-path depth is 51.",
+        "Team3": "Critical path depth is 51.",
+        "Team4": "Maximum combinational logic depth is 51.",
+        "Team7": "Depth 51; full path list stored (R2)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "Determine the number of gates driven by g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "Gate g0 drives 1 gate (g13209).",
+        "notes": "All four teams report fanout count 1. Naming g13209 is optional here (it is required on line 12). Team4's terse 'Found 1 successor gate.' still carries the correct number."
+      },
+      "team_answers": {
+        "Team2": "g0 has 1 immediate successor gate.",
+        "Team3": "The number of gates driven by g0 is 1.",
+        "Team4": "Found 1 successor gate.",
+        "Team7": "g0 drives 1 gate, specifically the NOT gate g13209."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 12,
+      "prompt": "Enumerate the immediate successors of gate g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": [1],
+        "must_names": ["g13209"],
+        "expected": null,
+        "reference": "Gate g0 has exactly 1 immediate successor: g13209 (a NOT gate driving net n14837).",
+        "notes": "All four teams name g13209 as the sole successor. The name g13209 is required; count 1 should accompany it. Gate type NOT and output net n14837 (Team7) are optional extra detail."
+      },
+      "team_answers": {
+        "Team2": "1 immediate successor gate: g13209.",
+        "Team3": "Immediate successor is g13209; total 1.",
+        "Team4": "Found 1 successor gate: g13209.",
+        "Team7": "Immediate successor is NOT gate g13209, driving net n14837."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 13,
+      "prompt": "Please write the current design to the output file test14_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was written to test14_out.v successfully.",
+        "notes": "Response must claim a successful write of test14_out.v. Actual verification happens on the output netlist file. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Wrote current design to test14_out.v successfully.",
+        "Team3": "Design successfully written to test14_out.v.",
+        "Team4": "Wrote netlist to .../test14_out.v successfully.",
+        "Team7": "Design written to test14_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

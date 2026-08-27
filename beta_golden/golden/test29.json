@@ -1,0 +1,112 @@
+{
+  "case": "test29",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test29.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test29\"; responses will be recorded to test29.log.",
+        "notes": "Any acknowledgment that the testcase test29 has been started/set is acceptable. All four full-score teams gave simple acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test29. Responses recorded to test29.log.",
+        "Team3": "The new testcase named test29 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test29. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test29. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test29.v located in the directory testcase/test29/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test29/test29.v successfully (1834 gates total: 1629 combinational + 205 DFFs; module top, 42 PIs, 67 POs).",
+        "notes": "Response must indicate a successful load of testcase/test29/test29.v. Optional stats are consistent where reported: total 1834 gates (Team3/Team4), or 1629 comb gates + 205 DFFs (Team7). Team2 reported only file size/lines (2052 lines, 77650 bytes) and still scored full, so stats are not required."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test29/test29.v successfully; stored 2052 lines (77650 bytes).",
+        "Team3": "Loaded successfully; 1834 gates total.",
+        "Team4": "Loaded successfully; 1834 gates, single flat top module.",
+        "Team7": "Loaded successfully; module top, PI 42, PO 67, Gates 1629, DFFs 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 59, 268, 974, 284, 2, 42, 0, 205, 1834],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1834 gates: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205 (1629 combinational + 205 DFFs).",
+        "notes": "All four full-score teams report the identical breakdown AND:0 OR:59 NOT:268 NAND:974 NOR:284 XOR:2 XNOR:42 BUF:0 DFF:205, total 1834. All nine per-type counts must match; total 1834 must be stated or derivable from the breakdown."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205; total 1834.",
+        "Team3": "Total 1834: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team4": "1834 gates: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team7": "Total 1834: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205 (1629 comb + 205 DFF)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Found and collapsed 0 back-to-back inverter pairs; the design is unchanged and functional equivalence is trivially preserved.",
+        "notes": "Objective fact confirmed by all four full-score teams: the original netlist contains 0 back-to-back inverter pairs, so the transform is a no-op. Response must claim the operation was performed/attempted and convey the no-op result, either by the literal count 0 (Team4/Team7) or an explicit statement that no pairs were found / design unchanged (Team2 'found no matching logic', Team3 'no such pairs found') - the numeral 0 is NOT required. Reporting any nonzero pair count would be wrong. Output netlist should be identical/equivalent to the input."
+      },
+      "team_answers": {
+        "Team2": "Done. Rewrite not(not(x))->x found no matching logic; design unchanged.",
+        "Team3": "Operation executed; no changes made, no such pairs found.",
+        "Team4": "Applied 0 verified pattern rewrites. Functional equivalence preserved.",
+        "Team7": "Collapsed 0 pairs (0 NOT gates removed); re-scan confirms 0 pairs remain; nothing changed functionally."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test29_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test29_out.v successfully.",
+        "notes": "Response must indicate a successful write to test29_out.v. Since line 4 was a no-op, the written netlist should be functionally identical to the loaded test29.v."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test29_out.v successfully.",
+        "Team3": "Design successfully written to test29_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to test29_out.v successfully.",
+        "Team7": "Design written to test29_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

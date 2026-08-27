@@ -1,0 +1,133 @@
+{
+  "case": "test59",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test59.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test59\"; responses will be recorded to test59.log.",
+        "notes": "Any acknowledgment naming test59 and indicating readiness is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test59, responses recorded to test59.log.",
+        "Team3": "The new testcase named test59 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test59; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test59; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test59.v located in the directory testcase/test59/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test59/test59.v successfully (64,430 total instances incl. 4,211 DFFs).",
+        "notes": "Response must indicate successful load of testcase/test59/test59.v. Extra stats optional and presentation-dependent: Team3/Team4 report 64,430 gates (incl. DFFs); Team7 reports Gates: 60219 + DFFs: 4211 (same design, DFFs listed separately); Team2 reports file size/lines only. All scored full, so no specific number is required here."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 72419 lines (3084784 bytes).",
+        "Team3": "Loaded successfully, containing 64,430 gates.",
+        "Team4": "Loaded successfully; 64,430 gates; single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 51, PO 87, Gates 60219, DFFs 4211."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 3585, 4748, 35261, 8372, 355, 7748, 150, 4211],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 3585, NOT: 4748, NAND: 35261, NOR: 8372, XOR: 355, XNOR: 7748, BUF: 150, DFF: 4211; total 64,430 gates.",
+        "notes": "All four full-score teams report identical per-type counts on the original netlist. Total 64430 is optional but if stated must equal 64430. Every listed type must appear with the exact count (including AND: 0)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211; total 64430.",
+        "Team3": "Total 64,430: AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211.",
+        "Team4": "64,430 gates: AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211.",
+        "Team7": "Total 64,430: AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Convert every XNOR gate in this design to an equivalent NOR-only circuit. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "All 7,748 XNOR gates were converted to equivalent NOR-only circuits; functional equivalence preserved.",
+        "notes": "Response must claim successful conversion of all XNOR gates (7748 on the original netlist) with functionality/equivalence preserved. Actual verification happens on test59_out.v: it must contain zero XNOR gates and be logically equivalent. All four teams remapped 7748 XNORs; Team2/Team3 report gate-count delta +23244 (canonical 4-NOR-per-XNOR decomposition, net +3 gates each). Team7's before/after totals (60,219 -> 83,463) exclude DFFs while Team2/Team3 include them - both presentations scored full."
+      },
+      "team_answers": {
+        "Team2": "Matched/remapped 7748 gates to NOR basis; delta +23244; equivalence preserved.",
+        "Team3": "All 7,748 XNOR gates converted to NOR-only; +23,244 gates added.",
+        "Team4": "Matched 7,748 gates and remapped 7,748 to the NOR gate basis.",
+        "Team7": "7,748 XNORs rewritten; totals 60,219 -> 83,463 (excl. DFFs); NOR 8372 -> 39364; equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many NOR gates are now in the design after the XNOR-to-NOR conversion?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "39,364 NOR gates after the conversion (8,372 original + 7,748 XNORs x 4 NORs each = 39,364).",
+        "notes": "Post-transform count, so technically depends on the chosen XNOR decomposition; however ALL four full-score teams used the canonical 4-NOR-per-XNOR implementation and report exactly 39364. Treat 39364 as the expected value; a different self-consistent value should only be accepted if the team's own output netlist verifies it (NOR count matches netlist, zero XNORs, equivalence holds)."
+      },
+      "team_answers": {
+        "Team2": "39364 NOR gates.",
+        "Team3": "39,364 NOR gates.",
+        "Team4": "Design now 87,674 gates total; NOR: 39364.",
+        "Team7": "39,364 NOR gates."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test59_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test59_out.v successfully.",
+        "notes": "Response must indicate successful write of test59_out.v. The output netlist is separately checked for zero XNOR gates and equivalence to the original design."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test59_out.v successfully.",
+        "Team3": "Successfully written to test59_out.v.",
+        "Team4": "Wrote netlist to test59_out.v successfully (absolute path shown).",
+        "Team7": "Design written to test59_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

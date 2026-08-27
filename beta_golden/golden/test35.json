@@ -1,0 +1,133 @@
+{
+  "case": "test35",
+  "max_score": 6,
+  "team_scores": {"Team2": 5, "Team3": 5.33, "Team4": 5.38, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test35.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test35 initialized; responses will be logged to test35.log.",
+        "notes": "Any acknowledgment of testcase start counts. All 4 teams acknowledged successfully."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test35. Responses recorded to test35.log.",
+        "Team3": "The new testcase named test35 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test35. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test35. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test35.v located in the directory testcase/test35/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test35/test35.v successfully (5680 gates total incl. 847 DFFs; PI: 76, PO: 135).",
+        "notes": "Must indicate successful load. Extra stats optional; if a gate total is given it should be 5680 (Team3/Team4 report 5680; Team7 splits 4833 comb gates + 847 DFFs = 5680, both consistent)."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 6315 lines (258286 bytes).",
+        "Team3": "Loaded successfully, 5680 gates total.",
+        "Team4": "Loaded successfully. 5,680 gates, single flat top module.",
+        "Team7": "Loaded successfully. Module top, PI 76, PO 135, Gates 4833, DFFs 847."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [5680, 0, 130, 276, 4073, 308, 7, 39, 0, 847],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 5680 gates: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "notes": "All 4 teams report identical breakdown on the original netlist. Order of must_numbers: total, AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF. Every type row must be present including the zeros (AND 0, BUF 0)."
+      },
+      "team_answers": {
+        "Team2": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team3": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team4": "5,680 gates: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team7": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Decompose all XOR gates in the fanin cone of n2281 into AND, OR, and NOT gates without changing functionality.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Decomposed the XOR gates in the fanin cone of n2281 into AND/OR/NOT (XOR -> (A AND NOT B) OR (NOT A AND B)); functionality preserved.",
+        "notes": "Transform must claim success and functional equivalence; real verification is on the output netlist (no XOR left in the cone of n2281). Netlist-verified ground truth: the combinational-only cone of n2281 contains exactly 1 XOR (g5499); the through-DFF cone contains 6 XORs (g5499,g5500,g5519,g5520,g5599,g5600). Team7's reported 7 adds g5594, which is NOT in the cone (its fanout n4910->g5081->n669 never reaches n2281) - 7 is simply all XORs in the design, a superset; decomposing extras is functionally harmless and Team7 scored 6/6, so it was credited. Team3/Team4 (1 XOR, comb-only cone) also got full credit: their fractional losses (5.33/5.38) are fully explained by line-5 QoR partials. Accept any of 1 / 6 / 7 XORs, or no count at all, as long as success + equivalence is claimed. Team2's 'no matching gates in the cone' contradicts the netlist (g5499 is in even the strictest cone) and comes from a non-graded run; it is not acceptable."
+      },
+      "team_answers": {
+        "Team2": "Done. 'No matching gates in the cone of the required remapping to the AND,OR,NOT basis.'",
+        "Team3": "1 XOR gate remapped, 7 new gates added; decomposition successful.",
+        "Team4": "Matched 1 gate and remapped 1 to the AND,OR,NOT basis.",
+        "Team7": "7 XOR gates in the cone (g5499,g5500,g5519,g5520,g5594,g5599,g5600) decomposed via (A AND NOT B) OR (NOT A AND B)."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 5,
+      "prompt": "Optimize the logic to minimize maximum path depth, ensuring the cone of n2281 contains only AND, OR, and NOT gates. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Best observed: max logic depth reduced 35 -> 12 (Team7). Initial depth of the design is 35 for all teams.",
+        "notes": "QoR line scored relatively across teams; smaller final depth is better. Achieved depths: Team7 12 (best, full credit), Team3 24, Team4 32, Team2 failed (planner error, no optimization -> 0). Fractional case scores (5.33, 5.38) come from partial credit here, not wrong facts. Checker sanity checks: response claims success + functional equivalence, initial depth 35 matches the original netlist, final depth matches the team's own output netlist, and the n2281 cone in the output contains only AND/OR/NOT. Note Team4 (depth 32) scored marginally above Team3 (depth 24), so the exact QoR formula may include factors beyond depth (Team3's gate count ballooned 5687 -> 7411)."
+      },
+      "team_answers": {
+        "Team2": "FAILED: planner could not execute a valid command (optimize_depth target='final' is not a loaded signal).",
+        "Team3": "Depth 35 -> 24; gates 5687 -> 7411; functionality preserved.",
+        "Team4": "Depth 35 -> 32; gates 5,684 -> 5,511; optimized successfully.",
+        "Team7": "Depth 35 -> 12 via whole-design ABC restructuring, converged in 2 iterations."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test35_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Design written to test35_out.v successfully.",
+        "notes": "Must indicate successful write of test35_out.v. All 4 teams succeeded."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test35_out.v successfully.",
+        "Team3": "Successfully written to test35_out.v.",
+        "Team4": "Wrote netlist to test35_out.v successfully.",
+        "Team7": "Design written to test35_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

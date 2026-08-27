@@ -1,0 +1,112 @@
+{
+  "case": "test32",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 4},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test32.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test32\"; subsequent responses will be recorded to test32.log.",
+        "notes": "Any acknowledgment that the testcase test32 has been started/initialized is acceptable. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test32. Responses recorded to test32.log.",
+        "Team3": "The new testcase named test32 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test32. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test32. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test32.v located in the directory testcase/test32/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test32/test32.v successfully (5680 gates total including 847 DFFs).",
+        "notes": "Must claim successful load of testcase/test32/test32.v. Extra stats optional: Team3/Team4 report 5680 total gates; Team7 reports PI:76 PO:135 Gates:4833 DFFs:847 (4833+847=5680, consistent); Team2 reports file size only. All scored full, so no specific number is required."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test32/test32.v successfully. Stored 6315 lines (258286 bytes).",
+        "Team3": "Loaded successfully, containing a total of 5680 gates.",
+        "Team4": "Loaded successfully. 5,680 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 76 | PO: 135 | Gates: 4833 | DFFs: 847"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 130, 276, 4073, 308, 7, 39, 0, 847, 5680],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 5680 gates: AND=0, OR=130, NOT=276, NAND=4073, NOR=308, XOR=7, XNOR=39, BUF=0, DFF=847.",
+        "notes": "All four teams report the identical breakdown; unanimous, treat as ground truth. Response must include the per-type counts; total 5680 = 4833 comb + 847 DFF."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680.",
+        "Team3": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team4": "5,680 gates: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team7": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Decompose all XOR gates in the fanin cone of n2281 into AND, OR, and NOT gates without changing functionality.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Done. Decomposed the XOR gates in the fanin cone of n2281 into AND/OR/NOT gates with functionality preserved: 1 XOR (g5500, inputs n83/n4898) matched and remapped.",
+        "notes": "Checker: response must clearly claim the decomposition was PERFORMED on the design (functionality preserved); output netlist should have no XOR left in the cone of n2281. Reliable evidence (Team3/Team4/Team7 only): full-score Team3 and Team4 both report exactly 1 XOR matched and remapped (Team3: +7 new gates), and Team7 independently identifies the same single XOR g5500 (inputs n83/n4898) in the cone, so the consensus is 1 XOR in the cone. The matched count is not hard-required (grading centers on the applied-transform claim plus the output netlist) but must be self-consistent with the team's own netlist. Team7 (4/5) only gave a textbook explanation of how g5500 COULD be decomposed (A xor B = (A and not B) or (not A and B)) without stating the transform was applied -- almost certainly Team7's lost point. Team2's exchanged log is a different run from its graded one and is not score-anchorable; its 'no matching XOR in cone' answer is noted only as evidence that cone extraction is tool-dependent, not as an accepted graded answer."
+      },
+      "team_answers": {
+        "Team2": "Done. No matching gates in the cone for remapping to AND,OR,NOT basis (claims 0 XOR in cone).",
+        "Team3": "Successfully decomposed: 1 XOR matched and remapped, adding 7 new gates.",
+        "Team4": "Matched 1 gate and remapped 1 to the requested AND,OR,NOT gate basis.",
+        "Team7": "Identifies XOR g5500 (n83, n4898) and explains the A xor B = (A and !B) or (!A and B) decomposition, but never states the transform was actually applied."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test32_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test32_out.v successfully.",
+        "notes": "Any success claim for writing test32_out.v is acceptable. All four teams answered equivalently; actual verification happens on the output netlist file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test32_out.v successfully.",
+        "Team3": "Successfully written to test32_out.v.",
+        "Team4": "Wrote current netlist to test32_out.v successfully.",
+        "Team7": "Design written to test32_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

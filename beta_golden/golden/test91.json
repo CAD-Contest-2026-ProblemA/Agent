@@ -1,0 +1,291 @@
+{
+ "case": "test91",
+ "max_score": 11,
+ "team_scores": {
+  "Team2": 9,
+  "Team3": 9,
+  "Team4": 9,
+  "Team7": 9
+ },
+ "lines": [
+  {
+   "line": 1,
+   "prompt": "This is the beginning of a new testcase. The case name is test91.",
+   "category": "ack",
+   "golden": {
+    "rule": "ack",
+    "must_numbers": null,
+    "must_names": null,
+    "expected": null,
+    "reference": "Acknowledged. Testcase test91 initialized; responses will be recorded to test91.log.",
+    "notes": "Any acknowledgment naming test91 counts. All four teams answered equivalently."
+   },
+   "team_answers": {
+    "Team2": "Acknowledged. Initialized testcase test91. Responses recorded to test91.log.",
+    "Team3": "The new testcase named test91 has been set.",
+    "Team4": "Acknowledged. Initialized testcase test91. Design state empty and ready.",
+    "Team7": "Acknowledged. Initialized testcase test91. Design state empty and ready."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  },
+  {
+   "line": 2,
+   "prompt": "Please load the design from the file test91.v located in the directory testcase/test91/.",
+   "category": "load",
+   "golden": {
+    "rule": "ack",
+    "must_numbers": null,
+    "must_names": null,
+    "expected": null,
+    "reference": "Loaded gate-level Verilog testcase/test91/test91.v successfully (25,996 gates including 2,585 DFFs).",
+    "notes": "Success claim is the gradable part. Extra stats vary by presentation: Team2 reported file lines/bytes, Team3/Team4 reported 25,996 total gates, Team7 reported 23,411 comb gates + 2,585 DFFs (= 25,996). All acceptable."
+   },
+   "team_answers": {
+    "Team2": "Loaded successfully; stored 29014 lines (1233377 bytes) as current design.",
+    "Team3": "Loaded successfully; 25,996 gates total.",
+    "Team4": "Loaded successfully; 25,996 gates; single flat top module.",
+    "Team7": "Loaded successfully; Module top, PI:109, PO:134, Gates:23411, DFFs:2585."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  },
+  {
+   "line": 3,
+   "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+   "category": "analysis",
+   "golden": {
+    "rule": "exact_number",
+    "must_numbers": [
+     0,
+     955,
+     1514,
+     17350,
+     3158,
+     18,
+     397,
+     19,
+     2585,
+     25996
+    ],
+    "must_names": null,
+    "expected": null,
+    "reference": "Total 25,996 gates: AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585.",
+    "notes": "All four teams reported identical breakdowns. Every per-type count must match; total 25996 must be stated or derivable."
+   },
+   "team_answers": {
+    "Team2": "AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585; total 25996.",
+    "Team3": "AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585; total 25996.",
+    "Team4": "AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585; total 25996.",
+    "Team7": "AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585; total 25996."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  },
+  {
+   "line": 4,
+   "prompt": "List all primary outputs of this design with their bit widths.",
+   "category": "analysis",
+   "golden": {
+    "rule": "name_set",
+    "must_numbers": null,
+    "must_names": [
+     "n9",
+     "n10",
+     "n11",
+     "n12",
+     "n13",
+     "n14",
+     "n15"
+    ],
+    "expected": null,
+    "reference": "7 primary output ports: n9[31:0] (32b), n10[31:0] (32b), n11[31:0] (32b), n12[31:0] (32b), n13 (1b), n14 (1b), n15[3:0] (4b).",
+    "notes": "All four teams listed the identical 7 ports. Widths must be present or implied by the [31:0]/[3:0] notation; n13/n14 are scalar (1-bit). Order does not matter. The explicit count '7' is NOT required: Team2 and Team3 listed the ports without stating a count and still passed, so must_numbers is null (matches convention of test64/test76/test88 port-listing lines)."
+   },
+   "team_answers": {
+    "Team2": "n13, n14, n9[31:0], n10[31:0], n11[31:0], n12[31:0], n15[3:0].",
+    "Team3": "n13, n14, n9[31:0], n10[31:0], n11[31:0], n12[31:0], n15[3:0].",
+    "Team4": "7 primary outputs: n13, n14, n9[31:0], n10[31:0], n11[31:0], n12[31:0], n15[3:0].",
+    "Team7": "n10 32b, n11 32b, n12 32b, n13 1b, n14 1b, n15 4b, n9 32b."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  },
+  {
+   "line": 5,
+   "prompt": "List all XOR gates in this design.",
+   "category": "analysis",
+   "golden": {
+    "rule": "name_set",
+    "must_numbers": [
+     18
+    ],
+    "must_names": [
+     "g1012",
+     "g18884",
+     "g18885",
+     "g18904",
+     "g18905",
+     "g19036",
+     "g19038",
+     "g19493",
+     "g19531",
+     "g19579",
+     "g19620",
+     "g19668",
+     "g19709",
+     "g19757",
+     "g19798",
+     "g19846",
+     "g19887",
+     "g19935"
+    ],
+    "expected": null,
+    "reference": "There are 18 XOR gates: g1012, g18884, g18885, g18904, g18905, g19036, g19038, g19493, g19531, g19579, g19620, g19668, g19709, g19757, g19798, g19846, g19887, g19935.",
+    "notes": "Count 18 confirmed 4/4. Team2, Team4, Team7 listed identical instance names inline; Team3 reported count 18 and wrote the list to a file (accepted, so 'count + list-in-file' is an acceptable presentation). Pin details (Team2) are optional extra."
+   },
+   "team_answers": {
+    "Team2": "Found 18 XOR gates; listed all with inputs/outputs (g1012 ... g19935).",
+    "Team3": "18 XOR gates; complete list written to testcase/test91/list_gates_gates.txt.",
+    "Team4": "Found 18 XOR gate instances; listed g1012 ... g19935 by name.",
+    "Team7": "18 XOR gates; listed g1012 ... g19935 by name."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  },
+  {
+   "line": 6,
+   "prompt": "What is the maximum combinational depth on any register-to-register path in this design?",
+   "category": "analysis",
+   "golden": {
+    "rule": "exact_number",
+    "must_numbers": [
+     104
+    ],
+    "must_names": null,
+    "expected": null,
+    "reference": "The maximum combinational depth on any register-to-register path is 104.",
+    "notes": "3/4 consensus (Team3, Team4, Team7 all report 104). Team2 answered '2585 register-to-register combinational paths' - it reported a path COUNT instead of the requested depth; this is confirmed as one of Team2's two lost points (see line 7 score arithmetic). 104 being official is also required for Team3/Team4/Team7 to reach 9/11."
+   },
+   "team_answers": {
+    "Team2": "There are 2585 register-to-register combinational paths (answered path count, not depth).",
+    "Team3": "Maximum reg-to-reg combinational depth is 104.",
+    "Team4": "Maximum combinational logic depth is 104.",
+    "Team7": "Max depth 104; 27 deepest endpoint instances (g2153, g2175, g2181, ...)."
+   },
+   "agreement": "3/4",
+   "confidence": "high"
+  },
+  {
+   "line": 7,
+   "prompt": "Report the D input logic of the flip-flops to report any existing enable or hold structures implemented through multiplexers or AND gates.",
+   "category": "analysis",
+   "golden": {
+    "rule": "llm_judge",
+    "must_numbers": null,
+    "must_names": null,
+    "expected": null,
+    "reference": "Report of enable/hold structures in DFF D-input logic. Official count UNKNOWN, but reliable-team score arithmetic RULES OUT 1796 (Team3), 1474 (Team4) and 1817 (Team7); remaining candidates are 721 (non-authoritative Team2 run) or an unobserved value (netlist self-loop count is 2213). Line 8 must be self-consistent with the team's own line 7.",
+    "notes": "Observed values: Team2-exchange-log=721, Team4=1474, Team3=1796, Team7=1817. Team2 caveat: the exchanged Team2 log is a DIFFERENT RUN than the graded one, so score-based reasoning about 721 is INVALID; 721 is only evidence of a plausible answer. Score arithmetic on reliable teams (Team3/Team4/Team7 all 9/11, each losing exactly 2 points): their answers are equivalent on every other line except the line-10 cone size (29 vs 22, which cannot be the differentiator since Team3 and Team4/Team7 scored identically), so the only consistent assignment is that all three lost lines 7 AND 8 — hence 1796, 1474 and 1817 are all NOT the official count. CORRECTED netlist facts (verified by independent traversal of test91.v): 2213 of the 2585 DFFs DO have their own Q in their combinational D-input cone (self-loop hold structures) — the earlier claim of zero was wrong. Team7's 1817 = DFFs whose D is driven by a NAND ((EN&DATA)|(!EN&Q) NAND-mux pattern), and 1817 + Team7's 396 exclusions = 2213 exactly. D-driver histogram: NAND 1817, NOR 279, OR 275, NOT 106, direct DFF-Q 106, PI/const 2. Official pattern definition and count remain unknown; grade via llm_judge for a reasonable enable/hold report, treating 721 and 2213 as the only unrefuted numeric candidates."
+   },
+   "team_answers": {
+    "Team2": "D input logic of the DFFs contains 721 enable/hold structures.",
+    "Team3": "1,796 instances; list written to testcase/test91/sequential_input_logic_gates.txt.",
+    "Team4": "Found 1,474 enable/hold registers; enumerated g1274 ... g3842 inline.",
+    "Team7": "1,817 FFs with enable/hold via (EN&DATA)|(!EN&Q); 396 excluded; list in test91_R1.txt."
+   },
+   "agreement": "1/4",
+   "confidence": "low"
+  },
+  {
+   "line": 8,
+   "prompt": "How many flip-flops were found to have enable or hold structures in their D input logic?",
+   "category": "analysis",
+   "golden": {
+    "rule": "llm_judge",
+    "must_numbers": null,
+    "must_names": null,
+    "expected": null,
+    "reference": "Report of enable/hold structures in DFF D-input logic. Official count UNKNOWN, but reliable-team score arithmetic RULES OUT 1796 (Team3), 1474 (Team4) and 1817 (Team7); remaining candidates are 721 (non-authoritative Team2 run) or an unobserved value (netlist self-loop count is 2213). Line 8 must be self-consistent with the team's own line 7.",
+    "notes": "Observed values: Team2-exchange-log=721, Team4=1474, Team3=1796, Team7=1817. Team2 caveat: the exchanged Team2 log is a DIFFERENT RUN than the graded one, so score-based reasoning about 721 is INVALID; 721 is only evidence of a plausible answer. Score arithmetic on reliable teams (Team3/Team4/Team7 all 9/11, each losing exactly 2 points): their answers are equivalent on every other line except the line-10 cone size (29 vs 22, which cannot be the differentiator since Team3 and Team4/Team7 scored identically), so the only consistent assignment is that all three lost lines 7 AND 8 — hence 1796, 1474 and 1817 are all NOT the official count. CORRECTED netlist facts (verified by independent traversal of test91.v): 2213 of the 2585 DFFs DO have their own Q in their combinational D-input cone (self-loop hold structures) — the earlier claim of zero was wrong. Team7's 1817 = DFFs whose D is driven by a NAND ((EN&DATA)|(!EN&Q) NAND-mux pattern), and 1817 + Team7's 396 exclusions = 2213 exactly. D-driver histogram: NAND 1817, NOR 279, OR 275, NOT 106, direct DFF-Q 106, PI/const 2. Official pattern definition and count remain unknown; grade via llm_judge for a reasonable enable/hold report, treating 721 and 2213 as the only unrefuted numeric candidates."
+   },
+   "team_answers": {
+    "Team2": "721 flip-flops (consistent with own line 7).",
+    "Team3": "1,796 flip-flops (consistent with own line 7).",
+    "Team4": "1,474 (quotes sequential_enable_hold from previous command).",
+    "Team7": "1,817 flip-flops (consistent with own line 7; list in test91_R2.txt)."
+   },
+   "agreement": "1/4",
+   "confidence": "low"
+  },
+  {
+   "line": 9,
+   "prompt": "What type of gate is g0? Report its gate type and pin connections.",
+   "category": "analysis",
+   "golden": {
+    "rule": "name_set",
+    "must_numbers": null,
+    "must_names": [
+     "NOT",
+     "n11[7]",
+     "n18413"
+    ],
+    "expected": null,
+    "reference": "g0 is a NOT gate: input A = n18413, output Y = n11[7].",
+    "notes": "3/4 consensus (Team3, Team4, Team7 identical: NOT, Y=n11[7], A=n18413). Team2 answered that it had no information about g0 - a non-answer, confirmed as Team2's second lost point (see line 7 score arithmetic). Response must name the type NOT and both nets."
+   },
+   "team_answers": {
+    "Team2": "No information available about gate type or pins of g0 (failed to answer).",
+    "Team3": "g0 is NOT; Output Y = n11[7], Input A = n18413.",
+    "Team4": "g0 is a NOT gate with pins {Y: n11[7], A: n18413}.",
+    "Team7": "g0 is a NOT gate; drives n11[7], input n18413."
+   },
+   "agreement": "3/4",
+   "confidence": "high"
+  },
+  {
+   "line": 10,
+   "prompt": "Which output has the largest fanin cone?",
+   "category": "analysis",
+   "golden": {
+    "rule": "name_set",
+    "must_numbers": null,
+    "must_names": [
+     "n11[16]"
+    ],
+    "expected": null,
+    "reference": "The largest fanin cone belongs to n11[16] (tied with n11[17]-n11[23]): 29 gates when boundary DFFs are included (22 combinational gates + 7 DFFs).",
+    "notes": "All four teams identify n11[16] (Team2/Team3/Team7 also list the 8-way tie n11[16]..n11[23]). Cone SIZE splits 2v2: Team2/Team3 say 29, Team4/Team7 say 22; difference of 7 matches the domain prior that the official golden INCLUDES boundary DFFs in the cone (29 = 22 comb + 7 DFFs), so prefer 29 but accept 22 if explicitly comb-only, since teams on both sides scored identically. The gradable essence is naming n11[16] (or any member of the tied set with the tie noted)."
+   },
+   "team_answers": {
+    "Team2": "Largest cone has 29 gates; tied outputs n11[16], n11[17], ..., n11[23].",
+    "Team3": "n11[16] with 29 gates in its cone; 8 tied outputs n11[16]..n11[23].",
+    "Team4": "n11[16], containing 22 gates.",
+    "Team7": "n11[16]..n11[23] tied at 22 gates each; list in test91_R3.txt."
+   },
+   "agreement": "4/4",
+   "confidence": "medium"
+  },
+  {
+   "line": 11,
+   "prompt": "Please write the current design to the output file test91_out.v.",
+   "category": "write",
+   "golden": {
+    "rule": "ack",
+    "must_numbers": null,
+    "must_names": null,
+    "expected": null,
+    "reference": "Wrote the current design to test91_out.v successfully.",
+    "notes": "Success claim in the log; actual file content is verified separately. All four teams claimed success."
+   },
+   "team_answers": {
+    "Team2": "Wrote the current design to test91_out.v successfully.",
+    "Team3": "Design successfully written to test91_out.v.",
+    "Team4": "Wrote current gate-level Verilog netlist to test91_out.v successfully.",
+    "Team7": "Design written to test91_out.v."
+   },
+   "agreement": "4/4",
+   "confidence": "high"
+  }
+ ]
+}

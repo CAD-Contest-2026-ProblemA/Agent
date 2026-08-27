@@ -1,0 +1,175 @@
+{
+  "case": "test09",
+  "max_score": 8,
+  "team_scores": {"Team2": 8, "Team3": 8, "Team4": 8, "Team7": 8},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test09.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test09\"; responses will be recorded to test09.log.",
+        "notes": "Any acknowledgment that the testcase test09 has been started/set is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test09. Responses recorded to test09.log.",
+        "Team3": "The new testcase named test09 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test09. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test09. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test09.v located in the directory testcase/test09/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test09/test09.v successfully (1981 gates, 0 DFFs).",
+        "notes": "Must claim successful load of test09.v. Optional stats seen: 1981 gates; Team7 also reports PI: 96, PO: 285, DFFs: 0, module top. Absolute vs relative path in the message is irrelevant."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 2221 lines (73482 bytes) as current design.",
+        "Team3": "Loaded successfully; contains 1981 gates.",
+        "Team4": "Loaded successfully; 1981 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 96, PO 285, Gates 1981, DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [439, 328, 549, 0, 248, 44, 195, 178, 0, 1981],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1981 gates: AND 439, OR 328, NOT 549, NAND 0, NOR 248, XOR 44, XNOR 195, BUF 178, DFF 0.",
+        "notes": "All four full-score teams report the identical breakdown. DFF count is genuinely 0 in this design (purely combinational netlist), so 'DFF: 0' is correct here, unlike cone questions in other cases. Total 1981 = sum of the breakdown."
+      },
+      "team_answers": {
+        "Team2": "AND 439, OR 328, NOT 549, NAND 0, NOR 248, XOR 44, XNOR 195, BUF 178, DFF 0; total 1981.",
+        "Team3": "Total 1981: AND 439, OR 328, NOT 549, NAND 0, NOR 248, XOR 44, XNOR 195, BUF 178, DFF 0.",
+        "Team4": "1981 gates: AND 439, OR 328, NOT 549, NAND 0, NOR 248, XOR 44, XNOR 195, BUF 178, DFF 0.",
+        "Team7": "Total 1981: AND 439, OR 328, NOT 549, NAND 0, NOR 248, XOR 44, XNOR 195, BUF 178, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n0 to n117[0] exists that does not traverse node n1816.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes. A combinational path from n0 to n117[0] exists that does not traverse node n1816.",
+        "notes": "Teams 2/3/4 (all full score) answer Yes, path avoiding n1816 exists. Team7 (also full score) instead states 'a path from n0 to n117[0] through n1816 does not exist' - a logically compatible fact that the grader accepted. Independently verified on the netlist: n117[0] IS reachable from n0, and n1816 is NOT in the transitive fanout of n0 at all, so both statements are true (every existing path avoids n1816). Golden answer for the literal question is YES such a path exists; a checker should also accept Team7-style phrasing asserting no path traverses n1816."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0 to n117[0] avoiding n1816 exists.",
+        "Team3": "Yes, a combinational path avoiding n1816 exists.",
+        "Team4": "Yes. Path avoiding n1816 exists.",
+        "Team7": "No, a path from n0 to n117[0] through n1816 does not exist. (i.e. all paths avoid n1816; accepted at full score)"
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n1 to output n117[1] exists while avoiding n1646.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No combinational path from n1 to n117[1] exists while avoiding n1646.",
+        "notes": "All four full-score teams answer No. Consistent with line 6, where zero paths from n1 to n117[1] exist at all, so trivially none exists avoiding n1646."
+      },
+      "team_answers": {
+        "Team2": "No. No path from n1 to n117[1] avoiding n1646 exists.",
+        "Team3": "No, such a path does not exist.",
+        "Team4": "No. No path avoiding n1646 exists.",
+        "Team7": "No, a path avoiding n1646 does not exist."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n1 and terminating at primary output n117[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no combinational paths from n1 to n117[1] (0 paths found).",
+        "notes": "All four full-score teams report zero paths, so the enumeration is empty. Response must state that no paths exist (equivalently 'found 0 paths'); no file listing needed since the set is empty. Rule is yes_no (not exact_number) because Teams 2/3/7 phrase it as 'no paths' without the digit 0. Verified against the netlist: n117[1] is not in the transitive fanout of n1."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n1 to n117[1].",
+        "Team3": "There are no combinational paths from n1 to n117[1].",
+        "Team4": "Found 0 combinational paths from n1 to n117[1]; enumeration empty.",
+        "Team7": "There are no paths from n1 to n117[1]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n2 and n117[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no combinational paths from n2 to n117[0] (0 paths found).",
+        "notes": "All four full-score teams report zero paths, so the enumeration is empty. Response must state that no paths exist (equivalently 'found 0 paths'). Rule is yes_no (not exact_number) because Teams 2/3/7 phrase it as 'no paths' without the digit 0. Verified against the netlist: n117[0] is not in the transitive fanout of n2."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n2 to n117[0].",
+        "Team3": "There are no combinational paths from n2 to n117[0].",
+        "Team4": "Found 0 combinational paths from n2 to n117[0]; enumeration empty.",
+        "Team7": "There are no paths from n2 to n117[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Please write the current design to the output file test09_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test09_out.v successfully.",
+        "notes": "Must claim the netlist was written to test09_out.v. Since no transforms were requested in this case, the output netlist should be equivalent to the loaded design."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test09_out.v successfully.",
+        "Team3": "Successfully written to test09_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test09_out.v successfully.",
+        "Team7": "Design written to test09_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

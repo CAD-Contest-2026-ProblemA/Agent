@@ -1,0 +1,196 @@
+{
+  "case": "test10",
+  "max_score": 9,
+  "team_scores": {"Team2": 9, "Team3": 9, "Team4": 9, "Team7": 9},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test10.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test10\"; responses will be recorded to test10.log.",
+        "notes": "Any acknowledgment that the testcase test10 has begun is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test10. Responses recorded to test10.log.",
+        "Team3": "The new testcase named test10 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test10. Responses recorded to test10.log. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase test10. Responses recorded to test10.log. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test10.v located in the directory testcase/test10/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test10/test10.v successfully (4836 gates, 0 DFFs).",
+        "notes": "Must indicate successful load of test10.v. Optional stats are fine; if a gate count is stated it should be 4836 (Team3/Team4/Team7 report 4836 gates; Team7 also reports PI=121, PO=17, DFFs=0)."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test10/test10.v successfully; 5453 lines / 186565 bytes stored.",
+        "Team3": "Successfully loaded testcase/test10/test10.v, total 4836 gates.",
+        "Team4": "Loaded test10.v successfully; 4,836 gates, single flat top module.",
+        "Team7": "Loaded test10.v successfully. Module top, PI 121, PO 17, Gates 4836, DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [4836, 903, 1076, 1293, 0, 339, 82, 807, 336, 0],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4836 gates: AND 903, OR 1076, NOT 1293, NAND 0, NOR 339, XOR 82, XNOR 807, BUF 336, DFF 0.",
+        "notes": "All four full-score teams report identical breakdown. Every per-type count must match; total 4836 = sum of the breakdown. NAND=0 and DFF=0 must be explicitly reported (purely combinational netlist)."
+      },
+      "team_answers": {
+        "Team2": "Total 4836: AND 903, OR 1076, NOT 1293, NAND 0, NOR 339, XOR 82, XNOR 807, BUF 336, DFF 0.",
+        "Team3": "Total 4836: AND 903, OR 1076, NOT 1293, NAND 0, NOR 339, XOR 82, XNOR 807, BUF 336, DFF 0.",
+        "Team4": "Total 4836: AND 903, OR 1076, NOT 1293, NAND 0, NOR 339, XOR 82, XNOR 807, BUF 336, DFF 0.",
+        "Team7": "Total 4836: AND 903, OR 1076, NOT 1293, NAND 0, NOR 339, XOR 82, XNOR 807, BUF 336, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n12 to n25[0] exists that does not traverse node n1127.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes. A combinational path from n12 to n25[0] exists that avoids node n1127.",
+        "notes": "Unanimous yes across all four full-score teams. Response must affirm existence of such an n1127-avoiding path."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n12 to n25[0] exists avoiding n1127.",
+        "Team3": "Yes, such a path exists that does not traverse n1127.",
+        "Team4": "Yes. Path avoiding n1127 exists.",
+        "Team7": "A path from n12 to n25[0] avoiding n1127 exists."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n13 to output n25[1] exists while avoiding n4156.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No combinational path from n13 to n25[1] exists while avoiding n4156.",
+        "notes": "Unanimous no across all four full-score teams. Consistent with line 6 which shows there are zero n13->n25[1] paths at all, so none exist avoiding n4156 either."
+      },
+      "team_answers": {
+        "Team2": "No. No path from n13 to n25[1] avoiding n4156.",
+        "Team3": "No, such a path does not exist while avoiding n4156.",
+        "Team4": "No. No path avoiding n4156 exists.",
+        "Team7": "A path from n13 to n25[1] avoiding n4156 does not exist."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n13 and terminating at primary output n25[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no paths from n13 to n25[1] (0 paths found).",
+        "notes": "All four full-score teams report an empty enumeration. Three of the four full-score answers (Team2 'No combinational paths were found', Team3/Team7 'There are no paths') contain no literal digit 0, so this cannot be exact_number[0]; graded as a negative/empty-result answer. Team4's 'Found 0 combinational paths' phrasing is equally acceptable; listing any path is wrong."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths found from n13 to n25[1].",
+        "Team3": "There are no paths from n13 to n25[1].",
+        "Team4": "Found 0 combinational paths from n13 to n25[1].",
+        "Team7": "There are no paths from n13 to n25[1]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n14 and n25[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "Exactly 1 path from n14 to n25[0]: n14 -> g605 -> g624 -> g623 -> g643 -> g642 -> g610 -> g1644 -> g1485 -> g1042 -> g945 -> n25[0] (nets: n4789, n4776, n4777, n4767, n4768, n3971, n273, n449, n872).",
+        "notes": "Gradable core is the path COUNT = 1 (all full-score teams agree). Presentation varies and all scored full: Team2/Team4 list the full gate/net path inline, Team7 lists gates only, Team3 gives only the count with paths written to a file. The single path traverses gates g605,g624,g623,g643,g642,g610,g1644,g1485,g1042,g945; if a path is listed it should match this sequence."
+      },
+      "team_answers": {
+        "Team2": "1 path: n14->g605->n4789->g624->n4776->g623->n4777->g643->n4767->g642->n4768->g610->n3971->g1644->n273->g1485->n449->g1042->n872->g945->n25[0].",
+        "Team3": "1 path between n14 and n25[0]; list written to list_paths_paths.txt.",
+        "Team4": "1 path: same gate/net sequence g605->g624->g623->g643->g642->g610->g1644->g1485->g1042->g945.",
+        "Team7": "1 path: n14 -> g605 -> g624 -> g623 -> g643 -> g642 -> g610 -> g1644 -> g1485 -> g1042 -> g945 -> n25[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n12 to output n25[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [10],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from n12 to n25[0] is 10 gate levels.",
+        "notes": "Unanimous value 10 across all four full-score teams. Team7 additionally lists a witness longest path (n12 -> g490 -> g509 -> g508 -> g526 -> g525 -> g495 -> g517 -> g4828 -> g1436 -> g945 -> n25[0], 11 gates counting from PI through the fanout chain but depth reported as 10) - extra detail is optional; the number 10 is what is graded. Note Team2 phrased it as depth 'of the current design' but still scored full, so pin-specific phrasing is not required as long as the value is 10."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 10 gate levels.",
+        "Team3": "Maximum logic depth from n12 to n25[0] is 10.",
+        "Team4": "Maximum combinational logic depth from n12 to n25[0] is 10.",
+        "Team7": "Depth is 10; longest path n12 -> g490 -> ... -> g945 -> n25[0] given."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Please write the current design to the output file test10_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test10_out.v successfully.",
+        "notes": "Must claim successful write of test10_out.v. Actual file correctness is checked on the output netlist; no transforms were performed, so the output should match the loaded design."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test10_out.v successfully.",
+        "Team3": "Design successfully written to test10_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test10_out.v successfully.",
+        "Team7": "Design written to test10_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

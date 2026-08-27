@@ -1,0 +1,133 @@
+{
+  "case": "test31",
+  "max_score": 6,
+  "team_scores": {"Team2": 4, "Team3": 5.24, "Team4": 5.44, "Team7": 5.36},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test31.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase \"test31\" initialized; subsequent responses will be recorded to test31.log.",
+        "notes": "Any acknowledgment that the testcase test31 has begun is acceptable. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test31. Responses recorded to test31.log.",
+        "Team3": "The new testcase named test31 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test31. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test31. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test31.v located in the directory testcase/test31/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test31/test31.v successfully; design contains 1834 gates (1629 combinational + 205 DFFs), module top, 42 PIs, 67 POs.",
+        "notes": "Response must indicate successful load. Stat details optional. Team7 reported Gates: 1629 | DFFs: 205 (same total 1834, DFFs listed separately) - both presentations acceptable. Team2 only reported line/byte counts, still a valid success ack."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 2052 lines (77650 bytes) as current design.",
+        "Team3": "Loaded successfully, total 1834 gates.",
+        "Team4": "Loaded successfully. 1,834 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 42 | PO: 67 | Gates: 1629 | DFFs: 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 59, 268, 974, 284, 2, 42, 0, 205, 1834],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 59, NOT: 268, NAND: 974, NOR: 284, XOR: 2, XNOR: 42, BUF: 0, DFF: 205. Total: 1834 gates.",
+        "notes": "All four teams report the identical breakdown and total 1834 (1629 combinational + 205 DFF). Numbers are on the ORIGINAL netlist. Full breakdown per type is required by the prompt; DFF count (205) must be included."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205; total 1834.",
+        "Team3": "Total 1834; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team4": "1,834 gates; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team7": "Total 1834; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Convert the logic cone of n8[0] to use only NOR and NOT gates while preserving functional equivalence.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Converted the logic cone of n8[0] to the NOR/NOT basis: 30 gates matched and remapped, gate-count delta +82 (1834 -> 1916 total, 1629 -> 1711 combinational). Functional equivalence preserved.",
+        "notes": "Grading: response must claim success + equivalence; real verification is on the output netlist (fanin cone of n8[0] must contain only NOR and NOT combinational gates, boundary DFFs allowed per contest convention, and the design must stay equivalent). All four teams independently report 30 gates remapped with +82 delta, so these numbers are a strong sanity anchor but are transform-dependent in principle. Team7 additionally gave per-type before/after counts (NOT 268->350, NOR 284->314, OR 59->55, NAND 974->948) - extra detail, acceptable."
+      },
+      "team_answers": {
+        "Team2": "Matched 30 gates, remapped 30 to NOR,NOT basis. Delta +82. Equivalence preserved.",
+        "Team3": "Cone of n8[0] converted to NOR/NOT only; 30 gates matched and remapped, delta 82 gates.",
+        "Team4": "Matched 30 gates and remapped 30 to requested NOR,NOT basis.",
+        "Team7": "Converted successfully; 30 gates rewritten, total 1629 -> 1711, cone contains 134 gates, per-type before/after listed, equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Reduce critical path depth through logic restructuring, ensuring the cone of n8[0] maintains only NOR and NOT gates. Preserve functional equivalence. Report original if already optimal. The cost function is the maximum logic depth of the final design; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Original max logic depth is 58 (post line-4 remap). Best observed result: depth reduced 58 -> 20 (Team3). Also acceptable: 58 -> 32 (Team4), 58 -> 39 (Team7). Must claim success, preserved equivalence, and NOR/NOT-only cone of n8[0].",
+        "notes": "Relative QoR line - fractional scores of the reliable teams (Team3 5.24 / Team4 5.44 / Team7 5.36; i.e. ~0.24/0.44/0.36 here if the other five lines are full credit) come from partial credit on this line, not wrong facts. Starting depth 58 (measured on the post-line-4, 1916-gate netlist) is confirmed by all three reliable teams (Team3/Team4/Team7). Checker should verify on the output netlist: (a) equivalence, (b) cone of n8[0] still NOR/NOT-only, (c) claimed final depth matches the team's own written netlist. Note the inversion: Team3 claimed the best depth (20) yet has the lowest fractional score of the three reliable teams, suggesting the graded depth/constraint is measured on the actual output netlist and may differ from the log claim (possible constraint break or depth mismatch in Team3's output). Team2's exchanged log shows a planner error at this line ('optimize_depth target=final is not a loaded signal'), but that log is a DIFFERENT run from Team2's graded one, so no conclusion about Team2's graded score on this line can be drawn from it."
+      },
+      "team_answers": {
+        "Team2": "FAILED: planner could not execute a valid command; error 'optimize_depth target=final is not a loaded signal'. No optimization done.",
+        "Team3": "Depth reduced 58 -> 20; gates 1916 -> 1842; NOR/NOT cone maintained, equivalence preserved.",
+        "Team4": "Depth reduced 58 -> 32; gates 1,916 -> 1,696.",
+        "Team7": "Optimization converged in 2 iterations; max_depth 58 -> 39 via whole-design ABC restructuring."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test31_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was written to test31_out.v successfully.",
+        "notes": "Response must indicate a successful write of test31_out.v; the output netlist itself is graded separately (parses, equivalent, cone constraint). All four teams claim success. Team2 lost 2.0 points on this case but only line 5 visibly failed in its log - the second lost point most likely comes from output-netlist verification (line 4/5 constraint or equivalence check on the written file), not from this ack text."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test31_out.v successfully.",
+        "Team3": "Design successfully written to test31_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test31_out.v successfully.",
+        "Team7": "Design written to test31_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

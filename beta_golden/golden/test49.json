@@ -1,0 +1,133 @@
+{
+  "case": "test49",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 5.56, "Team4": 5.71, "Team7": 5.88},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test49.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test49\"; responses will be recorded to test49.log.",
+        "notes": "Any acknowledgment naming test49 passes. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test49. Responses recorded to test49.log.",
+        "Team3": "The new testcase test49 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test49. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test49. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test49.v located in the directory testcase/test49/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test49/test49.v successfully (918 gates total incl. 150 DFFs; PI: 14, PO: 83).",
+        "notes": "Success claim is what is graded. Optional stats seen: 918 total gates (Team3/Team4); Team7 reports 768 comb gates + 150 DFFs = 918, consistent. Team2 reports file size/lines only. All acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 1026 lines (38172 bytes) as current design.",
+        "Team3": "Loaded successfully, containing a total of 918 gates.",
+        "Team4": "Loaded successfully. 918 gates, single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI: 14 | PO: 83 | Gates: 768 | DFFs: 150."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 69, 54, 264, 280, 4, 97, 0, 150, 918],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 918 gates: AND=0, OR=69, NOT=54, NAND=264, NOR=280, XOR=4, XNOR=97, BUF=0, DFF=150.",
+        "notes": "All four teams report the identical breakdown; unanimous, objective. DFF=150 must be included in the breakdown (and in the 918 total)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150; total 918.",
+        "Team3": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team4": "918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team7": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Remapped all 714 off-basis combinational gates to the AND/NOT basis; functional equivalence preserved (no residual off-basis gates).",
+        "notes": "Must claim success + equivalence; output netlist must contain only AND/NOT combinational gates (DFFs stay). All four teams remapped the same 714 gates (= 69 OR + 264 NAND + 280 NOR + 4 XOR + 97 XNOR). Resulting gate counts are team-dependent: Team2 delta +1738, Team3 delta +1835, Team7 after-total 3163 (NOT 2247 + AND 916); any self-consistent post-remap count is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Matched 714, remapped 714 to AND,NOT basis; delta +1738; equivalence preserved.",
+        "Team3": "Reconstructed with AND/NOT only; 714 matched and remapped; delta 1835 gates.",
+        "Team4": "Matched 714 gates and remapped 714 to the AND,NOT basis.",
+        "Team7": "714 gates rewritten; 768 comb gates -> 3163 (NOT 2247, AND 916); equivalence verified, no off-basis gates."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Minimize the critical path depth of the design, ensuring the netlist remains AND and NOT only. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Best final max logic depth = 15 (derived from Team4/Team7 score arithmetic). Response must claim depth reduction, AND/NOT-only basis retained, and functional equivalence.",
+        "notes": "Relative QoR line: score ~ best_depth/team_depth. Anchor best_depth=15 is derived from the two reliable-team equations agreeing: Team7 depth 17 with credit 0.88 (15/17=0.882) and Team4 depth 21 with credit 0.71 (15/21=0.714). Team3 logs depth 19 but earned 0.56, and 15/0.56~=26.8, so Team3's measured depth on its written test49_out.v was ~27; a checker should measure depth on the output file, not trust the log. Team2's log (a different run than its graded one; its listed score is not evidence) also reports depth 15, consistent with the derived anchor but not used to set it. Starting depths differ (43-51) because they are measured after each team's own line-4 remap."
+      },
+      "team_answers": {
+        "Team2": "Depth reduced 44 -> 15; gates 2656 -> 1721; equivalent.",
+        "Team3": "Depth reduced 45 -> 19; gates 2753 -> 1692; equivalent.",
+        "Team4": "Depth 43 -> 21; gates 2559 -> 1820.",
+        "Team7": "ABC restructuring: max_depth 51 -> 17 over 2 iterations."
+      },
+      "agreement": "4/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test49_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test49_out.v successfully.",
+        "notes": "Success claim naming test49_out.v. All four teams answered equivalently; actual grading of netlist content (AND/NOT-only, equivalence, depth) happens on the file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test49_out.v successfully.",
+        "Team3": "Successfully written to test49_out.v.",
+        "Team4": "Wrote current netlist to .../test49_out.v successfully.",
+        "Team7": "Design written to test49_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

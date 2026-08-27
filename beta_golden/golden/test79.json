@@ -1,0 +1,154 @@
+{
+  "case": "test79",
+  "max_score": 7,
+  "team_scores": {"Team2": 7, "Team3": 7, "Team4": 7, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test79.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test79 initialized; responses will be recorded to test79.log.",
+        "notes": "Any acknowledgment naming test79 counts. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test79.",
+        "Team3": "The new testcase named test79 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test79. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase test79. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test79.v located in the directory testcase/test79/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test79/test79.v successfully (4181 gates total, incl. 570 DFFs).",
+        "notes": "Must indicate successful load. Optional stats are fine: total 4181 gates (Team3/Team4); Team7 split as 3611 comb gates + 570 DFFs = 4181, PI 44, PO 106, module top; Team2 reported file lines/bytes. Both presentations acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 4685 lines (186912 bytes) stored.",
+        "Team3": "Loaded successfully; 4181 gates.",
+        "Team4": "Loaded successfully; 4181 gates, flat single top module.",
+        "Team7": "Loaded successfully; Module top, PI 44, PO 106, Gates 3611, DFFs 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 197, 331, 2394, 555, 9, 123, 2, 570, 4181],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "notes": "All four full-score teams report the identical breakdown on the original netlist. The full per-type breakdown including DFF=570 and total 4181 must be present; must be measured on the design as loaded (before any removal)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570; total 4181.",
+        "Team3": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team4": "4181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team7": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Are there any redundant gates in this design that can be removed without changing functionality? Remove them if found. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Redundancy removal performed; N redundant gates removed (N tool-dependent: 0, 15, and 30 all accepted); functionality unchanged.",
+        "notes": "Full-score teams reported divergent removal counts (Team3=0 found none, Team4=0 dangling, Team2=15, Team7=30 via functional-duplicate merging) and ALL scored full, so the count is not graded here — 'redundant' depends on the tool's definition (dangling gates vs functional duplicates). Gradable essence: the response addresses the question (found/none found), claims removal was done if found, and asserts functionality is preserved. Output netlist must remain equivalent to the original."
+      },
+      "team_answers": {
+        "Team2": "Done. Cleanup removed 15 redundant gates.",
+        "Team3": "No redundant gates found; none removed; functionality unchanged.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "Found and removed 30 redundant gates (44 duplicate classes merged); equivalence preserved."
+      },
+      "agreement": "2/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many redundant gates were removed?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "N redundant gates were removed (must equal the count reported for the previous command; observed full-score values: 0, 15, 30).",
+        "notes": "Checker must verify self-consistency with the team's own line-4 answer, not a fixed number: Team2=15, Team3=0, Team4=0, Team7=30, all full score. Any non-negative count matching the team's own removal claim (and a netlist still equivalent to the original) is acceptable."
+      },
+      "team_answers": {
+        "Team2": "15 redundant gates removed.",
+        "Team3": "No redundant gates were removed (0).",
+        "Team4": "removed_gates = 0.",
+        "Team7": "30 redundant gates removed."
+      },
+      "agreement": "2/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes — the current design is functionally equivalent to the original loaded netlist (equivalence check passed).",
+        "notes": "All four full-score teams report equivalent/passed. A bare 'Yes.' (Team2) was accepted, but the golden reference states equivalence explicitly. Any failure/'not equivalent' answer is wrong."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Equivalent; check passed.",
+        "Team4": "Yes, equivalent to snapshot 'original'.",
+        "Team7": "Equivalent, confirmed by whole-design ABC CEC (307 affected outputs verified)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test79_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test79_out.v successfully.",
+        "notes": "Success acknowledgment naming test79_out.v. Actual grading of the netlist happens on the output file, which must be equivalent to the original."
+      },
+      "team_answers": {
+        "Team2": "Wrote test79_out.v successfully.",
+        "Team3": "Written to test79_out.v successfully.",
+        "Team4": "Wrote netlist to .../test79_out.v successfully.",
+        "Team7": "Design written to test79_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

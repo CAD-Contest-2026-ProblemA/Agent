@@ -1,0 +1,112 @@
+{
+  "case": "test41",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test41.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase \"test41\" initialized; responses will be recorded to test41.log.",
+        "notes": "All four full-score teams simply acknowledge initialization. Any clear acknowledgment of starting testcase test41 is correct."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test41\". Responses recorded to test41.log.",
+        "Team3": "The new testcase named \"test41\" has been set successfully.",
+        "Team4": "Acknowledged. Initialized testcase \"test41\". Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test41\". Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test41.v located in the directory testcase/test41/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test41/test41.v successfully (2584 gates including 260 DFFs).",
+        "notes": "Response must indicate successful load of testcase/test41/test41.v. Extra stats vary by team (Team3/Team4 report 2584 total gates; Team7 reports Gates: 2324 comb + DFFs: 260 = 2584, PI 60, PO 71; Team2 reports file size/lines) — all acceptable, none required."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 2891 lines (110717 bytes) as current design.",
+        "Team3": "Loaded successfully, containing a total of 2584 gates.",
+        "Team4": "Loaded successfully. Contains 2,584 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 60 | PO: 71 | Gates: 2324 | DFFs: 260"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 124, 257, 1624, 298, 16, 5, 0, 260, 2584],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 2584 gates: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "notes": "All four full-score teams report identical per-type counts on the original netlist. Response must give the full breakdown by all nine types (zeros for AND and BUF included). Total 2584 = 2324 combinational + 260 DFF; total may be stated explicitly or implied by the breakdown."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584.",
+        "Team3": "Total 2584: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "Team4": "2,584 gates. AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "Team7": "Total 2584: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Prune the netlist of unused gates. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Pruning complete: 0 unused/dangling gates found, so nothing was removed; the design is functionally unchanged.",
+        "notes": "All four full-score teams report that NO unused gates exist in this netlist (zero removed) and the design is unchanged. The zero may be stated numerically ('Removed 0', Team4) or verbally ('no unused gates were removed', Team2/Team3/Team7) — do NOT require the literal digit 0. A response claiming removals were made would contradict all full-score anchors. Must claim success and functional preservation; output netlist should be identical (2584 gates) after this step."
+      },
+      "team_answers": {
+        "Team2": "Done. No unused gates were removed; the design was unchanged.",
+        "Team3": "No unused gates were removed from the netlist.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "Pruned; no gates removed (no dangling logic found). Functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test41_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test41_out.v successfully.",
+        "notes": "Response must indicate successful write of test41_out.v. Actual verification happens on the output netlist (should be equivalent to the original, 2584 gates since prune removed nothing)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test41_out.v\" successfully.",
+        "Team3": "Successfully written to the output file test41_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to test41_out.v successfully.",
+        "Team7": "Design written to test41_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

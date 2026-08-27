@@ -1,0 +1,91 @@
+{
+  "case": "test02",
+  "max_score": 4,
+  "team_scores": {"Team2": 4, "Team3": 4, "Team4": 4, "Team7": 4},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test02.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test02\"; responses will be recorded to test02.log.",
+        "notes": "Any acknowledgment that the testcase test02 has begun is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test02\". Responses will be recorded to test02.log.",
+        "Team3": "The new testcase named \"test02\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test02\". All subsequent responses recorded to test02.log. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test02\". All subsequent responses recorded to test02.log. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test02.v located in the directory testcase/test02/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test02/test02.v successfully (flat top module, 11227 gates, 264 PIs, 26 POs, 0 DFFs).",
+        "notes": "Response must indicate the file was loaded successfully. Extra statistics vary by team (Team2 reported file lines/bytes; Team3/Team4 reported 11,227 gates; Team7 reported PI:264 PO:26 Gates:11227 DFFs:0) — all acceptable; if a gate total is stated it should be 11227."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test02/test02.v successfully. Stored 12638 lines (454763 bytes) as current design.",
+        "Team3": "Design successfully loaded from testcase/test02/test02.v, containing a total of 11,227 gates.",
+        "Team4": "Loaded test02.v successfully. Contains 11,227 gates. Single top module (flat netlist).",
+        "Team7": "Loaded test02.v successfully. Module: top | PI: 264 | PO: 26 | Gates: 11227 | DFFs: 0"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [2301, 3270, 2412, 0, 524, 174, 2538, 8, 0, 11227],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total gates: 11227. Breakdown — AND: 2301, OR: 3270, NOT: 2412, NAND: 0, NOR: 524, XOR: 174, XNOR: 2538, BUF: 8, DFF: 0.",
+        "notes": "All four full-score teams report identical per-type counts on the original netlist; these are objective ground truth. Response must give the per-type breakdown (all nine types, including the zero NAND and DFF rows) and the total 11227. This is a purely combinational netlist (0 DFFs), so the DFF-inclusion prior does not change any number here."
+      },
+      "team_answers": {
+        "Team2": "AND 2301, OR 3270, NOT 2412, NAND 0, NOR 524, XOR 174, XNOR 2538, BUF 8, DFF 0; total 11227.",
+        "Team3": "Total 11,227: AND 2301, OR 3270, NOT 2412, NAND 0, NOR 524, XOR 174, XNOR 2538, BUF 8, DFF 0.",
+        "Team4": "11,227 gates. AND 2301, OR 3270, NOT 2412, NAND 0, NOR 524, XOR 174, XNOR 2538, BUF 8, DFF 0.",
+        "Team7": "Total 11,227: AND 2301, OR 3270, NOT 2412, NAND 0, NOR 524, XOR 174, XNOR 2538, BUF 8, DFF 0 (DFFs counted separately)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Please write the current design to the output file test02_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test02_out.v successfully.",
+        "notes": "Response must confirm the design was written to test02_out.v. Since no transforms were requested in this case, the output netlist should be equivalent to the loaded original (same 11227 gates); actual verification happens on the output file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test02_out.v\" successfully.",
+        "Team3": "The current design has been successfully written to the output file test02_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to .../test02_out.v successfully.",
+        "Team7": "Design written to test02_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

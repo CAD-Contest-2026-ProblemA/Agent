@@ -1,0 +1,154 @@
+{
+  "case": "test87",
+  "max_score": 7,
+  "team_scores": {"Team2": 7, "Team3": 7, "Team4": 7, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test87.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test87\"; responses will be recorded to test87.log.",
+        "notes": "Any acknowledgment that names/initializes test87 passes. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test87; responses recorded to test87.log.",
+        "Team3": "The new testcase named test87 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test87. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test87. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test87.v located in the directory testcase/test87/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test87/test87.v successfully (112114 gates total incl. 16050 DFFs; PI:123, PO:99, module top).",
+        "notes": "Response must indicate a successful load of test87.v. Extra stats optional and vary by team (Team3/Team4 say 112,114 gates; Team7 splits 96064 comb gates + 16050 DFFs; Team2 reports line/byte counts). Any success claim passes."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 124232 lines (5645752 bytes).",
+        "Team3": "Loaded successfully; 112,114 gates total.",
+        "Team4": "Loaded successfully; 112,114 gates, single flat top module.",
+        "Team7": "Loaded successfully; module top, PI:123, PO:99, Gates:96064, DFFs:16050."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 916, 6844, 77998, 8005, 86, 1358, 857, 16050, 112114],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 112114 gates: AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050.",
+        "notes": "All four full-score teams report the identical breakdown, so these numbers are ground truth on the original netlist. Response must include the per-type breakdown; all four teams state the total 112114 explicitly."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050; total 112114.",
+        "Team3": "Same breakdown; total 112,114.",
+        "Team4": "Same breakdown; total 112,114.",
+        "Team7": "Same breakdown; total 112,114 (notes it includes DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Convert every XOR gate in this design to an equivalent 4-NAND circuit. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Converted all 86 XOR gates to equivalent 4-NAND circuits (net gate delta +258, i.e. 86*4 added, 86 XOR removed); functionality preserved.",
+        "notes": "Transform must claim success on all XOR gates and preserve equivalence. All four teams remapped exactly 86 XOR gates (matches XOR count from line 3). Team2/Team3 report +258 gate delta; Team7 reports resulting total 96322 comb gates (its own gates-without-DFF accounting). Checker should verify the output netlist has 0 XOR gates and is equivalent to the original."
+      },
+      "team_answers": {
+        "Team2": "Matched/remapped 86 gates to NAND basis; delta +258; equivalence preserved.",
+        "Team3": "86 XOR gates remapped; +258 gates added.",
+        "Team4": "Matched 86 gates and remapped 86 to NAND basis.",
+        "Team7": "86 XOR rewritten as NAND; total now 96322 gates; NAND 77998 -> 78342; equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many NAND gates are now in the design after the XOR-to-NAND conversion?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [78342],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 78342 NAND gates after the XOR-to-NAND conversion (77998 original + 86*4 = 344 new).",
+        "notes": "Post-transform count, but the transform is fully specified (4 NANDs per XOR), so it is deterministic: 77998 + 344 = 78342. All four full-score teams report exactly 78342. If a future team used a different (still 4-NAND) decomposition the number is still 78342; treat deviation as wrong unless the team's own netlist self-consistently justifies it."
+      },
+      "team_answers": {
+        "Team2": "78342 NAND gates.",
+        "Team3": "78,342 NAND gates.",
+        "Team4": "Design now 112,372 gates; NAND: 78342.",
+        "Team7": "78,342 NAND gates."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the current design is functionally equivalent to the original loaded netlist (equivalence check passed).",
+        "notes": "Essence is an equivalent/passed conclusion. Team2's bare \"Yes.\" scored full, so a minimal affirmative suffices; richer answers (CEC passed) equally fine. A 'not equivalent' or failed check would be wrong."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Equivalence check passed; designs functionally equivalent.",
+        "Team4": "Yes, equivalent to snapshot original.",
+        "Team7": "Equivalent, confirmed by whole-design ABC CEC."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test87_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test87_out.v successfully.",
+        "notes": "Success claim for writing test87_out.v. Actual file content graded separately (should contain 0 XOR, 78342 NAND, and be equivalent to the original)."
+      },
+      "team_answers": {
+        "Team2": "Wrote to test87_out.v successfully.",
+        "Team3": "Successfully written to test87_out.v.",
+        "Team4": "Wrote netlist to test87_out.v successfully.",
+        "Team7": "Design written to test87_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

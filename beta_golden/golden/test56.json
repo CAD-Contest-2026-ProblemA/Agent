@@ -1,0 +1,133 @@
+{
+  "case": "test56",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test56.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test56\"; responses will be recorded to test56.log.",
+        "notes": "Any acknowledgment that the testcase test56 has begun/been set is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test56. Responses recorded to test56.log.",
+        "Team3": "The new testcase named test56 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test56. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test56. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test56.v located in the directory testcase/test56/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test56/test56.v successfully (14094 gates total, including 1948 DFFs).",
+        "notes": "Must indicate a successful load of test56.v. Extra stats optional: Team3/Team4 reported 14094 gates; Team7 reported module top, PI 57, PO 244, 12146 comb gates + 1948 DFFs; Team2 reported file line/byte counts. All variants scored full, so only the success claim is graded."
+      },
+      "team_answers": {
+        "Team2": "Loaded test56.v successfully; 15673 lines (659576 bytes) stored as current design.",
+        "Team3": "Design successfully loaded from testcase/test56/test56.v, 14094 gates total.",
+        "Team4": "Loaded test56.v successfully; 14094 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 57 | PO: 244 | Gates: 12146 | DFFs: 1948."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 239, 726, 9347, 1192, 49, 592, 1, 1948, 14094],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 14094 gates: AND=0, OR=239, NOT=726, NAND=9347, NOR=1192, XOR=49, XNOR=592, BUF=1, DFF=1948.",
+        "notes": "All four full-score teams report identical breakdowns: AND 0, OR 239, NOT 726, NAND 9347, NOR 1192, XOR 49, XNOR 592, BUF 1, DFF 1948; total 14094 (Team7 additionally notes 12146 combinational-only, which is fine as extra detail). Checker: all nine per-type counts must match; total 14094 (explicit or implied)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 239, NOT 726, NAND 9347, NOR 1192, XOR 49, XNOR 592, BUF 1, DFF 1948; total 14094.",
+        "Team3": "Total 14094: AND 0, OR 239, NOT 726, NAND 9347, NOR 1192, XOR 49, XNOR 592, BUF 1, DFF 1948.",
+        "Team4": "14094 gates: AND 0, OR 239, NOT 726, NAND 9347, NOR 1192, XOR 49, XNOR 592, BUF 1, DFF 1948.",
+        "Team7": "Total 14094 with same breakdown; adds combinational-only = 12146 (excluding DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Check if there are any dangling gates in this design that do not contribute to any primary output. Remove them if found. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": "no",
+        "reference": "No dangling gates were found; none were removed and the design functionality is unchanged.",
+        "notes": "All four full-score teams found zero dangling gates and removed nothing. Response must convey that no dangling gates exist / 0 removed, design unchanged. A claim of removing a nonzero number would be wrong."
+      },
+      "team_answers": {
+        "Team2": "Done. No unused gates removed; design unchanged.",
+        "Team3": "No dangling gates found; none removed; functionality unchanged.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "No dangling gates found; none removed; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many dangling gates were removed?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": null,
+        "reference": "0 dangling gates were removed.",
+        "notes": "Unanimous: 0. Answer must convey zero dangling gates removed (stated numerically or as 'none were removed' - Team3 scored full with no digit at all), consistent with line 4. Bare '0' without context risks the naked-number penalty seen in other cases (test86); prefer a full sentence."
+      },
+      "team_answers": {
+        "Team2": "The previous command removed 0 dangling gates.",
+        "Team3": "No dangling gates were removed.",
+        "Team4": "The removed_gates value from the previous command is 0.",
+        "Team7": "No dangling gates were removed; the removed count is 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test56_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test56_out.v successfully.",
+        "notes": "Must indicate a successful write of test56_out.v. Since no gates were removed, the output netlist should be functionally identical to the input (14094 gates)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test56_out.v successfully.",
+        "Team3": "Current design successfully written to test56_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test56_out.v successfully.",
+        "Team7": "Design written to test56_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

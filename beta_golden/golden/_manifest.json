@@ -1,0 +1,912 @@
+[
+ {
+  "case": "test01",
+  "max": 3,
+  "scores": {
+   "Team2": 3,
+   "Team3": 3,
+   "Team4": 3,
+   "Team7": 3
+  }
+ },
+ {
+  "case": "test02",
+  "max": 4,
+  "scores": {
+   "Team2": 4,
+   "Team3": 4,
+   "Team4": 4,
+   "Team7": 4
+  }
+ },
+ {
+  "case": "test03",
+  "max": 4,
+  "scores": {
+   "Team2": 4,
+   "Team3": 4,
+   "Team4": 4,
+   "Team7": 4
+  }
+ },
+ {
+  "case": "test04",
+  "max": 4,
+  "scores": {
+   "Team2": 4,
+   "Team3": 4,
+   "Team4": 4,
+   "Team7": 4
+  }
+ },
+ {
+  "case": "test05",
+  "max": 4,
+  "scores": {
+   "Team2": 4,
+   "Team3": 4,
+   "Team4": 4,
+   "Team7": 4
+  }
+ },
+ {
+  "case": "test06",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test07",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test08",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test09",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test10",
+  "max": 9,
+  "scores": {
+   "Team2": 9,
+   "Team3": 9,
+   "Team4": 9,
+   "Team7": 9
+  }
+ },
+ {
+  "case": "test11",
+  "max": 10,
+  "scores": {
+   "Team2": 9,
+   "Team3": 10,
+   "Team4": 10,
+   "Team7": 10
+  }
+ },
+ {
+  "case": "test12",
+  "max": 11,
+  "scores": {
+   "Team2": 11,
+   "Team3": 11,
+   "Team4": 11,
+   "Team7": 11
+  }
+ },
+ {
+  "case": "test13",
+  "max": 12,
+  "scores": {
+   "Team2": 11,
+   "Team3": 12,
+   "Team4": 12,
+   "Team7": 12
+  }
+ },
+ {
+  "case": "test14",
+  "max": 13,
+  "scores": {
+   "Team2": 13,
+   "Team3": 13,
+   "Team4": 11,
+   "Team7": 13
+  }
+ },
+ {
+  "case": "test15",
+  "max": 14,
+  "scores": {
+   "Team2": 13,
+   "Team3": 14,
+   "Team4": 14,
+   "Team7": 14
+  }
+ },
+ {
+  "case": "test16",
+  "max": 15,
+  "scores": {
+   "Team2": 13,
+   "Team3": 15,
+   "Team4": 15,
+   "Team7": 15
+  }
+ },
+ {
+  "case": "test17",
+  "max": 16,
+  "scores": {
+   "Team2": 15,
+   "Team3": 16,
+   "Team4": 16,
+   "Team7": 16
+  }
+ },
+ {
+  "case": "test18",
+  "max": 17,
+  "scores": {
+   "Team2": 16,
+   "Team3": 17,
+   "Team4": 16,
+   "Team7": 17
+  }
+ },
+ {
+  "case": "test19",
+  "max": 18,
+  "scores": {
+   "Team2": 17,
+   "Team3": 18,
+   "Team4": 18,
+   "Team7": 18
+  }
+ },
+ {
+  "case": "test20",
+  "max": 19,
+  "scores": {
+   "Team2": 18,
+   "Team3": 19,
+   "Team4": 19,
+   "Team7": 19
+  }
+ },
+ {
+  "case": "test21",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test22",
+  "max": 5,
+  "scores": {
+   "Team2": 4.92,
+   "Team3": 4.46,
+   "Team4": 4.46,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test23",
+  "max": 6,
+  "scores": {
+   "Team2": 5.9,
+   "Team3": 5.47,
+   "Team4": 5.53,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test24",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 6.89,
+   "Team4": 6.94,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test25",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test26",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test27",
+  "max": 7,
+  "scores": {
+   "Team2": 6.53,
+   "Team3": 6.34,
+   "Team4": 6.59,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test28",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test29",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test30",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test31",
+  "max": 6,
+  "scores": {
+   "Team2": 4,
+   "Team3": 5.24,
+   "Team4": 5.44,
+   "Team7": 5.36
+  }
+ },
+ {
+  "case": "test32",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 4
+  }
+ },
+ {
+  "case": "test33",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test34",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test35",
+  "max": 6,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5.33,
+   "Team4": 5.38,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test36",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test37",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test38",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test39",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 5.47,
+   "Team4": 5.47,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test40",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test41",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test42",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test43",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test44",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 5.32,
+   "Team4": 5.38,
+   "Team7": 5.89
+  }
+ },
+ {
+  "case": "test45",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test46",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test47",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test48",
+  "max": 5,
+  "scores": {
+   "Team2": 5,
+   "Team3": 5,
+   "Team4": 5,
+   "Team7": 5
+  }
+ },
+ {
+  "case": "test49",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 5.56,
+   "Team4": 5.71,
+   "Team7": 5.88
+  }
+ },
+ {
+  "case": "test50",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test51",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test52",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test53",
+  "max": 14,
+  "scores": {
+   "Team2": 14,
+   "Team3": 14,
+   "Team4": 14,
+   "Team7": 14
+  }
+ },
+ {
+  "case": "test54",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test55",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test56",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test57",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test58",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 7,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test59",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test60",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test61",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 4,
+   "Team4": 6,
+   "Team7": 3
+  }
+ },
+ {
+  "case": "test62",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test63",
+  "max": 6,
+  "scores": {
+   "Team2": 3,
+   "Team3": 4,
+   "Team4": 5.63,
+   "Team7": 5.46
+  }
+ },
+ {
+  "case": "test64",
+  "max": 11,
+  "scores": {
+   "Team2": 11,
+   "Team3": 11,
+   "Team4": 11,
+   "Team7": 11
+  }
+ },
+ {
+  "case": "test65",
+  "max": 12,
+  "scores": {
+   "Team2": 12,
+   "Team3": 12,
+   "Team4": 12,
+   "Team7": 12
+  }
+ },
+ {
+  "case": "test66",
+  "max": 6,
+  "scores": {
+   "Team2": 5,
+   "Team3": 6,
+   "Team4": 5,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test67",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test68",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test69",
+  "max": 6,
+  "scores": {
+   "Team2": 5,
+   "Team3": 6,
+   "Team4": 5,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test70",
+  "max": 12,
+  "scores": {
+   "Team2": 12,
+   "Team3": 12,
+   "Team4": 12,
+   "Team7": 12
+  }
+ },
+ {
+  "case": "test71",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test72",
+  "max": 7,
+  "scores": {
+   "Team2": 5.95,
+   "Team3": 6.95,
+   "Team4": 5.95,
+   "Team7": 6.96
+  }
+ },
+ {
+  "case": "test73",
+  "max": 11,
+  "scores": {
+   "Team2": 11,
+   "Team3": 11,
+   "Team4": 11,
+   "Team7": 11
+  }
+ },
+ {
+  "case": "test74",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test75",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test76",
+  "max": 15,
+  "scores": {
+   "Team2": 15,
+   "Team3": 15,
+   "Team4": 11,
+   "Team7": 15
+  }
+ },
+ {
+  "case": "test77",
+  "max": 7,
+  "scores": {
+   "Team2": 6,
+   "Team3": 7,
+   "Team4": 6,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test78",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test79",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test80",
+  "max": 6,
+  "scores": {
+   "Team2": 6,
+   "Team3": 6,
+   "Team4": 6,
+   "Team7": 6
+  }
+ },
+ {
+  "case": "test81",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test82",
+  "max": 9,
+  "scores": {
+   "Team2": 9,
+   "Team3": 9,
+   "Team4": 7,
+   "Team7": 9
+  }
+ },
+ {
+  "case": "test83",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test84",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test85",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test86",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test87",
+  "max": 7,
+  "scores": {
+   "Team2": 7,
+   "Team3": 7,
+   "Team4": 7,
+   "Team7": 7
+  }
+ },
+ {
+  "case": "test88",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test89",
+  "max": 9,
+  "scores": {
+   "Team2": 9,
+   "Team3": 9,
+   "Team4": 9,
+   "Team7": 9
+  }
+ },
+ {
+  "case": "test90",
+  "max": 8,
+  "scores": {
+   "Team2": 8,
+   "Team3": 8,
+   "Team4": 8,
+   "Team7": 8
+  }
+ },
+ {
+  "case": "test91",
+  "max": 11,
+  "scores": {
+   "Team2": 9,
+   "Team3": 9,
+   "Team4": 9,
+   "Team7": 9
+  }
+ }
+]

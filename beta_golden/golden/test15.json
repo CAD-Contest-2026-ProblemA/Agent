@@ -1,0 +1,301 @@
+{
+  "case": "test15",
+  "max_score": 14,
+  "team_scores": {"Team2": 13, "Team3": 14, "Team4": 14, "Team7": 14},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test15.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test15\"; responses will be recorded to test15.log.",
+        "notes": "Any acknowledgment that the testcase test15 has been set/initialized is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test15. Responses recorded to test15.log.",
+        "Team3": "The new testcase named test15 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test15. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test15. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test15.v located in the directory testcase/test15/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test15/test15.v successfully (213 gates, 0 DFFs).",
+        "notes": "Must claim successful load. Gate count 213 (Team3/4/7) is a useful sanity check but not required (Team2 reported line/byte counts instead and still passed this line)."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test15/test15.v successfully; 248 lines (7250 bytes) stored.",
+        "Team3": "Design loaded successfully; total 213 gates.",
+        "Team4": "Loaded successfully; 213 gates, single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI 12 | PO 27 | Gates 213 | DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [24, 57, 39, 0, 24, 1, 10, 58, 0, 213],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 213 gates: AND 24, OR 57, NOT 39, NAND 0, NOR 24, XOR 1, XNOR 10, BUF 58, DFF 0.",
+        "notes": "All four teams report identical breakdown. Every type count and the total 213 must match exactly."
+      },
+      "team_answers": {
+        "Team2": "AND 24, OR 57, NOT 39, NAND 0, NOR 24, XOR 1, XNOR 10, BUF 58, DFF 0; total 213.",
+        "Team3": "Total 213: AND 24, OR 57, NOT 39, NAND 0, NOR 24, XOR 1, XNOR 10, BUF 58, DFF 0.",
+        "Team4": "213 gates: AND 24, OR 57, NOT 39, NAND 0, NOR 24, XOR 1, XNOR 10, BUF 58, DFF 0.",
+        "Team7": "Total 213: AND 24, OR 57, NOT 39, NAND 0, NOR 24, XOR 1, XNOR 10, BUF 58, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n0[0] to n3 exists that does not traverse node n207.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No combinational path from n0[0] to n3 exists that avoids n207 (in fact no path from n0[0] to n3 exists at all).",
+        "notes": "All four teams answer 'no such path exists'. Any clear negative conclusion passes."
+      },
+      "team_answers": {
+        "Team2": "No. No combinational path from n0[0] to n3 exists while avoiding n207.",
+        "Team3": "No combinational path exists from n0[0] to n3 that does not traverse n207.",
+        "Team4": "No. No combinational path from n0[0] to n3 that avoids n207 exists.",
+        "Team7": "A path from n0[0] to n3 avoiding n207 does not exist."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n0[1] to output n4 exists while avoiding n29.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes. A combinational path from n0[1] to n4 exists that avoids n29.",
+        "notes": "All four teams answer 'yes, such a path exists'."
+      },
+      "team_answers": {
+        "Team2": "Yes. A combinational path from n0[1] to n4 exists while avoiding n29.",
+        "Team3": "A combinational path exists from n0[1] to n4 while avoiding n29.",
+        "Team4": "Yes. A combinational path from n0[1] to n4 that avoids n29 exists.",
+        "Team7": "A path connecting n0[1] to n4 exists while avoiding n29."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n0[1] and terminating at primary output n4.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [11],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 11 paths from n0[1] to n4 (start branches via g184, g195, g204; all end ... -> g80 -> n4).",
+        "notes": "The gradable value is the path count = 11. Presentation varies and all forms scored full: Team2/Team4 list gate+net paths inline, Team7 lists gate-only paths inline, Team3 writes the list to a file and reports the count. A checker should require the count 11; full enumeration may be inline or in a file."
+      },
+      "team_answers": {
+        "Team2": "Found 11 combinational paths from n0[1] to n4; full gate/net paths listed inline.",
+        "Team3": "11 paths found; complete list written to testcase/test15/list_paths_paths.txt.",
+        "Team4": "Found 11 combinational paths; complete enumeration listed inline (gates+nets).",
+        "Team7": "11 paths from n0[1] to n4; gate-only paths listed inline."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n0[2] and n3.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No paths exist between n0[2] and n3 (0 paths found).",
+        "notes": "All four teams report zero paths. Any clear '0 paths / no paths' statement passes."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n0[2] to n3.",
+        "Team3": "No paths exist between n0[2] and n3.",
+        "Team4": "Found 0 combinational paths from n0[2] to n3.",
+        "Team7": "There are no paths from n0[2] to n3."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n0[0] to output n3.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists from n0[0] to n3, so the point-to-point depth is 0 / undefined.",
+        "notes": "Netlist-verified: no gate drives n3 (undriven primary output), so no combinational path from n0[0] to n3 exists. Full-score teams (Team3/4/7, all 14/14) phrase this as depth 0 (Team3), 'no path exists' (Team4), or 'no path, depth undefined' (Team7) - accept 0, undefined, or N/A as long as the no-path conclusion is tied to the n0[0]->n3 query. exact_number is ruled out because Team4 and Team7 scored full without stating a number. Team2's logged answer mis-scopes to the whole design ('maximum logic depth of the current design is 0 gate levels'); it is shown only as an example of a plausible failure mode - Team2's exchanged log is a different run than its graded one, so no score inference may be drawn from it."
+      },
+      "team_answers": {
+        "Team2": "'The maximum logic depth of the current design is 0 gate levels' (mis-scoped to whole design).",
+        "Team3": "Depth from n0[0] to n3 is 0, indicating no combinational path exists.",
+        "Team4": "No combinational path exists from n0[0] to n3.",
+        "Team7": "No combinational path exists; therefore the logic depth is undefined."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Determine the longest combinational path depth from n0[1] to n4.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [17],
+        "must_names": null,
+        "expected": null,
+        "reference": "The longest combinational path depth from n0[1] to n4 is 17 gate levels (witness path with 17 gates: n0[1] -> g195 -> g178 -> g177 -> g175 -> g173 -> g172 -> g170 -> g169 -> g167 -> g166 -> g164 -> g206 -> g87 -> g86 -> g82 -> g81 -> g80 -> n4).",
+        "notes": "All four teams report 17. Team7 additionally shows the witness path. The number 17 is the required answer."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 17 gate levels.",
+        "Team3": "Longest combinational path depth from n0[1] to n4 is 17.",
+        "Team4": "Maximum combinational logic depth from n0[1] to n4 is 17.",
+        "Team7": "Depth is 17; witness path given via g195...g80."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Determine the number of gates driven by g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": null,
+        "reference": "Gate g0 drives 0 gates; its output feeds only primary output n5.",
+        "notes": "Netlist-verified: g0 is 'or g0(n5, n24, n29)'; its output net n5 is a primary output and feeds no gate inputs, so the count is 0. All three reliable full-score teams (Team3/4/7, 14/14) state 0 explicitly, so exact_number [0] is safe. Team7 adds the useful detail that the output feeds PO n5 (a port, not a gate). Team2's logged answer ('no immediate successor gates', no explicit number) implies 0; whether an unnumbered phrasing passes cannot be inferred from Team2's score because its exchanged log is a different run than its graded one."
+      },
+      "team_answers": {
+        "Team2": "Gate g0 has no immediate successor gates (no explicit count stated).",
+        "Team3": "The number of gates driven by g0 is 0.",
+        "Team4": "Found 0 successor gates.",
+        "Team7": "None (0 gates driven); output net feeds primary output n5 (port, not a gate)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "Enumerate the immediate successors of gate g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "Gate g0 has no immediate successor gates (0); its output goes only to primary output n5.",
+        "notes": "The essence is 'none/empty set'. All four teams report no successors. Mentioning that the output feeds PO n5 (Team7) is bonus detail, not required."
+      },
+      "team_answers": {
+        "Team2": "Gate g0 has no immediate successor gates.",
+        "Team3": "Immediate successors of g0 are none; 0 gates driven.",
+        "Team4": "Found 0 successor gates.",
+        "Team7": "None (0 gates driven); output feeds primary output n5 only."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 12,
+      "prompt": "Compute the transitive fanin cone of output n3.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": null,
+        "reference": "The transitive fanin cone of output n3 contains 0 gates (and 0 DFFs; no logic drives n3).",
+        "notes": "All four teams report an empty cone (0 gates). Domain prior on cone questions (must include boundary DFFs) is trivially satisfied here since the design has 0 DFFs and the cone is empty; do not penalize answers that omit a DFF row."
+      },
+      "team_answers": {
+        "Team2": "The transitive fanin cone of n3 contains 0 gates.",
+        "Team3": "The transitive fanin cone of n3 contains 0 gates.",
+        "Team4": "The fan-in cone of n3 contains 0 gates.",
+        "Team7": "0 gates, max depth 0, no DFF instances, no input signals."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 13,
+      "prompt": "Compute the transitive fanout cone of input n0[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [189],
+        "must_names": null,
+        "expected": null,
+        "reference": "The transitive fanout cone of input n0[0] contains 189 gates (design has 0 DFFs, so no DFF row is needed).",
+        "notes": "All four teams report 189 gates. Presentation varies and all scored full: Team2/Team4 list all 189 gate names inline (identical sets g0..g179,g189,g196,g206-g212 etc.), Team3 and Team7 write the list to a file and report the count. Required: the count 189; the explicit list is optional. DFF prior is moot (0 DFFs in design)."
+      },
+      "team_answers": {
+        "Team2": "189 gates; full inline list of gate names.",
+        "Team3": "189 gates; complete list written to testcase/test15/fanout_cone_list.txt.",
+        "Team4": "189 gates; full inline numbered list of gate names.",
+        "Team7": "189 gates, max depth 18; reached outputs listed; full gate list written to test15_R1.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 14,
+      "prompt": "Please write the current design to the output file test15_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test15_out.v successfully.",
+        "notes": "Must claim successful write of test15_out.v. Actual verification happens on the output netlist file (should be equivalent to the unmodified loaded design; no transforms were requested in this case)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test15_out.v successfully.",
+        "Team3": "Design successfully written to test15_out.v.",
+        "Team4": "Wrote the current netlist to .../test15_out.v successfully.",
+        "Team7": "Design written to test15_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

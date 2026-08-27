@@ -1,0 +1,91 @@
+{
+  "case": "test05",
+  "max_score": 4,
+  "team_scores": {"Team2": 4, "Team3": 4, "Team4": 4, "Team7": 4},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test05.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test05\"; responses will be recorded to test05.log.",
+        "notes": "Any acknowledgment naming the testcase test05 is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test05; responses recorded to test05.log.",
+        "Team3": "The new testcase named test05 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test05; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test05; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test05.v located in the directory testcase/test05/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test05/test05.v successfully (3462 gates; 152 PIs, 97 POs, 0 DFFs).",
+        "notes": "Must indicate successful load. Optional statistics, if given, should match: 3462 gates (Team3/Team4/Team7 agree; Team7 adds PI=152, PO=97, DFF=0). Team2 reported only file lines/bytes and still scored full, so gate count is not required for credit."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test05/test05.v successfully; 3902 lines (132351 bytes) stored.",
+        "Team3": "Design loaded successfully; total 3462 gates.",
+        "Team4": "Loaded successfully; 3,462 gates; single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI 152 | PO 97 | Gates 3462 | DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "What is the fanout of primary input n5? List all gates that n5 drives directly.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [35],
+        "must_names": null,
+        "expected": null,
+        "reference": "Primary input n5 has a fanout of 35; it directly drives g201, g234, g237, g238, g240, g241, g243, g244, g245, g247, g248, g250, g252, g255, g256, g259, g262, g263, g264, g267, g269, g270, g271, g274, g276, g281, g284, g285, g286, g290, g293, g294, g295, g300, g443.",
+        "notes": "Fanout count 35 is the only hard requirement (verified directly against test05.v: n5 feeds 33 AND-type gates plus g248 OR and g300/g443 NOT). The name list is NOT a hard must_names requirement because full-score Team3 listed no names in-log, giving only count=35 plus an explicit claim that the complete list was written to testcase/test05/fanout_gates.txt. Accept count=35 with either (a) the in-log name list or (b) an explicit list-written-to-file claim. If names are listed, they must match the 35-name set in the reference exactly (Teams 2/4/7 list this identical set; Team7 adds gate types). No DFFs are involved; the design has 0 DFFs."
+      },
+      "team_answers": {
+        "Team2": "n5 directly drives 35 gates; lists all 35 names (g201...g443).",
+        "Team3": "Fanout of n5 is 35; complete gate list written to testcase/test05/fanout_gates.txt.",
+        "Team4": "n5 drives 35 gate loads; lists all 35 names (g201...g443).",
+        "Team7": "n5 drives 35 gates directly; lists all 35 names with gate types (AND/OR/NOT)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Please write the current design to the output file test05_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test05_out.v successfully.",
+        "notes": "Must claim the netlist was written to test05_out.v. No transforms were requested in this case, so the output should be the loaded design unchanged (equivalence trivially holds)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test05_out.v successfully.",
+        "Team3": "Current design successfully written to test05_out.v.",
+        "Team4": "Wrote current gate-level netlist to test05_out.v successfully.",
+        "Team7": "Design written to test05_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

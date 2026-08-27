@@ -1,0 +1,154 @@
+{
+  "case": "test78",
+  "max_score": 7,
+  "team_scores": {"Team2": 7, "Team3": 7, "Team4": 7, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test78.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test78\"; responses will be recorded to test78.log.",
+        "notes": "All four full-score teams gave a simple acknowledgment naming the testcase. Any success/acknowledgment mentioning test78 is correct."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test78\". Responses recorded to test78.log.",
+        "Team3": "The new testcase named \"test78\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test78\". Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test78\". Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test78.v located in the directory testcase/test78/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test78/test78.v successfully (4181 gates total, including 570 DFFs).",
+        "notes": "Success claim is what is graded. Optional stats seen: Team3/Team4 report 4181 total gates; Team7 reports Module top, PI 44, PO 106, 3611 comb gates + 570 DFFs (= 4181 total). Both presentations are acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test78/test78.v successfully; 4685 lines (186912 bytes) stored.",
+        "Team3": "Loaded successfully; total 4181 gates.",
+        "Team4": "Loaded successfully; 4,181 gates; single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module top | PI 44 | PO 106 | Gates 3611 | DFFs 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [4181, 0, 197, 331, 2394, 555, 9, 123, 2, 570],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4181 gates: AND=0, OR=197, NOT=331, NAND=2394, NOR=555, XOR=9, XNOR=123, BUF=2, DFF=570.",
+        "notes": "All four full-score teams report identical per-type counts on the ORIGINAL netlist. Total 4181 (3611 combinational + 570 DFF). The full breakdown must be present; AND=0 must be reported explicitly."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570; total 4181.",
+        "Team3": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team4": "4,181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team7": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all pairs of back-to-back inverters (NOT followed by NOT) in this design and collapse them into direct wire connections. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Collapsed the back-to-back inverter pair(s) into direct wire connections; functionality preserved (verified equivalent).",
+        "notes": "Graded as a transform acknowledgment: must claim the collapse was done AND functionality/equivalence preserved. Reported pair/gate counts differ between full-score teams and were NOT graded: Team2 applied rewrite 2x removing 2 gates, Team3 changed 1 instance, Team4 applied 1 rewrite, Team7 collapsed 2 pairs removing 4 NOT gates. Any self-consistent count (1 or 2 pairs; 2 or 4 NOTs removed) is acceptable; the divergence likely comes from shared/chained inverters. Actual verification happens on the output netlist (must remain equivalent to original, with no remaining NOT-NOT pairs where removable)."
+      },
+      "team_answers": {
+        "Team2": "Applied rewrite not(not(?x))->?x 2 times, eliminated 2 gates; equivalence preserved.",
+        "Team3": "Collapsed back-to-back inverters; one instance changed; functionality preserved.",
+        "Team4": "Applied 1 verified pattern rewrite; functional equivalence preserved.",
+        "Team7": "Collapsed 2 pairs (4 NOT gates removed); 0 pairs remain; nothing changed functionally."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "What is the maximum combinational logic depth in the design now?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [26],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum combinational logic depth is 26.",
+        "notes": "Asked AFTER the inverter collapse, but all four full-score teams report 26 regardless of how many pairs they collapsed, so the collapse does not touch the critical path — 26 is the objective answer. Team7 additionally names deepest endpoints g738, g858-g865 (extra detail, not required)."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 26 gate levels.",
+        "Team3": "Maximum combinational logic depth is 26.",
+        "Team4": "Maximum combinational logic depth is 26.",
+        "Team7": "Depth 26; deepest endpoints g738, g858, g859, g860, g861, g862, g863, g864, g865."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the current design is functionally equivalent to the original loaded netlist; the equivalence check passed.",
+        "notes": "All four teams answer equivalent/passed. A bare \"Yes.\" (Team2) was accepted, but the golden reference should state equivalence explicitly. Any claim of non-equivalence is wrong."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Functionally equivalent; equivalence check passed.",
+        "Team4": "Yes, equivalent to snapshot \"original\".",
+        "Team7": "Equivalent to original; 33 cones verified equivalent."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test78_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test78_out.v successfully.",
+        "notes": "Success claim graded in the log; the written netlist itself must exist and be equivalent to the original (checked on the output file, not the log text)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test78_out.v\" successfully.",
+        "Team3": "Successfully written to test78_out.v.",
+        "Team4": "Wrote netlist to test78_out.v successfully.",
+        "Team7": "Design written to test78_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

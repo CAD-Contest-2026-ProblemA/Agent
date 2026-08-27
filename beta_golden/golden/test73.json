@@ -1,0 +1,238 @@
+{
+  "case": "test73",
+  "max_score": 11,
+  "team_scores": {"Team2": 11, "Team3": 11, "Team4": 11, "Team7": 11},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test73.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test73\"; responses will be recorded to test73.log.",
+        "notes": "Any acknowledgment that the testcase test73 has been set/initialized is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test73. Responses recorded to test73.log.",
+        "Team3": "The new testcase named test73 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test73. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test73. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test73.v located in the directory testcase/test73/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog testcase/test73/test73.v successfully (12428 total gates incl. 690 DFFs; PI=141, PO=107 per Team7).",
+        "notes": "Must indicate successful load. Extra stats optional: Team3/Team4 report 12,428 gates; Team7 reports PI 141, PO 107, 11738 comb gates + 690 DFFs (= 12428); Team2 reports only line/byte counts. All were accepted."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 13954 lines / 546097 bytes stored.",
+        "Team3": "Loaded successfully; total 12,428 gates.",
+        "Team4": "Loaded successfully; 12,428 gates, single top module, flat netlist.",
+        "Team7": "Loaded successfully. Module top | PI 141 | PO 107 | Gates 11738 | DFFs 690."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 789, 1241, 5906, 2429, 79, 1272, 22, 690, 12428],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 789, NOT: 1241, NAND: 5906, NOR: 2429, XOR: 79, XNOR: 1272, BUF: 22, DFF: 690; total 12428 gates.",
+        "notes": "All four full-score teams report the identical breakdown and total 12,428. Total must include DFFs. Checker: match each per-type count and the total."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 789, NOT 1241, NAND 5906, NOR 2429, XOR 79, XNOR 1272, BUF 22, DFF 690; total 12428.",
+        "Team3": "Identical breakdown; total 12,428.",
+        "Team4": "Identical breakdown; total 12,428.",
+        "Team7": "Identical breakdown; grand total incl. DFFs 12,428."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether wire n10239 is a cut between any primary input and any primary output. Report yes or no.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No, wire n10239 is not a cut between any primary input and any primary output.",
+        "notes": "All four teams answer No. Team7 adds rationale: n10239 has 0 primary inputs upstream and 0 primary outputs downstream, so it lies on no PI-to-PO path. Any clear 'no' is correct."
+      },
+      "team_answers": {
+        "Team2": "No.",
+        "Team3": "No, n10239 is not a cut between any PI and any PO.",
+        "Team4": "No. Signal n10239 is not a cut point.",
+        "Team7": "No; 0 PIs upstream and 0 POs downstream."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "What type of gate is g0? Report its gate type and pin connections.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": null,
+        "must_names": ["NOT", "n10231", "n10232"],
+        "expected": null,
+        "reference": "g0 is a NOT gate with output pin Y connected to net n10231 and input pin A connected to net n10232.",
+        "notes": "Team3/Team4/Team7 give the identical concrete answer (NOT, Y=n10231, A=n10232) - authoritative. ANOMALY: Team2 answered 'information not available' yet its reported case score is 11/11; either that score is inflated/lenient or the score data is off. Golden requires gate type NOT plus both nets n10231 (output) and n10232 (input)."
+      },
+      "team_answers": {
+        "Team2": "Said gate type and pin connections for g0 are not available (non-answer).",
+        "Team3": "g0 is NOT; Output Y: n10231, Input A: n10232.",
+        "Team4": "g0 is NOT with pins {Y: n10231, A: n10232}.",
+        "Team7": "g0 is NOT; outputs to n10231, input from n10232."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "What is the maximum logic depth from any primary input to any DFF D-pin in this design?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [122],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from any primary input to any DFF D-pin is 122 (deepest endpoint DFF g2837 per Team7).",
+        "notes": "Team3/Team4/Team7 all report 122 - authoritative. Endpoint name g2837 (Team7) is optional extra detail. ANOMALY: Team2 emitted a tool-error message (no number) yet is scored 11/11; treat 122 as the required answer regardless."
+      },
+      "team_answers": {
+        "Team2": "Planner/tool error, no depth reported (non-answer).",
+        "Team3": "Maximum logic depth PI -> DFF D-pin is 122.",
+        "Team4": "Max combinational depth primary_inputs -> sequential_input_pins is 122.",
+        "Team7": "122, deepest endpoint g2837."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Check whether the function at n11 is symmetric with respect to inputs n3 and n9[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the function at n11 is symmetric with respect to n3 and n9[0] (trivially: n11 depends on neither n3 nor n9[0], so swapping them cannot change n11).",
+        "notes": "All four teams conclude symmetric/yes. Team7 gives the mechanism: neither input is in n11's fanin cone, so symmetry holds vacuously. Any clear 'yes/symmetric' is correct; the vacuous-dependence explanation is optional."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "n11 is symmetric with respect to n3 and n9[0].",
+        "Team4": "Yes. n3 and n9[0] are functionally symmetric for n11.",
+        "Team7": "Symmetric - trivially, since n11 depends on neither n3 nor n9[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "List all flip-flops driven by clock n0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [690],
+        "must_names": null,
+        "expected": null,
+        "reference": "690 flip-flops are clocked by n0: instances g2432 through g3121 (contiguous range); list given inline or written to a file.",
+        "notes": "Count 690 is the objective gradable value; 4/4 agree. Team2 and Team4 enumerate all 690 instances inline (g2432..g3121); Team3 and Team7 write the list to a file and report the count - both presentations earned full credit, so a file reference plus count 690 is acceptable. Checker: require 690 and either an inline list consistent with g2432-g3121 or an explicit file reference."
+      },
+      "team_answers": {
+        "Team2": "Found 690 DFFs clocked by n0; full inline list g2432..g3121.",
+        "Team3": "690 flip-flops; list written to testcase/test73/list_registers_gates.txt.",
+        "Team4": "Found 690 registers; full inline list g2432..g3121.",
+        "Team7": "690 flip-flops driven by clock n0; list written to test73_R1.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Which primary input has the highest fanout in this design?",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": [690],
+        "must_names": ["n0"],
+        "expected": null,
+        "reference": "The primary input with the highest fanout is n0, with a fanout of 690.",
+        "notes": "4/4 name n0 with fanout 690. Team7 additionally claims a tie: primary input n1 also has fanout 690 (plausible: reset net feeding the same 690 DFFs) and still scored full, so mentioning n1 as a tied answer must not be penalized; n0 (or n0-and-n1) with 690 is correct."
+      },
+      "team_answers": {
+        "Team2": "n0, fanout 690.",
+        "Team3": "n0, fanout 690.",
+        "Team4": "n0, fanout 690.",
+        "Team7": "n0 with fanout 690; notes a tie with n1 also at 690."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "What is the fanout of primary input n0? List every gate that n0 drives directly.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [690],
+        "must_names": null,
+        "expected": null,
+        "reference": "n0 has a fanout of 690, directly driving the 690 DFF instances g2432 through g3121 (n0 is the clock); list given inline or written to a file.",
+        "notes": "Fanout 690 is the objective gradable value; 4/4 agree. Team4 enumerates all 690 driven gates inline (g2432..g3121); Team2, Team3, Team7 report 690 and point to an output file - both presentations earned full credit. Checker: require 690 plus either an inline list consistent with g2432-g3121 or an explicit file reference."
+      },
+      "team_answers": {
+        "Team2": "n0 drives 690 gates; list at netkit-output/test73-fanout_gates-0.txt.",
+        "Team3": "Fanout 690; list written to testcase/test73/fanout_gates.txt.",
+        "Team4": "n0 drives 690 gate loads; full inline list g2432..g3121.",
+        "Team7": "Fanout 690, driving 690 DFF clock pins; list written to test73_R2.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "Please write the current design to the output file test73_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test73_out.v successfully.",
+        "notes": "Any clear success claim for writing test73_out.v is acceptable; actual verification happens on the emitted netlist file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test73_out.v successfully.",
+        "Team3": "Design successfully written to test73_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test73_out.v successfully.",
+        "Team7": "Design written to test73_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

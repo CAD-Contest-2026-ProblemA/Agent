@@ -1,0 +1,112 @@
+{
+  "case": "test46",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test46.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test46\"; responses will be recorded to test46.log.",
+        "notes": "Any acknowledgment that the testcase test46 has begun is acceptable. All four full-score teams gave a simple init ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test46. Responses recorded to test46.log.",
+        "Team3": "The new testcase has been set to test46.",
+        "Team4": "Acknowledged. Initialized testcase test46. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test46. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test46.v located in the directory testcase/test46/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test46/test46.v successfully (918 gates total incl. 150 DFFs).",
+        "notes": "Must indicate successful load of testcase/test46/test46.v. Extra stats are fine and vary by team (Team3/Team4 say 918 gates; Team7 says 768 comb gates + 150 DFFs, PI 14, PO 83 - both presentations scored full; Team2 reports file lines/bytes only). No specific numbers are required for credit."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test46/test46.v successfully; 1026 lines (38172 bytes) stored.",
+        "Team3": "Loaded successfully, containing a total of 918 gates.",
+        "Team4": "Loaded successfully. 918 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module top | PI 14 | PO 83 | Gates 768 | DFFs 150."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [918, 0, 69, 54, 264, 280, 4, 97, 0, 150],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "notes": "All four full-score teams report the identical breakdown: AND=0, OR=69, NOT=54, NAND=264, NOR=280, XOR=4, XNOR=97, BUF=0, DFF=150, total=918. DFFs are included in the total. Checker: require every per-type count; total 918 (768 comb + 150 DFF)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150; total 918.",
+        "Team3": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team4": "918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team7": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Remove floating nodes that do not affect outputs. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Done. No floating/unused nodes were found; 0 gates removed and the design is functionally unchanged.",
+        "notes": "All four full-score teams found 0 floating nodes, so the netlist has no dangling logic. Response must claim the cleanup was performed (or attempted) with functionality preserved; reporting 0 removed is the consistent, expected outcome. A team claiming it removed gates here would need its output netlist checked for equivalence and would contradict all full-score anchors."
+      },
+      "team_answers": {
+        "Team2": "Done. No unused gates removed; design unchanged.",
+        "Team3": "No floating nodes removed, none existed; functionality unchanged.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "No floating nodes found; nothing removed; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test46_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test46_out.v successfully.",
+        "notes": "Must confirm the design was written to test46_out.v. Since no transform changed anything, the output netlist should be functionally identical to the original 918-gate design."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test46_out.v successfully.",
+        "Team3": "Design successfully written to test46_out.v.",
+        "Team4": "Wrote netlist to .../test46_out.v successfully.",
+        "Team7": "Design written to test46_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

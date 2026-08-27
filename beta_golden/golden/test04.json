@@ -1,0 +1,91 @@
+{
+  "case": "test04",
+  "max_score": 4,
+  "team_scores": {"Team2": 4, "Team3": 4, "Team4": 4, "Team7": 4},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test04.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test04\"; responses will be recorded to test04.log.",
+        "notes": "Any acknowledgment that the testcase test04 has begun/been set is acceptable. All 4 full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test04. Responses recorded to test04.log.",
+        "Team3": "The new testcase named test04 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test04. Responses recorded to test04.log. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase test04. Responses recorded to test04.log. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test04.v located in the directory testcase/test04/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test04/test04.v successfully (66 gates, 16 PIs, 1 PO, 0 DFFs).",
+        "notes": "Grading: response must indicate successful load of test04.v. Design stats if stated should match: 66 gates (Team3/Team4/Team7 all report 66; Team7 adds PI=16, PO=1, DFFs=0). Team2 reported only file size (86 lines / 2251 bytes) and still scored full, so gate count is optional detail, but if a gate count is given it should be 66."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test04/test04.v successfully. Stored 86 lines (2251 bytes) as current design.",
+        "Team3": "Design loaded successfully from testcase/test04/test04.v, total 66 gates.",
+        "Team4": "Loaded test04.v successfully. 66 gates, single top module (flat netlist).",
+        "Team7": "Loaded test04.v successfully. Module: top | PI: 16 | PO: 1 | Gates: 66 | DFFs: 0"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Compute the maximum logic depth of the fanin cone of output n3.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [14],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth of the fanin cone of output n3 is 14 (gate levels).",
+        "notes": "All 4 full-score teams report depth = 14; this is the objective golden value. Design has 0 DFFs (per Team7's load stats), so the DFF-in-cone prior does not add anything here; the cone is purely combinational (Team7 notes the cone contains all 66 combinational gates - extra detail, not required). Answer must state 14."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of fanin cone of n3 is 14 gate levels.",
+        "Team3": "Maximum logic depth of fanin cone of n3 is 14.",
+        "Team4": "Combinational logic depth of fan-in cone for n3 is 14.",
+        "Team7": "Max logic depth of fanin cone of n3 is 14; cone consists of 66 combinational gates (list written to test04_R1.txt)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Please write the current design to the output file test04_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test04_out.v successfully.",
+        "notes": "Grading: response must indicate the design was successfully written to test04_out.v. Actual file check happens on the output netlist (should be equivalent to the loaded design since no transforms were requested)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test04_out.v successfully.",
+        "Team3": "Current design successfully written to test04_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test04_out.v successfully.",
+        "Team7": "Design written to test04_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

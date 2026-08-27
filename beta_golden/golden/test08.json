@@ -1,0 +1,154 @@
+{
+  "case": "test08",
+  "max_score": 7,
+  "team_scores": {"Team2": 7, "Team3": 7, "Team4": 7, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test08.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test08\"; responses will be recorded to test08.log.",
+        "notes": "Any acknowledgment naming test08 and indicating the testcase has started is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test08. Responses recorded to test08.log.",
+        "Team3": "The new testcase named test08 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test08. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test08. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test08.v located in the directory testcase/test08/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test08/test08.v successfully (93 gates, module top, 20 PIs, 17 POs, 0 DFFs).",
+        "notes": "Must indicate a successful load of test08.v. Extra stats (93 gates, PI 20, PO 17, DFF 0 per Team7) are optional but if given should be consistent; 93 total gates confirmed by Team3/Team4/Team7."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test08/test08.v successfully; 116 lines (3162 bytes) stored.",
+        "Team3": "Loaded successfully from testcase/test08/test08.v; 93 gates total.",
+        "Team4": "Loaded successfully; 93 gates; single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 20 | PO: 17 | Gates: 93 | DFFs: 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [17, 17, 16, 0, 24, 4, 7, 8, 0, 93],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 93 gates: AND=17, OR=17, NOT=16, NAND=0, NOR=24, XOR=4, XNOR=7, BUF=8, DFF=0.",
+        "notes": "All four full-score teams report identical breakdown: AND 17, OR 17, NOT 16, NAND 0, NOR 24, XOR 4, XNOR 7, BUF 8, DFF 0, total 93. Every per-type count must match; total 93 must be present or derivable."
+      },
+      "team_answers": {
+        "Team2": "AND 17, OR 17, NOT 16, NAND 0, NOR 24, XOR 4, XNOR 7, BUF 8, DFF 0; total 93.",
+        "Team3": "Total 93: AND 17, OR 17, NOT 16, NAND 0, NOR 24, XOR 4, XNOR 7, BUF 8, DFF 0.",
+        "Team4": "93 gates: AND 17, OR 17, NOT 16, NAND 0, NOR 24, XOR 4, XNOR 7, BUF 8, DFF 0.",
+        "Team7": "Total 93: AND 17, OR 17, NOT 16, NAND 0, NOR 24, XOR 4, XNOR 7, BUF 8, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n0[0] to n9 exists that does not traverse node n14.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n0[0] to n9 exists that does not traverse node n14.",
+        "notes": "All four teams answer YES (path exists avoiding n14). Response must affirm existence; naming a witness path is optional."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0[0] to n9 exists avoiding n14.",
+        "Team3": "Yes, such a path exists (does not traverse n14).",
+        "Team4": "Yes. Path from n0[0] to n9 avoiding n14 exists.",
+        "Team7": "A combinational path from n0[0] to n9 exists that does not traverse n14 (affirmative)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n0[1] to output n10 exists while avoiding n14.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n0[1] to n10 exists while avoiding n14.",
+        "notes": "All four teams answer YES. Response must affirm existence of an n0[1]->n10 path avoiding n14."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0[1] to n10 exists avoiding n14.",
+        "Team3": "Yes, such a path exists (does not traverse n14).",
+        "Team4": "Yes. Path from n0[1] to n10 avoiding n14 exists.",
+        "Team7": "A path connecting n0[1] to n10 exists while avoiding n14 (affirmative)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n0[1] and terminating at primary output n10.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [16],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 16 paths from n0[1] to n10 (full enumeration listed; first gates g24/g25/g26/g28/g30/g31, all converging through g75->g92->n10).",
+        "notes": "All four teams report exactly 16 paths. Gradable objective value is the count 16. Enumeration may be inline (Team2/Team4 with nets, Team7 gate-only) or written to a file with the count in the log (Team3, testcase/test08/list_paths_paths.txt) - both presentations accepted. If paths are listed, they should match the 16 gate sequences seen in Team2/Team4 logs."
+      },
+      "team_answers": {
+        "Team2": "Found 16 combinational paths from n0[1] to n10; all 16 enumerated inline with gates and nets.",
+        "Team3": "16 paths found; complete list written to testcase/test08/list_paths_paths.txt.",
+        "Team4": "Found 16 combinational paths; all 16 enumerated inline with gates and nets.",
+        "Team7": "16 paths; all enumerated inline as gate-only sequences (g24/g25/g26/g28/g30/g31 starts)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test08_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test08_out.v successfully.",
+        "notes": "Must claim a successful write of test08_out.v. Output netlist should be the unmodified loaded design (no transforms were requested in this case)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test08_out.v successfully.",
+        "Team3": "Design successfully written to test08_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test08_out.v successfully.",
+        "Team7": "Design written to test08_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,112 @@
+{
+  "case": "test25",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test25.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test25\"; responses will be recorded to test25.log.",
+        "notes": "Any acknowledgment naming test25 is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test25\". Responses recorded to test25.log.",
+        "Team3": "The new testcase named \"test25\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test25\". Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test25\". Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test25.v located in the directory testcase/test25/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test25/test25.v successfully; design contains 749 gates (693 combinational + 56 DFFs).",
+        "notes": "Response must indicate a successful load of testcase/test25/test25.v. Stats are optional extras: Team3/Team4 report 749 total gates; Team7 reports PI:46 PO:52 Gates:693 DFFs:56 (693+56=749, consistent); Team2 reports only line/byte counts. All scored full, so no specific number is required on this line."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 849 lines (29168 bytes) stored as current design.",
+        "Team3": "Loaded successfully; total of 749 gates.",
+        "Team4": "Loaded successfully; 749 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully; Module top, PI:46, PO:52, Gates:693, DFFs:56."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 98, 102, 342, 119, 8, 15, 9, 56, 749],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 98, NOT: 102, NAND: 342, NOR: 119, XOR: 8, XNOR: 15, BUF: 9, DFF: 56; total 749 gates.",
+        "notes": "All four full-score teams report the identical breakdown and explicitly state the 749 total; counts verified against the netlist (grep of test25.v yields the same per-type counts). Checker: every per-type count must match; DFF row (56) must be present per the prompt's type list."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56; total 749.",
+        "Team3": "Total 749: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56.",
+        "Team4": "749 gates: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56.",
+        "Team7": "Total 749: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Replace all 2-input OR gates in the cone of n11[0] with equivalent logic built only from NAND and NOT gates. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "No 2-input OR gates exist in the fanin cone of n11[0]; 0 gates were replaced and the design is unchanged (functionality preserved).",
+        "notes": "Objective fact confirmed by all four full-score teams: the cone of n11[0] contains zero 2-input OR gates, so the correct outcome is 0 replacements / no netlist change. Checker: response must claim the transform was handled and report no matching gates (or 0 remapped); output netlist must remain equivalent to the original. A response claiming it replaced some OR gates in this cone would be suspect."
+      },
+      "team_answers": {
+        "Team2": "Done. No matching gates in the cone of n11[0] required remapping to NAND,NOT basis.",
+        "Team3": "No 2-input OR gates found in the cone of n11[0]; no gates replaced.",
+        "Team4": "Matched 0 gates and remapped 0 to the requested NAND,NOT basis.",
+        "Team7": "No OR gates found in that cone to replace; no changes made to the design."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test25_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test25_out.v successfully.",
+        "notes": "Response must indicate the netlist was written to test25_out.v. Since line 4 made no changes, the output file should be functionally identical to the input netlist."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test25_out.v\" successfully.",
+        "Team3": "Design successfully written to test25_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test25_out.v successfully.",
+        "Team7": "Design written to test25_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

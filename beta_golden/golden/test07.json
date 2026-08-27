@@ -1,0 +1,133 @@
+{
+  "case": "test07",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test07.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test07\"; responses will be recorded to test07.log.",
+        "notes": "Any acknowledgment that the testcase test07 has begun is acceptable. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test07. Responses recorded to test07.log.",
+        "Team3": "The new testcase named test07 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test07. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test07. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test07.v located in the directory testcase/test07/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test07/test07.v successfully (938 gates).",
+        "notes": "Must indicate successful load of testcase/test07/test07.v. Extra stats optional; teams that reported gate count all said 938 gates (Team7 also: module top, PI 95, PO 70, DFFs 0). Absolute vs relative path both acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 1058 lines (32281 bytes).",
+        "Team3": "Loaded successfully; total 938 gates.",
+        "Team4": "Loaded successfully; 938 gates; single top module, flat netlist.",
+        "Team7": "Loaded successfully; Module top | PI 95 | PO 70 | Gates 938 | DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [938, 113, 262, 309, 0, 52, 2, 138, 62, 0],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 938 gates: AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0.",
+        "notes": "All four full-score teams report identical breakdown. Response must give the per-type counts (AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0); total 938 stated explicitly by all four teams. Netlist is purely combinational (DFF = 0)."
+      },
+      "team_answers": {
+        "Team2": "AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0; total 938.",
+        "Team3": "Total 938: AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0.",
+        "Team4": "938 gates: AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0.",
+        "Team7": "Total 938: AND 113, OR 262, NOT 309, NAND 0, NOR 52, XOR 2, XNOR 138, BUF 62, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n0[0] to n5 exists that does not traverse node n95.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n0[0] to n5 exists that does not traverse node n95.",
+        "notes": "All four full-score teams answered affirmatively (path exists while avoiding n95). Answer must be an affirmative existence claim; explicit 'Yes' or an equivalent declarative statement (Team7 omitted the word 'Yes' but asserted existence) is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0[0] to n5 exists while avoiding n95.",
+        "Team3": "Yes, path exists that does not traverse n95.",
+        "Team4": "Yes. Path from n0[0] to n5 avoiding n95 exists.",
+        "Team7": "A path from n0[0] to n5 exists that does not traverse n95 (affirmative statement, no explicit 'Yes')."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n0[1] to output n6 exists while avoiding n94.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a path connecting input n0[1] to output n6 exists while avoiding n94.",
+        "notes": "All four full-score teams answered affirmatively (path exists while avoiding n94). Affirmative existence claim required; explicit 'Yes' optional if the statement clearly asserts existence."
+      },
+      "team_answers": {
+        "Team2": "Yes. Path from n0[1] to n6 exists while avoiding n94.",
+        "Team3": "Yes, path exists while avoiding n94.",
+        "Team4": "Yes. Path from n0[1] to n6 avoiding n94 exists.",
+        "Team7": "A path connecting n0[1] to n6 exists while avoiding n94 (affirmative statement, no explicit 'Yes')."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test07_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test07_out.v successfully.",
+        "notes": "Must indicate the design was written to test07_out.v. Since no transforms were requested in this case, the output netlist should be equivalent to the loaded design; actual verification is on the file, not the log."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test07_out.v successfully.",
+        "Team3": "Successfully written to test07_out.v.",
+        "Team4": "Wrote netlist to test07_out.v successfully (absolute path shown).",
+        "Team7": "Design written to test07_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

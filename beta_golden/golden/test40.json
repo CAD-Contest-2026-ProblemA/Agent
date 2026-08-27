@@ -1,0 +1,112 @@
+{
+  "case": "test40",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test40.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test40\"; responses will be recorded to test40.log.",
+        "notes": "Any acknowledgment naming the testcase test40 is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test40. Responses recorded to test40.log.",
+        "Team3": "The new testcase named test40 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test40. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test40. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test40.v located in the directory testcase/test40/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test40/test40.v successfully (2584 gates including 260 DFFs).",
+        "notes": "Response must indicate a successful load of testcase/test40/test40.v. Optional stats vary by presentation: Team3/Team4 report 2584 total gates; Team7 reports PI 60, PO 71, 2324 comb gates + 260 DFFs (2324+260=2584, consistent); Team2 reports file size/lines only. Any of these is fine as long as success is claimed."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test40/test40.v successfully; 2891 lines (110717 bytes) stored.",
+        "Team3": "Loaded successfully; total 2584 gates.",
+        "Team4": "Loaded successfully; 2584 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 60, PO 71, Gates 2324, DFFs 260."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 124, 257, 1624, 298, 16, 5, 0, 260, 2584],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 2584 gates: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "notes": "All four full-score teams report the identical breakdown, so these counts are objective ground truth. The per-type breakdown must match exactly; total 2584 = sum of all types including DFFs. Team4 omitted an explicit total-per-line but listed the breakdown plus 2584 total, still full credit."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584.",
+        "Team3": "Total 2584: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "Team4": "2584 gates: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260.",
+        "Team7": "Total 2584: AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Reconstructed the netlist into the AND/NOT basis: 2067 combinational gates remapped, functional equivalence preserved.",
+        "notes": "Response must claim successful remap to AND+NOT basis (equivalence preserved). All four teams remapped 2067 gates (the 2324 comb gates minus the 257 NOTs already in-basis), so 2067 is a strong sanity anchor but post-transform totals are team-dependent: Team2 delta +2739, Team3 delta +2744, Team7 after=5664 (AND 2109 + NOT 3555). Different decomposition choices give different gate-count deltas; do not grade the delta, only the success/equivalence claim and that the output netlist contains only AND/NOT (+DFF)."
+      },
+      "team_answers": {
+        "Team2": "Done. Matched/remapped 2067 gates to AND,NOT basis; delta +2739; equivalence preserved.",
+        "Team3": "Reconstructed with AND/NOT only; 2067 gates remapped; net gain 2744; equivalence preserved.",
+        "Team4": "Matched 2067 gates and remapped 2067 to AND,NOT basis.",
+        "Team7": "Rewrote 2067 gates; before 2324 comb, after 5664 (AND 2109, NOT 3555); pure basis, equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test40_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test40_out.v successfully.",
+        "notes": "Response must confirm the netlist was written to test40_out.v. Actual verification (AND/NOT-only content, equivalence to original) happens on the output file, not the log."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test40_out.v successfully.",
+        "Team3": "Successfully written to test40_out.v.",
+        "Team4": "Wrote current netlist to test40_out.v successfully.",
+        "Team7": "Design written to test40_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}
