@@ -1,0 +1,42 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test89". Responses will be recorded to test89.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test89/test89.v successfully. Stored 29014 lines (1233377 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 955
+- NOT: 1514
+- NAND: 17350
+- NOR: 3158
+- XOR: 18
+- XNOR: 397
+- BUF: 19
+- DFF: 2585
+
+Total gates: 25996.
+#END 3
+#RESPONSE 4
+Done.
+Matched 4547 gates and remapped 4547 of them in the design to the NAND,NOT basis. The gate-count delta is +13045.
+#END 4
+#RESPONSE 5
+Done.
+The rewrite nand(?x,1) → not(?x) found no matching logic, so the design was unchanged.
+#END 5
+#RESPONSE 6
+The current design contains 9778 NOT gates.
+#END 6
+#RESPONSE 7
+Done.
+Applied the rewrite not(not(?x)) → ?x 1497 times and eliminated 1497 gates. Functional equivalence was preserved.
+#END 7
+#RESPONSE 8
+Yes.
+#END 8
+#RESPONSE 9
+Wrote the current design to "test89_out.v" successfully.
+#END 9

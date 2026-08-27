@@ -1,0 +1,12 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test04". Responses will be recorded to test04.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test04/test04.v successfully. Stored 86 lines (2251 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The maximum logic depth of the fanin cone of n3 is 14 gate levels.
+#END 3
+#RESPONSE 4
+Wrote the current design to "test04_out.v" successfully.
+#END 4

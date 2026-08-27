@@ -1,0 +1,39 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test14". Responses will be recorded to test14.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test14/test14.v successfully. Stored 17163 lines (633816 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows: - AND: 2545 - OR: 3496 - NOT: 3729 - NAND: 2 - NOR: 1465 - XOR: 257 - XNOR: 3445 - BUF: 306 - DFF: 0. Total gates: 15245.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from n61 to n63[0] exists while avoiding n4363.
+#END 4
+#RESPONSE 5
+Yes. A combinational path from n0[0] to n63[1] exists while avoiding n141.
+#END 5
+#RESPONSE 6
+Found 289366 combinational paths from n0[0] to n63[1]. The complete path list is available at netkit-output/test14-list_paths_paths-0.txt.
+#END 6
+#RESPONSE 7
+Found 203810 combinational paths from n0[1] to n63[0]. The complete path list is available at netkit-output/test14-list_paths_paths-1.txt.
+#END 7
+#RESPONSE 8
+The maximum logic depth of the current design is 5 gate levels.
+#END 8
+#RESPONSE 9
+The maximum logic depth of the current design is 54 gate levels.
+#END 9
+#RESPONSE 10
+The critical-path depth from n0[1] to n63[0] is 51.
+#END 10
+#RESPONSE 11
+Gate g0 has 1 immediate successor gate.
+#END 11
+#RESPONSE 12
+Gate g0 has 1 immediate successor gate: g13209.
+#END 12
+#RESPONSE 13
+Wrote the current design to "test14_out.v" successfully.
+#END 13

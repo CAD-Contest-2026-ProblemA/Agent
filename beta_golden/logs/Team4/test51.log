@@ -1,0 +1,21 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test51". All subsequent responses will be recorded to test51.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test51/test51.v" successfully. It contains 5,442 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The current design contains 5,442 gates.
+Gate-type breakdown: AND: 0, OR: 144, NOT: 507, NAND: 3214, NOR: 505, XOR: 22, XNOR: 294, BUF: 0, DFF: 756.
+#END 3
+#RESPONSE 4
+Renamed "n1289" to "renamed_sig" successfully. Structural safety checks passed, and the bijective rename preserves functionality by construction.
+#END 4
+#RESPONSE 5
+Signal "renamed_sig" is driven by "g3904" and has 1 gate load.
+Load gates:
+1. g2161
+#END 5
+#RESPONSE 6
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test51_out.v" successfully.
+#END 6

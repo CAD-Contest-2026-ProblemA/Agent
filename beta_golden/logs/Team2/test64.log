@@ -1,0 +1,54 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test64". Responses will be recorded to test64.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test64/test64.v successfully. Stored 72419 lines (3084784 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 3585
+- NOT: 4748
+- NAND: 35261
+- NOR: 8372
+- XOR: 355
+- XNOR: 7748
+- BUF: 150
+- DFF: 4211
+
+Total gates: 64430.
+#END 3
+#RESPONSE 4
+No combinational paths of length 0 were found from primary_inputs to primary_outputs.
+#END 4
+#RESPONSE 5
+Done.
+No unused gates were removed; the design was unchanged.
+#END 5
+#RESPONSE 6
+No.
+#END 6
+#RESPONSE 7
+No combinational paths were found from n3 to n9.
+#END 7
+#RESPONSE 8
+No. n8 does not depend on n1: n8 is functionally insensitive to n1.
+#END 8
+#RESPONSE 9
+No.
+#END 9
+#RESPONSE 10
+The design's primary inputs are:
+- n0
+- n1
+- n2
+- n3
+- n4
+- n7[31:0]
+- n6[5:0]
+- n5[7:0]
+#END 10
+#RESPONSE 11
+Wrote the current design to "test64_out.v" successfully.
+#END 11

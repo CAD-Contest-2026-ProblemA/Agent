@@ -1,0 +1,31 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test80". Responses will be recorded to test80.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test80/test80.v successfully. Stored 4685 lines (186912 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 197
+- NOT: 331
+- NAND: 2394
+- NOR: 555
+- XOR: 9
+- XNOR: 123
+- BUF: 2
+- DFF: 570
+
+Total gates: 4181.
+#END 3
+#RESPONSE 4
+Done.
+Renamed signal n440 to renamed_wire; 4 references were updated.
+#END 4
+#RESPONSE 5
+Yes.
+#END 5
+#RESPONSE 6
+Wrote the current design to "test80_out.v" successfully.
+#END 6

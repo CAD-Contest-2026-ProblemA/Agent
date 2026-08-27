@@ -1,0 +1,32 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test44". Responses will be recorded to test44.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test44/test44.v successfully. Stored 2891 lines (110717 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 124
+- NOT: 257
+- NAND: 1624
+- NOR: 298
+- XOR: 16
+- XNOR: 5
+- BUF: 0
+- DFF: 260
+
+Total gates: 2584.
+#END 3
+#RESPONSE 4
+Done.
+Matched 2067 gates and remapped 2067 of them in the design to the AND,NOT basis. The gate-count delta is +2739. Functional equivalence was preserved.
+#END 4
+#RESPONSE 5
+Done.
+The maximum logic depth of the design was reduced from 383 to 81. The gate count changed from 5323 to 4882. The optimized design is functionally equivalent to the original.
+#END 5
+#RESPONSE 6
+Wrote the current design to "test44_out.v" successfully.
+#END 6

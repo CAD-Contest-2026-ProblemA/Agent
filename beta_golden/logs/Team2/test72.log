@@ -1,0 +1,34 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test72". Responses will be recorded to test72.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test72/test72.v successfully. Stored 13954 lines (546097 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 789
+- NOT: 1241
+- NAND: 5906
+- NOR: 2429
+- XOR: 79
+- XNOR: 1272
+- BUF: 22
+- DFF: 690
+
+Total gates: 12428.
+#END 3
+#RESPONSE 4
+Done.
+Added 445 fanout buffers for the design to enforce a maximum fanout of 16.
+#END 4
+#RESPONSE 5
+The maximum fanout of n1 is 16.
+#END 5
+#RESPONSE 6
+Yes.
+#END 6
+#RESPONSE 7
+Wrote the current design to "test72_out.v" successfully.
+#END 7

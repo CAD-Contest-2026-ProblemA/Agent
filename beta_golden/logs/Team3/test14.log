@@ -1,0 +1,49 @@
+#RESPONSE 1
+The new testcase "test14" has been set successfully.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test14/test14.v`, containing a total of 15,245 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 15,245, broken down by gate type as follows:
+
+- AND: 2,545
+- OR: 3,496
+- NOT: 3,729
+- NAND: 2
+- NOR: 1,465
+- XOR: 257
+- XNOR: 3,445
+- BUF: 306
+- DFF: 0
+#END 3
+#RESPONSE 4
+Yes, a combinational path from n61 to n63[0] exists that does not traverse node n4363.
+#END 4
+#RESPONSE 5
+Yes, a combinational path from n0[0] to n63[1] exists that does not traverse node n141.
+#END 5
+#RESPONSE 6
+A total of 289,366 paths originating at primary input n0[0] and terminating at primary output n63[1] have been found. The complete list has been written to the file `testcase/test14/list_paths_paths.txt`.
+#END 6
+#RESPONSE 7
+A total of 203,810 paths originating at primary input n0[1] and terminating at primary output n63[0] have been found. The complete list has been written to the file `testcase/test14/list_paths_paths_2.txt`.
+#END 7
+#RESPONSE 8
+The maximum logic depth from input n61 to output n63[0] is 5.
+#END 8
+#RESPONSE 9
+The longest combinational path depth from input n0[0] to output n63[1] is 54.
+#END 9
+#RESPONSE 10
+The critical path depth between n0[1] and n63[0] is 51.
+#END 10
+#RESPONSE 11
+The number of gates driven by g0 is 1.
+#END 11
+#RESPONSE 12
+The immediate successor of gate g0 is g13209. There is a total of 1 immediate successor.
+#END 12
+#RESPONSE 13
+The current design has been successfully written to the output file `test14_out.v`.
+#END 13

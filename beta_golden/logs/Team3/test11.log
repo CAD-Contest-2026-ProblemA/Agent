@@ -1,0 +1,40 @@
+#RESPONSE 1
+The new testcase named "test11" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test11/test11.v`, containing a total of 1620 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 1620, broken down by gate type as follows:
+
+- AND: 324
+- OR: 360
+- NOT: 378
+- NAND: 7
+- NOR: 164
+- XOR: 47
+- XNOR: 340
+- BUF: 0
+- DFF: 0
+#END 3
+#RESPONSE 4
+No combinational path exists from n29 to n31[0] that does not traverse node n1552.
+#END 4
+#RESPONSE 5
+No combinational path exists from n30 to n31[1] that does not traverse node n1592.
+#END 5
+#RESPONSE 6
+No paths exist originating at primary input n30 and terminating at primary output n31[1].
+#END 6
+#RESPONSE 7
+A complete enumeration of paths between `n0[0]` and `n31[0]` has been generated. The first path has been written to the file `testcase/test11/list_paths_paths.txt`.
+#END 7
+#RESPONSE 8
+The maximum logic depth from input `n29` to output `n31[0]` is 15.
+#END 8
+#RESPONSE 9
+The longest combinational path depth from input `n30` to output `n31[1]` is 0, indicating that no path exists between these points.
+#END 9
+#RESPONSE 10
+The current design has been successfully written to the output file `test11_out.v`.
+#END 10

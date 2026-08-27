@@ -1,0 +1,48 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test05". All subsequent responses will be recorded to test05.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test05/test05.v" successfully. It contains 3,462 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+Signal "n5" drives 35 gate loads.
+Driven gates:
+1. g201
+2. g234
+3. g237
+4. g238
+5. g240
+6. g241
+7. g243
+8. g244
+9. g245
+10. g247
+11. g248
+12. g250
+13. g252
+14. g255
+15. g256
+16. g259
+17. g262
+18. g263
+19. g264
+20. g267
+21. g269
+22. g270
+23. g271
+24. g274
+25. g276
+26. g281
+27. g284
+28. g285
+29. g286
+30. g290
+31. g293
+32. g294
+33. g295
+34. g300
+35. g443
+#END 3
+#RESPONSE 4
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test05_out.v" successfully.
+#END 4

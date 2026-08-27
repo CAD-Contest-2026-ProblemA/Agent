@@ -1,0 +1,46 @@
+#RESPONSE 1
+The new testcase has been set to "test65".
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test65/test65.v`, containing a total of 24,101 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 24,101, broken down by gate type as follows:
+
+- AND: 0
+- OR: 178
+- NOT: 572
+- NAND: 16,982
+- NOR: 1,749
+- XOR: 37
+- XNOR: 780
+- BUF: 1
+- DFF: 3,802
+#END 3
+#RESPONSE 4
+The netlist has been successfully reconstructed using only AND and NOT gates while preserving functional equivalence. A total of 19,727 gates were matched and remapped, resulting in a delta of 27,514 gates.
+#END 4
+#RESPONSE 5
+The reconstructed netlist now contains 21,360 AND gates.
+#END 5
+#RESPONSE 6
+The current netlist is functionally equivalent to the netlist as last loaded from disk.
+#END 6
+#RESPONSE 7
+The logic expression for \( n30 \) using only the primary input names is \( n30 \).
+#END 7
+#RESPONSE 8
+No combinational path exists from n2 to n30 that avoids n4552.
+#END 8
+#RESPONSE 9
+The maximum combinational depth from any primary input to any primary output in the entire design is 0.
+#END 9
+#RESPONSE 10
+The output bit with the deepest fanin logic cone is \( n30 \) with a depth of 0.
+#END 10
+#RESPONSE 11
+The primary input \( n0 \) drives a total of 3802 gates directly. The complete list of these gates has been written to the file `testcase/test65/fanout_gates.txt`.
+#END 11
+#RESPONSE 12
+The current design has been successfully written to the output file `test65_out.v`.
+#END 12

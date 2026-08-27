@@ -1,0 +1,12 @@
+#RESPONSE 1
+The new testcase named "test05" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test05/test05.v`, containing a total of 3462 gates.
+#END 2
+#RESPONSE 3
+The fanout of primary input **n5** is **35**. The complete list of gates that **n5** drives directly has been written to the file `testcase/test05/fanout_gates.txt`.
+#END 3
+#RESPONSE 4
+The current design has been successfully written to the output file `test05_out.v`.
+#END 4

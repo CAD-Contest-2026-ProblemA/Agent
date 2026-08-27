@@ -1,0 +1,12 @@
+#RESPONSE 1
+The new testcase named "test03" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test03/test03.v`, which contains a total of 931 gates.
+#END 2
+#RESPONSE 3
+There are 525 gates in the fanin cone of primary output n15.
+#END 3
+#RESPONSE 4
+The current design has been successfully written to the output file `test03_out.v`.
+#END 4

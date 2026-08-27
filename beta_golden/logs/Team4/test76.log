@@ -1,0 +1,118 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test76". All subsequent responses will be recorded to test76.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test76/test76.v" successfully. It contains 62 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The current design contains 62 gates.
+Gate-type breakdown: AND: 0, OR: 2, NOT: 16, NAND: 13, NOR: 22, XOR: 0, XNOR: 2, BUF: 0, DFF: 7.
+#END 3
+#RESPONSE 4
+Found 45 reachable ordered DFF-instance pairs, with one shortest representative route per pair. Self-loops are included; direct zero-gate Q-to-D routes are included.
+Representative register-pair routes:
+1. g12=>g22:n6[1]->g53->n11->g52->n52->g38->n26->g26->n37
+2. g12=>g13:n6[1]->g60->n13->g56->n54->g47->n17->g17->n44
+3. g12=>g12:n6[1]->g61->n12->g58->n53->g46->n18->g16->n45
+4. g12=>g23:n6[1]->g50->n9->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36
+5. g12=>g14:n6[1]->g60->n13->g59->n14->g57->n15->g55->n55->g42->n22->g18->n43
+6. g12=>g15:n6[1]->g50->n9->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g19->n42
+7. g13=>g13:n6[2]->g56->n54->g47->n17->g17->n44
+8. g13=>g22:n6[2]->g54->n10->g52->n52->g38->n26->g26->n37
+9. g13=>g14:n6[2]->g57->n15->g55->n55->g42->n22->g18->n43
+10. g13=>g23:n6[2]->g50->n9->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36
+11. g13=>g12:n6[2]->g50->n9->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g16->n45
+12. g13=>g15:n6[2]->g50->n9->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g19->n42
+13. g14=>g14:n6[3]->g55->n55->g42->n22->g18->n43
+14. g14=>g22:n6[3]->g54->n10->g52->n52->g38->n26->g26->n37
+15. g14=>g23:n6[3]->g51->n8->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36
+16. g14=>g12:n6[3]->g51->n8->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g16->n45
+17. g14=>g13:n6[3]->g51->n8->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g17->n44
+18. g14=>g15:n6[3]->g51->n8->g49->n56->g40->n24->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g19->n42
+19. g15=>g15:n6[0]->g19->n42
+20. g15=>g22:n6[0]->g53->n11->g52->n52->g38->n26->g26->n37
+21. g15=>g13:n6[0]->g60->n13->g56->n54->g47->n17->g17->n44
+22. g15=>g12:n6[0]->g61->n12->g58->n53->g46->n18->g16->n45
+23. g15=>g14:n6[0]->g60->n13->g59->n14->g57->n15->g55->n55->g42->n22->g18->n43
+24. g15=>g23:n6[0]->g53->n11->g52->n52->g48->n16->g37->n27->g34->n31->g31->n33->g28->n36
+25. g22=>g22:n7[1]->g29->n34->g26->n37
+26. g22=>g30:n7[1]->g39->n25->g33->n30
+27. g22=>g23:n7[1]->g7->n5[2]->g6->n50->g35->n29->g32->n32->g28->n36
+28. g22=>g12:n7[1]->g7->n5[2]->g6->n50->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g16->n45
+29. g22=>g13:n7[1]->g7->n5[2]->g6->n50->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g17->n44
+30. g22=>g14:n7[1]->g7->n5[2]->g6->n50->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g18->n43
+31. g22=>g15:n7[1]->g7->n5[2]->g6->n50->g35->n29->g32->n32->g28->n36->g25->n38->g20->n41->g19->n42
+32. g23=>g23:n7[0]->g31->n33->g28->n36
+33. g23=>g30:n7[0]->g39->n25->g33->n30
+34. g23=>g22:n7[0]->g3->n51->g43->n21->g38->n26->g26->n37
+35. g23=>g12:n7[0]->g24->n39->g21->n40->g20->n41->g16->n45
+36. g23=>g13:n7[0]->g24->n39->g21->n40->g20->n41->g17->n44
+37. g23=>g14:n7[0]->g24->n39->g21->n40->g20->n41->g18->n43
+38. g23=>g15:n7[0]->g24->n39->g21->n40->g20->n41->g19->n42
+39. g30=>g30:n7[2]->g44->n20->g33->n30
+40. g30=>g12:n7[2]->g21->n40->g20->n41->g16->n45
+41. g30=>g13:n7[2]->g21->n40->g20->n41->g17->n44
+42. g30=>g14:n7[2]->g21->n40->g20->n41->g18->n43
+43. g30=>g15:n7[2]->g21->n40->g20->n41->g19->n42
+44. g30=>g22:n7[2]->g34->n31->g29->n34->g26->n37
+45. g30=>g23:n7[2]->g34->n31->g31->n33->g28->n36
+#END 4
+#RESPONSE 5
+The maximum combinational logic depth is 12.
+#END 5
+#RESPONSE 6
+The design has 4 primary-input bits and 10 primary-output bits.
+#END 6
+#RESPONSE 7
+Found 3 primary outputs.
+Ports:
+1. n4[2:0]
+2. n5[2:0]
+3. n6[3:0]
+#END 7
+#RESPONSE 8
+The output with the largest fan-in cone is "n4[0]", containing 4 gates.
+#END 8
+#RESPONSE 9
+Found 2 XNOR gate instances.
+Gate instances:
+1. g55
+2. g56
+#END 9
+#RESPONSE 10
+The logic cone of "n4[0]" contains 4 gates.
+Gate-type breakdown: AND: 0, OR: 0, NOT: 2, NAND: 1, NOR: 1, XOR: 0, XNOR: 0, BUF: 0, DFF: 0.
+#END 10
+#RESPONSE 11
+The logic cone of "n5[0]" contains 4 gates.
+Gate-type breakdown: AND: 0, OR: 1, NOT: 2, NAND: 1, NOR: 0, XOR: 0, XNOR: 0, BUF: 0, DFF: 0.
+#END 11
+#RESPONSE 12
+The logic cone of "n6[0]" contains 0 gates.
+Gate-type breakdown: AND: 0, OR: 0, NOT: 0, NAND: 0, NOR: 0, XOR: 0, XNOR: 0, BUF: 0, DFF: 0.
+#END 12
+#RESPONSE 13
+Signal "n0" drives 7 gate loads.
+Driven gates:
+1. g12
+2. g13
+3. g14
+4. g15
+5. g22
+6. g23
+7. g30
+#END 13
+#RESPONSE 14
+Signal "n1" drives 7 gate loads.
+Driven gates:
+1. g12
+2. g13
+3. g14
+4. g15
+5. g22
+6. g23
+7. g30
+#END 14
+#RESPONSE 15
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test76_out.v" successfully.
+#END 15

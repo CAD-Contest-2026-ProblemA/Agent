@@ -1,0 +1,76 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test76". Responses will be recorded to test76.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test76/test76.v successfully. Stored 77 lines (2311 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 2
+- NOT: 16
+- NAND: 13
+- NOR: 22
+- XOR: 0
+- XNOR: 2
+- BUF: 0
+- DFF: 7
+
+Total gates: 62.
+#END 3
+#RESPONSE 4
+There are 212 register-to-register combinational paths. The complete path list is available at netkit-output/test76-register_paths_paths-0.txt.
+#END 4
+#RESPONSE 5
+The planner could not execute a valid Netkit command after repair. initial_nks=['logic_depth src=register_paths dst=register_paths kind=max mode=comb'] repair_nks=['logic_depth src=register_paths dst=register_paths kind=max mode=comb'] error=logic_depth src='register_paths' is not a loaded signal
+#END 5
+#RESPONSE 6
+The design has 4 primary inputs and 10 primary outputs.
+#END 6
+#RESPONSE 7
+The design's primary outputs are:
+- n4[2:0]
+- n5[2:0]
+- n6[3:0]
+#END 7
+#RESPONSE 8
+The largest output fanin cone contains 7 gates. The tied outputs are: n4[0], n5[0], n5[1].
+#END 8
+#RESPONSE 9
+Found 2 XNOR gates.
+- g55(inputs=[n15,n6[3]],output=n55)
+- g56(inputs=[n6[2],n13],output=n54)
+#END 9
+#RESPONSE 10
+The logic cone of n4[0] contains 0 AND gates, 0 OR gates, 2 NOT gates, 1 NAND gate, 1 NOR gate, 0 XOR gates, 0 XNOR gates, 0 BUF gates, and 3 DFF gates.
+#END 10
+#RESPONSE 11
+The logic cone of n5[0] contains 0 AND gates, 1 OR gate, 2 NOT gates, 1 NAND gate, 0 NOR gates, 0 XOR gates, 0 XNOR gates, 0 BUF gates, and 3 DFF gates, with a total of 7 gates.
+#END 11
+#RESPONSE 12
+The logic cone of n6[0] contains 0 AND gates, 0 OR gates, 0 NOT gates, 0 NAND gates, 0 NOR gates, 0 XOR gates, 0 XNOR gates, 0 BUF gates, and 1 DFF gate.
+#END 12
+#RESPONSE 13
+n0 directly drives 7 gates.
+- g12
+- g13
+- g14
+- g15
+- g22
+- g23
+- g30
+#END 13
+#RESPONSE 14
+n1 directly drives 7 gates.
+- g12
+- g13
+- g14
+- g15
+- g22
+- g23
+- g30
+#END 14
+#RESPONSE 15
+Wrote the current design to "test76_out.v" successfully.
+#END 15

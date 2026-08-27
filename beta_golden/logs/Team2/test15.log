@@ -1,0 +1,254 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test15". Responses will be recorded to test15.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test15/test15.v successfully. Stored 248 lines (7250 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 24
+- OR: 57
+- NOT: 39
+- NAND: 0
+- NOR: 24
+- XOR: 1
+- XNOR: 10
+- BUF: 58
+- DFF: 0
+
+Total gates: 213.
+#END 3
+#RESPONSE 4
+No. No combinational path from n0[0] to n3 exists while avoiding n207.
+#END 4
+#RESPONSE 5
+Yes. A combinational path from n0[1] to n4 exists while avoiding n29.
+#END 5
+#RESPONSE 6
+Found 11 combinational paths from n0[1] to n4:
+- n0[1] → g184 → n190 → g176 → n198 → g212 → n2[1] → g85 → n98 → g83 → n100 → g82 → n101 → g81 → n102 → g80 → n4
+- n0[1] → g195 → n179 → g178 → n196 → g177 → n197 → g174 → n200 → g210 → n2[2] → g83 → n100 → g82 → n101 → g81 → n102 → g80 → n4
+- n0[1] → g195 → n179 → g178 → n196 → g177 → n197 → g175 → n199 → g173 → n201 → g171 → n203 → g209 → n2[3] → g89 → n94 → g81 → n102 → g80 → n4
+- n0[1] → g195 → n179 → g178 → n196 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g168 → n206 → g208 → n2[4] → g88 → n95 → g84 → n99 → g80 → n4
+- n0[1] → g195 → n179 → g178 → n196 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g169 → n205 → g167 → n207 → g165 → n209 → g207 → n2[5] → g84 → n99 → g80 → n4
+- n0[1] → g195 → n179 → g178 → n196 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g169 → n205 → g167 → n207 → g166 → n208 → g164 → n210 → g206 → n2[6] → g87 → n96 → g86 → n97 → g82 → n101 → g81 → n102 → g80 → n4
+- n0[1] → g204 → n170 → g193 → n181 → g177 → n197 → g174 → n200 → g210 → n2[2] → g83 → n100 → g82 → n101 → g81 → n102 → g80 → n4
+- n0[1] → g204 → n170 → g193 → n181 → g177 → n197 → g175 → n199 → g173 → n201 → g171 → n203 → g209 → n2[3] → g89 → n94 → g81 → n102 → g80 → n4
+- n0[1] → g204 → n170 → g193 → n181 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g168 → n206 → g208 → n2[4] → g88 → n95 → g84 → n99 → g80 → n4
+- n0[1] → g204 → n170 → g193 → n181 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g169 → n205 → g167 → n207 → g165 → n209 → g207 → n2[5] → g84 → n99 → g80 → n4
+- n0[1] → g204 → n170 → g193 → n181 → g177 → n197 → g175 → n199 → g173 → n201 → g172 → n202 → g170 → n204 → g169 → n205 → g167 → n207 → g166 → n208 → g164 → n210 → g206 → n2[6] → g87 → n96 → g86 → n97 → g82 → n101 → g81 → n102 → g80 → n4
+#END 6
+#RESPONSE 7
+No combinational paths were found from n0[2] to n3.
+#END 7
+#RESPONSE 8
+The maximum logic depth of the current design is 0 gate levels.
+#END 8
+#RESPONSE 9
+The maximum logic depth of the current design is 17 gate levels.
+#END 9
+#RESPONSE 10
+Gate g0 has no immediate successor gates.
+#END 10
+#RESPONSE 11
+Gate g0 has no immediate successor gates.
+#END 11
+#RESPONSE 12
+The transitive fanin cone of n3 contains 0 gates.
+#END 12
+#RESPONSE 13
+The transitive fanout cone of n0[0] contains 189 gates.
+- g0
+- g1
+- g10
+- g100
+- g101
+- g102
+- g103
+- g104
+- g105
+- g106
+- g107
+- g108
+- g109
+- g11
+- g110
+- g111
+- g112
+- g113
+- g114
+- g115
+- g116
+- g117
+- g118
+- g119
+- g12
+- g120
+- g121
+- g122
+- g123
+- g124
+- g125
+- g126
+- g127
+- g128
+- g129
+- g13
+- g130
+- g131
+- g132
+- g133
+- g134
+- g135
+- g136
+- g137
+- g138
+- g139
+- g14
+- g140
+- g141
+- g142
+- g143
+- g144
+- g145
+- g146
+- g147
+- g148
+- g149
+- g15
+- g150
+- g151
+- g152
+- g153
+- g154
+- g155
+- g156
+- g157
+- g158
+- g159
+- g16
+- g160
+- g161
+- g162
+- g163
+- g164
+- g165
+- g166
+- g167
+- g168
+- g169
+- g17
+- g170
+- g171
+- g172
+- g173
+- g174
+- g175
+- g176
+- g177
+- g178
+- g179
+- g18
+- g189
+- g19
+- g196
+- g2
+- g20
+- g206
+- g207
+- g208
+- g209
+- g21
+- g210
+- g211
+- g212
+- g22
+- g23
+- g24
+- g25
+- g26
+- g27
+- g28
+- g29
+- g3
+- g30
+- g31
+- g32
+- g33
+- g34
+- g35
+- g36
+- g37
+- g38
+- g39
+- g4
+- g40
+- g41
+- g42
+- g43
+- g44
+- g45
+- g46
+- g47
+- g48
+- g49
+- g5
+- g50
+- g51
+- g52
+- g53
+- g54
+- g55
+- g56
+- g57
+- g58
+- g59
+- g6
+- g60
+- g61
+- g62
+- g63
+- g64
+- g65
+- g66
+- g67
+- g68
+- g69
+- g7
+- g70
+- g71
+- g72
+- g73
+- g74
+- g75
+- g76
+- g77
+- g78
+- g79
+- g8
+- g80
+- g81
+- g82
+- g83
+- g84
+- g85
+- g86
+- g87
+- g88
+- g89
+- g9
+- g90
+- g91
+- g92
+- g93
+- g94
+- g95
+- g96
+- g97
+- g98
+- g99
+#END 13
+#RESPONSE 14
+Wrote the current design to "test15_out.v" successfully.
+#END 14

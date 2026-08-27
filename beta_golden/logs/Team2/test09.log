@@ -1,0 +1,24 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test09". Responses will be recorded to test09.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test09/test09.v successfully. Stored 2221 lines (73482 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows: - AND: 439 - OR: 328 - NOT: 549 - NAND: 0 - NOR: 248 - XOR: 44 - XNOR: 195 - BUF: 178 - DFF: 0. Total gates: 1981.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from n0 to n117[0] exists while avoiding n1816.
+#END 4
+#RESPONSE 5
+No. No combinational path from n1 to n117[1] exists while avoiding n1646.
+#END 5
+#RESPONSE 6
+No combinational paths were found from n1 to n117[1].
+#END 6
+#RESPONSE 7
+No combinational paths were found from n2 to n117[0].
+#END 7
+#RESPONSE 8
+Wrote the current design to "test09_out.v" successfully.
+#END 8

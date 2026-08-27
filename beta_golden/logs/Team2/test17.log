@@ -1,0 +1,254 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test17". Responses will be recorded to test17.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test17/test17.v successfully. Stored 3574 lines (119354 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 734
+- OR: 645
+- NOT: 953
+- NAND: 0
+- NOR: 123
+- XOR: 122
+- XNOR: 313
+- BUF: 270
+- DFF: 0
+
+Total gates: 3160.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from n7 to n42[0] exists while avoiding n1034.
+#END 4
+#RESPONSE 5
+No. No combinational path from n8 to n42[1] exists while avoiding n2116.
+#END 5
+#RESPONSE 6
+No combinational paths were found from n8 to n42[1].
+#END 6
+#RESPONSE 7
+No combinational paths were found from n9 to n42[0].
+#END 7
+#RESPONSE 8
+The maximum logic depth of the current design is 20 gate levels.
+#END 8
+#RESPONSE 9
+The maximum logic depth of the current design is 0 gate levels.
+#END 9
+#RESPONSE 10
+No combinational path exists from n9 to n42[0]; the reported critical-path depth is 0.
+#END 10
+#RESPONSE 11
+Gate g0 has 3 immediate successor gates.
+#END 11
+#RESPONSE 12
+Gate g0 has 3 immediate successor gates: g868, g1193, g1239.
+#END 12
+#RESPONSE 13
+The transitive fanin cone of n42[0] contains 194 gates.
+- g0
+- g1004
+- g1006
+- g1009
+- g1025
+- g1026
+- g1028
+- g1029
+- g1030
+- g1033
+- g1034
+- g1039
+- g1041
+- g1042
+- g1044
+- g1046
+- g1047
+- g1073
+- g1074
+- g1078
+- g1079
+- g1087
+- g1093
+- g1094
+- g1103
+- g1111
+- g1113
+- g1118
+- g1119
+- g1124
+- g1126
+- g1128
+- g1157
+- g117
+- g1204
+- g1233
+- g1234
+- g1235
+- g1236
+- g1237
+- g1238
+- g1239
+- g124
+- g1240
+- g13
+- g1489
+- g1494
+- g1500
+- g1501
+- g1520
+- g1521
+- g1554
+- g1563
+- g1571
+- g1572
+- g1595
+- g1596
+- g160
+- g1627
+- g1636
+- g1644
+- g1645
+- g165
+- g1668
+- g1669
+- g1694
+- g1698
+- g1700
+- g1703
+- g1720
+- g1721
+- g1756
+- g1768
+- g1773
+- g1774
+- g1775
+- g1786
+- g1821
+- g1849
+- g1858
+- g1859
+- g1887
+- g1888
+- g1933
+- g1944
+- g195
+- g198
+- g1985
+- g2020
+- g2031
+- g2072
+- g2108
+- g2119
+- g2152
+- g217
+- g2213
+- g23
+- g2318
+- g2344
+- g2361
+- g2363
+- g2375
+- g239
+- g2458
+- g2556
+- g2557
+- g2566
+- g2567
+- g2568
+- g262
+- g264
+- g265
+- g2793
+- g2876
+- g2877
+- g288
+- g2884
+- g2885
+- g2899
+- g303
+- g3043
+- g3049
+- g3157
+- g3158
+- g319
+- g344
+- g356
+- g378
+- g393
+- g405
+- g414
+- g427
+- g433
+- g464
+- g466
+- g468
+- g476
+- g478
+- g479
+- g482
+- g484
+- g485
+- g487
+- g488
+- g5
+- g513
+- g515
+- g52
+- g576
+- g577
+- g578
+- g580
+- g634
+- g635
+- g641
+- g643
+- g645
+- g646
+- g653
+- g655
+- g659
+- g661
+- g671
+- g673
+- g677
+- g679
+- g689
+- g691
+- g778
+- g786
+- g792
+- g796
+- g820
+- g823
+- g830
+- g838
+- g855
+- g864
+- g865
+- g866
+- g867
+- g868
+- g883
+- g885
+- g886
+- g888
+- g89
+- g919
+- g925
+- g937
+- g951
+- g962
+- g973
+- g990
+#END 13
+#RESPONSE 14
+The transitive fanout cone of n7 contains 1261 gates. The complete gate list is available at netkit-output/test17-fanout_cone_list-0.txt.
+#END 14
+#RESPONSE 15
+No.
+#END 15
+#RESPONSE 16
+Wrote the current design to "test17_out.v" successfully.
+#END 16

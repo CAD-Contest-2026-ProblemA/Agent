@@ -1,0 +1,25 @@
+#RESPONSE 1
+The new testcase named "test36" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test36/test36.v`, containing a total of 15,581 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 15,581, broken down by gate type as follows:
+
+- AND: 0
+- OR: 970
+- NOT: 1,064
+- NAND: 4,782
+- NOR: 4,373
+- XOR: 110
+- XNOR: 3,422
+- BUF: 23
+- DFF: 837
+#END 3
+#RESPONSE 4
+The netlist has been successfully reconstructed using only AND and NOT gates while preserving functional equivalence. A total of 13,680 gates were matched and remapped, resulting in a delta of 44,607 gates.
+#END 4
+#RESPONSE 5
+The current design has been successfully written to the output file `test36_out.v`.
+#END 5

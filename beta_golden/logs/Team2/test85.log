@@ -1,0 +1,34 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test85". Responses will be recorded to test85.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test85/test85.v successfully. Stored 124232 lines (5645752 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 916
+- NOT: 6844
+- NAND: 77998
+- NOR: 8005
+- XOR: 86
+- XNOR: 1358
+- BUF: 857
+- DFF: 16050
+
+Total gates: 112114.
+#END 3
+#RESPONSE 4
+Done.
+Inserted 1 dedicated BUF gate on n2 so that its loads are driven through dedicated buffers.
+#END 4
+#RESPONSE 5
+The previous command added 1 BUF gate.
+#END 5
+#RESPONSE 6
+Yes.
+#END 6
+#RESPONSE 7
+Wrote the current design to "test85_out.v" successfully.
+#END 7

@@ -1,0 +1,47 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test05". Responses will be recorded to test05.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test05/test05.v successfully. Stored 3902 lines (132351 bytes) as the current design.
+#END 2
+#RESPONSE 3
+n5 directly drives 35 gates.
+- g201
+- g234
+- g237
+- g238
+- g240
+- g241
+- g243
+- g244
+- g245
+- g247
+- g248
+- g250
+- g252
+- g255
+- g256
+- g259
+- g262
+- g263
+- g264
+- g267
+- g269
+- g270
+- g271
+- g274
+- g276
+- g281
+- g284
+- g285
+- g286
+- g290
+- g293
+- g294
+- g295
+- g300
+- g443
+#END 3
+#RESPONSE 4
+Wrote the current design to "test05_out.v" successfully.
+#END 4

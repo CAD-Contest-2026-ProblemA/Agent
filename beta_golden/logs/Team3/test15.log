@@ -1,0 +1,52 @@
+#RESPONSE 1
+The new testcase named "test15" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test15/test15.v`, containing a total of 213 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 213, broken down by gate type as follows:
+
+- AND: 24
+- OR: 57
+- NOT: 39
+- NAND: 0
+- NOR: 24
+- XOR: 1
+- XNOR: 10
+- BUF: 58
+- DFF: 0
+#END 3
+#RESPONSE 4
+No combinational path exists from n0[0] to n3 that does not traverse node n207.
+#END 4
+#RESPONSE 5
+A combinational path exists from input **n0[1]** to output **n4** while avoiding **n29**.
+#END 5
+#RESPONSE 6
+A total of 11 paths originating at primary input **n0[1]** and terminating at primary output **n4** have been found. The complete list of paths has been written to the file `testcase/test15/list_paths_paths.txt`.
+#END 6
+#RESPONSE 7
+No paths exist between input **n0[2]** and output **n3**.
+#END 7
+#RESPONSE 8
+The maximum logic depth from input **n0[0]** to output **n3** is **0**, indicating that no combinational path exists between these points.
+#END 8
+#RESPONSE 9
+The longest combinational path depth from input **n0[1]** to output **n4** is **17**.
+#END 9
+#RESPONSE 10
+The number of gates driven by **g0** is **0**.
+#END 10
+#RESPONSE 11
+The immediate successors of gate **g0** are none; there are **0** gates driven by **g0**.
+#END 11
+#RESPONSE 12
+The transitive fanin cone of output **n3** contains **0** gates.
+#END 12
+#RESPONSE 13
+The transitive fanout cone of input **n0[0]** contains **189** gates. The complete list has been written to the file **testcase/test15/fanout_cone_list.txt**.
+#END 13
+#RESPONSE 14
+The current design has been successfully written to the output file **test15_out.v**.
+#END 14

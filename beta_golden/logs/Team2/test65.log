@@ -1,0 +1,50 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test65". Responses will be recorded to test65.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test65/test65.v successfully. Stored 26702 lines (1185926 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 178
+- NOT: 572
+- NAND: 16982
+- NOR: 1749
+- XOR: 37
+- XNOR: 780
+- BUF: 1
+- DFF: 3802
+
+Total gates: 24101.
+#END 3
+#RESPONSE 4
+Done.
+Matched 19727 gates and remapped 19727 of them in the design to the AND,NOT basis. The gate-count delta is +26733. Functional equivalence was preserved.
+#END 4
+#RESPONSE 5
+The current design contains 21361 AND gates.
+#END 5
+#RESPONSE 6
+Yes.
+#END 6
+#RESPONSE 7
+The Boolean expression for n30 over the primary inputs is:
+n30
+#END 7
+#RESPONSE 8
+No. No combinational path from n2 to n30 exists while avoiding n4552.
+#END 8
+#RESPONSE 9
+The planner could not execute a valid Netkit command after repair. initial_nks=['logic_depth src=primary_inputs dst=primary_outputs kind=max mode=comb'] repair_nks=['logic_depth src=primary_inputs dst=primary_outputs kind=max mode=comb'] error=logic_depth src='to' is not a loaded signal
+#END 9
+#RESPONSE 10
+The deepest output fanin-cone depth is 0. The tied outputs are: n30, n31, n32, n33, n34, n35, n36, n37, n38, n39, n40, n41, n42, n43[0], n43[10], n43[11], n43[12], n43[13], n43[14], n43[15], n43[16], n43[17], n43[18], n43[19], n43[1], n43[20], n43[21], n43[22], n43[23], n43[24], n43[25], n43[26], n43[27], n43[28], n43[29], n43[2], n43[30], n43[31], n43[3], n43[4], n43[5], n43[6], n43[7], n43[8], n43[9], n44[0], n44[10], n44[11], n44[12], n44[13], n44[14], n44[15], n44[16], n44[17], n44[18], n44[19], n44[1], n44[20], n44[21], n44[22], n44[23], n44[24], n44[25], n44[26], n44[27], n44[28], n44[29], n44[2], n44[30], n44[31], n44[3], n44[4], n44[5], n44[6], n44[7], n44[8], n44[9], n45[0], n45[10], n45[11], n45[12], n45[13], n45[14], n45[15], n45[16], n45[17], n45[18], n45[19], n45[1], n45[20], n45[21], n45[22], n45[23], n45[24], n45[25], n45[26], n45[27], n45[28], n45[29], n45[2], n45[30], n45[31], n45[3], n45[4], n45[5], n45[6], n45[7], n45[8], n45[9], n46[0], n46[1], n46[2], n46[3], n46[4], n46[5], n46[6], n46[7], n47[0], n47[1], n47[2], n47[3], n47[4], n47[5], n47[6], n47[7], n48[0], n48[1], n48[2], n48[3], n48[4], n48[5], n48[6], n48[7], n49[0], n49[1], n49[2], n49[3], n49[4], n49[5], n49[6], n49[7], n50[0], n50[1], n50[2], n50[3], n50[4], n50[5], n50[6], n50[7], n51[0], n51[1], n51[2], n51[3], n51[4], n51[5], n51[6], n51[7], n51[8], n51[9], n52[0], n52[10], n52[11], n52[12], n52[13], n52[14], n52[15], n52[1], n52[2], n52[3], n52[4], n52[5], n52[6], n52[7], n52[8], n52[9], n53[0], n53[10], n53[11], n53[12], n53[13], n53[14], n53[15], n53[1], n53[2], n53[3], n53[4], n53[5], n53[6], n53[7], n53[8], n53[9], n54[0], n54[10], n54[11], n54[12], n54[13], n54[14], n54[15], n54[1], n54[2], n54[3], n54[4], n54[5], n54[6], n54[7], n54[8], n54[9], n55[0], n55[10], n55[11], n55[12], n55[13], n55[14], n55[15], n55[1], n55[2], n55[3], n55[4], n55[5], n55[6], n55[7], n55[8], n55[9], n56[0], n56[10], n56[11], n56[12], n56[13], n56[14], n56[15], n56[1], n56[2], n56[3], n56[4], n56[5], n56[6], n56[7], n56[8], n56[9], n57[0], n57[10], n57[11], n57[12], n57[13], n57[14], n57[15], n57[16], n57[17], n57[18], n57[19], n57[1], n57[20], n57[21], n57[22], n57[23], n57[24], n57[25], n57[26], n57[27], n57[28], n57[29], n57[2], n57[30], n57[31], n57[32], n57[33], n57[34], n57[35], n57[36], n57[37], n57[38], n57[39], n57[3], n57[40], n57[41], n57[42], n57[43], n57[44], n57[45], n57[46], n57[47], n57[48], n57[49], n57[4], n57[50], n57[51], n57[52], n57[53], n57[54], n57[55], n57[56], n57[57], n57[58], n57[59], n57[5], n57[60], n57[61], n57[62], n57[63], n57[6], n57[7], n57[8], n57[9], n58[0], n58[10], n58[11], n58[1], n58[2], n58[3], n58[4], n58[5], n58[6], n58[7], n58[8], n58[9], n59[0], n59[10], n59[11], n59[1], n59[2], n59[3], n59[4], n59[5], n59[6], n59[7], n59[8], n59[9], n60[0], n60[10], n60[11], n60[1], n60[2], n60[3], n60[4], n60[5], n60[6], n60[7], n60[8], n60[9], n61[0], n61[1], n61[2], n61[3].
+#END 10
+#RESPONSE 11
+n0 directly drives 3802 gates. The complete gate list is available at netkit-output/test65-fanout_gates-0.txt.
+#END 11
+#RESPONSE 12
+Wrote the current design to "test65_out.v" successfully.
+#END 12
