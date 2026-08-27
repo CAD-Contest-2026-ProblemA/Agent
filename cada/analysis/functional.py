@@ -11,6 +11,7 @@ import os
 import re
 import shutil
 import tempfile
+import time
 from typing import List, Optional, Tuple
 
 from ..netlist.ir import Netlist, is_const
@@ -219,7 +220,8 @@ def _cofactor_is_empty(nl: Netlist, sig: str, var: str, combine: str):
     return abc_bridge.cec_blif(blif, const0)
 
 
-def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256):
+def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256,
+                          deadline: Optional[float] = None):
     """Batched form of :func:`_cofactor_is_empty` over ``(sig, var, combine)``.
 
     One ABC process per chunk rather than per query.  Solving these cofactor
@@ -231,11 +233,17 @@ def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256):
     back in command order; if the count does not line up (a BLIF ABC refused,
     say) the chunk is redone one query at a time so a single bad entry cannot
     shift every later answer.
+
+    ``deadline`` (absolute ``time.time()`` value) is checked between chunks
+    and bounds each chunk's ABC run; queries not reached stay ``None`` so the
+    caller can fall back to its cheaper verdict for exactly those entries.
     """
     out = [None] * len(queries)
     tmp = tempfile.mkdtemp(prefix="cada_cof_")
     try:
         for start in range(0, len(queries), chunk):
+            if deadline is not None and time.time() >= deadline:
+                break
             batch = queries[start:start + chunk]
             cmds, idx = [], []
             for j, (sig, var, combine) in enumerate(batch):
@@ -252,7 +260,11 @@ def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256):
                 idx.append(start + j)
             if not idx:
                 continue
-            ok, txt = abc_bridge.run_abc(cmds)
+            if deadline is None:
+                ok, txt = abc_bridge.run_abc(cmds)
+            else:
+                ok, txt = abc_bridge.run_abc(
+                    cmds, timeout=max(5, int(deadline - time.time())))
             verdicts = [ln for ln in txt.splitlines()
                         if "SATISFIABLE" in ln or "UNSATISFIABLE" in ln]
             if ok and len(verdicts) == len(idx):
@@ -260,6 +272,8 @@ def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256):
                     out[k] = ln.lstrip().startswith("UNSAT")
             else:
                 for k in idx:                      # realign by going one by one
+                    if deadline is not None and time.time() >= deadline:
+                        break
                     sig, var, combine = queries[k]
                     out[k] = _cofactor_is_empty(nl, sig, var, combine)
     finally:

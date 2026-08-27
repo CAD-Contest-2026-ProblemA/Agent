@@ -234,13 +234,16 @@ def enable_hold_ffs(nl: Netlist, budget: float = 240.0, detail: bool = False):
     if not cand:
         return _ret([])
 
+    # the deadline reaches into the chunk loop: candidates the solver never
+    # gets to stay None and fall back to the simulation verdict below
+    deadline = t0 + budget
     unate = functional.cofactors_empty_batch(
-        nl, [(ff.d, ff.q, "viol") for ff in cand])
+        nl, [(ff.d, ff.q, "viol") for ff in cand], deadline=deadline)
     keep = [ff for ff, u in zip(cand, unate) if u is not False]
 
-    if time.time() - t0 > budget or not keep:
+    if time.time() >= deadline or not keep:
         return _ret(keep)                    # degrade to the simulation verdict
 
     dep = functional.cofactors_empty_batch(
-        nl, [(ff.d, ff.q, "diff") for ff in keep])
+        nl, [(ff.d, ff.q, "diff") for ff in keep], deadline=deadline)
     return _ret([ff for ff, empty in zip(keep, dep) if empty is not True])

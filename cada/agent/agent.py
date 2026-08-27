@@ -1334,7 +1334,9 @@ class Agent:
     def _enable_hold_partition(self):
         """(members, feedback-non-members, no-feedback, total), cached in deltas."""
         nl = self.state.current
-        eh, fb = sequential.enable_hold_ffs(nl, detail=True)
+        # A77: analysis requests are Basic (60 s); leave headroom for the
+        # structural/simulation stages and response assembly
+        eh, fb = sequential.enable_hold_ffs(nl, budget=50.0, detail=True)
         self.state.record_delta("enable_hold", len(eh))
         self.state.record_delta("enable_hold_fb", fb)
         return eh, fb - len(eh), len(nl.dffs) - fb, len(nl.dffs)
