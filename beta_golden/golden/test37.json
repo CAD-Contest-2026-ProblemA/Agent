@@ -1,0 +1,112 @@
+{
+  "case": "test37",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test37.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test37\"; responses will be recorded to test37.log.",
+        "notes": "Any acknowledgment naming test37 and indicating readiness is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test37; responses recorded to test37.log.",
+        "Team3": "The new testcase named test37 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test37; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test37; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test37.v located in the directory testcase/test37/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test37/test37.v successfully (15,581 gates total including 837 DFFs).",
+        "notes": "Response must claim a successful load of test37.v. Extra stats optional but if given should be consistent: 15,581 total instances (Team7 split as 14,744 comb gates + 837 DFFs, PI 40, PO 50 — also acceptable)."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 17382 lines (694240 bytes).",
+        "Team3": "Loaded successfully; 15,581 gates.",
+        "Team4": "Loaded successfully; 15,581 gates, single top module, flat netlist.",
+        "Team7": "Loaded successfully; module top, PI 40, PO 50, Gates 14744, DFFs 837."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 970, 1064, 4782, 4373, 110, 3422, 23, 837, 15581],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 970, NOT: 1064, NAND: 4782, NOR: 4373, XOR: 110, XNOR: 3422, BUF: 23, DFF: 837; total 15,581 gates.",
+        "notes": "All four full-score teams report the identical breakdown. Total 15,581 may be stated explicitly or implied by the breakdown; the per-type numbers are the gradable content."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837; total 15581.",
+        "Team3": "Same breakdown; total 15,581.",
+        "Team4": "Same breakdown; total 15,581.",
+        "Team7": "Same breakdown; total 15,581 (notes DFFs included)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Sweep out dangling gates. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Dangling-gate sweep completed: 0 dangling gates found/removed; design unchanged and functionally equivalent.",
+        "notes": "All four full-score teams report zero dangling gates removed. Response must confirm the sweep was performed and functionality preserved; the netlist should be unchanged (still 15,581 gates). A nonzero removal count would contradict all full-score anchors."
+      },
+      "team_answers": {
+        "Team2": "Done. No dangling gates removed; design unchanged.",
+        "Team3": "No dangling gates removed; functionality unchanged.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "Found and removed 0 dangling gates; no gates removable without affecting functionality."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test37_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test37_out.v successfully.",
+        "notes": "Response must indicate the netlist was written to test37_out.v. Actual verification happens on the output file, which should be equivalent to the original (no gates were removed)."
+      },
+      "team_answers": {
+        "Team2": "Wrote design to test37_out.v successfully.",
+        "Team3": "Design successfully written to test37_out.v.",
+        "Team4": "Wrote netlist to test37_out.v successfully.",
+        "Team7": "Design written to test37_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

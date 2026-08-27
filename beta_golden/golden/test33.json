@@ -1,0 +1,112 @@
+{
+  "case": "test33",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test33.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test33 initialized; responses will be recorded to test33.log.",
+        "notes": "Any acknowledgment that the testcase test33 has begun is acceptable. All four full-score teams gave simple acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test33. Responses recorded to test33.log.",
+        "Team3": "The new testcase named test33 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test33. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test33. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test33.v located in the directory testcase/test33/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test33/test33.v successfully (top module with 5680 gates total including 847 DFFs).",
+        "notes": "Response must indicate successful load of testcase/test33/test33.v. Extra stats are optional but if given must be consistent: total 5680 gates (4833 combinational + 847 DFF), PI 76, PO 135 per Team7. All four full-score teams claimed success."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 6315 lines (258286 bytes).",
+        "Team3": "Loaded successfully; 5680 gates.",
+        "Team4": "Loaded successfully; 5680 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully; Module top, PI 76, PO 135, Gates 4833, DFFs 847."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 130, 276, 4073, 308, 7, 39, 0, 847, 5680],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 5680 gates: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "notes": "All four full-score teams report the identical breakdown on the ORIGINAL netlist: AND=0, OR=130, NOT=276, NAND=4073, NOR=308, XOR=7, XNOR=39, BUF=0, DFF=847; total 5680. The must_numbers list is ordered [AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF, total]. DFFs must be included in the count."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680.",
+        "Team3": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680.",
+        "Team4": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680.",
+        "Team7": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680 (includes DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all back-to-back inverter pairs and collapse them into a wire. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Collapsed the back-to-back inverter pairs into wires; functional equivalence preserved.",
+        "notes": "Reliable full-score evidence: Team3, Team4 and Team7 all scored 5/5 yet reported different pair counts (Team7: 6 pairs / 12 NOT gates removed; Team3 and Team4: 1 pair/rewrite), so the reported count is NOT graded. (Team2's logged answer of 6 rewrites corroborates the 6-pair reading but its score is from a different run and is not used as evidence.) Ground truth from test33.v: exactly 6 structural back-to-back NOT->NOT pairs exist among the 276 NOT gates; several first-stage inverter outputs have additional fanout, which explains why fanout-restricted tools (Team3/Team4) only apply 1 safe full-pair removal while the second inverter of every pair can always be bypassed (Team7's 6). Grading: response must claim the transform was applied AND that functionality/equivalence is unchanged; actual verification is on the output netlist (test33_out.v must be equivalent to the original). Sanity check on a team's own claim: output NOT count = 276 minus gates removed (Team7: 276-12=264)."
+      },
+      "team_answers": {
+        "Team2": "Applied not(not(x))->x rewrite 6 times, eliminated 6 gates; equivalence preserved.",
+        "Team3": "Collapsed back-to-back inverter pairs; one pair was changed; functionality preserved.",
+        "Team4": "Applied 1 verified pattern rewrite; functional equivalence preserved.",
+        "Team7": "Collapsed 6 pairs (12 NOT gates removed) into wires; re-scan shows 0 pairs remain; nothing changed functionally."
+      },
+      "agreement": "2/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test33_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was written to test33_out.v successfully.",
+        "notes": "Response must indicate the netlist was written to test33_out.v. All four full-score teams gave a simple success ack; the file itself must be a valid equivalent netlist."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test33_out.v successfully.",
+        "Team3": "Successfully written to test33_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test33_out.v successfully.",
+        "Team7": "Design written to test33_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

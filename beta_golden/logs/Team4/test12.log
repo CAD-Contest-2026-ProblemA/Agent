@@ -1,0 +1,44 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test12". All subsequent responses will be recorded to test12.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test12/test12.v" successfully. It contains 91,583 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The current design contains 91,583 gates.
+Gate-type breakdown: AND: 18359, OR: 26146, NOT: 17450, NAND: 1, NOR: 5855, XOR: 1834, XNOR: 18954, BUF: 2984, DFF: 0.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from "n24[0]" to "n26[0]" that avoids "n86984" exists.
+#END 4
+#RESPONSE 5
+Yes. A combinational path from "n24[1]" to "n26[1]" that avoids "n87234" exists.
+#END 5
+#RESPONSE 6
+Found 8 combinational paths from "n24[1]" to "n26[1]".
+Complete path enumeration:
+1. n24[1]->g1473->n85707->g1428->n85783->g1515->n90340->g685->n86321->g28072->n59297->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g8575->n79000->g7951->n79375->g6923->n26[1]
+2. n24[1]->g1473->n85707->g1428->n85783->g1515->n90340->g685->n86321->g28072->n59297->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g9493->n77868->g8574->n79001->g7951->n79375->g6923->n26[1]
+3. n24[1]->g30723->n55545->g28072->n59297->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g8575->n79000->g7951->n79375->g6923->n26[1]
+4. n24[1]->g30723->n55545->g28072->n59297->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g9493->n77868->g8574->n79001->g7951->n79375->g6923->n26[1]
+5. n24[1]->g31063->n56711->g30161->n57208->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g8575->n79000->g7951->n79375->g6923->n26[1]
+6. n24[1]->g31063->n56711->g30161->n57208->g23625->n63785->g20018->n67332->g17076->n70322->g13652->n73649->g11610->n76022->g9617->n77867->g9493->n77868->g8574->n79001->g7951->n79375->g6923->n26[1]
+7. n24[1]->g34447->n52933->g31896->n55876->g23923->n62009->g20211->n68112->g16846->n70588->g13932->n73366->g11516->n76088->g8575->n79000->g7951->n79375->g6923->n26[1]
+8. n24[1]->g34447->n52933->g31896->n55876->g23923->n62009->g20211->n68112->g16846->n70588->g13932->n73366->g11516->n76088->g11274->n76089->g8574->n79001->g7951->n79375->g6923->n26[1]
+#END 6
+#RESPONSE 7
+Found 0 combinational paths from "n24[2]" to "n26[0]".
+Complete path enumeration:
+#END 7
+#RESPONSE 8
+The maximum combinational logic depth from "n24[0]" to "n26[0]" is 11.
+#END 8
+#RESPONSE 9
+The maximum combinational logic depth from "n24[1]" to "n26[1]" is 15.
+#END 9
+#RESPONSE 10
+Found 1 successor gate.
+#END 10
+#RESPONSE 11
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test12_out.v" successfully.
+#END 11

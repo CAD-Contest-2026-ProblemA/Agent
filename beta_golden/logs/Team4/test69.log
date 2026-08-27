@@ -1,0 +1,19 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test69". All subsequent responses will be recorded to test69.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test69/test69.v" successfully. It contains 34,853 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The current design contains 34,853 gates.
+Gate-type breakdown: AND: 0, OR: 930, NOT: 2913, NAND: 19682, NOR: 5598, XOR: 138, XNOR: 1548, BUF: 16, DFF: 4028.
+#END 3
+#RESPONSE 4
+Matched 138 gates and remapped 138 to the requested NAND gate basis.
+#END 4
+#RESPONSE 5
+The "added_gates" value from the previous command is 414.
+#END 5
+#RESPONSE 6
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test69_out.v" successfully.
+#END 6

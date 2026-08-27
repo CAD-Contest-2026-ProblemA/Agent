@@ -1,0 +1,31 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test31". Responses will be recorded to test31.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test31/test31.v successfully. Stored 2052 lines (77650 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 59
+- NOT: 268
+- NAND: 974
+- NOR: 284
+- XOR: 2
+- XNOR: 42
+- BUF: 0
+- DFF: 205
+
+Total gates: 1834.
+#END 3
+#RESPONSE 4
+Done.
+Matched 30 gates and remapped 30 of them in the cone of n8[0] to the NOR,NOT basis. The gate-count delta is +82. Functional equivalence was preserved.
+#END 4
+#RESPONSE 5
+The planner could not execute a valid Netkit command after repair. initial_nks=['optimize_depth objective=minimize_max preserve=equiv target=final report_if=already_optimal constraint_scope=fanin_cone constraint_target=n8[0] constraint_basis=NOR,NOT'] repair_nks=['optimize_depth objective=minimize_max preserve=equiv target=final report_if=already_optimal constraint_scope=fanin_cone constraint_target=n8[0] constraint_basis=NOR,NOT'] error=optimize_depth target='final' is not a loaded signal
+#END 5
+#RESPONSE 6
+Wrote the current design to "test31_out.v" successfully.
+#END 6

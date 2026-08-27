@@ -1,0 +1,112 @@
+{
+  "case": "test28",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test28.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test28\"; responses will be recorded to test28.log.",
+        "notes": "Any acknowledgment that the testcase test28 has begun/been set is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test28; responses recorded to test28.log.",
+        "Team3": "The new testcase named test28 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test28. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test28. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test28.v located in the directory testcase/test28/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test28/test28.v successfully (1834 gates total: 1629 combinational + 205 DFFs; PI 42, PO 67).",
+        "notes": "Success indication is the gradable essence. Optional stats varied by presentation: Team3/Team4 said 1834 gates total (DFFs included); Team7 said 1629 gates + 205 DFFs (PI 42, PO 67); Team2 gave file size/line count only. Both 1834-total and 1629+205-split presentations are acceptable; no stats required at all."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test28/test28.v successfully; stored 2052 lines (77650 bytes).",
+        "Team3": "Successfully loaded; contains a total of 1834 gates.",
+        "Team4": "Loaded successfully; 1,834 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module top | PI: 42 | PO: 67 | Gates: 1629 | DFFs: 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 59, 268, 974, 284, 2, 42, 0, 205, 1834],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1834 gates: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "notes": "All four full-score teams report identical breakdown: AND=0, OR=59, NOT=268, NAND=974, NOR=284, XOR=2, XNOR=42, BUF=0, DFF=205, total=1834 (1629 combinational + 205 DFF). The breakdown per type is the core answer; total 1834 must include DFFs."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205; total 1834.",
+        "Team3": "Total 1834: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team4": "1,834 gates: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team7": "Total 1834 (1629 comb + 205 DFF): AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Convert the logic cone of n8[0] to use only NOR and NOT gates while preserving functional equivalence.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Converted the logic cone of n8[0] to the NOR/NOT basis: 30 gates matched and remapped, gate-count delta +82 (1629 -> 1711 combinational gates); functional equivalence preserved.",
+        "notes": "Grading is on the success claim; real verification happens on test28_out.v (the cone of n8[0] must contain only NOR/NOT gates and be functionally equivalent). Notably all four full-score teams independently report the same transform stats: 30 gates remapped and +82 gate delta (Team4 omitted the delta but still scored full, so the delta is not required). A checker should sanity-check that any reported numbers are self-consistent with the team's own output netlist."
+      },
+      "team_answers": {
+        "Team2": "Matched 30 gates, remapped 30 to NOR/NOT basis; delta +82; equivalence preserved.",
+        "Team3": "Cone of n8[0] converted to NOR/NOT; 30 gates matched and remapped; delta of 82 gates.",
+        "Team4": "Matched 30 gates and remapped 30 to the NOR,NOT basis (no delta stated).",
+        "Team7": "30 gates rewritten; total 1629 -> 1711 (+82); post-transform cone = 134 gates (NOR 39, NOT 95); equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test28_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test28_out.v successfully.",
+        "notes": "Any confirmation that test28_out.v was written is acceptable; the netlist itself is checked separately (must be equivalent with the n8[0] cone in NOR/NOT-only form)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test28_out.v successfully.",
+        "Team3": "Successfully written to test28_out.v.",
+        "Team4": "Wrote netlist to test28_out.v successfully.",
+        "Team7": "Design written to test28_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

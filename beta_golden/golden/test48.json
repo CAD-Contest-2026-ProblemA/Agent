@@ -1,0 +1,112 @@
+{
+  "case": "test48",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test48.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test48\"; responses will be recorded to test48.log.",
+        "notes": "Any acknowledgment that names/accepts the testcase test48 passes. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test48. Responses recorded to test48.log.",
+        "Team3": "The new testcase named test48 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test48. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test48. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test48.v located in the directory testcase/test48/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test48/test48.v successfully (918 gates total, 150 of them DFFs).",
+        "notes": "Success claim is the gradable essence. Extra stats optional but if numbers are given they should be consistent: 918 total instances (768 combinational + 150 DFF). Team7 reported PI 14 / PO 83 / 768 comb gates / 150 DFFs; Team3/Team4 said 918 gates. Both framings scored full, so do not penalize either count style."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test48/test48.v successfully; stored 1026 lines (38172 bytes).",
+        "Team3": "Loaded successfully; contains a total of 918 gates.",
+        "Team4": "Loaded successfully; 918 gates; single flat top module.",
+        "Team7": "Loaded successfully; Module top | PI 14 | PO 83 | Gates 768 | DFFs 150."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 69, 54, 264, 280, 4, 97, 0, 150],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "notes": "Unanimous across all four full-score teams. must_numbers order matches the requested type order AND,OR,NOT,NAND,NOR,XOR,XNOR,BUF,DFF. Total 918 = 768 combinational + 150 DFF; total is derivable and should equal 918 if stated. Zero counts for AND and BUF must be reported as 0 (not omitted silently is acceptable, but a nonzero value is wrong)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150; total 918.",
+        "Team3": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team4": "918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team7": "Total 918: same breakdown; notes 768 combinational + 150 DFF."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find and merge all gate pairs in the design that are functionally equivalent (produce the same function). Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Equivalent-gate merge completed successfully; functionality unchanged (typical result: 1 gate/pair merged).",
+        "notes": "Real numeric disagreement among full-score teams: Team2/Team4/Team7 report merging 1 gate/pair, Team3 reports 0 merges (no equivalent pairs found) — all scored 5/5, so the merge count is NOT graded. Checker should require: (a) a success/completion claim for the merge operation, (b) an explicit or implicit no-functional-change guarantee, (c) the reported count (0 or 1 here) must be self-consistent with the team's own output netlist test48_out.v, which must remain functionally equivalent to the original."
+      },
+      "team_answers": {
+        "Team2": "Done. Merged 1 gate.",
+        "Team3": "No gates were merged; no functionally equivalent gate pairs found.",
+        "Team4": "Merged 1 equivalent gate.",
+        "Team7": "Merged 1 pair; 4 functional equivalence classes identified; functionality unchanged."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test48_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test48_out.v successfully.",
+        "notes": "Success claim mentioning test48_out.v. Actual verification happens on the output netlist file (must exist and be functionally equivalent to the loaded design)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test48_out.v successfully.",
+        "Team3": "Successfully written to test48_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test48_out.v successfully.",
+        "Team7": "Design written to test48_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

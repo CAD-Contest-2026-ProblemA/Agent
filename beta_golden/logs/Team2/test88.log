@@ -1,0 +1,133 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test88". Responses will be recorded to test88.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test88/test88.v successfully. Stored 124232 lines (5645752 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 916
+- NOT: 6844
+- NAND: 77998
+- NOR: 8005
+- XOR: 86
+- XNOR: 1358
+- BUF: 857
+- DFF: 16050
+
+Total gates: 112114.
+#END 3
+#RESPONSE 4
+47 outputs have a logic depth greater than 4.
+#END 4
+#RESPONSE 5
+Found 86 XOR gates.
+- g68019(inputs=[n59305,n59312],output=n7136)
+- g68020(inputs=[n59301,n5530],output=n7135)
+- g68021(inputs=[n59300,n5529],output=n7134)
+- g68022(inputs=[n59302,n5531],output=n7133)
+- g68023(inputs=[n59303,n59310],output=n7132)
+- g68024(inputs=[n59304,n59311],output=n7131)
+- g68025(inputs=[n24[7],n59306],output=n7130)
+- g68029(inputs=[n59416,n96766],output=n7126)
+- g68280(inputs=[n25[4],n24[4]],output=n7312)
+- g68778(inputs=[n34[8],n35[5]],output=n59290)
+- g69080(inputs=[n833,n924],output=n59087)
+- g69097(inputs=[n5529,n42[0]],output=n59198)
+- g69098(inputs=[n5531,n42[2]],output=n1085)
+- g69104(inputs=[n1119,n1122],output=n23[3])
+- g69122(inputs=[n85744,n43[1]],output=n1107)
+- g69133(inputs=[n1124,n36[7]],output=n59315)
+- g69134(inputs=[n34[8],n35[5]],output=n59313)
+- g69143(inputs=[n1125,n1127],output=n59317)
+- g69199(inputs=[n1166,n1160],output=n59267)
+- g69202(inputs=[n1157,n1163],output=n59266)
+- g69208(inputs=[n96528,n33[3]],output=n59265)
+- g69234(inputs=[n1192,n1186],output=n59258)
+- g69237(inputs=[n1183,n1189],output=n59257)
+- g69243(inputs=[n96576,n39[3]],output=n59256)
+- g69269(inputs=[n1218,n1212],output=n59249)
+- g69272(inputs=[n1209,n1215],output=n59248)
+- g69278(inputs=[n96540,n31[3]],output=n59247)
+- g69304(inputs=[n1244,n1238],output=n59240)
+- g69307(inputs=[n1235,n1241],output=n59239)
+- g69313(inputs=[n96588,n58[3]],output=n59238)
+- g69339(inputs=[n1270,n1264],output=n59231)
+- g69342(inputs=[n1261,n1267],output=n59230)
+- g69348(inputs=[n96552,n32[3]],output=n59229)
+- g69374(inputs=[n1296,n1290],output=n59222)
+- g69377(inputs=[n1287,n1293],output=n59221)
+- g69383(inputs=[n96600,n45[3]],output=n59220)
+- g69409(inputs=[n1322,n1316],output=n59213)
+- g69412(inputs=[n1313,n1319],output=n59212)
+- g69418(inputs=[n96564,n29[3]],output=n59211)
+- g69444(inputs=[n1348,n1342],output=n59204)
+- g69447(inputs=[n1339,n1345],output=n59203)
+- g69453(inputs=[n96612,n61[3]],output=n59202)
+- g69488(inputs=[n1386,n1389],output=n59052)
+- g69491(inputs=[n1371,n1384],output=n59051)
+- g69504(inputs=[n59074,n59062],output=n59050)
+- g70107(inputs=[n1480,n1659],output=n1828)
+- g70276(inputs=[n1503,n1541],output=n1659)
+- g70420(inputs=[n2244,n2227],output=n1465)
+- g71003(inputs=[n2475,n2615],output=n2784)
+- g71174(inputs=[n2499,n2503],output=n2615)
+- g71316(inputs=[n3202,n3179],output=n2421)
+- g71903(inputs=[n3388,n3567],output=n3736)
+- g72072(inputs=[n3411,n3449],output=n3567)
+- g72216(inputs=[n4152,n4135],output=n3373)
+- g72217(inputs=[n4405,n5538],output=n59319)
+- g72264(inputs=[n4329,n5532],output=n4353)
+- g72291(inputs=[n4423,n4513],output=n59934)
+- g72403(inputs=[n4531,n34[8]],output=n85715)
+- g72440(inputs=[n96769,n4543],output=n85752)
+- g72441(inputs=[n96767,n4541],output=n85754)
+- g72442(inputs=[n96765,n34[8]],output=n85756)
+- g72456(inputs=[n4558,n37[7]],output=n59407)
+- g72457(inputs=[n4555,n37[6]],output=n59406)
+- g72475(inputs=[n4567,n36[7]],output=n59360)
+- g72518(inputs=[n4609,n4611],output=n24[4])
+- g72530(inputs=[n85705,n85717],output=n59310)
+- g72540(inputs=[n4663,n96773],output=n59308)
+- g73540(inputs=[n96765,n96764],output=n59417)
+- g73581(inputs=[n5625,n55[18]],output=n692[18])
+- g73629(inputs=[n55[1],n55[0]],output=n692[1])
+- g73670(inputs=[n5683,n38[18]],output=n694[18])
+- g73718(inputs=[n38[1],n38[0]],output=n694[1])
+- g73828(inputs=[n169[1],n169[0]],output=n59362)
+- g73843(inputs=[n5852,n5851],output=n59389)
+- g73858(inputs=[n5844,n5843],output=n59395)
+- g73861(inputs=[n95418,n95417],output=n59427)
+- g74627(inputs=[n96509,n96420],output=n58999)
+- g75728(inputs=[n96443,n96502],output=n58998)
+- g75729(inputs=[n96377,n96488],output=n95424)
+- g75730(inputs=[n96438,n96469],output=n59021)
+- g75731(inputs=[n96437,n96462],output=n59007)
+- g75732(inputs=[n96422,n96419],output=n59006)
+- g75733(inputs=[n96399,n96313],output=n95423)
+- g75736(inputs=[n95911,n95810],output=n95420)
+- g75776(inputs=[n59185,n59173],output=n59161)
+- g75843(inputs=[n59139,n59127],output=n59115)
+#END 5
+#RESPONSE 6
+The Boolean expression for n12 over the primary inputs is:
+n12
+#END 6
+#RESPONSE 7
+The design's primary inputs are:
+- n0
+- n1
+- n2
+- n3
+- n4
+- n9[15:0]
+- n6[31:0]
+- n7[31:0]
+- n8[31:0]
+- n5[5:0]
+#END 7
+#RESPONSE 8
+Wrote the current design to "test88_out.v" successfully.
+#END 8

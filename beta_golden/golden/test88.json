@@ -1,0 +1,175 @@
+{
+  "case": "test88",
+  "max_score": 8,
+  "team_scores": {"Team2": 8, "Team3": 8, "Team4": 8, "Team7": 8},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test88.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test88 initialized; responses will be recorded to test88.log.",
+        "notes": "Any acknowledgment of the new testcase name test88 is correct. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test88. Responses recorded to test88.log.",
+        "Team3": "The new testcase named test88 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test88. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test88. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test88.v located in the directory testcase/test88/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test88/test88.v successfully (112,114 gates total incl. 16,050 DFFs; flat top module).",
+        "notes": "Response must indicate successful load. Extra stats vary by team and are not graded here: Team3/Team4 report 112,114 total gates; Team7 reports 96,064 comb gates + 16,050 DFFs (= 112,114) with PI:123 (bit-level) / PO:99; Team2 reports file line/byte counts. All are consistent."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 124232 lines (5645752 bytes) as current design.",
+        "Team3": "Successfully loaded, containing a total of 112,114 gates.",
+        "Team4": "Loaded successfully. Contains 112,114 gates, single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI: 123 | PO: 99 | Gates: 96064 | DFFs: 16050."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 916, 6844, 77998, 8005, 86, 1358, 857, 16050, 112114],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 112,114 gates: AND=0, OR=916, NOT=6844, NAND=77998, NOR=8005, XOR=86, XNOR=1358, BUF=857, DFF=16050.",
+        "notes": "All four full-score teams report the identical breakdown and total 112,114 (DFFs included in the total). Every number must match exactly."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050; total 112114.",
+        "Team3": "Total 112,114: AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050.",
+        "Team4": "112,114 gates: AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050.",
+        "Team7": "Total 112,114 incl. DFFs: AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "How many outputs have a logic depth greater than 4?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [47],
+        "must_names": null,
+        "expected": null,
+        "reference": "47 outputs have a logic depth greater than 4.",
+        "notes": "All four full-score teams report 47 (combinational depth on the original netlist). Exact match required."
+      },
+      "team_answers": {
+        "Team2": "47 outputs have a logic depth greater than 4.",
+        "Team3": "There are 47 outputs with a logic depth greater than 4.",
+        "Team4": "47 primary outputs have a combinational logic depth greater than 4.",
+        "Team7": "There are 47 outputs with a logic depth greater than 4."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "List all XOR gates in this design.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [86],
+        "must_names": null,
+        "expected": null,
+        "reference": "There are 86 XOR gates: g68019-g68025, g68029, g68280, g68778, g69080, g69097, g69098, g69104, g69122, g69133, g69134, g69143, g69199, g69202, g69208, g69234, g69237, g69243, g69269, g69272, g69278, g69304, g69307, g69313, g69339, g69342, g69348, g69374, g69377, g69383, g69409, g69412, g69418, g69444, g69447, g69453, g69488, g69491, g69504, g70107, g70276, g70420, g71003, g71174, g71316, g71903, g72072, g72216, g72217, g72264, g72291, g72403, g72440, g72441, g72442, g72456, g72457, g72475, g72518, g72530, g72540, g73540, g73581, g73629, g73670, g73718, g73828, g73843, g73858, g73861, g74627, g75728, g75729, g75730, g75731, g75732, g75733, g75736, g75776, g75843.",
+        "notes": "Gradable anchor is the count 86: full-score Team3 and Team7 only reported the count with a pointer to an external file and still scored full, so an inline name list is NOT required. If names ARE listed inline (Team2, Team4 did), they must match this 86-instance set exactly (both inline lists agree)."
+      },
+      "team_answers": {
+        "Team2": "Found 86 XOR gates; full inline list with instance names, input nets, and output nets (g68019..g75843).",
+        "Team3": "86 XOR gates total; complete list written to testcase/test88/list_gates_gates.txt.",
+        "Team4": "Found 86 XOR gate instances; full inline numbered list g68019..g75843.",
+        "Team7": "86 XOR gates; full list via result_page(R1), written to test88_R1.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Derive the Boolean equation for output n12 in terms of its primary inputs.",
+      "category": "analysis",
+      "golden": {
+        "rule": "llm_judge",
+        "must_numbers": null,
+        "must_names": ["n12"],
+        "expected": null,
+        "reference": "n12 is a registered (sequential) output, so it has no pure primary-input combinational closed form; the trivial answer 'n12 = n12' or its next-state function n12_next = (!n4600 + (!n5842 * (!n4575 + !n4576 + !n4577 + !n4578 + !n4574))) * !n4601 * n4599 (over register outputs treated as pseudo-PIs) are both accepted.",
+        "notes": "Netlist-verified: n12 is the Q output of dff g2209 (D=n9424), so no PI-only combinational closed form exists; the cone of n9424 terminates on exactly the 9 register outputs n4574-n4578/n4599/n4600/n4601/n5842 and Team7's next-state equation is truth-table equivalent to it. Both accepted forms are anchored by reliable full-score teams: Team3 and Team4 (both 8/8) gave the trivial identity 'n12'; Team7 (8/8) gave the next-state derivation and stated a pure-PI closed form is not well-defined. Team2's log also shows the trivial identity, but Team2's exchanged log is a different run than its graded one, so it is only non-authoritative corroboration. Accept either the trivial identity or a next-state derivation; reject any answer that fabricates a PI-only combinational equation."
+      },
+      "team_answers": {
+        "Team2": "The Boolean expression for n12 over the primary inputs is: n12.",
+        "Team3": "The Boolean equation for output n12 in terms of its primary inputs is simply n12.",
+        "Team4": "The Boolean expression for n12 is: n12.",
+        "Team7": "n12 is registered; next-state fn = (!n4600 + (!n5842*(!n4575+!n4576+!n4577+!n4578+!n4574))) * !n4601 * n4599 over register outputs; pure-PI form not well-defined."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please list all the primary inputs of this design with their bit widths.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": null,
+        "must_names": ["n0", "n1", "n2", "n3", "n4", "n5", "n6", "n7", "n8", "n9"],
+        "expected": null,
+        "reference": "10 primary inputs: n0 (1 bit), n1 (1 bit), n2 (1 bit), n3 (1 bit), n4 (1 bit), n5[5:0] (6 bits), n6[31:0] (32 bits), n7[31:0] (32 bits), n8[31:0] (32 bits), n9[15:0] (16 bits).",
+        "notes": "All four teams list the same 10 ports with identical widths (total 123 input bits, matching Team7's PI:123 at load). The explicit count '10' is NOT required: full-score Team2 and Team3 never state it (Team2 lists names with bracket widths only; Team3 lists names with widths only). Widths must be consistent with n0-n4 scalar, n5=6, n6=n7=n8=32, n9=16 (bracket notation like n5[5:0] is acceptable, as Team2 shows). Listing order varies and is not graded."
+      },
+      "team_answers": {
+        "Team2": "n0, n1, n2, n3, n4, n9[15:0], n6[31:0], n7[31:0], n8[31:0], n5[5:0].",
+        "Team3": "n0-n4: 1 bit each; n9: 16 bits; n6/n7/n8: 32 bits each; n5: 6 bits.",
+        "Team4": "Found 10 primary inputs: n0-n4 scalar, n9[15:0], n6[31:0], n7[31:0], n8[31:0], n5[5:0].",
+        "Team7": "n0-n4: 1 bit; n5: 6 bits [5:0]; n6/n7/n8: 32 bits [31:0]; n9: 16 bits [15:0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Please write the current design to the output file test88_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test88_out.v successfully.",
+        "notes": "Response must claim the write succeeded and name test88_out.v. Actual netlist correctness is verified on the output file, not the log. All four teams confirmed."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test88_out.v successfully.",
+        "Team3": "The current design has been successfully written to test88_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to .../test88_out.v successfully.",
+        "Team7": "Design written to test88_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

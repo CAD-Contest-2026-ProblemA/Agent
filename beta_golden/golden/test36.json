@@ -1,0 +1,112 @@
+{
+  "case": "test36",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test36.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test36\"; responses will be recorded to test36.log.",
+        "notes": "Any acknowledgment that the testcase test36 has been started/initialized is correct. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test36. Responses recorded to test36.log.",
+        "Team3": "The new testcase named test36 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test36. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test36. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test36.v located in the directory testcase/test36/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog design from testcase/test36/test36.v successfully (15,581 gates including 837 DFFs).",
+        "notes": "Response must indicate a successful load of testcase/test36/test36.v. Optional stats vary by team (Team3/Team4: 15,581 gates; Team7: 14,744 comb gates + 837 DFFs, PI 40, PO 50; Team2: line/byte counts) — all acceptable. Note 14,744 + 837 = 15,581, so both totals are consistent."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test36/test36.v successfully. Stored 17382 lines (694240 bytes).",
+        "Team3": "Successfully loaded testcase/test36/test36.v, total 15,581 gates.",
+        "Team4": "Loaded test36.v successfully. 15,581 gates, single top module (flat netlist).",
+        "Team7": "Loaded test36.v successfully. Module top | PI: 40 | PO: 50 | Gates: 14744 | DFFs: 837."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 970, 1064, 4782, 4373, 110, 3422, 23, 837, 15581],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 15,581 gates: AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837.",
+        "notes": "All four full-score teams report identical breakdowns, including DFF: 837 as a counted type (prompt explicitly lists DFF). Total 15,581 must equal the sum of the per-type counts. AND: 0 must be explicitly reported since AND is in the requested list."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837; total 15581.",
+        "Team3": "Total 15,581: AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837.",
+        "Team4": "15,581 gates. AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837.",
+        "Team7": "Total 15,581: AND 0, OR 970, NOT 1064, NAND 4782, NOR 4373, XOR 110, XNOR 3422, BUF 23, DFF 837."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Reconstruct the entire netlist using only AND and NOT gates while preserving functional equivalence.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The netlist has been reconstructed using only AND and NOT gates; 13,680 gates were remapped and functional equivalence is preserved.",
+        "notes": "Grade on the success/equivalence claim; verification happens on the output netlist (only AND, NOT, and DFF instances may remain; must be functionally equivalent). All four teams remapped 13,680 gates (= 14,744 comb gates minus the 1,064 already-basis NOT gates... actually 14,744 - 1,064 = 13,680, consistent). Post-transform totals are team-dependent implementation results and differ: Team2 delta +41,162; Team3 delta +44,607; Team7 final 68,097 comb gates (NOT 47,376 + AND 20,721); Team4 reported no delta. All scored full, so the resulting gate count is NOT graded — only the success claim and the actual output basis."
+      },
+      "team_answers": {
+        "Team2": "Done. Matched/remapped 13,680 gates to AND,NOT basis. Delta +41,162. Equivalence preserved.",
+        "Team3": "Reconstructed with only AND/NOT preserving equivalence. 13,680 gates remapped, delta 44,607.",
+        "Team4": "Matched 13,680 gates and remapped 13,680 to the AND,NOT basis.",
+        "Team7": "Reconstructed to AND/NOT, equivalence verified. Before 14,744 -> after 68,097 (NOT 47,376, AND 20,721); 13,680 rewritten; no residual off-basis gates."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test36_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was written to test36_out.v successfully.",
+        "notes": "Any confirmation that the current (AND/NOT-reconstructed) design was written to test36_out.v is correct. The written netlist should contain only AND, NOT, and DFF instances and be equivalent to the original."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test36_out.v successfully.",
+        "Team3": "Current design successfully written to test36_out.v.",
+        "Team4": "Wrote current gate-level netlist to test36_out.v successfully.",
+        "Team7": "Design written to test36_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

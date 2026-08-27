@@ -1,0 +1,39 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test13". All subsequent responses will be recorded to test13.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test13/test13.v" successfully. It contains 299 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The current design contains 299 gates.
+Gate-type breakdown: AND: 62, OR: 99, NOT: 36, NAND: 0, NOR: 4, XOR: 7, XNOR: 67, BUF: 24, DFF: 0.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from "n2" to "n5[0]" that avoids "n58" exists.
+#END 4
+#RESPONSE 5
+No. No combinational path from "n3" to "n5[1]" that avoids "n208" exists.
+#END 5
+#RESPONSE 6
+Found 0 combinational paths from "n3" to "n5[1]".
+Complete path enumeration:
+#END 6
+#RESPONSE 7
+Found 0 combinational paths from "n4" to "n5[0]".
+Complete path enumeration:
+#END 7
+#RESPONSE 8
+The maximum combinational logic depth from "n2" to "n5[0]" is 3.
+#END 8
+#RESPONSE 9
+No combinational path exists from "n3" to "n5[1]".
+#END 9
+#RESPONSE 10
+No combinational path exists from "n4" to "n5[0]".
+#END 10
+#RESPONSE 11
+Found 1 successor gate.
+#END 11
+#RESPONSE 12
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test13_out.v" successfully.
+#END 12

@@ -1,0 +1,112 @@
+{
+  "case": "test21",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test21.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test21\"; responses will be recorded to test21.log.",
+        "notes": "Any acknowledgment naming test21 and indicating readiness is acceptable. All four full-score teams give a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test21\". Responses recorded to test21.log.",
+        "Team3": "The new testcase has been set to \"test21\".",
+        "Team4": "Acknowledged. Initialized testcase \"test21\". Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test21\". Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test21.v located in the directory testcase/test21/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test21/test21.v successfully (398 gates including 55 DFFs).",
+        "notes": "Response must indicate successful load of testcase/test21/test21.v. Extra stats vary by team (Team3/Team4 report 398 gates; Team7 reports PI:21 PO:13 Gates:343 DFF:55; Team2 reports file size) and are not graded, but if stats are given they should be consistent with the netlist (343 comb + 55 DFF = 398 total)."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test21/test21.v successfully. 457 lines (16086 bytes).",
+        "Team3": "Loaded successfully, containing a total of 398 gates.",
+        "Team4": "Loaded successfully. 398 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 21 | PO: 13 | Gates: 343 | DFFs: 55."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 8, 43, 227, 57, 1, 7, 0, 55, 398],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 398 gates: AND=0, OR=8, NOT=43, NAND=227, NOR=57, XOR=1, XNOR=7, BUF=0, DFF=55 (343 combinational + 55 DFFs).",
+        "notes": "All four full-score teams report the identical breakdown AND:0 OR:8 NOT:43 NAND:227 NOR:57 XOR:1 XNOR:7 BUF:0 DFF:55 and total 398. The per-type breakdown is the gradable core; total 398 (or equivalently 343 comb + 55 DFF) should accompany it."
+      },
+      "team_answers": {
+        "Team2": "AND:0 OR:8 NOT:43 NAND:227 NOR:57 XOR:1 XNOR:7 BUF:0 DFF:55, total 398.",
+        "Team3": "Total 398: AND:0 OR:8 NOT:43 NAND:227 NOR:57 XOR:1 XNOR:7 BUF:0 DFF:55.",
+        "Team4": "398 gates. AND:0 OR:8 NOT:43 NAND:227 NOR:57 XOR:1 XNOR:7 BUF:0 DFF:55.",
+        "Team7": "Total 398: AND:0 OR:8 NOT:43 NAND:227 NOR:57 XOR:1 XNOR:7 BUF:0 DFF:55 (343 comb + 55 DFF)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Insert buffers wherever needed so that no gate drives more than 4 loads. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Inserted buffers so that no gate drives more than 4 loads; functionality preserved (e.g. 86 buffers added).",
+        "notes": "Buffer count depends on the team's buffering strategy (tree structure, which nets are split): Team2/Team3/Team4 all added 86 buffers; Team7 added 69 and still scored full. Checker should verify: (a) success claim + functional-equivalence claim in the log, (b) output netlist test21_out.v has max fanout <= 4 on gate outputs and is equivalent to the original. Team7's caveat about CONST1 fanout (constant net driving 55 loads) did not cost points, suggesting constant/tie-cell fanout is exempt from the gate-drive limit in grading."
+      },
+      "team_answers": {
+        "Team2": "Done. Added 86 fanout buffers to enforce max fanout of 4.",
+        "Team3": "86 fanout buffers added; no gate drives more than 4 loads; functionality preserved.",
+        "Team4": "Inserted 86 buffers; requested maximum fanout is 4.",
+        "Team7": "Inserted 69 buffers on 21 listed nets (n0, n1, n371, ...); functionality unchanged. Notes CONST1 fanout 55 could not be bounded and constraint not registered."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test21_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test21_out.v successfully.",
+        "notes": "Response must indicate the netlist was written to test21_out.v. Actual verification (fanout bound + equivalence) happens on the output file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test21_out.v\" successfully.",
+        "Team3": "Successfully written to test21_out.v.",
+        "Team4": "Wrote current gate-level netlist to test21_out.v successfully.",
+        "Team7": "Design written to test21_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

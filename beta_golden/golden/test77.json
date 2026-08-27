@@ -1,0 +1,154 @@
+{
+  "case": "test77",
+  "max_score": 7,
+  "team_scores": {"Team2": 6, "Team3": 7, "Team4": 6, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test77.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test77 initialized; responses will be recorded to test77.log.",
+        "notes": "Any acknowledgment that the testcase test77 has been set/initialized passes. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test77. Responses recorded to test77.log.",
+        "Team3": "The new testcase named test77 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test77. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test77. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test77.v located in the directory testcase/test77/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Design loaded successfully from testcase/test77/test77.v (4181 total gates including 570 DFFs).",
+        "notes": "Success claim is the gradable essence. Stat presentation varies and is all acceptable: Team3/Team4 report 4181 total gates; Team7 splits it as 3611 comb gates + 570 DFFs (= 4181); Team2 reports only file lines/bytes but still scored the point elsewhere-lost, so a bare success claim suffices."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully. Stored 4685 lines (186912 bytes).",
+        "Team3": "Loaded successfully, total 4181 gates.",
+        "Team4": "Loaded successfully. 4,181 gates, single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI: 44 | PO: 106 | Gates: 3611 | DFFs: 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [4181, 0, 197, 331, 2394, 555, 9, 123, 2, 570],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4181 gates: AND=0, OR=197, NOT=331, NAND=2394, NOR=555, XOR=9, XNOR=123, BUF=2, DFF=570.",
+        "notes": "All four teams report identical breakdown on the original netlist; unanimous ground truth. Total must be 4181 and every per-type count must match."
+      },
+      "team_answers": {
+        "Team2": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team3": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team4": "Total 4,181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team7": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Try to insert buffers on the reset signal n1 to reduce its fanout to at most 4 loads per driver. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Inserted a buffer tree on reset signal n1 (approx. 147-148 BUF gates) so every driver has at most 4 loads; original fanout of n1 was 444; functionality preserved.",
+        "notes": "Must claim the buffers were actually inserted and functionality/equivalence preserved; actual verification happens on the output netlist (n1 fanout <= 4 per driver, CEC vs original). Buffer count is team-dependent by tree topology: 148 (Team3, verified 7/7) and 147 (Team7, verified 7/7) both accepted. Team2's logged answer is only a hypothetical 'buffers can be inserted' with no action performed (its line-5 fanout of 444 confirms no insertion in that run); this fails the rule on content grounds, but Team2's exchanged log is a different run than its graded one, so no score attribution is drawn from Team2. Team4 (verified 6/7) claims 148 buffers but omits an explicit functionality-preserved claim; its single lost point cannot be localized from log text alone and may lie here or on line 5."
+      },
+      "team_answers": {
+        "Team2": "Hypothetical: 'buffers CAN be strategically inserted... may need to be added'. No action performed.",
+        "Team3": "Success: 148 fanout buffers added on n1, at most 4 loads per driver, functionality preserved.",
+        "Team4": "Inserted 148 buffers on n1; requested max fanout is 4.",
+        "Team7": "Inserted 147 BUF gates; n1 fanout reduced from 444 to at most 4 loads per driver; functionality unchanged."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 5,
+      "prompt": "What is the maximum fanout of n1 now?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "After buffering, the maximum fanout of n1 is at most 4 (Team7: 4; Team3: 2 - depends on the team's buffer-tree topology).",
+        "notes": "Post-transform value depends on each team's buffer tree: any value <= 4 that matches the team's own output netlist is correct. The two verified full-score teams disagree on the raw number (Team3=2 with 148 buffers, Team7=4 with 147 buffers) yet both scored 7/7, confirming team-dependence. Checker should verify the reported number against the fanout of n1 in that team's test77_out.v. Team4 (verified 6/7) answered 4 but phrased it as the max fanout anywhere in the buffer tree rather than of n1 itself; with 148 buffers a greedy tree leaves n1 driving 2 (as with Team3's identical buffer count), so Team4's lost point plausibly lies here, though this cannot be confirmed without its output netlist. Team2's 444 is self-consistent with its unmodified log run but violates the <= 4 chain from line 4; no score conclusions are drawn from Team2 since its exchanged log is a different run than its graded one."
+      },
+      "team_answers": {
+        "Team2": "444 (no buffers were inserted).",
+        "Team3": "2",
+        "Team4": "4 (max fanout in buffer tree rooted at n1).",
+        "Team7": "4, driving g3568, g3612, n1_bfg_0, g463.RN."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 6,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes - the current design is functionally equivalent to the original loaded netlist (CEC proved).",
+        "notes": "All four teams answered equivalent/yes. Response must affirm equivalence; ideally cites a CEC/proof method (Team3: ABC CEC proved; Team7: whole-design cec equivalent), but Team2's bare 'Yes.' also appeared in a 6/7 log whose lost point traces to line 4, so a plain affirmative passes. Real verification is CEC of test77_out.v vs test77.v."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Equivalence check passed; proved via ABC CEC.",
+        "Team4": "Yes, equivalent to snapshot 'original'.",
+        "Team7": "Equivalent; '[preserve_all] ctrl-aware whole-design cec: equivalent'."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test77_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design has been written to test77_out.v successfully.",
+        "notes": "Success claim required; all four teams confirm the write. Output file must exist and contain the buffered, equivalent netlist."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test77_out.v successfully.",
+        "Team3": "Successfully written to test77_out.v.",
+        "Team4": "Wrote current gate-level netlist to test77_out.v successfully.",
+        "Team7": "Design written to test77_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

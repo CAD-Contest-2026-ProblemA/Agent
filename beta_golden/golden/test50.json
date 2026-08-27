@@ -1,0 +1,133 @@
+{
+  "case": "test50",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test50.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test50\"; responses will be recorded to test50.log.",
+        "notes": "Any acknowledgment of starting testcase test50 is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test50. Responses recorded to test50.log.",
+        "Team3": "The new testcase named test50 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test50. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test50. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test50.v located in the directory testcase/test50/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test50/test50.v successfully (5442 gates total incl. 756 DFFs; PI 135, PO 192).",
+        "notes": "Must indicate successful load of testcase/test50/test50.v. Extra stats optional: Team3/Team4 report 5442 total gates; Team7 reports 4686 comb gates + 756 DFFs (= 5442) with PI 135 / PO 192; Team2 reports only line/byte counts. Any success message passes."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 6034 lines (244320 bytes) stored as current design.",
+        "Team3": "Loaded successfully, containing a total of 5442 gates.",
+        "Team4": "Loaded successfully; 5,442 gates; single flat top module.",
+        "Team7": "Loaded successfully; Module top | PI 135 | PO 192 | Gates 4686 | DFFs 756."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 144, 507, 3214, 505, 22, 294, 0, 756, 5442],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 5442 gates: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756.",
+        "notes": "All four full-score teams report identical breakdown: AND=0, OR=144, NOT=507, NAND=3214, NOR=505, XOR=22, XNOR=294, BUF=0, DFF=756; total 5442. The per-type numbers must match; total 5442 must be present or derivable (Team4 states total; all others state it too)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756; total 5442.",
+        "Team3": "Total 5442: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756.",
+        "Team4": "5,442 gates: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756.",
+        "Team7": "Total 5442: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Collapsed all detected back-to-back inverter pairs into wires (count is method-dependent: 0-5 pairs observed); functional equivalence preserved.",
+        "notes": "All four teams scored full despite reporting different pair counts (Team3: 0 pairs, Team4: 0 rewrites, Team2: 4 rewrites / 4 gates eliminated, Team7: 5 pairs / 10 NOTs removed), so the count is not graded as an exact number. It depends on the detection criterion (e.g. whether the first inverter may have other fanout). Checker: response must claim the collapse was performed/attempted and functional equivalence preserved; any reported count must be self-consistent with the team's output netlist (NOT count in test50_out.v = 507 minus NOTs removed)."
+      },
+      "team_answers": {
+        "Team2": "Applied rewrite not(not(x))->x 4 times, eliminated 4 gates; equivalence preserved.",
+        "Team3": "Operation executed; no back-to-back inverter pairs found; no changes made.",
+        "Team4": "Applied 0 verified pattern rewrites; functional equivalence preserved.",
+        "Team7": "Collapsed 5 pairs (10 NOT gates removed); post-scan shows 0 pairs remain; functionally unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Prove that the transformed design is equivalent to the pre-transformation netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the transformed design is functionally equivalent to the pre-transformation netlist; the equivalence check (e.g. SAT miter UNSAT / cec) passed.",
+        "notes": "Essence: an affirmative equivalence conclusion backed by a check. All four teams assert equivalence (Team2: miter UNSAT via ABC; Team3: check passed; Team4: equivalent to snapshot pre_transform; Team7: 157 cones verified equivalent). Method details are free-form; the claim of proven equivalence is required."
+      },
+      "team_answers": {
+        "Team2": "Yes; ABC AIGER miter SAT result UNSATISFIABLE against original (boundary mode).",
+        "Team3": "Equivalent; equivalence check passed successfully.",
+        "Team4": "Yes; current design functionally equivalent to snapshot pre_transform.",
+        "Team7": "Equivalent; verification found 157 cones verified equivalent."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test50_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test50_out.v successfully.",
+        "notes": "Response must indicate a successful write to test50_out.v. Actual grading is on the emitted netlist (must be equivalent to the original, with inverter pairs collapsed per the team's line-4 claim)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test50_out.v successfully.",
+        "Team3": "Successfully written to test50_out.v.",
+        "Team4": "Wrote current gate-level netlist to test50_out.v successfully.",
+        "Team7": "Design written to test50_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

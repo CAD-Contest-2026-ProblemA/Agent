@@ -1,0 +1,12 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test03". Responses will be recorded to test03.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test03/test03.v successfully. Stored 1057 lines (32167 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The transitive fanin cone of n15 contains 525 gates.
+#END 3
+#RESPONSE 4
+Wrote the current design to "test03_out.v" successfully.
+#END 4

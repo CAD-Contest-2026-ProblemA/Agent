@@ -1,0 +1,154 @@
+{
+  "case": "test24",
+  "max_score": 7,
+  "team_scores": {"Team2": 7, "Team3": 6.89, "Team4": 6.94, "Team7": 7},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test24.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test24\"; responses will be recorded to test24.log.",
+        "notes": "Any acknowledgment that the testcase test24 has begun is acceptable. All four teams gave equivalent acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test24. Responses recorded to test24.log.",
+        "Team3": "The new testcase named test24 has been set successfully.",
+        "Team4": "Acknowledged. Initialized testcase test24. Responses recorded to test24.log. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase test24. Responses recorded to test24.log. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test24.v located in the directory testcase/test24/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test24/test24.v successfully; design contains 15,320 gates (14,927 combinational + 393 DFFs), PI: 260, PO: 130.",
+        "notes": "Grading: success claim for the load. Extra stats optional. If totals are given they should be consistent: 15,320 total gates including DFFs, or 14,927 gates + 393 DFFs (Team7's split, also full-score, both acceptable)."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 17213 lines (660032 bytes).",
+        "Team3": "Loaded successfully; 15,320 gates total.",
+        "Team4": "Loaded successfully; 15,320 gates, single top module flat netlist.",
+        "Team7": "Loaded successfully; Module top, PI 260, PO 130, Gates 14927, DFFs 393."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 1196, 1548, 6040, 5298, 150, 695, 0, 393, 15320],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 1196, NOT: 1548, NAND: 6040, NOR: 5298, XOR: 150, XNOR: 695, BUF: 0, DFF: 393; total 15,320 gates.",
+        "notes": "All four teams (including both full-score teams) report identical per-type counts. Total 15,320 includes the 393 DFFs. Every number in the breakdown must match."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 1196, NOT 1548, NAND 6040, NOR 5298, XOR 150, XNOR 695, BUF 0, DFF 393; total 15320.",
+        "Team3": "AND 0, OR 1196, NOT 1548, NAND 6040, NOR 5298, XOR 150, XNOR 695, BUF 0, DFF 393; total 15,320.",
+        "Team4": "AND 0, OR 1196, NOT 1548, NAND 6040, NOR 5298, XOR 150, XNOR 695, BUF 0, DFF 393; total 15,320.",
+        "Team7": "AND 0, OR 1196, NOT 1548, NAND 6040, NOR 5298, XOR 150, XNOR 695, BUF 0, DFF 393; total 15,320 incl. DFFs."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Remove all dangling gates that do not contribute to any primary output. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no gates removed (zero); verbal 'none' acceptable",
+        "reference": "No dangling gates found; 0 gates removed, design unchanged, functional equivalence preserved.",
+        "notes": "All four teams report that no dangling gates were removed from the original netlist, so the objective fact is 'none removed'. Do NOT require the literal digit 0: both full-score teams (Team2 'No unused gates were removed', Team7 'there were none') express it verbally; only Team4 (6.94) wrote 'Removed 0'. Response must claim the command completed and convey zero removals (literal 0 or verbal none). A nonzero removal count would contradict all full-score teams."
+      },
+      "team_answers": {
+        "Team2": "Done. No unused gates removed; design unchanged, equivalence preserved.",
+        "Team3": "No dangling gates were removed; there were none.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "No dangling gates removed; none existed. Equivalence preserved."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Rename gate g0 to renamed_gate. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": ["g0", "renamed_gate"],
+        "expected": null,
+        "reference": "Renamed gate g0 to renamed_gate successfully; functional equivalence preserved (rename only, no logic change).",
+        "notes": "Success claim required; output netlist must contain instance renamed_gate and no instance g0. All four teams confirmed the rename. Reference-update details (Team2: 1 reference updated) are optional extras."
+      },
+      "team_answers": {
+        "Team2": "Done. Renamed g0 to renamed_gate; 1 reference updated.",
+        "Team3": "g0 renamed to renamed_gate, equivalence preserved.",
+        "Team4": "Renamed g0 to renamed_gate; safety checks passed, bijective rename preserves functionality.",
+        "Team7": "Renamed g0 to renamed_gate; equivalence preserved, references updated."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Optimize the logic to minimize maximum path depth. Ensure functional equivalence is preserved. The cost function is the maximum logic depth of the final design; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Depth optimization succeeded, equivalence preserved: max logic depth reduced from 25 to 17 (best observed, Team7).",
+        "notes": "Relative QoR line: original max depth is 25 (all three reliable teams agree). Achieved depths: Team7=17 (best, full score), Team4=18, Team3=19. Score arithmetic from the reliable teams exactly matches ratio best/achieved with best=17: 17/18=0.94 (Team4 6.94), 17/19=0.89 (Team3 6.89), Team7 7.00. So grade this line as (best_depth / team_final_depth), best_depth=17, verified against the team's written test24_out.v with equivalence preserved. Team2's exchanged log is from a DIFFERENT run than its graded one (this log shows a planner failure with no optimization); it is not an anchor and its listed score must not be used to reason about this line."
+      },
+      "team_answers": {
+        "Team2": "Planner FAILED: 'optimize_depth target=final is not a loaded signal'; no optimization reported in log.",
+        "Team3": "Depth 25 -> 19; gates 15,320 -> 14,750.",
+        "Team4": "Depth 25 -> 18; gates 15,320 -> 14,548.",
+        "Team7": "Depth 25 -> 17 via whole-design ABC restructuring, 2 iterations."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test24_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test24_out.v successfully.",
+        "notes": "Success claim for writing test24_out.v. All four teams confirmed the write. Actual file correctness (equivalence, rename applied) is checked on the netlist, not the log."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test24_out.v successfully.",
+        "Team3": "Design successfully written to test24_out.v.",
+        "Team4": "Wrote netlist to test24_out.v successfully.",
+        "Team7": "Design written to test24_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

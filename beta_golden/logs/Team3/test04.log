@@ -1,0 +1,12 @@
+#RESPONSE 1
+The new testcase named "test04" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test04/test04.v`, containing a total of 66 gates.
+#END 2
+#RESPONSE 3
+The maximum logic depth of the fanin cone of output `n3` is 14.
+#END 3
+#RESPONSE 4
+The current design has been successfully written to the output file `test04_out.v`.
+#END 4

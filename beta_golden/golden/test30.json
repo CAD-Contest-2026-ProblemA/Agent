@@ -1,0 +1,112 @@
+{
+  "case": "test30",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test30.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test30\"; responses will be recorded to test30.log.",
+        "notes": "Any acknowledgment naming the testcase counts. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test30\". Responses recorded to test30.log.",
+        "Team3": "The new testcase named \"test30\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test30\". Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test30\". Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test30.v located in the directory testcase/test30/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test30/test30.v successfully (1834 gates total incl. 205 DFFs).",
+        "notes": "Success claim is what is graded. Optional stats vary by presentation: Team3/Team4 say 1834 gates; Team7 says Gates: 1629 (combinational only) + DFFs: 205 (= 1834 total) plus PI: 42, PO: 67; Team2 reports file lines/bytes. All acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 2052 lines (77650 bytes).",
+        "Team3": "Loaded successfully; total 1834 gates.",
+        "Team4": "Loaded successfully; 1,834 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 42, PO 67, Gates 1629 (comb), DFFs 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 59, 268, 974, 284, 2, 42, 0, 205, 1834],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1834 gates: AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "notes": "All four full-score teams report identical breakdown and total. Zeros for AND and BUF must be stated (per-type breakdown was requested). Total 1834 = 1629 combinational + 205 DFF."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205; total 1834.",
+        "Team3": "Total 1834; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team4": "1,834 gates; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205.",
+        "Team7": "Total 1834; AND 0, OR 59, NOT 268, NAND 974, NOR 284, XOR 2, XNOR 42, BUF 0, DFF 205."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Remove all dangling gates and nets not connected to any primary output. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Removed 0 dangling gates/nets; the design contains no logic disconnected from primary outputs, so it is functionally unchanged.",
+        "notes": "All four full-score teams report that nothing was removed, but only Team4 uses the numeral 0 ('Removed 0 dangling or unused gates'); Team2/Team3/Team7 phrase it as 'no dangling gates'/'none'. So no must_number: the checker must accept either the numeral 0 or a semantic none/no-removal statement. Response must claim success with zero removals and (implicitly or explicitly) functional preservation; output netlist must remain equivalent with the same 1834 gates. A nonzero removal count would contradict all full-score anchors."
+      },
+      "team_answers": {
+        "Team2": "Done. No dangling gates removed; design unchanged.",
+        "Team3": "No dangling gates or nets were removed (none found).",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "No dangling gates or nets found; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test30_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test30_out.v successfully.",
+        "notes": "Success claim is graded here; actual verification is on the output netlist (must be equivalent to original, 1834 gates)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test30_out.v\" successfully.",
+        "Team3": "Design successfully written to test30_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test30_out.v successfully.",
+        "Team7": "Design written to test30_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

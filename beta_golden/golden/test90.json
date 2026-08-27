@@ -1,0 +1,175 @@
+{
+  "case": "test90",
+  "max_score": 8,
+  "team_scores": {"Team2": 8, "Team3": 8, "Team4": 8, "Team7": 8},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test90.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test90 initialized; responses will be recorded to test90.log.",
+        "notes": "Any acknowledgment of the new testcase name test90 is acceptable. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test90. Responses recorded to test90.log.",
+        "Team3": "The new testcase named test90 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test90. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test90. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test90.v located in the directory testcase/test90/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test90/test90.v successfully (25996 gates total, incl. 2585 DFFs; 23411 combinational).",
+        "notes": "Must indicate successful load of test90.v. Gate totals are optional garnish; teams that reported totals agree on 25996 total / 23411 comb / 2585 DFF."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 29014 lines (1233377 bytes).",
+        "Team3": "Loaded successfully; 25,996 gates total.",
+        "Team4": "Loaded successfully; 25,996 gates, flat single top module.",
+        "Team7": "Loaded successfully; top module, PI 109, PO 134, 23411 gates + 2585 DFFs."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 955, 1514, 17350, 3158, 18, 397, 19, 2585],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 955, NOT: 1514, NAND: 17350, NOR: 3158, XOR: 18, XNOR: 397, BUF: 19, DFF: 2585; total 25996 gates.",
+        "notes": "All four full-score teams report the identical breakdown. Total of 25996 (or 23411 combinational + 2585 DFF) may accompany the breakdown but the per-type counts are the gradable content."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 955, NOT 1514, NAND 17350, NOR 3158, XOR 18, XNOR 397, BUF 19, DFF 2585; total 25996.",
+        "Team3": "Identical breakdown; total 25,996.",
+        "Team4": "Identical breakdown; total 25,996.",
+        "Team7": "Identical breakdown; total 25996 (comb 23411)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Remap the entire design to use only NAND and NOT gates. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Design remapped to NAND/NOT-only basis: 4547 gates rewritten, gate-count delta +13045 (23411 -> 36456 combinational); functional equivalence preserved.",
+        "notes": "Response must claim successful remap plus functional preservation. Output netlist must contain only NAND/NOT (plus DFF/BUF as sequential/IO elements per checker policy). All four teams independently report 4547 gates matched/remapped and +13045 delta, so those numbers are a strong sanity anchor but exact figures may vary with a different remap strategy."
+      },
+      "team_answers": {
+        "Team2": "Done. Matched 4547 gates, remapped 4547 to NAND,NOT basis; delta +13045.",
+        "Team3": "Successfully remapped; 4,547 gates remapped, net change 13,045 gates.",
+        "Team4": "Matched 4,547 and remapped 4,547 to NAND,NOT basis.",
+        "Team7": "4547 rewritten; 23411 -> 36456 gates; after: NOT 13333, NAND 23123; formally verified equivalent."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Optimize the logic cone of output n14 while ensuring the netlist remains NAND and NOT only. Preserve functional equivalence. Report original if already optimal. The cost function is the depth of the cone of n14; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": [2],
+        "must_names": null,
+        "expected": null,
+        "reference": "Cone depth of n14 is 2 and already optimal; no depth improvement possible. Netlist stays NAND/NOT-only and functionally equivalent (best observed depth = 2).",
+        "notes": "All four full-score teams end with cone depth 2 (the cone is just 1 NOT + 1 NAND, already in-basis, so depth 2 is the floor). Three teams left the netlist unchanged; Team2 additionally shrank total gate count 39041 -> 33429 while keeping depth 2 - both are full credit since the cost function is cone depth only. Grader: require success/equivalence claim and reported cone depth 2."
+      },
+      "team_answers": {
+        "Team2": "Done. Cone depth of n14 remains 2; gate count 39041 -> 33429; functionally equivalent.",
+        "Team3": "Completed; depth unchanged at 2, no improvement possible; NAND/NOT only, equivalent.",
+        "Team4": "No optimization change committed; maximum depth remains 2; no verified candidate improved objective.",
+        "Team7": "Converged in 1 iteration; cone_depth(n14)=2 initial and best; original retained, transforms formally verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "What is the depth of the cone of n14 now?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [2],
+        "must_names": null,
+        "expected": null,
+        "reference": "The depth of the cone of n14 is 2.",
+        "notes": "Post-transform in principle, but the n14 cone (1 NOT + 1 NAND, fed by DFFs g2044/g2146 per Team7) was already NAND/NOT so remap could not change it: every team's netlist yields 2. Team2's RESPONSE 6 was a tool-error message with no number yet Team2 still scored 8/8 - the grader evidently credited the depth-2 statement in its RESPONSE 5; a strict checker should accept 2 stated in either line. Team7's DFF-inclusive cone description (2 comb gates + DFFs g2044, g2146) matches the domain prior of counting boundary DFFs and is a good model answer."
+      },
+      "team_answers": {
+        "Team2": "RESPONSE 6 is a planner error (logic_depth target 'cone' not a signal); depth 2 was stated in RESPONSE 5.",
+        "Team3": "The depth of the cone of n14 is now 2.",
+        "Team4": "Combinational logic depth of fan-in cone of n14 is 2.",
+        "Team7": "Depth 2; cone has 2 comb gates (1 NOT, 1 NAND) and 2 DFFs (g2044, g2146)."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "What is the maximum combinational logic depth in the design now?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Maximum combinational logic depth after the plain NAND/NOT remap is 159 levels; a team whose netlist was further restructured during the line-5 optimization may report a different self-consistent value for its own netlist.",
+        "notes": "159 is the only score-anchored value: all three reliably graded full-score teams (3/4/7), whose designs are the plain 4547-gate remap, report 159 (Team7 names deepest endpoint g1782). The rule stays team_dependent because the question asks about the design 'now' and line 5 permits restructuring, so depth is a property of each team's own netlist; Team2's exchanged log (a DIFFERENT run than its graded one, hence no score-based conclusions) illustrates this - it shrank the netlist 39041 -> 33429 at line 5 and reports depth 54, a plausible self-consistent alternative but NOT a verified-credited answer. Checker: accept 159 for plain-remap netlists; otherwise the number must match the longest topological gate path of the team's own current netlist; flag values matching neither."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 54 gate levels.",
+        "Team3": "Maximum combinational logic depth is now 159.",
+        "Team4": "Maximum combinational logic depth is 159.",
+        "Team7": "Maximum depth 159; deepest endpoint gate instance g1782."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 8,
+      "prompt": "Please write the current design to the output file test90_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test90_out.v successfully.",
+        "notes": "Must indicate successful write of test90_out.v. Actual file must be NAND/NOT-only (plus DFFs) and functionally equivalent to the original; that is verified on the netlist, not the log."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test90_out.v successfully.",
+        "Team3": "Successfully written to test90_out.v.",
+        "Team4": "Wrote current gate-level netlist to test90_out.v successfully.",
+        "Team7": "Design written to test90_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "case": "test03",
+  "max_score": 4,
+  "team_scores": {"Team2": 4, "Team3": 4, "Team4": 4, "Team7": 4},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test03.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase \"test03\" initialized; responses will be recorded to test03.log.",
+        "notes": "Any acknowledgment that the testcase test03 has begun is acceptable. All four full-score teams gave simple acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test03\". Responses will be recorded to test03.log.",
+        "Team3": "The new testcase named \"test03\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test03\". Responses recorded to test03.log. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase \"test03\". Responses recorded to test03.log. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test03.v located in the directory testcase/test03/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test03/test03.v successfully (module top: 48 PIs, 5 POs, 931 gates, 0 DFFs).",
+        "notes": "Success claim is what is graded. Optional stats must be consistent if given: 931 gates (Team3/Team4/Team7 agree), 48 PI, 5 PO, 0 DFFs (Team7). Team2 reported file size/lines (1057 lines, 32167 bytes) instead of a gate count and still scored full, so stats are not required."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 1057 lines (32167 bytes) as current design.",
+        "Team3": "Loaded successfully; design contains 931 gates.",
+        "Team4": "Loaded successfully; 931 gates, single top module, flat netlist.",
+        "Team7": "Loaded successfully; Module top | PI: 48 | PO: 5 | Gates: 931 | DFFs: 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "How many gates are in the fanin cone of primary output n15?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [525],
+        "must_names": null,
+        "expected": null,
+        "reference": "The fanin cone of primary output n15 contains 525 gates.",
+        "notes": "All four full-score teams report 525 unanimously. The design has 0 DFFs (Team7 load stats), so the cone-includes-DFFs rule is vacuous here; 525 is the single objective answer."
+      },
+      "team_answers": {
+        "Team2": "The transitive fanin cone of n15 contains 525 gates.",
+        "Team3": "There are 525 gates in the fanin cone of primary output n15.",
+        "Team4": "The fan-in cone of \"n15\" contains 525 gates.",
+        "Team7": "525 gates; detailed list written to test03_R1.txt (pointer result_page(R1))."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Please write the current design to the output file test03_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test03_out.v successfully.",
+        "notes": "Success claim of writing test03_out.v; actual file content is checked separately. No transforms were applied in this case, so the output should match the loaded netlist."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test03_out.v\" successfully.",
+        "Team3": "The current design has been successfully written to the output file test03_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to test03_out.v successfully.",
+        "Team7": "Design written to test03_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

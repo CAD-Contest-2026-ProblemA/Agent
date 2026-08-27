@@ -1,0 +1,31 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test69". Responses will be recorded to test69.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test69/test69.v successfully. Stored 38687 lines (1681406 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 930
+- NOT: 2913
+- NAND: 19682
+- NOR: 5598
+- XOR: 138
+- XNOR: 1548
+- BUF: 16
+- DFF: 4028
+
+Total gates: 34853.
+#END 3
+#RESPONSE 4
+Done.
+Matched 138 gates and remapped 138 of them in the design to the NAND basis. The gate-count delta is +414. Functional equivalence was preserved.
+#END 4
+#RESPONSE 5
+The previous command added 414 NAND gates.
+#END 5
+#RESPONSE 6
+Wrote the current design to "test69_out.v" successfully.
+#END 6

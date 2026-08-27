@@ -1,0 +1,133 @@
+{
+  "case": "test66",
+  "max_score": 6,
+  "team_scores": {"Team2": 5, "Team3": 6, "Team4": 5, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test66.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test66 initialized; ready for commands.",
+        "notes": "Any acknowledgment that the testcase test66 has been set/initialized passes. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test66. Responses recorded to test66.log.",
+        "Team3": "The new testcase named test66 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test66. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test66. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test66.v located in the directory testcase/test66/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Successfully loaded testcase/test66/test66.v (34,853 total instances: 30,825 combinational gates + 4,028 DFFs; PI 223, PO 214).",
+        "notes": "Grading only requires a successful-load claim. Extra stats are presentation-dependent: Team3/Team4 report 34,853 total gates (incl. DFF); Team7 reports Gates: 30825 | DFFs: 4028 (same design, DFFs listed separately); Team2 reports line/byte counts only. All acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test66/test66.v successfully. Stored 38687 lines (1681406 bytes).",
+        "Team3": "Design successfully loaded from testcase/test66/test66.v, 34,853 gates total.",
+        "Team4": "Loaded test66.v successfully. 34,853 gates, single flat top module.",
+        "Team7": "Loaded test66.v successfully. Module top | PI 223 | PO 214 | Gates 30825 | DFFs 4028."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [34853, 0, 930, 2913, 19682, 5598, 138, 1548, 16, 4028],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 34,853 gates: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "notes": "All four teams report identical per-type counts on the original netlist; treat as objective ground truth. DFF row (4028) must be present since the prompt explicitly lists DFF. Combinational-only subtotal 30,825 (Team7) is acceptable extra detail, not a substitute for the 34,853 total."
+      },
+      "team_answers": {
+        "Team2": "Total 34853: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "Team3": "Total 34,853: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "Team4": "34,853 gates: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "Team7": "Total 34,853 (same breakdown); notes combinational-only total is 30,825."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Try to replace all XNOR gates in this design with equivalent NOR-only implementations. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "All 1,548 XNOR gates were replaced with equivalent NOR-only implementations (4 NOR per XNOR); net gate-count delta +4,644; functionality preserved.",
+        "notes": "Response must claim success on all 1548 XNORs and preserve/verify equivalence; actual verification is on the output netlist. All four teams performed the same 4-NOR-per-XNOR rewrite (delta +4644: 6192 NOR added, 1548 XNOR removed; NOR 5598 -> 11790, Team7 detail). Team4 omits an explicit equivalence sentence but 'remapped to the requested NOR gate basis' was accepted."
+      },
+      "team_answers": {
+        "Team2": "Matched 1548, remapped 1548 to NOR basis. Gate-count delta +4644. Functional equivalence preserved.",
+        "Team3": "All 1,548 XNOR replaced with NOR-only implementations, net gain 4,644 gates. Functionality unchanged.",
+        "Team4": "Matched 1,548 gates and remapped 1,548 to the requested NOR gate basis.",
+        "Team7": "1,548 XNOR rewritten; total 30,825 -> 35,469; NOR 5,598 -> 11,790. Equivalence verified."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many NOR gates were added by replacing the XNOR gates?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [6192],
+        "must_names": null,
+        "expected": null,
+        "reference": "6,192 NOR gates were added (1,548 XNOR x 4 NOR each; NOR count went from 5,598 to 11,790).",
+        "notes": "This is the line that separates full-score from 5/6 teams. Both full-score teams (Team3, Team7) answered 6,192. Team2 and Team4 answered 4,644, which is the NET total-gate delta (6192 NOR added minus 1548 XNOR removed) from the very same transform - a wrong quantity for this question, and it cost each of them exactly 1 point. Checker sanity: answer must equal the team's own NOR_after - NOR_before; with the standard 4-NOR XNOR decomposition all four netlists give 6,192. 4,644 is NOT acceptable."
+      },
+      "team_answers": {
+        "Team2": "The previous command added 4644 NOR gates. (WRONG: net delta, not NOR added)",
+        "Team3": "A total of 6,192 NOR gates were added.",
+        "Team4": "The added_gates value from the previous command is 4,644. (WRONG: net delta, not NOR added)",
+        "Team7": "6,192 NOR gates added (1,548 XNOR rewritten; NOR 5,598 -> 11,790)."
+      },
+      "agreement": "2/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test66_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was successfully written to test66_out.v.",
+        "notes": "Success claim for writing test66_out.v is sufficient; the written netlist itself is checked externally (must contain the NOR-only replacement and be equivalent). All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test66_out.v successfully.",
+        "Team3": "Design successfully written to test66_out.v.",
+        "Team4": "Wrote current gate-level netlist to .../test66_out.v successfully.",
+        "Team7": "Design written to test66_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

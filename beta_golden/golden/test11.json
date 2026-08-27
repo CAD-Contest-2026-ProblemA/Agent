@@ -1,0 +1,217 @@
+{
+  "case": "test11",
+  "max_score": 10,
+  "team_scores": {"Team2": 9, "Team3": 10, "Team4": 10, "Team7": 10},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test11.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test11\"; subsequent responses will be recorded to test11.log.",
+        "notes": "Any acknowledgment that the testcase test11 has begun is acceptable. All four teams gave simple acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test11. Responses recorded to test11.log.",
+        "Team3": "The new testcase named test11 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test11. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test11. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test11.v located in the directory testcase/test11/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test11/test11.v successfully (1620 gates, flat top module, 0 DFFs).",
+        "notes": "Must indicate successful load. Optional detail (all consistent where reported): 1620 gates; Team7 additionally reports PI=205, PO=13, DFFs=0. Absolute vs relative path is presentation-only."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test11/test11.v successfully; 1834 lines / 61205 bytes stored.",
+        "Team3": "Successfully loaded testcase/test11/test11.v, total 1620 gates.",
+        "Team4": "Loaded successfully; 1620 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top | PI: 205 | PO: 13 | Gates: 1620 | DFFs: 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [324, 360, 378, 7, 164, 47, 340, 0, 0, 1620],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1620 gates: AND=324, OR=360, NOT=378, NAND=7, NOR=164, XOR=47, XNOR=340, BUF=0, DFF=0.",
+        "notes": "All four teams report identical counts on the original netlist; this is fully objective. The design is purely combinational (DFF=0 is genuinely correct here, not a cone-boundary omission)."
+      },
+      "team_answers": {
+        "Team2": "AND 324, OR 360, NOT 378, NAND 7, NOR 164, XOR 47, XNOR 340, BUF 0, DFF 0; total 1620.",
+        "Team3": "Total 1620: AND 324, OR 360, NOT 378, NAND 7, NOR 164, XOR 47, XNOR 340, BUF 0, DFF 0.",
+        "Team4": "1620 gates: AND 324, OR 360, NOT 378, NAND 7, NOR 164, XOR 47, XNOR 340, BUF 0, DFF 0.",
+        "Team7": "Total 1620 (incl. DFFs): AND 324, OR 360, NOT 378, NAND 7, NOR 164, XOR 47, XNOR 340, BUF 0, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n29 to n31[0] exists that does not traverse node n1552.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No combinational path from n29 to n31[0] exists that avoids node n1552 (every n29->n31[0] path passes through n1552).",
+        "notes": "Unanimous 'No' across all four teams including three full-score teams. Checker: answer must be a clear negative for the avoid-n1552 condition."
+      },
+      "team_answers": {
+        "Team2": "No. No path from n29 to n31[0] avoiding n1552.",
+        "Team3": "No combinational path exists from n29 to n31[0] that does not traverse n1552.",
+        "Team4": "No. No path from n29 to n31[0] avoiding n1552 exists.",
+        "Team7": "No combinational path from n29 to n31[0] exists that does not traverse n1552."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n30 to output n31[1] exists while avoiding n1592.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No. No path from n30 to n31[1] exists while avoiding n1592 (in fact no n30->n31[1] path exists at all, see line 6).",
+        "notes": "Unanimous 'No'. Consistent with line 6 where all teams find zero n30->n31[1] paths, so the avoidance constraint is trivially unsatisfiable."
+      },
+      "team_answers": {
+        "Team2": "No. No path from n30 to n31[1] avoiding n1592.",
+        "Team3": "No combinational path exists from n30 to n31[1] avoiding n1592.",
+        "Team4": "No. No path from n30 to n31[1] that avoids n1592 exists.",
+        "Team7": "No path connecting n30 to n31[1] exists while avoiding n1592."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n30 and terminating at primary output n31[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no paths from n30 to n31[1]: 0 combinational paths found.",
+        "notes": "Enumeration request whose correct result is the empty set. Response must state that zero paths exist (an empty list / 'no paths found' is the full answer). Unanimous across all four teams."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths were found from n30 to n31[1].",
+        "Team3": "No paths exist from n30 to n31[1].",
+        "Team4": "Found 0 combinational paths from n30 to n31[1].",
+        "Team7": "There are no paths from n30 to n31[1]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n0[0] and n31[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "Exactly 1 path from n0[0] to n31[0]: n0[0] -> g61 -> g5 -> g1534 -> g1533 -> g1291 -> g1023 -> g825 -> n31[0] (with intermediate nets n1577, n1625, n104, n105, n422, n578).",
+        "notes": "Objective count = 1 path through gate sequence g61,g5,g1534,g1533,g1291,g1023,g825 (informative, not required: full-score Team3 wrote the enumeration to a file and named no gates in-log). Presentation varies and all pass: net-level listing (Team2/Team4), gate-only listing (Team7), or writing the enumeration to a file (Team3, full score) — per prior, file-based path listings are acceptable; the gradable in-log part is the count/claim of complete enumeration."
+      },
+      "team_answers": {
+        "Team2": "Found 1 path: n0[0]->g61->n1577->g5->n1625->g1534->n104->g1533->n105->g1291->n422->g1023->n578->g825->n31[0].",
+        "Team3": "Complete enumeration generated; path written to testcase/test11/list_paths_paths.txt.",
+        "Team4": "Found 1 path: n0[0]->g61->n1577->g5->n1625->g1534->n104->g1533->n105->g1291->n422->g1023->n578->g825->n31[0].",
+        "Team7": "1 path: n0[0] -> g61 -> g5 -> g1534 -> g1533 -> g1291 -> g1023 -> g825 -> n31[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n29 to output n31[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [15],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from n29 to n31[0] is 15 gate levels (e.g. n29 -> g90 -> g125 -> g123 -> g84 -> g103 -> g102 -> g140 -> g139 -> g61 -> g5 -> g1534 -> g1533 -> g1291 -> g1023 -> g825 -> n31[0]).",
+        "notes": "All four teams report 15. Team2 phrased it as depth 'of the current design' rather than of the n29->n31[0] pair, but the number matches and Team2 was not penalized here (its single lost point is line 9). Team7 additionally lists the 15-gate longest path."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of the current design is 15 gate levels.",
+        "Team3": "Maximum logic depth from n29 to n31[0] is 15.",
+        "Team4": "Maximum combinational logic depth from n29 to n31[0] is 15.",
+        "Team7": "Depth 15; longest path n29 -> g90 -> ... -> g825 -> n31[0] listed."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Determine the longest combinational path depth from n30 to n31[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists from n30 to n31[1]; the path depth is therefore 0 / undefined.",
+        "notes": "The essential fact: no n30->n31[1] path exists, unanimous across the three reliable full-score teams (Team3/Team4/Team7) and consistent with lines 5-6. Full-score answers state either '0' explicitly tied to the n30->n31[1] pair (Team3) or 'no path / undefined' (Team4, Team7) — both formulations acceptable, so rule is yes_no rather than exact_number 0 (which would contradict full-score Team7's 'undefined'). Team2's exchanged-log answer ('maximum logic depth of the current design is 0 gate levels') omits the queried pair, but that log is a different run than Team2's graded one, so no scoring inference is drawn from it. Checker: answer must connect the no-path/zero-depth conclusion to the queried pair, not the whole design."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of the current design is 0 gate levels.",
+        "Team3": "Depth from n30 to n31[1] is 0, indicating no path exists.",
+        "Team4": "No combinational path exists from n30 to n31[1].",
+        "Team7": "No path exists from n30 to n31[1]; depth is undefined."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Please write the current design to the output file test11_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test11_out.v successfully.",
+        "notes": "Must claim successful write of test11_out.v; actual verification is on the output netlist file. No transforms were requested in this case, so the output should equal the loaded design."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test11_out.v successfully.",
+        "Team3": "Design successfully written to test11_out.v.",
+        "Team4": "Wrote current netlist to test11_out.v successfully.",
+        "Team7": "Design written to test11_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

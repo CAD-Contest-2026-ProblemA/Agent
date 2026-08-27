@@ -1,0 +1,70 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test91". Responses will be recorded to test91.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test91/test91.v successfully. Stored 29014 lines (1233377 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 955
+- NOT: 1514
+- NAND: 17350
+- NOR: 3158
+- XOR: 18
+- XNOR: 397
+- BUF: 19
+- DFF: 2585
+
+Total gates: 25996.
+#END 3
+#RESPONSE 4
+The design's primary outputs are:
+- n13
+- n14
+- n9[31:0]
+- n10[31:0]
+- n11[31:0]
+- n12[31:0]
+- n15[3:0]
+#END 4
+#RESPONSE 5
+Found 18 XOR gates.
+- g1012(inputs=[n478,n886],output=n17044)
+- g18884(inputs=[n130,n9[22]],output=n18080)
+- g18885(inputs=[n132,n9[20]],output=n18078)
+- g18904(inputs=[n119,n9[14]],output=n18072)
+- g18905(inputs=[n118,n9[12]],output=n18070)
+- g19036(inputs=[n223,n210],output=n89[1])
+- g19038(inputs=[n902,n18091],output=n18090)
+- g19493(inputs=[n18[1],n18[0]],output=n18059)
+- g19531(inputs=[n1179,n22487],output=n18299)
+- g19579(inputs=[n22470,n22469],output=n18282)
+- g19620(inputs=[n1237,n22519],output=n18268)
+- g19668(inputs=[n22502,n22501],output=n18251)
+- g19709(inputs=[n1295,n22455],output=n18330)
+- g19757(inputs=[n22438,n22437],output=n18313)
+- g19798(inputs=[n1353,n22551],output=n18210)
+- g19846(inputs=[n22534,n22533],output=n18193)
+- g19887(inputs=[n1411,n22583],output=n18155)
+- g19935(inputs=[n22566,n22565],output=n18138)
+#END 5
+#RESPONSE 6
+There are 2585 register-to-register combinational paths.
+#END 6
+#RESPONSE 7
+The D input logic of the DFF elements contains 721 enable or hold structures.
+#END 7
+#RESPONSE 8
+The previous command found 721 flip-flops with enable or hold structures.
+#END 8
+#RESPONSE 9
+The provided information does not include details about the gate type or pin connections for g0.
+#END 9
+#RESPONSE 10
+The largest output fanin cone contains 29 gates. The tied outputs are: n11[16], n11[17], n11[18], n11[19], n11[20], n11[21], n11[22], n11[23].
+#END 10
+#RESPONSE 11
+Wrote the current design to "test91_out.v" successfully.
+#END 11

@@ -1,0 +1,22 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test57". Responses will be recorded to test57.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test57/test57.v successfully. Stored 15673 lines (659576 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows: - AND: 0 - OR: 239 - NOT: 726 - NAND: 9347 - NOR: 1192 - XOR: 49 - XNOR: 592 - BUF: 1 - DFF: 1948. Total gates: 14094.
+#END 3
+#RESPONSE 4
+No NAND gates with inputs tied to 0,1 were found.
+#END 4
+#RESPONSE 5
+Done.
+The rewrite rule file rules/constants_nand_0_1.json found no matching logic, so the design was unchanged.
+#END 5
+#RESPONSE 6
+The previous command eliminated 0 NAND gates.
+#END 6
+#RESPONSE 7
+Wrote the current design to "test57_out.v" successfully.
+#END 7

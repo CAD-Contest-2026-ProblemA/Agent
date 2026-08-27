@@ -1,0 +1,52 @@
+#RESPONSE 1
+The new testcase named "test64" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test64/test64.v`, containing a total of 64,430 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 64,430, broken down by gate type as follows:
+
+- AND: 0
+- OR: 3,585
+- NOT: 4,748
+- NAND: 35,261
+- NOR: 8,372
+- XOR: 355
+- XNOR: 7,748
+- BUF: 150
+- DFF: 4,211
+#END 3
+#RESPONSE 4
+There are no paths of length 0 (direct wire connections) from primary inputs to primary outputs.
+#END 4
+#RESPONSE 5
+No dangling gates were found in the design, and thus none were removed.
+#END 5
+#RESPONSE 6
+No, the internal signals n55146 and n55104 are not functionally equivalent for all input combinations.
+#END 6
+#RESPONSE 7
+There are no paths originating at primary input n3 and terminating at primary output n9.
+#END 7
+#RESPONSE 8
+No, output n8 does not depend on input n1.
+#END 8
+#RESPONSE 9
+No, wire n55104 is not a cut between any primary input and any primary output.
+#END 9
+#RESPONSE 10
+The primary inputs of the design along with their bit widths are:
+
+- n0
+- n1
+- n2
+- n3
+- n4
+- n7[31:0]
+- n6[5:0]
+- n5[7:0]
+#END 10
+#RESPONSE 11
+The current design has been successfully written to the output file `test64_out.v`.
+#END 11

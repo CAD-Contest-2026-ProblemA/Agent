@@ -1,0 +1,48 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test13". Responses will be recorded to test13.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test13/test13.v successfully. Stored 339 lines (10311 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 62
+- OR: 99
+- NOT: 36
+- NAND: 0
+- NOR: 4
+- XOR: 7
+- XNOR: 67
+- BUF: 24
+- DFF: 0
+
+Total gates: 299.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from n2 to n5[0] exists while avoiding n58.
+#END 4
+#RESPONSE 5
+No. No combinational path from n3 to n5[1] exists while avoiding n208.
+#END 5
+#RESPONSE 6
+No combinational paths were found from n3 to n5[1].
+#END 6
+#RESPONSE 7
+No combinational paths were found from n4 to n5[0].
+#END 7
+#RESPONSE 8
+The maximum logic depth of the current design is 3 gate levels.
+#END 8
+#RESPONSE 9
+The maximum logic depth of the current design is 0 gate levels.
+#END 9
+#RESPONSE 10
+No combinational path exists from n4 to n5[0]; the reported critical-path depth is 0.
+#END 10
+#RESPONSE 11
+Gate g0 has 1 immediate successor gate.
+#END 11
+#RESPONSE 12
+Wrote the current design to "test13_out.v" successfully.
+#END 12

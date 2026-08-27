@@ -1,0 +1,12 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test04". All subsequent responses will be recorded to test04.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test04/test04.v" successfully. It contains 66 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+The combinational logic depth of the fan-in cone for "n3" is 14.
+#END 3
+#RESPONSE 4
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test04_out.v" successfully.
+#END 4

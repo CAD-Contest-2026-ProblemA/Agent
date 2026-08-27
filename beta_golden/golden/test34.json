@@ -1,0 +1,112 @@
+{
+  "case": "test34",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test34.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test34\"; responses will be recorded to test34.log.",
+        "notes": "Any acknowledgment naming test34 and indicating readiness is acceptable. All four full-score teams gave simple acks."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test34; responses recorded to test34.log.",
+        "Team3": "The new testcase named test34 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test34; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test34; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test34.v located in the directory testcase/test34/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test34/test34.v successfully (5680 gates including 847 DFFs).",
+        "notes": "Response must indicate successful load of test34.v. Extra stats are optional but must be consistent if given: total 5680 instances = 4833 comb gates + 847 DFFs; Team7 additionally reports PI: 76, PO: 135. Teams giving no stats (Team2 gave line/byte counts only) also scored full, so stats are not graded here."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test34/test34.v successfully; 6315 lines (258286 bytes) stored.",
+        "Team3": "Loaded successfully; total 5680 gates.",
+        "Team4": "Loaded successfully; 5,680 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI: 76, PO: 135, Gates: 4833, DFFs: 847."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 130, 276, 4073, 308, 7, 39, 0, 847, 5680],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 130, NOT: 276, NAND: 4073, NOR: 308, XOR: 7, XNOR: 39, BUF: 0, DFF: 847; total 5680 gates.",
+        "notes": "All four full-score teams report identical per-type counts. Total 5680 includes DFFs (4833 comb + 847 DFF). The per-type breakdown is the core requirement; the total should equal 5680 if stated."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; total 5680.",
+        "Team3": "Total 5680: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team4": "5,680 gates: AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847.",
+        "Team7": "AND 0, OR 130, NOT 276, NAND 4073, NOR 308, XOR 7, XNOR 39, BUF 0, DFF 847; grand total incl. DFFs 5680."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Delete all gates that do not contribute to any primary output. Make sure nothing changes functionally.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Removed 0 dangling/unused gates; every gate contributes to a primary output, so the design is unchanged and functionality is preserved.",
+        "notes": "All four full-score teams report that ZERO gates were removed (no dangling logic in test34). Response must claim the cleanup was performed with functional equivalence preserved; reporting 0 removed / design unchanged is the consistent objective outcome. A nonzero removal count would contradict all full-score anchors and should be flagged."
+      },
+      "team_answers": {
+        "Team2": "Done. No unused gates removed; design unchanged.",
+        "Team3": "No gates removed; no dangling gates found.",
+        "Team4": "Removed 0 dangling or unused gates.",
+        "Team7": "No gates removed; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test34_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test34_out.v successfully.",
+        "notes": "Response must indicate the netlist was written to test34_out.v. Actual verification happens on the output file, which should be functionally identical to the original (0 gates were removed in line 4)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test34_out.v successfully.",
+        "Team3": "Successfully written to test34_out.v.",
+        "Team4": "Wrote netlist to test34_out.v successfully.",
+        "Team7": "Design written to test34_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

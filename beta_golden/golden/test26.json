@@ -1,0 +1,133 @@
+{
+  "case": "test26",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test26.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Testcase test26 initialized; responses will be recorded to test26.log.",
+        "notes": "Any acknowledgment that the testcase test26 has begun/is set is acceptable. All four full-score teams gave a simple acknowledgment."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test26; responses recorded to test26.log.",
+        "Team3": "The new testcase named test26 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test26; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test26; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test26.v located in the directory testcase/test26/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test26/test26.v successfully (749 gates total, 56 of which are DFFs).",
+        "notes": "Response must claim successful load of testcase/test26/test26.v. Extra stats are optional and vary: Team3/Team4 say 749 gates; Team7 splits 693 comb gates + 56 DFFs (= 749 total, consistent); Team2 reports file size/lines only. All accepted as long as load success is stated."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test26/test26.v successfully; 849 lines (29168 bytes) stored.",
+        "Team3": "Loaded successfully from testcase/test26/test26.v; 749 gates total.",
+        "Team4": "Loaded successfully; 749 gates; single top module (flat netlist).",
+        "Team7": "Loaded successfully; Module top | PI 46 | PO 52 | Gates 693 | DFFs 56."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 98, 102, 342, 119, 8, 15, 9, 56, 749],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 749 gates: AND=0, OR=98, NOT=102, NAND=342, NOR=119, XOR=8, XNOR=15, BUF=9, DFF=56.",
+        "notes": "All four full-score teams report identical per-type counts on the original netlist. The breakdown must match exactly: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56; total 749. Total may be stated explicitly (Team2/Team3/Team4/Team7 all imply or state 749)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56; total 749.",
+        "Team3": "Total 749: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56.",
+        "Team4": "749 gates: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56.",
+        "Team7": "Total 749: AND 0, OR 98, NOT 102, NAND 342, NOR 119, XOR 8, XNOR 15, BUF 9, DFF 56."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Change the identifier of gate g0 to renamed_gate and update all references. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": ["g0", "renamed_gate"],
+        "expected": null,
+        "reference": "Renamed gate g0 to renamed_gate and updated all references; design functionality is unchanged.",
+        "notes": "Response must claim the rename g0 -> renamed_gate succeeded with references updated and functionality preserved. In the output netlist, instance g0 must no longer exist and renamed_gate must exist with identical connectivity. Team2 and Team7 both report 1 reference updated (consistent detail, not required for credit)."
+      },
+      "team_answers": {
+        "Team2": "Renamed gate g0 to renamed_gate; 1 reference updated.",
+        "Team3": "g0 changed to renamed_gate; all references updated; functionality preserved.",
+        "Team4": "Renamed g0 to renamed_gate; structural safety checks passed; functionality preserved.",
+        "Team7": "Changed g0 to renamed_gate; updated 1 reference; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Change the identifier of wire n74 to renamed_wire and update all references. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": ["n74", "renamed_wire"],
+        "expected": null,
+        "reference": "Renamed wire n74 to renamed_wire and updated all references (12 occurrences); design functionality is unchanged.",
+        "notes": "Response must claim the rename n74 -> renamed_wire succeeded with all references updated and functionality preserved. In the output netlist, wire n74 must no longer appear and renamed_wire must carry the same connectivity. Team2 and Team7 independently report 12 references updated (consistent detail, not required for credit)."
+      },
+      "team_answers": {
+        "Team2": "Renamed signal n74 to renamed_wire; 12 references updated.",
+        "Team3": "n74 changed to renamed_wire; all references updated; functionality preserved.",
+        "Team4": "Renamed n74 to renamed_wire; structural safety checks passed; functionality preserved.",
+        "Team7": "Changed n74 to renamed_wire; updated 12 references; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test26_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The current design was written to test26_out.v successfully.",
+        "notes": "Response must claim the design was written to test26_out.v. Actual verification happens on the output file (must contain renamed_gate and renamed_wire, no g0 instance, no n74 wire, and be equivalent to the original)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test26_out.v successfully.",
+        "Team3": "Current design successfully written to test26_out.v.",
+        "Team4": "Wrote the current gate-level Verilog netlist to test26_out.v successfully.",
+        "Team7": "Design written to test26_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

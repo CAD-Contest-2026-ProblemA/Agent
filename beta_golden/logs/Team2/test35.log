@@ -1,0 +1,31 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test35". Responses will be recorded to test35.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test35/test35.v successfully. Stored 6315 lines (258286 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 130
+- NOT: 276
+- NAND: 4073
+- NOR: 308
+- XOR: 7
+- XNOR: 39
+- BUF: 0
+- DFF: 847
+
+Total gates: 5680.
+#END 3
+#RESPONSE 4
+Done.
+No matching gates in the cone of the required remapping to the AND,OR,NOT basis.
+#END 4
+#RESPONSE 5
+The planner could not execute a valid Netkit command after repair. initial_nks=['optimize_depth objective=minimize_max target=final'] repair_nks=['optimize_depth objective=minimize_max target=final'] error=optimize_depth target='final' is not a loaded signal
+#END 5
+#RESPONSE 6
+Wrote the current design to "test35_out.v" successfully.
+#END 6

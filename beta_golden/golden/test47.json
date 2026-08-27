@@ -1,0 +1,112 @@
+{
+  "case": "test47",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test47.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test47\"; ready for commands.",
+        "notes": "Any acknowledgment naming the testcase (test47) counts. All four full-score teams simply acknowledge initialization."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test47. Responses recorded to test47.log.",
+        "Team3": "The new testcase named test47 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test47. Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase test47. Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test47.v located in the directory testcase/test47/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded design testcase/test47/test47.v successfully (918 gates total incl. 150 DFFs; module top, 14 PIs, 83 POs).",
+        "notes": "Success claim is what is graded. Optional stats vary by presentation: Team3/Team4 report 918 gates (all cells incl. DFF); Team7 reports 768 comb gates + 150 DFFs (= 918) plus PI 14 / PO 83; Team2 reports file size/lines only. All acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded gate-level Verilog successfully; 1026 lines (38172 bytes) stored as current design.",
+        "Team3": "Design successfully loaded from testcase/test47/test47.v, total 918 gates.",
+        "Team4": "Loaded successfully. Contains 918 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 14 | PO: 83 | Gates: 768 | DFFs: 150."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 69, 54, 264, 280, 4, 97, 0, 150, 918],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 918 gates: AND=0, OR=69, NOT=54, NAND=264, NOR=280, XOR=4, XNOR=97, BUF=0, DFF=150.",
+        "notes": "All four full-score teams report identical breakdowns on the original netlist. Checker: every per-type count must match; total 918 = sum of all types including the 150 DFFs. Zero counts for AND and BUF must be stated (explicitly listed as 0 by all teams)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150; total 918.",
+        "Team3": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team4": "918 gates: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150.",
+        "Team7": "Total 918: AND 0, OR 69, NOT 54, NAND 264, NOR 280, XOR 4, XNOR 97, BUF 0, DFF 150 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Found and collapsed 1 back-to-back inverter pair into a wire; functional equivalence preserved.",
+        "notes": "Response must claim success and equivalence preservation. All four teams agree exactly 1 pair exists. Gates-removed count is presentation-dependent: Team2 says 1 gate eliminated (first NOT likely still drives other fanout), Team7 says 2 NOT gates removed; both scored full, so either removal count (or none stated, as Team3/Team4) is acceptable. Actual verification happens on the output netlist (equivalence to original, no remaining back-to-back inverter pairs)."
+      },
+      "team_answers": {
+        "Team2": "Applied rewrite not(not(x))->x 1 time, eliminated 1 gate; equivalence preserved.",
+        "Team3": "Back-to-back inverter pairs collapsed into a wire; one pair changed; equivalence preserved.",
+        "Team4": "Applied 1 verified pattern rewrite; functional equivalence preserved.",
+        "Team7": "Collapsed 1 back-to-back inverter pair (2 NOT gates removed); re-scan confirms 0 pairs remain; functionally unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test47_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test47_out.v successfully.",
+        "notes": "Success claim naming test47_out.v. Output netlist should be equivalent to the original with the inverter pair collapsed."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test47_out.v successfully.",
+        "Team3": "Current design successfully written to test47_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test47_out.v successfully.",
+        "Team7": "Design written to test47_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

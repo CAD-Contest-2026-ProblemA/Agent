@@ -1,0 +1,28 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test32". Responses will be recorded to test32.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test32/test32.v successfully. Stored 6315 lines (258286 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 130
+- NOT: 276
+- NAND: 4073
+- NOR: 308
+- XOR: 7
+- XNOR: 39
+- BUF: 0
+- DFF: 847
+
+Total gates: 5680.
+#END 3
+#RESPONSE 4
+Done.
+No matching gates in the cone of the required remapping to the AND,OR,NOT basis.
+#END 4
+#RESPONSE 5
+Wrote the current design to "test32_out.v" successfully.
+#END 5

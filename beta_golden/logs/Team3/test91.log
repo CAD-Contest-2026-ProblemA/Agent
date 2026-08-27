@@ -1,0 +1,53 @@
+#RESPONSE 1
+The new testcase named "test91" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test91/test91.v`, containing a total of 25,996 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 25,996, broken down by gate type as follows:
+
+- AND: 0
+- OR: 955
+- NOT: 1,514
+- NAND: 17,350
+- NOR: 3,158
+- XOR: 18
+- XNOR: 397
+- BUF: 19
+- DFF: 2,585
+#END 3
+#RESPONSE 4
+The primary outputs of the design along with their bit widths are as follows:
+
+- n13
+- n14
+- n9[31:0]
+- n10[31:0]
+- n11[31:0]
+- n12[31:0]
+- n15[3:0]
+#END 4
+#RESPONSE 5
+There are a total of 18 XOR gates in the design. The complete list has been written to the file `testcase/test91/list_gates_gates.txt`.
+#END 5
+#RESPONSE 6
+The maximum combinational depth on any register-to-register path in this design is 104.
+#END 6
+#RESPONSE 7
+The D input logic of the flip-flops has been analyzed, and there are a total of 1,796 instances. The complete list has been written to the file `testcase/test91/sequential_input_logic_gates.txt`.
+#END 7
+#RESPONSE 8
+A total of 1,796 flip-flops were found to have enable or hold structures in their D input logic.
+#END 8
+#RESPONSE 9
+The gate `g0` is of type **NOT**. Its pin connections are as follows:
+- Output (Y): `n11[7]`
+- Input (A): `n18413`
+#END 9
+#RESPONSE 10
+The output with the largest fanin cone is `n11[16]`, which has 29 gates in its fanin cone, including 8 tied gates: `n11[16], n11[17], n11[18], n11[19], n11[20], n11[21], n11[22], n11[23]`.
+#END 10
+#RESPONSE 11
+The current design has been successfully written to the output file `test91_out.v`.
+#END 11

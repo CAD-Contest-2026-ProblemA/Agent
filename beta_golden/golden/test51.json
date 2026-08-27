@@ -1,0 +1,133 @@
+{
+  "case": "test51",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test51.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test51\"; responses will be recorded to test51.log.",
+        "notes": "Any acknowledgment naming the testcase test51 is acceptable. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test51\". Responses recorded to test51.log.",
+        "Team3": "The new testcase named \"test51\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test51\". Responses recorded to test51.log. Design state empty.",
+        "Team7": "Acknowledged. Initialized testcase \"test51\". Responses recorded to test51.log. Design state empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test51.v located in the directory testcase/test51/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test51/test51.v successfully (top module, 5442 gates incl. 756 DFFs, 135 PIs, 192 POs).",
+        "notes": "Success claim is the gradable essence. Optional stats vary by presentation: Team3/Team4 report 5442 total gates; Team7 reports Gates: 4686 (comb only) + DFFs: 756 = 5442, PI: 135, PO: 192; Team2 reports raw file size/lines. Any success acknowledgment is acceptable; if numbers are given they must be consistent with 5442 total (or 4686 comb + 756 DFF)."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test51/test51.v successfully. Stored 6034 lines (244320 bytes).",
+        "Team3": "Loaded successfully from testcase/test51/test51.v, containing 5442 gates.",
+        "Team4": "Loaded successfully. 5,442 gates, single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 135 | PO: 192 | Gates: 4686 | DFFs: 756"
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 144, 507, 3214, 505, 22, 294, 0, 756, 5442],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 5442 gates: AND=0, OR=144, NOT=507, NAND=3214, NOR=505, XOR=22, XNOR=294, BUF=0, DFF=756.",
+        "notes": "All four full-score teams report the identical breakdown; treat these counts as objective ground truth on the original netlist. Total 5442 = 4686 combinational + 756 DFF. Zero counts for AND and BUF should be stated (or the types omitted with total still 5442)."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756; total 5442.",
+        "Team3": "Total 5442: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756.",
+        "Team4": "5,442 gates: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756.",
+        "Team7": "Total 5442: AND 0, OR 144, NOT 507, NAND 3214, NOR 505, XOR 22, XNOR 294, BUF 0, DFF 756 (incl. DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Try to rename internal signal n1289 to renamed_sig and update all references to it. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Renamed internal signal n1289 to renamed_sig and updated all references (3 occurrences: 1 wire decl + driver pin + load pin); functionality unchanged.",
+        "notes": "Grade on success claim + functionality-preserved claim; the actual verification is on the output netlist (renamed_sig must exist, n1289 must not, equivalence holds). Team2 and Team3 both report 3 references/instances updated, consistent with one driver (g3904) and one load (g2161) plus the declaration; Team4/Team7 give no count and still scored full, so the count is optional."
+      },
+      "team_answers": {
+        "Team2": "Done. Renamed n1289 to renamed_sig; 3 references updated.",
+        "Team3": "Renamed successfully, all references updated, functionality unchanged, 3 instances modified.",
+        "Team4": "Renamed n1289 to renamed_sig successfully; bijective rename preserves functionality by construction.",
+        "Team7": "Renamed successfully, all references updated, functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "List all gates that now connect to the renamed signal renamed_sig.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_names": ["g3904", "g2161"],
+        "must_numbers": null,
+        "expected": null,
+        "reference": "Gates connected to renamed_sig: driver g3904 (NOR) and load g2161 (OR) — 2 gates total.",
+        "notes": "Netlist-verified ground truth: in test51.v, 'nor g3904(n1289, n1092, n1077)' drives n1289 and 'or g2161(n3052, n1289, n2819)' is its only load, so after the rename exactly {g3904, g2161} connect to renamed_sig. All three reliable full-score teams (Team3/Team4/Team7) agree. Team4 phrases it as driver + '1 gate load' (g2161), Team3 as '2 connections (g2161, g3904)' — both presentations acceptable as long as both gate names appear. Team2's exchanged log shows a non-answer, but that log is a different run than Team2's graded one, so no grading-leniency conclusion can be drawn from it; it is ignored for anchoring."
+      },
+      "team_answers": {
+        "Team2": "Non-answer: 'current information does not provide details about the gates that connect to renamed_sig'.",
+        "Team3": "Driven by g3904; 2 connections: g2161 and g3904.",
+        "Team4": "Driven by g3904, 1 gate load: g2161.",
+        "Team7": "Driver: g3904 (NOR); Load: g2161 (OR); connected gates = g3904 and g2161."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test51_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test51_out.v successfully.",
+        "notes": "Success claim only; actual check is on the emitted file (must contain renamed_sig, no n1289, and be equivalent to the original)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test51_out.v\" successfully.",
+        "Team3": "Successfully written to test51_out.v.",
+        "Team4": "Wrote netlist to test51_out.v successfully.",
+        "Team7": "Design written to test51_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

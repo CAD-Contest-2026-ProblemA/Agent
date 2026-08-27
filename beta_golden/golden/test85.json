@@ -1,0 +1,159 @@
+{
+  "case": "test85",
+  "max_score": 7,
+  "team_scores": {
+    "Team2": 7,
+    "Team3": 7,
+    "Team4": 7,
+    "Team7": 7
+  },
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test85.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test85\"; responses will be recorded to test85.log.",
+        "notes": "Any acknowledgment that the testcase test85 has been set/initialized is correct. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase \"test85\". Responses recorded to test85.log.",
+        "Team3": "The new testcase named \"test85\" has been set.",
+        "Team4": "Acknowledged. Initialized testcase \"test85\". Design state empty, ready for commands.",
+        "Team7": "Acknowledged. Initialized testcase \"test85\". Design state empty, ready for commands."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test85.v located in the directory testcase/test85/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog design from testcase/test85/test85.v successfully (112,114 gates total).",
+        "notes": "Must indicate successful load of testcase/test85/test85.v. Optional stats vary by team (Team3/Team4 report 112,114 total gates; Team7 reports PI: 123, PO: 99, comb gates: 96064, DFFs: 16050 which is consistent since 96064+16050=112114). Stats are not required for credit."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test85/test85.v successfully; 124232 lines (5645752 bytes) stored.",
+        "Team3": "Loaded successfully; total 112,114 gates.",
+        "Team4": "Loaded successfully; 112,114 gates; single top module (flat netlist).",
+        "Team7": "Loaded successfully. Module: top | PI: 123 | PO: 99 | Gates: 96064 | DFFs: 16050."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 916, 6844, 77998, 8005, 86, 1358, 857, 16050, 112114],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total gates: 112,114. Breakdown: AND: 0, OR: 916, NOT: 6844, NAND: 77998, NOR: 8005, XOR: 86, XNOR: 1358, BUF: 857, DFF: 16050.",
+        "notes": "All four full-score teams report identical breakdown and total (112,114). The full per-type breakdown including AND: 0 and DFF: 16050 is required. The total (112114) should be present or trivially derivable from the breakdown."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050; total 112114.",
+        "Team3": "Total 112,114; AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050.",
+        "Team4": "112,114 gates; AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050.",
+        "Team7": "Total 112,114; AND 0, OR 916, NOT 6844, NAND 77998, NOR 8005, XOR 86, XNOR 1358, BUF 857, DFF 16050 (incl. comb gates and DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Please insert a BUF gate on signal n2 so that each load of n2 is driven through a dedicated buffer. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": ["n2"],
+        "expected": null,
+        "reference": "Inserted 1 dedicated BUF gate on signal n2; each load of n2 is now driven through its own buffer and functionality is unchanged.",
+        "notes": "Response must claim success of the buffer insertion on n2 (functionality preserved). Signal n2 has exactly 1 load in the original netlist (per Team7), so all teams inserted exactly 1 BUF. Actual verification happens on the output netlist: n2's driver should feed BUF(s), one per load, and the design must remain equivalent."
+      },
+      "team_answers": {
+        "Team2": "Done. Inserted 1 dedicated BUF gate on n2.",
+        "Team3": "Dedicated BUF gate successfully inserted on n2; functionality unchanged.",
+        "Team4": "Inserted 1 dedicated buffer for signal \"n2\".",
+        "Team7": "Inserted 1 BUF on n2; original net n2 had 1 load, driver fanout now 1, matching buffers inserted."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "How many BUF gates were added by the buffer insertion just performed?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "1 BUF gate was added by the buffer insertion just performed.",
+        "notes": "Nominally team-dependent (count of buffers the team inserted), but the count equals the number of loads on n2, which is 1 on the original netlist; all four full-score teams answered 1. Answer must be 1 and consistent with the team's line-4 transform."
+      },
+      "team_answers": {
+        "Team2": "The previous command added 1 BUF gate.",
+        "Team3": "One BUF gate was added.",
+        "Team4": "The \"added_gates\" value from the previous command is 1.",
+        "Team7": "1 BUF gate(s), per the insert_buffers_for_fanout result."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the current design is functionally equivalent to the original loaded netlist; the equivalence check passed.",
+        "notes": "Must conclude equivalence holds (buffer insertion is functionality-preserving). All four full-score teams answered equivalent/yes. Team2's bare \"Yes.\" was accepted. Team7's extra detail about '642 outputs affected / fast path' is incidental and not required."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Functionally equivalent; equivalence check passed successfully.",
+        "Team4": "Yes. Current design is functionally equivalent to snapshot \"original\".",
+        "Team7": "Functionally equivalent, confirmed by whole-design ABC CEC (fast path; 642 outputs affected)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Please write the current design to the output file test85_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test85_out.v successfully.",
+        "notes": "Must indicate the current netlist was successfully written to test85_out.v. Output file itself is checked separately (must contain the inserted BUF and be equivalent to the original)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to \"test85_out.v\" successfully.",
+        "Team3": "Successfully written to test85_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test85_out.v successfully.",
+        "Team7": "Design written to test85_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

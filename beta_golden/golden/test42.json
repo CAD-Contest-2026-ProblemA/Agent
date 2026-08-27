@@ -1,0 +1,112 @@
+{
+  "case": "test42",
+  "max_score": 5,
+  "team_scores": {"Team2": 5, "Team3": 5, "Team4": 5, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test42.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test42\"; subsequent responses will be recorded to test42.log.",
+        "notes": "Response must acknowledge the new testcase named test42. All four full-score teams gave a simple acknowledgment."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test42; responses recorded to test42.log.",
+        "Team3": "The new testcase named test42 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test42; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test42; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test42.v located in the directory testcase/test42/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test42/test42.v successfully (2584 gates total: 2324 combinational + 260 DFFs; PI 60, PO 71).",
+        "notes": "Must indicate successful load of testcase/test42/test42.v. Extra stats optional; if stats are given they should be consistent with 2584 total gates / 2324 comb + 260 DFF. Team7 reported Gates: 2324 (comb only) plus DFFs: 260 separately and still scored full, so both presentations are acceptable."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 2891 lines (110717 bytes) stored.",
+        "Team3": "Loaded successfully; 2584 gates total.",
+        "Team4": "Loaded successfully; 2584 gates, single top module, flat netlist.",
+        "Team7": "Loaded successfully; Module top, PI 60, PO 71, Gates 2324 (comb), DFFs 260."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 124, 257, 1624, 298, 16, 5, 0, 260, 2584],
+        "must_names": null,
+        "expected": null,
+        "reference": "AND: 0, OR: 124, NOT: 257, NAND: 1624, NOR: 298, XOR: 16, XNOR: 5, BUF: 0, DFF: 260; total 2584 gates (2324 combinational + 260 DFFs).",
+        "notes": "All four full-score teams report the identical breakdown. The per-type counts are the hard requirement; the total (2584) should be present or derivable. Numbers order in must_numbers: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF, total."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584.",
+        "Team3": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584.",
+        "Team4": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584.",
+        "Team7": "AND 0, OR 124, NOT 257, NAND 1624, NOR 298, XOR 16, XNOR 5, BUF 0, DFF 260; total 2584 (2324 comb + 260 DFF)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Find all back-to-back inverter pairs and collapse them into a wire. Ensure functional equivalence is preserved.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Collapsed back-to-back inverter pairs into wires (1 pair found by most detectors; 0 if fanout constraints block collapsing); functional equivalence preserved.",
+        "notes": "Full-score teams DISAGREE on the raw count: Team2 removed 1 gate (1 rewrite), Team7 removed 2 NOT gates (1 pair), Team3 and Team4 found/applied 0 pairs. Since all scored 5/5, the pair/gate count is NOT graded; grading requires (a) a success/completion claim for the collapse operation and (b) a functional-equivalence claim, with actual verification done on the output netlist. Checker should accept any self-consistent count (0, 1 pair, 1 or 2 gates removed) as long as equivalence to the original design holds. Difference likely stems from whether an intermediate inverter net with extra fanout is considered collapsible."
+      },
+      "team_answers": {
+        "Team2": "Applied rewrite not(not(?x))->?x 1 time, eliminated 1 gate; equivalence preserved.",
+        "Team3": "No back-to-back inverter pairs found; no changes; equivalence preserved.",
+        "Team4": "Applied 0 verified pattern rewrites; equivalence preserved.",
+        "Team7": "Collapsed 1 pair (2 NOT gates removed); post-scan 0 pairs remain; functionally unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test42_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test42_out.v successfully.",
+        "notes": "Response must indicate the design was written to test42_out.v. Output netlist must exist and be functionally equivalent to the original (post any inverter-pair collapse)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test42_out.v successfully.",
+        "Team3": "Design successfully written to test42_out.v.",
+        "Team4": "Wrote netlist to test42_out.v successfully (absolute path shown).",
+        "Team7": "Design written to test42_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

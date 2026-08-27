@@ -1,0 +1,180 @@
+{
+  "case": "test81",
+  "max_score": 8,
+  "team_scores": {
+    "Team2": 8,
+    "Team3": 8,
+    "Team4": 8,
+    "Team7": 8
+  },
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test81.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test81\"; responses will be recorded to test81.log.",
+        "notes": "Any acknowledgment that names/initializes testcase test81 passes. All four full-score teams gave a simple ack."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test81; responses recorded to test81.log.",
+        "Team3": "The new testcase named test81 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test81; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test81; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test81.v located in the directory testcase/test81/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded the design from testcase/test81/test81.v successfully (4181 gates including 570 DFFs).",
+        "notes": "Must claim successful load of testcase/test81/test81.v. Extra stats optional and vary by presentation: Team3/Team4 say 4181 total gates; Team7 splits as 3611 comb gates + 570 DFFs (PI 44, PO 106, module top); Team2 reports file size/lines only. All accepted since all scored full."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test81/test81.v successfully; 4685 lines (186912 bytes) stored.",
+        "Team3": "Loaded successfully; total 4181 gates.",
+        "Team4": "Loaded successfully; 4,181 gates, single top module, flat netlist.",
+        "Team7": "Loaded successfully; Module top, PI 44, PO 106, Gates 3611, DFFs 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 197, 331, 2394, 555, 9, 123, 2, 570, 4181],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "notes": "All four full-score teams report identical breakdown and total 4181 (DFFs included in total). Per-type counts must match; total 4181 should include the 570 DFFs."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570; total 4181.",
+        "Team3": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team4": "4,181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team7": "Total 4181 incl. DFFs: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Report any NAND gates with constant inputs (0 or 1) in this design.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no NAND gates with constant inputs (0 or 1) in this design (0 found).",
+        "notes": "All four full-score teams report none/0 found. Answer must clearly state that no NAND gates with constant 0/1 inputs exist. Team4's terse 'Found 0 NAND gate instances' still scored full, so a bare 0-count in context is acceptable."
+      },
+      "team_answers": {
+        "Team2": "No NAND gates with inputs tied to 0,1 were found.",
+        "Team3": "There are no NAND gates with constant inputs (0 or 1).",
+        "Team4": "Found 0 NAND gate instances (with constant inputs).",
+        "Team7": "There are no NAND gates with constant inputs (0 or 1)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Simplify the reported NAND gates by propagating their constant inputs. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Constant propagation on NAND gates completed; since no NAND gates had constant inputs, the design is unchanged and functionality is preserved.",
+        "notes": "Transform is a no-op here (0 matching gates from line 4). Response must claim the simplification step completed without changing functionality; stating 'no changes made / 0 rewrites' is the expected outcome. Output netlist should be identical (or equivalent) to original."
+      },
+      "team_answers": {
+        "Team2": "Done; rewrite rule found no matching logic, design unchanged.",
+        "Team3": "Simplification completed; no changes made, nothing to simplify.",
+        "Team4": "Applied 0 verified pattern rewrites; equivalence preserved.",
+        "Team7": "Attempted simplification; 0 gates simplified/removed out of 2394 NANDs considered; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "How many NAND gates were eliminated by constant propagation?",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": null,
+        "reference": "0 NAND gates were eliminated by constant propagation.",
+        "notes": "All four full-score teams answer 0 (consistent with line 4: no constant-input NANDs exist). Any phrasing conveying zero eliminated is correct."
+      },
+      "team_answers": {
+        "Team2": "The previous command eliminated 0 NAND gates.",
+        "Team3": "No NAND gates were eliminated by constant propagation.",
+        "Team4": "eliminated_gates value is 0.",
+        "Team7": "0 gates removed and 0 simplified; 2394 NANDs considered."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Verify functional equivalence between the current design and the original loaded netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the current design is functionally equivalent to the original loaded netlist (equivalence check passed).",
+        "notes": "Design was untouched, so equivalence must hold. Response must affirm equivalence/pass. Team2's bare 'Yes.' scored full, so a minimal affirmative is acceptable."
+      },
+      "team_answers": {
+        "Team2": "Yes.",
+        "Team3": "Functionally equivalent; equivalence check passed.",
+        "Team4": "Yes, equivalent to snapshot original.",
+        "Team7": "Functionally equivalent to the original loaded netlist, no structural changes."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Please write the current design to the output file test81_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test81_out.v successfully.",
+        "notes": "Must claim successful write to test81_out.v. Actual grading verifies the emitted netlist is equivalent to the original design (no transforms changed it)."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test81_out.v successfully.",
+        "Team3": "Successfully written to test81_out.v.",
+        "Team4": "Wrote current gate-level Verilog netlist to test81_out.v successfully.",
+        "Team7": "Design written to test81_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

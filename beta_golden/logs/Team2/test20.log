@@ -1,0 +1,119 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test20". Responses will be recorded to test20.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test20/test20.v successfully. Stored 16175 lines (589126 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 2814
+- OR: 3677
+- NOT: 3440
+- NAND: 0
+- NOR: 949
+- XOR: 150
+- XNOR: 2718
+- BUF: 623
+- DFF: 0
+
+Total gates: 14371.
+#END 3
+#RESPONSE 4
+Yes. A combinational path from n13 to n25[0] exists while avoiding n2240.
+#END 4
+#RESPONSE 5
+No. No combinational path from n14 to n25[1] exists while avoiding n13083.
+#END 5
+#RESPONSE 6
+No combinational paths were found from n14 to n25[1].
+#END 6
+#RESPONSE 7
+Found 1 combinational path from n15 to n25[0]:
+- n15 → g1166 → n14245 → g1212 → n14222 → g1210 → n14224 → g1138 → n14265 → g1174 → n12708 → g3306 → n418 → g2928 → n838 → g2006 → n1718 → g1820 → n25[0]
+#END 7
+#RESPONSE 8
+The maximum logic depth of the current design is 8 gate levels.
+#END 8
+#RESPONSE 9
+The maximum logic depth of the current design is 0 gate levels.
+#END 9
+#RESPONSE 10
+The critical-path depth from n15 to n25[0] is 9.
+#END 10
+#RESPONSE 11
+Gate g0 has 1 immediate successor gate.
+#END 11
+#RESPONSE 12
+Gate g0 has 1 immediate successor gate: g59.
+#END 12
+#RESPONSE 13
+The transitive fanin cone of n25[0] contains 49 gates.
+- g10423
+- g1132
+- g1138
+- g1166
+- g1174
+- g1210
+- g1212
+- g12192
+- g13961
+- g14357
+- g14364
+- g14365
+- g1820
+- g2006
+- g208
+- g241
+- g2499
+- g269
+- g273
+- g29
+- g2901
+- g2928
+- g298
+- g300
+- g3306
+- g37
+- g414
+- g450
+- g478
+- g5115
+- g521
+- g523
+- g648
+- g65
+- g684
+- g6884
+- g712
+- g716
+- g750
+- g752
+- g78
+- g80
+- g8654
+- g879
+- g915
+- g943
+- g965
+- g984
+- g986
+#END 13
+#RESPONSE 14
+The transitive fanout cone of n13 contains 1878 gates. The complete gate list is available at netkit-output/test20-fanout_cone_list-0.txt.
+#END 14
+#RESPONSE 15
+No.
+#END 15
+#RESPONSE 16
+No.
+#END 16
+#RESPONSE 17
+No.
+#END 17
+#RESPONSE 18
+The current design contains 14371 gates in total.
+#END 18
+#RESPONSE 19
+Wrote the current design to "test20_out.v" successfully.
+#END 19

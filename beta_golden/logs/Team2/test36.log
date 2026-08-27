@@ -1,0 +1,28 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test36". Responses will be recorded to test36.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test36/test36.v successfully. Stored 17382 lines (694240 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 970
+- NOT: 1064
+- NAND: 4782
+- NOR: 4373
+- XOR: 110
+- XNOR: 3422
+- BUF: 23
+- DFF: 837
+
+Total gates: 15581.
+#END 3
+#RESPONSE 4
+Done.
+Matched 13680 gates and remapped 13680 of them in the design to the AND,NOT basis. The gate-count delta is +41162. Functional equivalence was preserved.
+#END 4
+#RESPONSE 5
+Wrote the current design to "test36_out.v" successfully.
+#END 5

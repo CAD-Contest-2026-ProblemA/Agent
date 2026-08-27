@@ -1,0 +1,76 @@
+#RESPONSE 1
+The new testcase named "test20" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test20/test20.v`, containing a total of 14,371 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 14,371, broken down by gate type as follows:
+
+- AND: 2,814
+- OR: 3,677
+- NOT: 3,440
+- NAND: 0
+- NOR: 949
+- XOR: 150
+- XNOR: 2,718
+- BUF: 623
+- DFF: 0
+#END 3
+#RESPONSE 4
+Yes, a combinational path from n13 to n25[0] exists that does not traverse node n2240.
+#END 4
+#RESPONSE 5
+No, a combinational path from n14 to n25[1] does not exist while avoiding node n13083.
+#END 5
+#RESPONSE 6
+There are no paths originating at primary input n14 and terminating at primary output n25[1].
+#END 6
+#RESPONSE 7
+There is a total of 1 path between n15 and n25[0]. The complete list of paths has been written to the file `testcase/test20/list_paths_paths.txt`.
+#END 7
+#RESPONSE 8
+The maximum logic depth from input n13 to output n25[0] is 8.
+#END 8
+#RESPONSE 9
+The longest combinational path depth from input n14 to output n25[1] is 0, indicating that no path exists between these points.
+#END 9
+#RESPONSE 10
+The critical path depth between n15 and n25[0] is 9.
+#END 10
+#RESPONSE 11
+The number of gates driven by g0 is 1.
+#END 11
+#RESPONSE 12
+The immediate successor of gate g0 is g59. There is a total of 1 gate connected to g0.
+#END 12
+#RESPONSE 13
+The transitive fanin cone of output n25[0] contains 49 gates. The complete list was written to the file `testcase/test20/fanin_cone_list.txt`.
+#END 13
+#RESPONSE 14
+The transitive fanout cone of input n13 contains 1,878 gates. The complete list was written to the file `testcase/test20/fanout_cone_list.txt`.
+#END 14
+#RESPONSE 15
+The signals n13082 and n13083 are not functionally equivalent.
+#END 15
+#RESPONSE 16
+The signals n2257 and n2184 do not produce identical logic values for all inputs.
+#END 16
+#RESPONSE 17
+The signals n2233 and n2193 are not functionally equivalent.
+#END 17
+#RESPONSE 18
+The total gate count of the design is 14,371 gates, broken down as follows:
+- AND: 2,814
+- OR: 3,677
+- NOT: 3,440
+- NAND: 0
+- NOR: 949
+- XOR: 150
+- XNOR: 2,718
+- BUF: 623
+- DFF: 0
+#END 18
+#RESPONSE 19
+The current design has been successfully written to the output file `test20_out.v`.
+#END 19

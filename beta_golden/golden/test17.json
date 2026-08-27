@@ -1,0 +1,343 @@
+{
+  "case": "test17",
+  "max_score": 16,
+  "team_scores": {"Team2": 15, "Team3": 16, "Team4": 16, "Team7": 16},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test17.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test17\"; responses will be recorded to test17.log.",
+        "notes": "Any acknowledgment that the testcase test17 has begun is correct. All four teams pass."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test17. Responses recorded to test17.log.",
+        "Team3": "The new testcase named test17 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test17. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test17. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test17.v located in the directory testcase/test17/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded testcase/test17/test17.v successfully; the design contains 3160 gates (flat netlist, 0 DFFs).",
+        "notes": "Response must claim a successful load. Gate count 3160 is a bonus sanity anchor (Team3/Team4/Team7 report it; Team7 also reports PI: 141, PO: 26, DFFs: 0). Team2 only reports line/byte counts, which is still a valid success ack."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; stored 3574 lines (119354 bytes).",
+        "Team3": "Loaded successfully; 3160 gates.",
+        "Team4": "Loaded successfully; 3,160 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 141, PO 26, Gates 3160, DFFs 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [3160, 734, 645, 953, 0, 123, 122, 313, 270, 0],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 3160 gates: AND=734, OR=645, NOT=953, NAND=0, NOR=123, XOR=122, XNOR=313, BUF=270, DFF=0.",
+        "notes": "All four teams report the identical breakdown, so these numbers are ground truth on the original netlist. The full breakdown including the zero entries (NAND=0, DFF=0) must be present."
+      },
+      "team_answers": {
+        "Team2": "Total 3160: AND 734, OR 645, NOT 953, NAND 0, NOR 123, XOR 122, XNOR 313, BUF 270, DFF 0.",
+        "Team3": "Total 3160: AND 734, OR 645, NOT 953, NAND 0, NOR 123, XOR 122, XNOR 313, BUF 270, DFF 0.",
+        "Team4": "Total 3160: AND 734, OR 645, NOT 953, NAND 0, NOR 123, XOR 122, XNOR 313, BUF 270, DFF 0.",
+        "Team7": "Total 3160: AND 734, OR 645, NOT 953, NAND 0, NOR 123, XOR 122, XNOR 313, BUF 270, DFF 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Determine whether a combinational path from n7 to n42[0] exists that does not traverse node n1034.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, a combinational path from n7 to n42[0] exists that avoids n1034.",
+        "notes": "All four teams answer yes. Answer must affirm the existence of such an avoiding path."
+      },
+      "team_answers": {
+        "Team2": "Yes, path exists avoiding n1034.",
+        "Team3": "Yes, path exists that does not traverse n1034.",
+        "Team4": "Yes, avoiding path exists.",
+        "Team7": "A path exists that does not traverse n1034."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Verify whether a path connecting input n8 to output n42[1] exists while avoiding n2116.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No, no combinational path from n8 to n42[1] exists while avoiding n2116 (in fact no path from n8 to n42[1] exists at all).",
+        "notes": "All four teams answer no. Consistent with lines 6 and 9: there is no n8-to-n42[1] path in the design at all."
+      },
+      "team_answers": {
+        "Team2": "No such path exists.",
+        "Team3": "No, such a path does not exist.",
+        "Team4": "No such path exists.",
+        "Team7": "A path does not exist while avoiding n2116."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "List every path originating at primary input n8 and terminating at primary output n42[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no combinational paths from n8 to n42[1] (0 paths).",
+        "notes": "The correct enumeration is empty. Answer must state that zero/no paths exist. Do NOT require the literal number 0: full-score Team3 ('There are no combinational paths...') and Team7 ('There are no paths...') never write '0'. All four teams agree on the essence."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths found.",
+        "Team3": "No paths from n8 to n42[1].",
+        "Team4": "Found 0 combinational paths; empty enumeration.",
+        "Team7": "There are no paths from n8 to n42[1]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Provide a complete enumeration of paths between n9 and n42[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no combinational paths between n9 and n42[0] (0 paths).",
+        "notes": "The correct enumeration is empty. Answer must state that zero/no paths exist. Do NOT require the literal number 0: full-score Team3 and Team7 phrase it as 'There are no ... paths' without the digit. All four teams agree on the essence."
+      },
+      "team_answers": {
+        "Team2": "No combinational paths found.",
+        "Team3": "No paths from n9 to n42[0].",
+        "Team4": "Found 0 combinational paths; empty enumeration.",
+        "Team7": "There are no paths from n9 to n42[0]."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the maximum logic depth from input n7 to output n42[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [20],
+        "must_names": null,
+        "expected": null,
+        "reference": "The maximum logic depth from n7 to n42[0] is 20 gate levels.",
+        "notes": "All four teams report 20. Team7 additionally lists the 20-gate longest path (n7 -> g5 -> g13 -> ... -> g3043 -> n42[0]), which is extra detail and not required. Team2 phrases it as depth 'of the current design' but the value 20 matches and was accepted."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth is 20 gate levels (phrased as whole-design depth).",
+        "Team3": "Depth from n7 to n42[0] is 20.",
+        "Team4": "Maximum combinational depth n7 to n42[0] is 20.",
+        "Team7": "Depth 20; lists the full longest path through g5..g3043."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Determine the longest combinational path depth from n8 to n42[1].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists from n8 to n42[1]; the depth is 0 (or undefined/nonexistent).",
+        "notes": "Essence: no path exists. Accept depth reported as 0 (Team3), 'no path exists' (Team4), or 'undefined' (Team7) - all full-score. Do NOT require a specific number. Team2's answer ('maximum logic depth of the current design is 0 gate levels') states a false fact about the whole design and never mentions n8/n42[1]; this is the most likely line where Team2 lost its 1 point."
+      },
+      "team_answers": {
+        "Team2": "Maximum logic depth of the current design is 0 gate levels (misscoped; likely the lost point).",
+        "Team3": "Depth is 0, indicating no path exists.",
+        "Team4": "No combinational path exists from n8 to n42[1].",
+        "Team7": "No path exists; depth undefined."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 10,
+      "prompt": "Calculate the critical path depth between n9 and n42[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No combinational path exists between n9 and n42[0]; the critical path depth is 0 (or undefined/nonexistent).",
+        "notes": "Essence: no path exists. Accept 0 or undefined as the depth, as long as the nonexistence of the path is stated. All four teams agree on this essence."
+      },
+      "team_answers": {
+        "Team2": "No path exists; reported critical-path depth 0.",
+        "Team3": "Path does not exist, resulting in depth 0.",
+        "Team4": "No combinational path exists from n9 to n42[0].",
+        "Team7": "No path exists; critical path depth undefined."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 11,
+      "prompt": "Determine the number of gates driven by g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [3],
+        "must_names": null,
+        "expected": null,
+        "reference": "Gate g0 drives 3 gates.",
+        "notes": "All four teams report 3. Objective fanout count on the original netlist."
+      },
+      "team_answers": {
+        "Team2": "3 immediate successor gates.",
+        "Team3": "The number of gates driven by g0 is 3.",
+        "Team4": "Found 3 successor gates.",
+        "Team7": "g0 drives a total of 3 gates."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 12,
+      "prompt": "Enumerate the immediate successors of gate g0.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": [3],
+        "must_names": ["g868", "g1193", "g1239"],
+        "expected": null,
+        "reference": "The immediate successors of g0 are g868, g1193, and g1239 (3 gates).",
+        "notes": "All four teams list exactly {g868, g1193, g1239}. All three names must appear; extra detail (Team7 adds gate types: all NOT) is fine."
+      },
+      "team_answers": {
+        "Team2": "g868, g1193, g1239 (3 gates).",
+        "Team3": "g868, g1193, g1239; total 3.",
+        "Team4": "g868, g1193, g1239.",
+        "Team7": "g868 (NOT), g1193 (NOT), g1239 (NOT); driver g0 is a NOT gate."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 13,
+      "prompt": "Compute the transitive fanin cone of output n42[0].",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [194],
+        "must_names": null,
+        "expected": null,
+        "reference": "The transitive fanin cone of n42[0] contains 194 gates (all combinational; the design has 0 DFFs). The list starts g0, g1004, g1006, ... and ends ... g962, g973, g990.",
+        "notes": "All four teams report 194. The gradable value is the count; presenting the full list inline (Team2/Team4) or writing it to a file (Team3/Team7) are both accepted. DFF-in-cone prior does not bite here: this design has zero DFFs, so no DFF row is required. Team7's type breakdown (NOR 8, AND 32, NOT 92, BUF 20, OR 25, XOR 8, XNOR 9 = 194) and boundary-input list are consistent extras."
+      },
+      "team_answers": {
+        "Team2": "194 gates; full list printed inline (g0..g990).",
+        "Team3": "194 gates; list written to fanin_cone_list.txt.",
+        "Team4": "194 gates; full numbered list printed inline (identical set to Team2).",
+        "Team7": "194 gates, all combinational; type breakdown, cone depth 20, boundary inputs listed; list written to test17_R1.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 14,
+      "prompt": "Compute the transitive fanout cone of input n7.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1261],
+        "must_names": null,
+        "expected": null,
+        "reference": "The transitive fanout cone of n7 contains 1261 gates (all combinational; 0 DFFs in the design).",
+        "notes": "All four teams report 1261. Count is the gradable value; full list may be inline (Team4) or in a file (Team2/Team3/Team7). Team7 extras: cone depth 49, reaches outputs n42[0..12] and n43[0..12] - consistent, not required."
+      },
+      "team_answers": {
+        "Team2": "1261 gates; list written to netkit-output/test17-fanout_cone_list-0.txt.",
+        "Team3": "1261 gates; list written to fanout_cone_list.txt.",
+        "Team4": "1261 gates; full numbered list printed inline.",
+        "Team7": "1261 gates, depth 49, reaches n42[0..12] and n43[0..12]; list written to test17_R2.txt."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 15,
+      "prompt": "Determine whether signals n2122 and n2116 are functionally equivalent.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "No, signals n2122 and n2116 are not functionally equivalent.",
+        "notes": "All four teams conclude not equivalent. Team2 answered with a bare 'No.' - per beta grading experience, bare unexplained answers risk losing the point (candidate for Team2's lost line if line 9 was accepted); golden answers should restate the conclusion in a sentence."
+      },
+      "team_answers": {
+        "Team2": "No. (bare answer, no restatement)",
+        "Team3": "n2122 and n2116 are not functionally equivalent.",
+        "Team4": "No, not functionally equivalent.",
+        "Team7": "Not functionally equivalent; checked via simulation, no relation found."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 16,
+      "prompt": "Please write the current design to the output file test17_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test17_out.v successfully.",
+        "notes": "Response must claim a successful write of test17_out.v. Since no transforms were requested, the output netlist should be the unmodified 3160-gate design. All four teams pass."
+      },
+      "team_answers": {
+        "Team2": "Wrote test17_out.v successfully.",
+        "Team3": "Successfully written to test17_out.v.",
+        "Team4": "Wrote netlist to test17_out.v successfully.",
+        "Team7": "Design written to test17_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

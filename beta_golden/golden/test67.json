@@ -1,0 +1,133 @@
+{
+  "case": "test67",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 6, "Team4": 6, "Team7": 6},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test67.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test67\"; responses will be recorded to test67.log.",
+        "notes": "Any acknowledgment naming the testcase test67 is acceptable. All four full-score teams simply acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test67. Responses recorded to test67.log.",
+        "Team3": "The new testcase named test67 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test67. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test67. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test67.v located in the directory testcase/test67/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test67/test67.v successfully (34,853 gates total).",
+        "notes": "Response must claim successful load of testcase/test67/test67.v. Extra stats OK: total gates 34853 (Team3/Team4), or 30825 comb gates + 4028 DFFs with PI 223 / PO 214 (Team7), or file size/line count (Team2). No specific number required for credit."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 38687 lines (1681406 bytes) stored as current design.",
+        "Team3": "Loaded successfully, containing a total of 34,853 gates.",
+        "Team4": "Loaded successfully; contains 34,853 gates; single flat top module.",
+        "Team7": "Loaded successfully. Module top | PI: 223 | PO: 214 | Gates: 30825 | DFFs: 4028."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 930, 2913, 19682, 5598, 138, 1548, 16, 4028, 34853],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 34,853 gates: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "notes": "All four full-score teams report identical breakdown; treat as objective ground truth. Total must be 34853 (DFFs included). Team7 additionally states combinational-only total 30825 (= 34853 - 4028), which is an acceptable extra but the reported breakdown must sum to 34853."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028; total 34853.",
+        "Team3": "Total 34,853: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "Team4": "34,853 gates: AND 0, OR 930, NOT 2913, NAND 19682, NOR 5598, XOR 138, XNOR 1548, BUF 16, DFF 4028.",
+        "Team7": "Total 34,853 with same breakdown; notes combinational-only total 30,825."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Update the name of signal n7431 to renamed_wire throughout the netlist. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": ["n7431", "renamed_wire"],
+        "expected": null,
+        "reference": "Renamed signal n7431 to renamed_wire throughout the netlist (51 references updated); functionality unchanged.",
+        "notes": "Must claim successful rename of n7431 -> renamed_wire with functionality preserved. Three of four full-score teams report 51 references updated (objective on the original netlist); Team4 omits the count and still scored full, so the number 51 is a sanity check, not required. Verification happens on the output netlist: renamed_wire must exist, n7431 must be gone, connectivity unchanged."
+      },
+      "team_answers": {
+        "Team2": "Renamed n7431 to renamed_wire; 51 references updated.",
+        "Team3": "Renamed n7431 to renamed_wire; 51 changes made; functionality unchanged.",
+        "Team4": "Renamed n7431 to renamed_wire; bijective rename preserves functionality by construction.",
+        "Team7": "Renamed n7431 to renamed_wire; 51 references affected; functionality unchanged."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Prove that the transformed design is equivalent to the pre-transformation netlist.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "yes",
+        "reference": "Yes, the transformed design is equivalent to the pre-transformation netlist; the equivalence check passed (miter UNSAT).",
+        "notes": "Response must affirmatively claim equivalence proven. Method details vary (Team2: ABC AIGER miter SAT UNSATISFIABLE; Team7: 49 cones verified equivalent; Team3/Team4: generic pass) and are all acceptable. A rename is functionally neutral, so equivalence must hold."
+      },
+      "team_answers": {
+        "Team2": "Yes. Boundary-mode equivalence check: ABC AIGER miter SAT result UNSATISFIABLE.",
+        "Team3": "Equivalent; equivalence check passed successfully.",
+        "Team4": "Yes. Current design functionally equivalent to snapshot pre_transform.",
+        "Team7": "Equivalent; verification found 49 cones verified equivalent."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test67_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test67_out.v successfully.",
+        "notes": "Must indicate successful write to test67_out.v. Actual grading verifies the output file (with renamed_wire present) is equivalent to the original netlist."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test67_out.v successfully.",
+        "Team3": "Successfully written to test67_out.v.",
+        "Team4": "Wrote netlist to test67_out.v successfully.",
+        "Team7": "Design written to test67_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

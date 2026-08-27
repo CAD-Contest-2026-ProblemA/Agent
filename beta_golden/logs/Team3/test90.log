@@ -1,0 +1,34 @@
+#RESPONSE 1
+The new testcase named "test90" has been set.
+#END 1
+#RESPONSE 2
+The design has been successfully loaded from the file `testcase/test90/test90.v`, containing a total of 25,996 gates.
+#END 2
+#RESPONSE 3
+The total count of gates in the design is 25,996, broken down by gate type as follows:
+
+- AND: 0
+- OR: 955
+- NOT: 1,514
+- NAND: 17,350
+- NOR: 3,158
+- XOR: 18
+- XNOR: 397
+- BUF: 19
+- DFF: 2,585
+#END 3
+#RESPONSE 4
+The design has been successfully remapped to use only NAND and NOT gates. A total of 4,547 gates were matched and remapped, resulting in a net change of 13,045 gates.
+#END 4
+#RESPONSE 5
+The optimization of the logic cone of output `n14` has been completed. The depth of the cone remains unchanged at 2, as there was no improvement possible. The netlist continues to use only NAND and NOT gates, preserving functional equivalence.
+#END 5
+#RESPONSE 6
+The depth of the cone of `n14` is now 2.
+#END 6
+#RESPONSE 7
+The maximum combinational logic depth in the design is now 159.
+#END 7
+#RESPONSE 8
+The current design has been successfully written to the output file `test90_out.v`.
+#END 8

@@ -1,0 +1,19 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test51". Responses will be recorded to test51.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test51/test51.v successfully. Stored 6034 lines (244320 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows: - AND: 0 - OR: 144 - NOT: 507 - NAND: 3214 - NOR: 505 - XOR: 22 - XNOR: 294 - BUF: 0 - DFF: 756. Total gates: 5442.
+#END 3
+#RESPONSE 4
+Done.
+Renamed signal n1289 to renamed_sig; 3 references were updated.
+#END 4
+#RESPONSE 5
+The current information does not provide details about the gates that connect to the renamed signal renamed_sig.
+#END 5
+#RESPONSE 6
+Wrote the current design to "test51_out.v" successfully.
+#END 6

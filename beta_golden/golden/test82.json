@@ -1,0 +1,196 @@
+{
+  "case": "test82",
+  "max_score": 9,
+  "team_scores": {"Team2": 9, "Team3": 9, "Team4": 7, "Team7": 9},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test82.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test82\"; responses will be recorded to test82.log.",
+        "notes": "Any acknowledgment that the testcase test82 has begun is acceptable. All four teams acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test82; responses recorded to test82.log.",
+        "Team3": "The new testcase named test82 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test82; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test82; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test82.v located in the directory testcase/test82/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test82/test82.v successfully (4181 gates total, including 570 DFFs).",
+        "notes": "Must indicate a successful load of testcase/test82/test82.v. Extra stats are optional but should be consistent: total 4181 instances (3611 comb gates + 570 DFFs), PI 44, PO 106 per Team7."
+      },
+      "team_answers": {
+        "Team2": "Loaded successfully; 4685 lines / 186912 bytes stored.",
+        "Team3": "Loaded successfully; 4181 gates total.",
+        "Team4": "Loaded successfully; 4181 gates; single flat top module.",
+        "Team7": "Loaded successfully; top module, PI 44, PO 106, Gates 3611, DFFs 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 197, 331, 2394, 555, 9, 123, 2, 570, 4181],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 4181 gates: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "notes": "All four teams reported identical breakdowns. must_numbers order: AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF, total."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570; total 4181.",
+        "Team3": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team4": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570.",
+        "Team7": "Total 4181: AND 0, OR 197, NOT 331, NAND 2394, NOR 555, XOR 9, XNOR 123, BUF 2, DFF 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Which primary input has the highest fanout in this design?",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": [570],
+        "must_names": ["n0"],
+        "expected": null,
+        "reference": "Primary input n0 has the highest fanout: 570.",
+        "notes": "All four teams agree on n0 with fanout 570 (n0 is very likely the clock feeding all 570 DFFs). Name n0 is required; fanout value 570 is objective."
+      },
+      "team_answers": {
+        "Team2": "n0, fanout 570.",
+        "Team3": "n0, fanout 570.",
+        "Team4": "n0, fanout 570.",
+        "Team7": "n0, fanout 570."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 5,
+      "prompt": "Find all paths of length 0 (direct wire connections from PI to PO).",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": [0],
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no length-0 paths (no direct PI-to-PO wire connections); count = 0.",
+        "notes": "All four teams report zero such paths. Response must clearly state that none exist / count is 0."
+      },
+      "team_answers": {
+        "Team2": "No paths of length 0 found.",
+        "Team3": "No length-0 paths (no direct PI-to-PO wires).",
+        "Team4": "Found 0 paths; empty enumeration.",
+        "Team7": "No direct PI-to-PO wires; count of length-0 paths is 0."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 6,
+      "prompt": "Find all articulation points in the combinational graph between n2 and n14.",
+      "category": "analysis",
+      "golden": {
+        "rule": "yes_no",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": "no",
+        "reference": "There are no articulation points between n2 and n14 because no combinational path exists between them (n2 feeds only DFF D-pins, n14 is driven directly by DFF g1032's Q output).",
+        "notes": "All four teams conclude none exist. The essential claim: no combinational path between n2 and n14, therefore zero articulation points. No numeric requirement: all three full-score teams answered in words ('no articulation points/gates') without stating a literal 0; only Team4 wrote 'Found 0'. Team7's explanation (n2 -> D-pin of g564; n14 driven by Q of g1032) is a good model rationale but not required."
+      },
+      "team_answers": {
+        "Team2": "No combinational path between n2 and n14; no articulation gates.",
+        "Team3": "No articulation points; no path exists between the two signals.",
+        "Team4": "Found 0 articulation points.",
+        "Team7": "None; no comb path. n2 feeds DFF D-pin g564; n14 driven by DFF Q of g1032; graph between them empty."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 7,
+      "prompt": "Report the number of each gate type in the cone of n14.",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [1],
+        "must_names": null,
+        "expected": null,
+        "reference": "The cone of n14 contains 0 combinational gates of every type (AND/OR/NOT/NAND/NOR/XOR/XNOR/BUF all 0) and 1 DFF (g1032); total 1 gate.",
+        "notes": "Domain prior applies: the official golden INCLUDES the boundary DFF in the cone, so DFF count must be 1 (not 0). Full-score Team2/Team3 report DFF: 1 without naming the instance, so naming g1032 is OPTIONAL (same convention as test76 line 12). Full-score Team7 reports 0 comb gates plus DFF instance g1032 counted separately - also accepted since the DFF is present. Team4 reported DFF: 0 with no DFF mention -> this is one of its two lost points. Checker: all comb types 0 AND a DFF count of 1 (inline or the DFF instance listed separately)."
+      },
+      "team_answers": {
+        "Team2": "0 of every comb type, 1 DFF.",
+        "Team3": "All comb types 0, DFF 1; total 1 gate.",
+        "Team4": "Cone contains 0 gates; all types 0 including DFF: 0. (WRONG - missing DFF)",
+        "Team7": "0 combinational gates; boundary DFF g1032 counted separately."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 8,
+      "prompt": "Compute the fanin logic cone of output n14 and list all gates that contribute to this output.",
+      "category": "analysis",
+      "golden": {
+        "rule": "name_set",
+        "must_numbers": null,
+        "must_names": ["g1032"],
+        "expected": null,
+        "reference": "The fanin cone of output n14 contains 1 gate: the DFF g1032 (n14 is driven directly by its Q output; no combinational gates contribute).",
+        "notes": "Domain prior: boundary DFFs belong in the cone. Full-score Team2/Team3 say 1 gate, g1032. Full-score Team7 says 0 combinational gates but explicitly names DFF g1032 as the boundary element - naming g1032 is the load-bearing part, so the count is presentation-dependent and NOT a hard numeric requirement (Team7 scored full without stating 1). Team4 said the cone contains 0 gates with no instance named -> its second lost point. Checker: must name g1032; count 1 (or 0 comb + 1 DFF listed separately) both acceptable."
+      },
+      "team_answers": {
+        "Team2": "Transitive fanin cone contains 1 gate: g1032.",
+        "Team3": "Cone consists of 1 gate: g1032.",
+        "Team4": "Fan-in cone contains 0 gates. (WRONG - g1032 missing)",
+        "Team7": "0 combinational gates; only boundary element is DFF g1032, counted separately."
+      },
+      "agreement": "3/4",
+      "confidence": "high"
+    },
+    {
+      "line": 9,
+      "prompt": "Please write the current design to the output file test82_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test82_out.v successfully.",
+        "notes": "Must indicate a successful write of test82_out.v. No transforms occurred in this case, so the output netlist should be identical/equivalent to the loaded design. All four teams succeeded."
+      },
+      "team_answers": {
+        "Team2": "Wrote design to test82_out.v successfully.",
+        "Team3": "Design successfully written to test82_out.v.",
+        "Team4": "Wrote netlist to test82_out.v successfully.",
+        "Team7": "Design written to test82_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

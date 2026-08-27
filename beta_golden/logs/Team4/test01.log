@@ -1,0 +1,9 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test01". All subsequent responses will be recorded to test01.log. Design state is empty and ready for commands.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from "/project/cad/cad07/cada1020/beta_test_submission/testcase/test01/test01.v" successfully. It contains 1,794 gates. Detected a single top module (flat netlist), and the design state has been updated.
+#END 2
+#RESPONSE 3
+Wrote the current gate-level Verilog netlist to "/project/cad/cad07/cada1020/beta_test_submission/test01_out.v" successfully.
+#END 3

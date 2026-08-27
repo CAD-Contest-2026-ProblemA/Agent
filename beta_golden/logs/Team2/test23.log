@@ -1,0 +1,31 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test23". Responses will be recorded to test23.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test23/test23.v successfully. Stored 782 lines (27387 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 20
+- NOT: 126
+- NAND: 259
+- NOR: 160
+- XOR: 2
+- XNOR: 30
+- BUF: 0
+- DFF: 86
+
+Total gates: 683.
+#END 3
+#RESPONSE 4
+Done.
+No unused gates were removed; the design was unchanged.
+#END 4
+#RESPONSE 5
+The planner could not execute a valid Netkit command after repair. initial_nks=['optimize_depth objective=minimize_max target=final'] repair_nks=['optimize_depth objective=minimize_max target=final'] error=optimize_depth target='final' is not a loaded signal
+#END 5
+#RESPONSE 6
+Wrote the current design to "test23_out.v" successfully.
+#END 6

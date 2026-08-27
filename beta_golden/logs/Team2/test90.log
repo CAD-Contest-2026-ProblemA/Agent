@@ -1,0 +1,38 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test90". Responses will be recorded to test90.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test90/test90.v successfully. Stored 29014 lines (1233377 bytes) as the current design.
+#END 2
+#RESPONSE 3
+The total count of gates in the design, broken down by gate type, is as follows:
+
+- AND: 0
+- OR: 955
+- NOT: 1514
+- NAND: 17350
+- NOR: 3158
+- XOR: 18
+- XNOR: 397
+- BUF: 19
+- DFF: 2585
+
+Total gates: 25996.
+#END 3
+#RESPONSE 4
+Done.
+Matched 4547 gates and remapped 4547 of them in the design to the NAND,NOT basis. The gate-count delta is +13045.
+#END 4
+#RESPONSE 5
+Done.
+The maximum logic depth of the logic cone of n14 remains 2. The gate count changed from 39041 to 33429. The optimized design is functionally equivalent to the original.
+#END 5
+#RESPONSE 6
+The planner could not execute a valid Netkit command after repair. initial_nks=['logic_depth kind=max target=cone'] repair_nks=['logic_depth kind=max target=cone'] error=logic_depth target='cone' is not a loaded signal
+#END 6
+#RESPONSE 7
+The maximum logic depth of the current design is 54 gate levels.
+#END 7
+#RESPONSE 8
+Wrote the current design to "test90_out.v" successfully.
+#END 8

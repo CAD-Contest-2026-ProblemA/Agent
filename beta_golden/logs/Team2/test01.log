@@ -1,0 +1,9 @@
+#RESPONSE 1
+Acknowledged. Initialized testcase "test01". Responses will be recorded to test01.log.
+#END 1
+#RESPONSE 2
+Loaded gate-level Verilog from testcase/test01/test01.v successfully. Stored 2024 lines (65903 bytes) as the current design.
+#END 2
+#RESPONSE 3
+Wrote the current design to "test01_out.v" successfully.
+#END 3

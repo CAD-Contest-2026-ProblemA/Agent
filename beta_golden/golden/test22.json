@@ -1,0 +1,112 @@
+{
+  "case": "test22",
+  "max_score": 5,
+  "team_scores": {"Team2": 4.92, "Team3": 4.46, "Team4": 4.46, "Team7": 5},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test22.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test22\"; responses will be recorded to test22.log.",
+        "notes": "Any acknowledgment naming the testcase is acceptable. All four teams acknowledged."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test22. Responses recorded to test22.log.",
+        "Team3": "The new testcase named test22 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test22. Design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test22. Design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test22.v located in the directory testcase/test22/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test22/test22.v successfully (1949 gates total, incl. 202 DFFs).",
+        "notes": "Response must indicate a successful load of test22.v. Extra stats are optional and presentation-dependent: Team3 reports 1949 total gates; full-score Team7 reports Gates: 1747 (combinational) + DFFs: 202 separately (1747+202=1949) plus PI:23 PO:41. Both breakdowns are acceptable; do not penalize either."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test22/test22.v successfully; 2188 lines (81623 bytes) stored.",
+        "Team3": "Successfully loaded testcase/test22/test22.v, 1949 gates total.",
+        "Team4": "Loaded test22.v successfully; 1,949 gates; single flat top module.",
+        "Team7": "Loaded test22.v successfully. Module: top | PI: 23 | PO: 41 | Gates: 1747 | DFFs: 202."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 121, 213, 1056, 322, 11, 24, 0, 202, 1949],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 1949 gates: AND 0, OR 121, NOT 213, NAND 1056, NOR 322, XOR 11, XNOR 24, BUF 0, DFF 202.",
+        "notes": "All four teams report identical per-type counts on the original netlist; this is objective ground truth. Per-type breakdown must be present, including the zero entries (AND=0, BUF=0) and DFF=202. Total 1949 = 1747 combinational + 202 DFFs."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 121, NOT 213, NAND 1056, NOR 322, XOR 11, XNOR 24, BUF 0, DFF 202; total 1949.",
+        "Team3": "Total 1949: AND 0, OR 121, NOT 213, NAND 1056, NOR 322, XOR 11, XNOR 24, BUF 0, DFF 202.",
+        "Team4": "1,949 gates: AND 0, OR 121, NOT 213, NAND 1056, NOR 322, XOR 11, XNOR 24, BUF 0, DFF 202.",
+        "Team7": "Total 1949: AND 0, OR 121, NOT 213, NAND 1056, NOR 322, XOR 11, XNOR 24, BUF 0, DFF 202."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Reduce the critical path depth through restructuring. Make sure nothing changes functionally. The cost function is the maximum logic depth of the final design; smaller is better.",
+      "category": "opt",
+      "golden": {
+        "rule": "opt_qor",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Restructured the design functionally-equivalently; maximum logic depth reduced from 41 to 11 (best observed, Team7).",
+        "notes": "QoR line scored relatively on the final netlist's max logic depth; smaller is better. Original depth = 41 (agreed by Team3/Team4/Team7). Achieved depths per log: Team7=11 (best, full score 5.00), Team3=20 (claimed), Team4=24; Team2's exchanged log shows a planner failure but is a DIFFERENT run than its graded one, so Team2's score must not be used as evidence for this line. Score arithmetic on reliable teams: lines 1/2/3/5 are correct for all three, so Team3 and Team4 each earned exactly 0.46 partial credit here (4.46 total). 0.46 = 11/24 matches Team4's depth, and Team3 received the identical 0.46 despite its log claiming depth 20 - consistent with grading measured on the written output netlist's depth (both ~24) rather than log prose; treat log text as secondary for this line. Checker should verify: success + functional-equivalence claim, a before/after depth pair, and that the claimed final depth matches the team's written output netlist."
+      },
+      "team_answers": {
+        "Team2": "FAILED: planner could not execute a valid command (optimize_depth target='final' is not a loaded signal). No depth change reported.",
+        "Team3": "Depth reduced 41 -> 20; gates 1949 -> 1997; functionally equivalent.",
+        "Team4": "Optimized successfully. Max depth 41 -> 24; gates 1,949 -> 1,723.",
+        "Team7": "Converged in 2 iterations; whole-design ABC restructuring improved max_depth 41 -> 11."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 5,
+      "prompt": "Please write the current design to the output file test22_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test22_out.v successfully.",
+        "notes": "Response must indicate the design was written to test22_out.v. All four teams succeeded; actual verification (equivalence, depth) happens on the output file."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test22_out.v successfully.",
+        "Team3": "Current design successfully written to test22_out.v.",
+        "Team4": "Wrote gate-level Verilog netlist to test22_out.v successfully.",
+        "Team7": "Design written to test22_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}

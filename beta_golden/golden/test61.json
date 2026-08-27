@@ -1,0 +1,133 @@
+{
+  "case": "test61",
+  "max_score": 6,
+  "team_scores": {"Team2": 6, "Team3": 4, "Team4": 6, "Team7": 3},
+  "lines": [
+    {
+      "line": 1,
+      "prompt": "This is the beginning of a new testcase. The case name is test61.",
+      "category": "ack",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Acknowledged. Initialized testcase \"test61\"; responses will be recorded to test61.log.",
+        "notes": "Any acknowledgment naming test61 passes. All four teams answered equivalently."
+      },
+      "team_answers": {
+        "Team2": "Acknowledged. Initialized testcase test61; responses recorded to test61.log.",
+        "Team3": "The new testcase named test61 has been set.",
+        "Team4": "Acknowledged. Initialized testcase test61; design state empty and ready.",
+        "Team7": "Acknowledged. Initialized testcase test61; design state empty and ready."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 2,
+      "prompt": "Please load the design from the file test61.v located in the directory testcase/test61/.",
+      "category": "load",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Loaded gate-level Verilog from testcase/test61/test61.v successfully (64,430 gates total; 60,219 combinational + 4,211 DFFs).",
+        "notes": "Response must indicate a successful load of test61.v. Extra stats vary by team (line/byte counts, PI=51/PO=87, gate totals) and are all consistent with 64,430 total instances; do not penalize different detail levels."
+      },
+      "team_answers": {
+        "Team2": "Loaded testcase/test61/test61.v successfully; 72419 lines (3084784 bytes) stored.",
+        "Team3": "Loaded successfully; 64,430 gates total.",
+        "Team4": "Loaded successfully; 64,430 gates, single flat top module.",
+        "Team7": "Loaded successfully; Module top, PI 51, PO 87, Gates 60219, DFFs 4211."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 3,
+      "prompt": "Please count all the gates in this design and report the total count broken down by gate type (AND, OR, NOT, NAND, NOR, XOR, XNOR, BUF, DFF).",
+      "category": "analysis",
+      "golden": {
+        "rule": "exact_number",
+        "must_numbers": [0, 3585, 4748, 35261, 8372, 355, 7748, 150, 4211, 64430],
+        "must_names": null,
+        "expected": null,
+        "reference": "Total 64,430 gates: AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211.",
+        "notes": "All four teams report the identical breakdown, including both full-score teams; this is objective ground truth on the original netlist. Team7 additionally notes 60,219 combinational-only, which is a correct derived figure (64430-4211) and acceptable extra detail."
+      },
+      "team_answers": {
+        "Team2": "AND 0, OR 3585, NOT 4748, NAND 35261, NOR 8372, XOR 355, XNOR 7748, BUF 150, DFF 4211; total 64430.",
+        "Team3": "Same breakdown; total 64,430.",
+        "Team4": "Same breakdown; total 64,430.",
+        "Team7": "Same breakdown; total 64,430 (60,219 combinational excluding DFFs)."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    },
+    {
+      "line": 4,
+      "prompt": "Try to restructure the logic cone of output n12[0] using only NAND and NOT gates while preserving functional equivalence. Ensure the design functionality does not change.",
+      "category": "transform",
+      "golden": {
+        "rule": "transform_ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Restructured the logic cone of n12[0] to the NAND/NOT basis: 60 gates matched and remapped (gate-count delta +170); functional equivalence preserved.",
+        "notes": "Response must claim successful restructure and equivalence; real verification is on the output netlist (cone of n12[0] must contain only NAND/NOT combinational gates and be functionally equivalent). Anchor: Team4 (verified 6/6) remapped 60 gates; Team3's log gives the same 60-gate remap with delta +170, and Team2's log (different run than its graded score, corroborating only, never an anchor) agrees on 60/+170. Team7 rewrote only 10 gates, indicating an incomplete restructure (cone likely still contains non-NAND/NOT gates); since Team7 scored 3/6 and its lines 1-3 match consensus, this is almost certainly one of its lost lines. Team3's log text is equivalent to Team4's yet Team3 scored 4/6, so its losses are presumed to be netlist-verification failures on this transform and/or the dependent count in line 5; a checker must validate the written netlist, not just the log claim."
+      },
+      "team_answers": {
+        "Team2": "Matched 60 gates, remapped 60 to NAND/NOT; delta +170; equivalence preserved.",
+        "Team3": "Restructured successfully; 60 gates matched and remapped, delta 170 gates.",
+        "Team4": "Matched 60 gates and remapped 60 to the requested NAND,NOT basis.",
+        "Team7": "Restructured to NAND/NOT; 10 gates rewritten; functionality preserved."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 5,
+      "prompt": "How many NAND gates are now in the restructured cone of output n12[0]?",
+      "category": "analysis",
+      "golden": {
+        "rule": "team_dependent",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "The restructured cone of n12[0] contains 184 NAND gates (Team4 additionally reports 313 total gates in the cone).",
+        "notes": "Post-transform count: must match the team's OWN restructured netlist, whose n12[0] cone must be NAND/NOT-only per line 4. Anchor: Team4 (verified 6/6) reports 184 NAND (313 total cone gates), making 184 the reference value for the standard remap; Team3's log also says 184, and Team2's log (different run than its graded score, corroborating only, never an anchor) agrees. Team7 reports 84, consistent with its incomplete 10-gate rewrite and almost certainly wrong (Team7 scored 3/6 with lines 1-3 matching consensus). Team3 says 184 but scored 4/6, so if Team3 lost this line it is because its written netlist did not actually contain that cone structure - checker should count NAND gates in the cone of n12[0] in each team's test61_out.v and compare to the claimed number."
+      },
+      "team_answers": {
+        "Team2": "184 NAND gates in the cone of n12[0].",
+        "Team3": "184 NAND gates.",
+        "Team4": "Cone contains 313 gates; breakdown NAND: 184.",
+        "Team7": "84 NAND gates."
+      },
+      "agreement": "3/4",
+      "confidence": "medium"
+    },
+    {
+      "line": 6,
+      "prompt": "Please write the current design to the output file test61_out.v.",
+      "category": "write",
+      "golden": {
+        "rule": "ack",
+        "must_numbers": null,
+        "must_names": null,
+        "expected": null,
+        "reference": "Wrote the current design to test61_out.v successfully.",
+        "notes": "Success claim naming test61_out.v is sufficient in the log; the written netlist itself must exist and pass equivalence with the transform applied. All four teams claim success."
+      },
+      "team_answers": {
+        "Team2": "Wrote the current design to test61_out.v successfully.",
+        "Team3": "Successfully written to test61_out.v.",
+        "Team4": "Wrote netlist to test61_out.v successfully.",
+        "Team7": "Design written to test61_out.v."
+      },
+      "agreement": "4/4",
+      "confidence": "high"
+    }
+  ]
+}
