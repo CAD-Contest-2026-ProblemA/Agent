@@ -10,6 +10,7 @@ fallback when the register sets differ or ABC is unavailable.
 
 from __future__ import annotations
 
+import time
 from typing import Optional
 
 from ..netlist.ir import Netlist
@@ -64,11 +65,19 @@ def signals_equivalent(nl: Netlist, sig_a: str, sig_b: str,
     """Are two internal signals functionally identical for all inputs?
 
     Build a miter that XORs the two cones and SAT-check for a difference.
+    ``timeout`` is a TOTAL budget for the query: the cec fallback runs on
+    whatever remains after the miter attempt, not on a fresh allowance --
+    the analysis caller's 60-second limit (A77/A89) covers both stages.
     """
+    deadline = time.time() + timeout
     blif = signal_blif(nl, sig_a, sig_b)
     import os, shutil, tempfile
     d = tempfile.mkdtemp(prefix="cada_sig_")
     p = os.path.join(d, "m.blif")
+
+    def left():
+        return max(5, int(deadline - time.time()))
+
     try:
         with open(p, "w") as f:
             f.write(blif)
@@ -77,14 +86,14 @@ def signals_equivalent(nl: Netlist, sig_a: str, sig_b: str,
             [f'read_blif "{p}"', "strash", "miter -o", "sat"], timeout=timeout)
         if not ok:
             # fall back: cec-style by building two single-output designs
-            return _signals_via_cec(nl, sig_a, sig_b, timeout)
+            return _signals_via_cec(nl, sig_a, sig_b, left())
         low = out.lower()
         if "unsat" in low or "miter is constant 0" in low or \
            "networks are equivalent" in low:
             return True
         if "was asserted" in low or "satisfiable" in low or "is sat" in low:
             return False
-        return _signals_via_cec(nl, sig_a, sig_b, timeout)
+        return _signals_via_cec(nl, sig_a, sig_b, left())
     finally:
         shutil.rmtree(d, ignore_errors=True)
 

@@ -29,6 +29,12 @@ from ..llm.client import LLMClient
 from ..llm.fallback import Fallback
 
 NET = r"[A-Za-z_]\w*(?:\[\d+\])?"
+
+# A77/A89: analysis questions are Basic -> the WHOLE request must finish in
+# 60 s (result, file writes, #END).  Solver calls on analysis paths get this
+# budget; transform-path validation keeps the 280 s default under its 300 s.
+ANALYSIS_BUDGET_S = 50
+
 BASIS_WORDS = {
     ("nand", "not"): "NAND_NOT", ("nor", "not"): "NOR_NOT",
     ("and", "not"): "AND_NOT",
@@ -1172,7 +1178,8 @@ class Agent:
     def _sig_equiv(self, a, b):
         if self._need_design():
             return self._need_design()
-        r = functional.signals_equivalent(self.state.current, a, b)
+        r = functional.signals_equivalent(self.state.current, a, b,
+                                          timeout=ANALYSIS_BUDGET_S)
         if r is None:
             return f"Could not determine the equivalence of {a} and {b}."
         return ("Yes." if r else "No.") + f" Signals {a} and {b} are {'' if r else 'not '}functionally equivalent."
@@ -1190,7 +1197,8 @@ class Agent:
         if self._need_design():
             return self._need_design()
         out = m.group(1)
-        v = functional.output_always_constant(self.state.current, out)
+        v = functional.output_always_constant(self.state.current, out,
+                                              timeout=ANALYSIS_BUDGET_S)
         if v == 0:
             return f"Yes. Output {out} is always 0 regardless of the inputs."
         if v == 1:
@@ -1224,7 +1232,8 @@ class Agent:
         a, b = m.group(1), m.group(2)
         # the function net is the first net mentioned
         fn = toks[0] if toks else None
-        r = functional.is_symmetric(self.state.current, fn, a, b)
+        r = functional.is_symmetric(self.state.current, fn, a, b,
+                                    timeout=ANALYSIS_BUDGET_S)
         if r is None:
             return f"Could not determine symmetry of {fn} in {a}, {b}."
         return ("Yes." if r else "No.") + f" The function at {fn} is {'' if r else 'not '}symmetric in {a} and {b}."
@@ -1334,9 +1343,8 @@ class Agent:
     def _enable_hold_partition(self):
         """(members, feedback-non-members, no-feedback, total), cached in deltas."""
         nl = self.state.current
-        # A77: analysis requests are Basic (60 s); leave headroom for the
-        # structural/simulation stages and response assembly
-        eh, fb = sequential.enable_hold_ffs(nl, budget=50.0, detail=True)
+        eh, fb = sequential.enable_hold_ffs(nl, budget=float(ANALYSIS_BUDGET_S),
+                                            detail=True)
         self.state.record_delta("enable_hold", len(eh))
         self.state.record_delta("enable_hold_fb", fb)
         return eh, fb - len(eh), len(nl.dffs) - fb, len(nl.dffs)
@@ -1806,7 +1814,8 @@ class Agent:
             label = "original loaded netlist"
         if ref is None:
             return "No reference design is available for comparison."
-        r = equiv_gate.equivalent(ref, self.state.current)
+        r = equiv_gate.equivalent(ref, self.state.current,
+                                  timeout=ANALYSIS_BUDGET_S)
         if r is True:
             return f"Verified: the current design is functionally equivalent to the {label}."
         if r is False:
@@ -2459,7 +2468,8 @@ class Agent:
         if self._need_design():
             return self._need_design()
         out = str(output)
-        v = functional.output_always_constant(self.state.current, out)
+        v = functional.output_always_constant(self.state.current, out,
+                                              timeout=ANALYSIS_BUDGET_S)
         if v == 0:
             return f"Yes. Output {out} is always 0 regardless of the inputs."
         if v == 1:
@@ -2499,7 +2509,8 @@ class Agent:
         if not structural:
             return f"No. Output {out} does not depend on input {inp}."
 
-        exact = functional.truly_depends_on(nl, out, inp)
+        exact = functional.truly_depends_on(nl, out, inp,
+                                            timeout=ANALYSIS_BUDGET_S)
         if exact is None:
             return (f"Yes. {inp} is in the fan-in cone of {out} (structural); "
                     f"functional dependence could not be decided.")
@@ -2521,7 +2532,8 @@ class Agent:
         if self._need_design():
             return self._need_design()
         out, a, b = str(output), str(a), str(b)
-        r = functional.is_symmetric(self.state.current, out, a, b)
+        r = functional.is_symmetric(self.state.current, out, a, b,
+                                    timeout=ANALYSIS_BUDGET_S)
         if r is None:
             return f"Could not determine symmetry of {out} in {a}, {b}."
         return ("Yes." if r else "No.") + f" The function at {out} is {'' if r else 'not '}symmetric in {a} and {b}."
@@ -2921,7 +2933,8 @@ class Agent:
             label = "original loaded netlist"
         if ref is None:
             return "No reference design is available for comparison."
-        r = equiv_gate.equivalent(ref, self.state.current)
+        r = equiv_gate.equivalent(ref, self.state.current,
+                                  timeout=ANALYSIS_BUDGET_S)
         if r is True:
             return f"Verified: the current design is functionally equivalent to the {label}."
         if r is False:

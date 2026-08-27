@@ -20,10 +20,11 @@ from . import graph, cones
 from ..equiv import abc_bridge, gate as equiv_gate
 
 
-def signals_equivalent(nl: Netlist, a: str, b: str) -> Optional[bool]:
+def signals_equivalent(nl: Netlist, a: str, b: str,
+                       timeout: int = 120) -> Optional[bool]:
     if a == b:
         return True
-    return equiv_gate.signals_equivalent(nl, a, b)
+    return equiv_gate.signals_equivalent(nl, a, b, timeout=timeout)
 
 
 def _splitmix(i: int) -> int:
@@ -142,8 +143,12 @@ def _single_out_blif(nl: Netlist, sig: str, inputs: List[str],
     return "\n".join(lines) + "\n"
 
 
-def output_always_constant(nl: Netlist, out: str) -> Optional[int]:
-    """Return 0 or 1 if ``out`` is constant for all inputs, else None."""
+def output_always_constant(nl: Netlist, out: str,
+                           timeout: int = 280) -> Optional[int]:
+    """Return 0 or 1 if ``out`` is constant for all inputs, else None.
+
+    ``timeout`` is a TOTAL budget shared by the two cec runs."""
+    deadline = time.time() + timeout
     sinks = cones.effective_sinks(nl, out)
     cone = graph.fanin_cone_nets(nl, sinks)
     inputs = _cone_inputs(nl, sinks)
@@ -152,12 +157,14 @@ def output_always_constant(nl: Netlist, out: str) -> Optional[int]:
     # compare to const-0
     const0 = (".model m\n.inputs " + " ".join(inputs) +
               "\n.outputs O\n.names O\n.end\n")
-    r0 = abc_bridge.cec_blif(blif, const0)
+    r0 = abc_bridge.cec_blif(blif, const0,
+                             timeout=max(5, int(deadline - time.time())))
     if r0 is True:
         return 0
     const1 = (".model m\n.inputs " + " ".join(inputs) +
               "\n.outputs O\n.names O\n1\n.end\n")
-    r1 = abc_bridge.cec_blif(blif, const1)
+    r1 = abc_bridge.cec_blif(blif, const1,
+                             timeout=max(5, int(deadline - time.time())))
     if r1 is True:
         return 1
     return None
@@ -208,7 +215,8 @@ def _cofactor_blif(nl: Netlist, sig: str, var: str, inputs: List[str],
     return "\n".join(lines) + "\n"
 
 
-def _cofactor_is_empty(nl: Netlist, sig: str, var: str, combine: str):
+def _cofactor_is_empty(nl: Netlist, sig: str, var: str, combine: str,
+                       timeout: int = 280):
     """Is the combined cofactor function identically 0?  None if undecidable."""
     cone = graph.fanin_cone_nets(nl, [sig])
     if var not in cone:
@@ -217,7 +225,7 @@ def _cofactor_is_empty(nl: Netlist, sig: str, var: str, combine: str):
     blif = _cofactor_blif(nl, sig, var, inputs, cone, combine)
     const0 = (".model m\n.inputs " + " ".join(i for i in inputs if i != var) +
               "\n.outputs O\n.names O\n.end\n")
-    return abc_bridge.cec_blif(blif, const0)
+    return abc_bridge.cec_blif(blif, const0, timeout=timeout)
 
 
 def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256,
@@ -275,20 +283,23 @@ def cofactors_empty_batch(nl: Netlist, queries, chunk: int = 256,
                     if deadline is not None and time.time() >= deadline:
                         break
                     sig, var, combine = queries[k]
-                    out[k] = _cofactor_is_empty(nl, sig, var, combine)
+                    out[k] = _cofactor_is_empty(
+                        nl, sig, var, combine,
+                        timeout=(280 if deadline is None
+                                 else max(5, int(deadline - time.time()))))
     finally:
         shutil.rmtree(tmp, ignore_errors=True)
     return out
 
 
-def positive_unate_in(nl: Netlist, sig: str, var: str):
+def positive_unate_in(nl: Netlist, sig: str, var: str, timeout: int = 280):
     """Exact: is ``sig`` monotonically non-decreasing in ``var``?  None if unknown."""
-    return _cofactor_is_empty(nl, sig, var, "viol")
+    return _cofactor_is_empty(nl, sig, var, "viol", timeout=timeout)
 
 
-def truly_depends_on(nl: Netlist, sig: str, var: str):
+def truly_depends_on(nl: Netlist, sig: str, var: str, timeout: int = 280):
     """Exact: does ``sig`` functionally depend on ``var``?  None if unknown."""
-    r = _cofactor_is_empty(nl, sig, var, "diff")
+    r = _cofactor_is_empty(nl, sig, var, "diff", timeout=timeout)
     return None if r is None else (not r)
 
 
@@ -301,7 +312,8 @@ def depends_on(nl: Netlist, out: str, inp: str) -> bool:
     return any(c == inp or c.split("[")[0] == inp for c in cone)
 
 
-def is_symmetric(nl: Netlist, out: str, a: str, b: str) -> Optional[bool]:
+def is_symmetric(nl: Netlist, out: str, a: str, b: str,
+                 timeout: int = 280) -> Optional[bool]:
     """Is the function at ``out`` symmetric in inputs a and b?  (Swap a<->b in
     its cone and check equivalence.)"""
     sinks = cones.effective_sinks(nl, out)
@@ -313,7 +325,7 @@ def is_symmetric(nl: Netlist, out: str, a: str, b: str) -> Optional[bool]:
     orig = _single_out_blif(nl, sig, inputs, cone, model="o")
     # swapped: rename a<->b in a copied netlist's cone
     swapped = _swapped_blif(nl, sig, inputs, cone, a, b)
-    return abc_bridge.cec_blif(orig, swapped)
+    return abc_bridge.cec_blif(orig, swapped, timeout=timeout)
 
 
 def _swapped_blif(nl, sig, inputs, cone, a, b):
