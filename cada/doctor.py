@@ -21,6 +21,7 @@ Exit code is 0 when there are no hard failures, 1 otherwise.
 
 from __future__ import annotations
 
+import hashlib
 import os
 import shutil
 import subprocess
@@ -355,6 +356,34 @@ def check_retrieval(rep: Report, use_bm25: bool = True):
                  "the prompt will teach intent names but not their arguments")
 
 
+def check_prepared_solutions(rep: Report):
+    """Ensure the curated manifest and every packaged artifact are reachable."""
+    rep.section("Prepared optimization solutions")
+    try:
+        from cada.optimize import prepared
+        registry = prepared.load_registry(required=True)
+        if not registry.candidates:
+            rep.fail("prepared registry is empty")
+            return
+        for candidate in registry.candidates:
+            raw = candidate.artifact_path.read_bytes()
+            if hashlib.sha256(raw).hexdigest().lower() != candidate.sha256.lower():
+                rep.fail(
+                    f"prepared artifact hash mismatch: {candidate.candidate_id}")
+                return
+            provenance = candidate.metadata.get("provenance", {})
+            if (not isinstance(provenance, dict)
+                    or provenance.get("offline_cec_rechecked") is not True):
+                rep.fail(
+                    f"prepared artifact lacks offline CEC: "
+                    f"{candidate.candidate_id}")
+                return
+        rep.ok("prepared solution bank loaded",
+               f"{len(registry.candidates)} verified artifact(s) present")
+    except Exception as exc:
+        rep.fail("prepared solution bank is unavailable", str(exc)[:200])
+
+
 def main(argv=None, use_rules=None, use_bm25=None) -> int:
     if use_rules is None or use_bm25 is None:
         # Direct ``python -m cada.doctor`` calls do not pass through the agent
@@ -373,6 +402,7 @@ def main(argv=None, use_rules=None, use_bm25=None) -> int:
     check_tools(rep)
     check_config(rep)
     check_package(rep)
+    check_prepared_solutions(rep)
     check_retrieval(rep, use_bm25=use_bm25)
 
     print("\n" + _bold("Summary"))

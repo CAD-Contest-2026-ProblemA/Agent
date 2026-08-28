@@ -33,6 +33,7 @@ abc.history
 *.aig
 *.blif
 *.eqn
+/offline_results/
 
 # ---- editor / OS ----
 .idea/

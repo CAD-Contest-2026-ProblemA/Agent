@@ -450,6 +450,19 @@ class Agent:
             return "No design is currently loaded."
         return None
 
+    @staticmethod
+    def _opt_validation_text(nl: Netlist) -> str:
+        """Describe the actual acceptance gate used by an opt winner."""
+        validation = getattr(nl, "_prepared_validation", None)
+        if not isinstance(validation, dict):
+            return "equivalence verified"
+        patterns = int(validation.get("patterns") or 0)
+        trust = str(validation.get("trust") or "")
+        if trust.startswith("offline_cec+"):
+            return (f"offline CEC identity reused and {patterns:,}-pattern "
+                    "equivalence simulation passed")
+        return f"{patterns:,}-pattern equivalence simulation passed"
+
     def _commit(self, mutate, *, basis=None, max_fanout=None,
                 max_fanout_pi=True, verify=True) -> Tuple[object, bool, str]:
         st = self.state
@@ -1748,12 +1761,14 @@ class Agent:
             basis_output=basis_scope)
         self.state.current = res
         after = depth.depth_of_cone(res, out)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Optimized the cone of {out}: depth reduced from {before} "
-                    f"to {after}{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"to {after}{' (basis preserved)' if basis else ''}; "
+                    f"{validation}.")
         if imp:
             return (f"Applied the required {basis} basis to the cone of {out}; "
-                    f"depth changed from {before} to {after}; equivalence verified.")
+                    f"depth changed from {before} to {after}; {validation}.")
         return (f"The cone of {out} is already optimal at depth {before}; "
                 "reported the original (equivalence preserved).")
 
@@ -1768,12 +1783,13 @@ class Agent:
             self.state.current, basis=basis, basis_output=basis_scope)
         self.state.current = res
         after = depth.global_max_depth(res)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Reduced the maximum logic depth from {before} to {after}"
-                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"{' (basis preserved)' if basis else ''}; {validation}.")
         if imp:
             return (f"Applied the required {basis} basis; maximum logic depth "
-                    f"changed from {before} to {after}; equivalence verified.")
+                    f"changed from {before} to {after}; {validation}.")
         return (f"The design is already optimal at depth {before}; reported the "
                 "original (equivalence preserved).")
 
@@ -1790,12 +1806,13 @@ class Agent:
         if imp:
             self.state.provably_equiv = getattr(res, '_provably_equiv', False)
         after = len(res.gates)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Reduced the total gate count from {before} to {after}"
-                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"{' (basis preserved)' if basis else ''}; {validation}.")
         if imp:
             return (f"Applied the required {basis} basis; gate count changed "
-                    f"from {before} to {after}; equivalence verified.")
+                    f"from {before} to {after}; {validation}.")
         return (f"The design is already optimal at {before} gates; reported the "
                 "original (equivalence preserved).")
 
@@ -2864,12 +2881,13 @@ class Agent:
             basis_output=str(scope) if scope is not None else None)
         self.state.current = res
         after = depth.global_max_depth(res)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Reduced the maximum logic depth from {before} to {after}"
-                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"{' (basis preserved)' if basis else ''}; {validation}.")
         if imp:
             return (f"Applied the required {basis} basis; maximum logic depth "
-                    f"changed from {before} to {after}; equivalence verified.")
+                    f"changed from {before} to {after}; {validation}.")
         return (f"The design is already optimal at depth {before}; reported the "
                 "original (equivalence preserved).")
 
@@ -2889,12 +2907,13 @@ class Agent:
             basis_output=str(scope) if scope is not None else None)
         self.state.current = res
         after = len(res.gates)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Reduced the gate count from {before} to {after}"
-                    f"{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"{' (basis preserved)' if basis else ''}; {validation}.")
         if imp:
             return (f"Applied the required {basis} basis; gate count changed "
-                    f"from {before} to {after}; equivalence verified.")
+                    f"from {before} to {after}; {validation}.")
         return (f"The design is already optimal at gate count {before}; reported the "
                 "original (equivalence preserved).")
 
@@ -2913,12 +2932,14 @@ class Agent:
             basis_output=str(scope) if scope is not None else None)
         self.state.current = res
         after = depth.depth_of_cone(res, out)
+        validation = self._opt_validation_text(res)
         if imp and after < before:
             return (f"Optimized the cone of {out}: depth reduced from {before} "
-                    f"to {after}{' (basis preserved)' if basis else ''}; equivalence verified.")
+                    f"to {after}{' (basis preserved)' if basis else ''}; "
+                    f"{validation}.")
         if imp:
             return (f"Applied the required {basis} basis to the cone of {out}; "
-                    f"depth changed from {before} to {after}; equivalence verified.")
+                    f"depth changed from {before} to {after}; {validation}.")
         return (f"The cone of {out} is already optimal at depth {before}; "
                 "reported the original (equivalence preserved).")
 

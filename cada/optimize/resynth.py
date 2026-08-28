@@ -13,10 +13,11 @@ It follows the ALS_Final_Project "monotonic refine" methodology:
   gain/second feedback decides which family receives the next deadline slice;
   there is no testcase dispatch or preselected winner chain.
 * **Selection** — candidates are ranked by the true IR cost (recomputed on
-  the rebuilt netlist, never trusted from ABC), the basis purity is enforced,
-  and the best strictly-improving candidate that passes a full ``cec``
-  against the current design wins.  No candidate, no change — the original is
-  reported as already optimal.
+  the rebuilt netlist, never trusted from ABC), and basis purity is enforced.
+  Ordinary online candidates require full ``cec`` against the current design.
+  Packaged prepared candidates are the one explicit exception: they must have
+  passed offline CEC and then pass the exact/semantic pattern gate documented
+  below.  No candidate, no change — the original is reported as optimal.
 
 Wrong template guesses are eliminated twice (per-cone cec at detection, whole
 design cec here); ABC transforms are equivalence-preserving by construction
@@ -26,16 +27,15 @@ but still gated by the final cec.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-import hashlib
 import math
 import time
-from typing import Callable, Dict, List, Optional, Set, Tuple
+from typing import Callable, Dict, List, Mapping, Optional, Set, Tuple
 
 from ..netlist.ir import Netlist, is_const
 from ..analysis import cones, depth as depth_mod, graph
 from ..transform import rewrite
-from ..equiv import gate as equiv_gate
-from . import abc_opt, templates, yosys_synth
+from ..equiv import gate as equiv_gate, pattern as pattern_equiv
+from . import abc_opt, cone_runtime, prepared, templates, yosys_synth
 
 # ---- adaptive search ------------------------------------------------------
 
@@ -53,6 +53,9 @@ _HORIZONS = (1, 2, 3, 4)
 _SEED_COUNT = 101                 # ABC accepts -S 0..100
 _BEAM_WIDTH = 4
 _ARCHIVE_WIDTH = 12
+_PREPARED_EXACT_PATTERNS = 4_096
+_PREPARED_SEMANTIC_PATTERNS = 100_000
+_OBJECTIVES = {"depth", "area", "buffered_area", "cone_depth"}
 
 
 @dataclass
@@ -74,7 +77,8 @@ class _Arm:
     seen: Set[Tuple[str, Tuple[object, ...]]] = field(default_factory=set)
     # A successful local operator is immediately retried on its verified child
     # before broad exploration resumes (generic evolutionary continuation).
-    promotions: List[Tuple[object, object]] = field(default_factory=list)
+    promotions: List[Tuple["_Candidate", "_Trial"]] = field(
+        default_factory=list)
     blocked_epoch: int = -1
     exhausted: bool = False
 
@@ -160,76 +164,8 @@ def _shape_signature(nl: Netlist, value: int,
 
 
 def _topology_key(nl: Netlist) -> str:
-    """Canonical-ish digest for exact scheduler identity.
-
-    The cheap aggregate :func:`_shape_signature` is intentionally retained for
-    name-independent seeding and runtime features, but aggregate sums can
-    collide.  Beam deduplication and the parent×parameter grid therefore use a
-    stronger digest of the complete combinational DAG.  Internal net names are
-    excluded; fixed interface/source identities remain so two different input
-    assignments are never conflated.
-    """
-    memo: Dict[str, bytes] = {
-        "1'b0": b"C0",
-        "1'b1": b"C1",
-    }
-
-    q_instances: Dict[str, List[str]] = {}
-    for ff in nl.dffs:
-        q_instances.setdefault(ff.q, []).append(ff.name)
-
-    def source_token(net: str) -> bytes:
-        if net in memo:
-            return memo[net]
-        drv = nl.driver(net)
-        if drv[0] == "pi":
-            token = ("PI:" + net).encode()
-        elif drv[0] == "dff":
-            token = ("Q:" + ",".join(sorted(q_instances.get(net, [net])))).encode()
-        elif drv[0] == "undriven":
-            token = ("U:" + net).encode()
-        else:
-            token = ("S:" + net).encode()
-        memo[net] = hashlib.blake2b(token, digest_size=16).digest()
-        return memo[net]
-
-    def token_for(net: str) -> bytes:
-        token = memo.get(net)
-        if token is not None:
-            return token
-        return source_token(net)
-
-    # Each gate digest depends only on already-computed input digests.
-    for out_net in graph.topo_nets(nl):
-        drv = nl.driver(out_net)
-        if drv[0] != "gate":
-            continue
-        gate = drv[1]
-        ins = []
-        for net in gate.ins:
-            ins.append(token_for(net))
-        if len(ins) == 2:  # every legal binary primitive is commutative
-            ins.sort()
-        payload = gate.type.encode() + b"(" + b",".join(ins) + b")"
-        memo[gate.out] = hashlib.blake2b(payload, digest_size=16).digest()
-
-    outputs: List[bytes] = []
-    for po in sorted(nl.po):
-        outputs.append(b"PO:" + po.encode() + b"=" + token_for(po))
-    for ff in sorted(nl.dffs, key=lambda item: item.name):
-        for attr in ("d", "clk", "rn", "sn"):
-            net = getattr(ff, attr)
-            outputs.append((f"FF:{ff.name}:{attr}=".encode()
-                            + token_for(net)))
-    # Include the multiset of all nodes as well as observable endpoints so dead
-    # or duplicated logic cannot masquerade as the same evolutionary parent.
-    nodes = sorted(memo.get(g.out, b"") for g in nl.gates)
-    h = hashlib.blake2b(digest_size=20)
-    h.update(str(len(nl.gates)).encode())
-    for token in nodes + outputs:
-        h.update(len(token).to_bytes(2, "little"))
-        h.update(token)
-    return h.hexdigest()
+    """Shared exact-topology digest used by scheduler and prepared lookup."""
+    return prepared.topology_key(nl)
 
 
 def _stable_seed(shape: Tuple[int, ...], family: str = "") -> int:
@@ -407,8 +343,8 @@ def _trial_for(arm: _Arm, parent: _Candidate, objective: str,
         else:
             recipe = tuple(["compress2rs"] * horizon + ["resyn2rs"])
         normalize = arm.name == "yosys"
-        params = (arm.name, horizon, "area" if map_mode else "delay",
-                  random_seed)
+        params: Tuple[object, ...] = (
+            arm.name, horizon, "area" if map_mode else "delay", random_seed)
         label = (f"{arm.name}[{index}]/r{horizon}/"
                  f"{'area-map' if map_mode else 'delay-map'}"
                  + (f"/s{random_seed}" if random_seed >= 0 else ""))
@@ -631,6 +567,8 @@ def _cost_fn(objective: str, output: Optional[str],
         return lambda nl: _buffered_gate_count(
             nl, fanout_limit, fanout_include_pi)
     if objective == "cone_depth":
+        if output is None:
+            raise ValueError("cone_depth requires a target output")
         return lambda nl: depth_mod.depth_of_cone(nl, output)
     return depth_mod.global_max_depth
 
@@ -640,6 +578,12 @@ def _ensure_basis(cand: Netlist, basis: Optional[str],
     """Purity before costing: stray cells (e.g. mapper ``buf``) are rewritten
     into the basis so the ranking sees the netlist the checks will see."""
     if basis:
+        if (basis_output is not None
+                and basis_output not in cand.all_nets()):
+            # Do not silently turn a missing scoped net into a global rewrite.
+            # _basis_compliant() rejects it unless the prepared manifest
+            # explicitly records the one legacy eliminated-target contract.
+            return cand
         want = rewrite.BASES[basis]
         scoped = (cones.fanin_cone_gates(cand, basis_output)
                   if basis_output is not None else cand.gates)
@@ -651,9 +595,12 @@ def _ensure_basis(cand: Netlist, basis: Optional[str],
 
 
 def _basis_compliant(nl: Netlist, basis: Optional[str],
-                     basis_output: Optional[str]) -> bool:
+                     basis_output: Optional[str],
+                     allow_missing_scope: bool = False) -> bool:
     if not basis:
         return True
+    if basis_output is not None and basis_output not in nl.all_nets():
+        return allow_missing_scope
     want = rewrite.BASES[basis]
     scoped = (cones.fanin_cone_gates(nl, basis_output)
               if basis_output is not None else nl.gates)
@@ -671,18 +618,439 @@ def _trial_limit(arm: _Arm, objective: str) -> int:
     return grid * (_SEED_COUNT if arm.kind == "stochastic" else 1)
 
 
+def _runtime_nand_super_seed(
+        nl: Netlist, output: str, timeout: float,
+        ) -> Tuple[Netlist, bool, dict]:
+    """Build a generic shallow NAND/NOT seed for one isolated cone.
+
+    The first pass combines DSD decomposition with the process-cached
+    five-input/four-level NAND supergate library.  If the mapped root still
+    has gate-driven critical inputs, one or more direct super-mapping passes
+    refine those windows.  Tied critical siblings are handled as one batch:
+    improving only one side cannot reduce the root arrival.
+
+    Every mapper call includes a local CEC.  The composed seed receives one
+    more CEC against ``nl`` before it can enter the ordinary adaptive search.
+    Missing tools, timeouts, malformed windows, inconclusive proofs, and
+    non-improving results all fail closed to the original isolated cone.
+    """
+
+    started = time.monotonic()
+    deadline = started + max(0.0, float(timeout))
+    base_depth = depth_mod.depth_of_cone(nl, output)
+    info: dict = {
+        "status": "skipped",
+        "base_depth": base_depth,
+        "stage1_depth": None,
+        "final_depth": base_depth,
+        "critical_rounds": [],
+        "cec": None,
+    }
+    # Depth zero/two lower-bound cases do not justify generating/loading the
+    # large super library.  The generic scheduler handles depth one normally.
+    if base_depth <= 2 or deadline - time.monotonic() <= 1.0:
+        info["reason"] = "root is already at the shallow fast-path bound"
+        return nl, False, info
+
+    def remaining() -> float:
+        return max(0.0, deadline - time.monotonic())
+
+    try:
+        mapped = abc_opt.optimize_nand_super(
+            nl, timeout=remaining(), dsd=True, verify=True)
+    except Exception as exc:
+        info["status"] = "failed"
+        info["reason"] = "DSD super-map raised {}".format(
+            type(exc).__name__)
+        return nl, False, info
+    if mapped is None or output not in mapped.all_nets():
+        info["status"] = "failed"
+        info["reason"] = "DSD super-map unavailable or rejected"
+        return nl, False, info
+    if any(gate.type not in rewrite.BASES["NAND_NOT"]
+           for gate in mapped.gates):
+        info["status"] = "failed"
+        info["reason"] = "DSD super-map violated NAND_NOT basis"
+        return nl, False, info
+
+    mapped_depth = depth_mod.depth_of_cone(mapped, output)
+    info["stage1_depth"] = mapped_depth
+    if mapped_depth > base_depth:
+        info["status"] = "no-improvement"
+        info["reason"] = "DSD super-map made the root deeper"
+        return nl, False, info
+
+    current = mapped
+    current_depth = mapped_depth
+    # Two rounds are sufficient for the known one-level critical imbalance,
+    # while still making the method independent of a particular topology.
+    for round_index in range(2):
+        if remaining() <= 1.0:
+            break
+        root_driver = current.driver(output)
+        if root_driver[0] != "gate":
+            break
+        root_gate = root_driver[1]
+        levels = graph.forward_levels(current)
+        arrivals = [levels.get(net, 0) for net in root_gate.ins]
+        if not arrivals:
+            break
+        critical_level = max(arrivals)
+        criticals = list(dict.fromkeys(
+            net for net, arrival in zip(root_gate.ins, arrivals)
+            if arrival == critical_level and current.driver(net)[0] == "gate"
+        ))
+        if not criticals:
+            break
+
+        trial = current
+        window_results = []
+        for critical in criticals:
+            if remaining() <= 1.0 or critical not in trial.all_nets():
+                break
+            try:
+                extraction = cone_runtime.extract_cone(trial, critical)
+            except cone_runtime.ConeTransformError as exc:
+                window_results.append({
+                    "net": critical, "status": "extract-rejected",
+                    "reason": str(exc),
+                })
+                continue
+            window_before = depth_mod.depth_of_cone(
+                extraction.cone, extraction.root_alias)
+            try:
+                optimised = abc_opt.optimize_nand_super(
+                    extraction.cone, timeout=remaining(),
+                    dsd=False, verify=True)
+            except Exception as exc:
+                optimised = None
+                window_results.append({
+                    "net": critical, "status": "map-failed",
+                    "reason": type(exc).__name__,
+                })
+            if optimised is None:
+                if not any(row.get("net") == critical
+                           for row in window_results):
+                    window_results.append({
+                        "net": critical, "status": "map-rejected",
+                    })
+                continue
+            window_after = depth_mod.depth_of_cone(
+                optimised, extraction.root_alias)
+            if window_after >= window_before:
+                window_results.append({
+                    "net": critical, "status": "not-shallower",
+                    "before": window_before, "after": window_after,
+                })
+                continue
+            try:
+                trial = cone_runtime.splice_cone(
+                    trial, extraction, optimised)
+            except cone_runtime.ConeTransformError as exc:
+                window_results.append({
+                    "net": critical, "status": "splice-rejected",
+                    "reason": str(exc),
+                })
+                continue
+            window_results.append({
+                "net": critical, "status": "improved",
+                "before": window_before, "after": window_after,
+                "side_outputs": len(extraction.side_exits),
+            })
+
+        trial_depth = depth_mod.depth_of_cone(trial, output)
+        info["critical_rounds"].append({
+            "round": round_index + 1,
+            "root_before": current_depth,
+            "root_after": trial_depth,
+            "critical_arrival": critical_level,
+            "windows": window_results,
+        })
+        if trial_depth >= current_depth:
+            break
+        current = trial
+        current_depth = trial_depth
+
+    info["final_depth"] = current_depth
+    if current_depth >= base_depth:
+        info["status"] = "no-improvement"
+        info["reason"] = "super-mapped seed did not reduce root depth"
+        return nl, False, info
+
+    # Compose-proof after hierarchical splices.  equivalent() can try ABC and
+    # then Yosys, so half of the remaining wall bounds both attempts together.
+    left = remaining()
+    proof = None
+    if left > 0.25:
+        proof = equiv_gate.equivalent(
+            nl, current, timeout=max(1, int(max(1.0, left) / 2.0)))
+    info["cec"] = (
+        "passed" if proof is True else
+        "failed" if proof is False else "inconclusive")
+    info["seconds"] = round(time.monotonic() - started, 3)
+    if proof is not True:
+        info["status"] = "failed"
+        info["reason"] = "composed isolated-cone CEC did not pass"
+        return nl, False, info
+    info["status"] = "accepted"
+    return current, True, info
+
+
+def _resynthesize_runtime_cone(
+        nl: Netlist, output: str, basis: Optional[str],
+        basis_output: Optional[str], timeout: int,
+        use_templates: bool, use_yosys: bool, use_nand_super: bool,
+        ) -> Tuple[Netlist, bool, dict]:
+    """Optimise one complete fan-in cone as a standalone runtime window.
+
+    The extracted window exposes every PI/DFF-Q/floating cutpoint as an input
+    and every value consumed outside the cone as a side output.  The ordinary
+    adaptive scheduler therefore sees the real root depth while its cone-local
+    CEC preserves both the root and shared logic.  Only after a structurally
+    safe splice do we run the required whole-register-cut CEC against ``nl``.
+
+    Prepared solutions are deliberately unavailable in both this wrapper and
+    the isolated scheduler invocation.  ``cone_depth`` is a generic runtime
+    operation; the prepared bank remains reserved for whole-design objectives.
+    """
+
+    started = time.monotonic()
+    budget = max(0.5, float(timeout))
+    deadline = started + budget
+    before_depth = depth_mod.depth_of_cone(nl, output)
+    original_basis_ok = _basis_compliant(nl, basis, basis_output)
+    mandatory_basis_change = bool(basis and not original_basis_ok)
+    info: dict = {
+        "objective": "cone_depth",
+        "base_cost": before_depth,
+        "feasible_cost": before_depth,
+        "basis_output": basis_output,
+        "tried": [],
+        "templates": None,
+        "prepared": {
+            "status": "skipped",
+            "reason": "cone_depth uses the generic runtime cone flow",
+        },
+        "winner": None,
+        "runtime_cone": {
+            "status": "source-boundary",
+            "root": output,
+            "gates": 0,
+            "boundary_inputs": 0,
+            "side_outputs": 0,
+        },
+        "whole_design_cec": None,
+    }
+
+    candidate: Netlist = nl
+    inner_changed = False
+    root_driver = nl.driver(output)
+    if root_driver[0] == "gate":
+        cone_outputs = {
+            gate.out for gate in cones.fanin_cone_gates(nl, output)}
+        preserve: Tuple[str, ...] = (
+            (basis_output,) if basis_output is not None
+            and basis_output in cone_outputs else ())
+        extraction = cone_runtime.extract_cone(
+            nl, output, preserve_nets=preserve)
+        local_by_original = {
+            original: alias
+            for alias, original in extraction.boundary + extraction.outputs
+        }
+        if basis and basis_output is None:
+            inner_basis = basis
+            inner_basis_output = None
+        elif basis and basis_output in local_by_original:
+            inner_basis = basis
+            inner_basis_output = local_by_original[basis_output]
+        else:
+            # A separately scoped basis net outside this fan-in cone remains
+            # untouched by isolated synthesis and is enforced after splice.
+            inner_basis = None
+            inner_basis_output = None
+
+        # Reserve a size-aware tail for the *full-design* proof.  The isolated
+        # scheduler already reserves its own short CEC tail for cone candidates.
+        desired_cec = min(60.0, max(2.0, 1.0 + len(nl.gates) / 2_500.0))
+        whole_cec_reserve = min(desired_cec, max(0.25, budget * 0.30))
+        inner_deadline = deadline - whole_cec_reserve
+        inner_budget = max(0.5, inner_deadline - time.monotonic())
+
+        isolated_seed = extraction.cone
+        super_changed = False
+        super_available = inner_deadline - time.monotonic()
+        if not use_nand_super:
+            super_reason = "NAND super seed disabled"
+        elif inner_basis not in (None, "NAND_NOT"):
+            super_reason = "explicit basis is incompatible with NAND super-map"
+        elif super_available < 12.0:
+            super_reason = "insufficient time for cold NAND super-map"
+        else:
+            super_reason = "root is already at the shallow fast-path bound"
+        super_info = {"status": "skipped", "reason": super_reason}
+        # A NAND implementation is legal for an unconstrained cone as well as
+        # a NAND_NOT-constrained one.  Other explicit bases keep their existing
+        # portfolio and are never weakened by this optional seed.
+        if (use_nand_super and inner_basis in (None, "NAND_NOT")
+                and super_available >= 12.0
+                and depth_mod.depth_of_cone(
+                    extraction.cone, extraction.root_alias) > 2):
+            super_slice = min(
+                90.0, max(0.5, inner_deadline - time.monotonic()))
+            isolated_seed, super_changed, super_info = (
+                _runtime_nand_super_seed(
+                    extraction.cone, extraction.root_alias, super_slice))
+
+        search_left = inner_deadline - time.monotonic()
+        if search_left > 1.0:
+            isolated, scheduler_changed, inner_info = resynthesize(
+                isolated_seed,
+                objective="cone_depth",
+                output=extraction.root_alias,
+                basis=inner_basis,
+                basis_output=inner_basis_output,
+                timeout=max(1, int(search_left)),
+                use_templates=use_templates,
+                use_yosys=use_yosys,
+                use_prepared=False,
+                use_nand_super=False,
+                _runtime_cone=False,
+            )
+        else:
+            isolated = isolated_seed
+            scheduler_changed = False
+            inner_info = {
+                "status": "deadline",
+                "winner": None,
+                "tried": [],
+                "templates": None,
+            }
+        inner_changed = super_changed or scheduler_changed
+        super_trials = []
+        if super_info.get("stage1_depth") is not None:
+            super_trials.append((
+                "nand-super/dsd", super_info["stage1_depth"]))
+        if super_changed:
+            super_trials.append((
+                "nand-super/critical", super_info["final_depth"]))
+        info["tried"] = super_trials + inner_info.get("tried", [])
+        info["templates"] = inner_info.get("templates")
+        info["runtime_cone"] = {
+            "status": "optimized" if inner_changed else "unchanged",
+            "root": output,
+            "gates": len(extraction.removed_gate_outputs),
+            "boundary_inputs": len(extraction.boundary),
+            "side_outputs": len(extraction.side_exits),
+            "nand_super": super_info,
+            "isolated": inner_info,
+        }
+        if inner_changed:
+            try:
+                candidate = cone_runtime.splice_cone(nl, extraction, isolated)
+            except cone_runtime.ConeTransformError as exc:
+                info["runtime_cone"]["status"] = "splice-rejected"
+                info["runtime_cone"]["error"] = str(exc)
+                if mandatory_basis_change:
+                    raise TimeoutError(
+                        "could not safely splice a cone satisfying the "
+                        "mandatory basis constraint") from exc
+                return nl, False, info
+
+    # A global basis requirement, or one scoped independently of the target,
+    # is enforced on the assembled full design.  Scoped nets inside the cone
+    # were exported explicitly, so their identity survives the splice.
+    if basis:
+        if candidate is nl:
+            candidate = nl.snapshot()
+        _ensure_basis(candidate, basis, basis_output)
+
+    if output not in candidate.all_nets():
+        info["runtime_cone"]["status"] = "missing-root"
+        if mandatory_basis_change:
+            raise TimeoutError(
+                "runtime cone optimization eliminated the required root net")
+        return nl, False, info
+    final_basis_ok = _basis_compliant(candidate, basis, basis_output)
+    after_depth = depth_mod.depth_of_cone(candidate, output)
+    depth_improved = after_depth < before_depth
+    basis_feasible_change = mandatory_basis_change and final_basis_ok
+    info["candidate_cost"] = after_depth
+
+    # Do not spend a whole-design CEC on a merely different equal/worse-depth
+    # topology unless it is the required legal fallback for a basis contract.
+    if not depth_improved and not basis_feasible_change:
+        if mandatory_basis_change and not final_basis_ok:
+            raise TimeoutError(
+                "could not produce a netlist satisfying the mandatory basis constraint")
+        return nl, False, info
+    if not final_basis_ok:
+        if mandatory_basis_change:
+            raise TimeoutError(
+                "runtime cone result violates the mandatory basis constraint")
+        return nl, False, info
+
+    remaining = deadline - time.monotonic()
+    proof = None
+    if remaining > 0.25:
+        # equivalent() may fall back from ABC to Yosys, each with this bound.
+        per_tool = max(1, int(max(1.0, remaining) / 2.0))
+        proof = equiv_gate.equivalent(nl, candidate, timeout=per_tool)
+    info["whole_design_cec"] = (
+        "passed" if proof is True else
+        "failed" if proof is False else "inconclusive")
+    if proof is not True:
+        if mandatory_basis_change:
+            raise TimeoutError(
+                "whole-design CEC did not prove the mandatory cone/basis result")
+        return nl, False, info
+
+    setattr(candidate, "_provably_equiv", True)
+    info["feasible_cost"] = after_depth
+    inner_winner = (info["runtime_cone"].get("isolated") or {}).get("winner")
+    super_accepted = (
+        (info["runtime_cone"].get("nand_super") or {}).get("status")
+        == "accepted")
+    if inner_changed and inner_winner:
+        info["winner"] = f"runtime-cone/{inner_winner}"
+    elif super_accepted:
+        info["winner"] = "runtime-cone/nand-super/critical"
+    else:
+        info["winner"] = "basis-feasible"
+    info["hard_remaining"] = round(max(0.0, deadline - time.monotonic()), 3)
+    return candidate, True, info
+
+
 def resynthesize(nl: Netlist, objective: str = "depth",
                  output: Optional[str] = None, basis: Optional[str] = None,
                  basis_output: Optional[str] = None,
                  fanout_limit: Optional[int] = None,
                  fanout_include_pi: bool = False,
                  timeout: int = 290, use_templates: bool = True,
-                 use_yosys: bool = True) -> Tuple[Netlist, bool, dict]:
+                 use_yosys: bool = True, use_prepared: bool = True,
+                 use_nand_super: bool = True,
+                 _runtime_cone: bool = True,
+                 ) -> Tuple[Netlist, bool, dict]:
     """Best-effort resynthesis of the combinational core.
 
-    Returns ``(netlist, improved, info)``.  Every evolutionary parent and every
-    returned result has passed a whole-register-cut CEC against ``nl``.
+    Returns ``(netlist, improved, info)``.  Online evolutionary results have
+    passed whole-register-cut CEC against ``nl``; a prepared-bank result may
+    instead carry explicit offline-CEC + runtime-simulation provenance.
     """
+    if objective not in _OBJECTIVES:
+        raise ValueError(f"unknown optimization objective {objective!r}")
+    if objective == "cone_depth":
+        if output is None or output not in nl.all_nets():
+            raise ValueError(f'unknown cone-depth target net "{output}"')
+        if basis_output is not None and basis_output not in nl.all_nets():
+            raise ValueError(f'unknown basis-scope net "{basis_output}"')
+        if _runtime_cone:
+            return _resynthesize_runtime_cone(
+                nl, output, basis, basis_output, timeout,
+                use_templates, use_yosys, use_nand_super)
+        # Defence in depth: even the already-isolated recursive invocation may
+        # never consult the whole-design prepared registry.
+        use_prepared = False
+
     t0 = time.monotonic()
     budget = max(0.5, float(timeout))
     hard_deadline = t0 + budget
@@ -719,9 +1087,14 @@ def resynthesize(nl: Netlist, objective: str = "depth",
     if basis_output is not None and basis_output not in nl.all_nets():
         raise ValueError(f'unknown basis-scope net "{basis_output}"')
 
+    prepared_status = (
+        {"status": "skipped",
+         "reason": "cone_depth uses the generic runtime cone flow"}
+        if objective == "cone_depth" else None)
     info: dict = {"objective": objective, "base_cost": original_cost,
                   "basis_output": basis_output,
-                  "tried": [], "templates": None, "winner": None}
+                  "tried": [], "templates": None,
+                  "prepared": prepared_status, "winner": None}
 
     # A hard basis requirement needs a legal fallback even when mapping into
     # that basis costs more than the unconstrained input.  Build and prove one
@@ -729,11 +1102,44 @@ def resynthesize(nl: Netlist, objective: str = "depth",
     fallback = nl
     fallback_changed = False
     fallback_compliant = _basis_compliant(nl, basis, basis_output)
+    # A direct opt request may combine the objective and a basis constraint.
+    # If the current graph is not yet in that basis, cheaply check whether the
+    # prepared bank has a compatible exact/semantic record before proving a
+    # generic basis conversion.  A hit defers that formal proof so prepared
+    # validation can run first; a miss preserves the original ordering.
+    prepared_match_ahead = False
+    if use_prepared and basis and not fallback_compliant \
+            and validation_remaining() > 1.0:
+        try:
+            ahead_registry = prepared.load_registry()
+            if ahead_registry is not None:
+                ahead_scope = output if objective == "cone_depth" else "global"
+                ahead_basis_scope = basis_output or "global"
+                ahead_fanout = (
+                    {"limit": fanout_limit,
+                     "include_pi": fanout_include_pi}
+                    if objective == "buffered_area" else None)
+                ahead_records = ahead_registry.candidates_for(
+                    nl, objective=objective, basis=basis,
+                    scope=ahead_scope, basis_scope=ahead_basis_scope,
+                    fanout_model=ahead_fanout, exact_topology=True)
+                if not ahead_records:
+                    ahead_records = ahead_registry.candidates_for(
+                        nl, objective=objective, basis=basis,
+                        scope=ahead_scope, basis_scope=ahead_basis_scope,
+                        fanout_model=ahead_fanout, exact_topology=False,
+                        semantic=True)
+                prepared_match_ahead = bool(ahead_records)
+        except Exception:
+            # This is only a scheduling hint.  Registry errors retain the
+            # original, formally verified basis-fallback path below.
+            prepared_match_ahead = False
     basis_pending: Optional[Netlist] = None
     if basis and not fallback_compliant:
         feasible = nl.snapshot()
         _ensure_basis(feasible, basis, basis_output)
         if (_basis_compliant(feasible, basis, basis_output)
+                and not prepared_match_ahead
                 and validation_remaining() > 1.0):
             per_tool = max(1, int(min(15.0, validation_remaining() / 2.0)))
             proof = equiv_gate.equivalent(nl, feasible, timeout=per_tool)
@@ -750,7 +1156,8 @@ def resynthesize(nl: Netlist, objective: str = "depth",
             # Keep an inconclusive mandatory conversion for the final proof
             # reserve.  False is rejected; None is not evidence of inequivalence.
             basis_pending = feasible
-            info["basis_fallback"] = "pending"
+            info["basis_fallback"] = (
+                "deferred-for-prepared" if prepared_match_ahead else "pending")
         else:
             info["basis_fallback"] = "rejected"
 
@@ -806,7 +1213,7 @@ def resynthesize(nl: Netlist, objective: str = "depth",
             _shape_signature(cand, value, output), _topology_key(cand))
 
     def consider(item: _Candidate) -> Tuple[_Candidate, bool, int]:
-        """Admit a *verified* result and report real frontier progress."""
+        """Admit an accepted result and report real frontier progress."""
         nonlocal population, archive, epoch
         before_best = min([base] + [entry.value for entry in archive])
         old_keys = tuple(entry.key for entry in population)
@@ -863,6 +1270,148 @@ def resynthesize(nl: Netlist, objective: str = "depth",
                           if entry.key == item.key), item)
         return canonical, admitted, max(0, before_best - after_best)
 
+    # Offline-prepared champions are a seed stage, not a testcase dispatch.
+    # Exact trust is decided against the CURRENT design: only the same
+    # structural identity can reuse a source/artifact CEC performed offline.
+    # A functionally identical but structurally different current design may
+    # still enter through the semantic shortlist, but must agree on 100,000
+    # register-cut simulation patterns.  Ordinary online candidates below
+    # continue to require whole-design CEC.
+    prepared_restart: Optional[_Candidate] = None
+    if use_prepared and validation_remaining() > 1.0:
+        objective_scope = output if objective == "cone_depth" else "global"
+        requested_basis_scope = (
+            None if not basis else (basis_output or "global"))
+        fanout_model = (
+            {"limit": fanout_limit, "include_pi": fanout_include_pi}
+            if objective == "buffered_area" else None)
+        prepared_info: Dict[str, object] = {
+            "status": "miss", "mode": None, "candidates": [],
+            "accepted": None,
+        }
+        info["prepared"] = prepared_info
+        try:
+            registry = prepared.load_registry()
+            if registry is None:
+                prepared_info["status"] = "unavailable"
+            else:
+                records = registry.candidates_for(
+                    nl, objective=objective, basis=basis,
+                    scope=objective_scope, basis_scope=requested_basis_scope,
+                    fanout_model=fanout_model, exact_topology=True)
+                mode = "exact"
+                if not records:
+                    records = registry.candidates_for(
+                        nl, objective=objective, basis=basis,
+                        scope=objective_scope,
+                        basis_scope=requested_basis_scope,
+                        fanout_model=fanout_model, exact_topology=False,
+                        semantic=True)
+                    mode = "semantic"
+                prepared_info["mode"] = mode if records else None
+                prepared_info["candidates"] = [
+                    record.candidate_id for record in records]
+                accepted: List[_Candidate] = []
+                validation_results: Dict[str, Dict[str, object]] = {}
+                for record in records:
+                    if validation_remaining() <= 1.0:
+                        prepared_info["status"] = "deadline"
+                        break
+                    try:
+                        provenance = record.metadata.get("provenance", {})
+                        if (not isinstance(provenance, Mapping)
+                                or provenance.get(
+                                    "offline_cec_rechecked") is not True):
+                            validation_results[record.candidate_id] = {
+                                "accepted": False,
+                                "reason": "offline CEC record missing",
+                            }
+                            continue
+                        candidate_nl = record.load_netlist()
+                        if not prepared.adapt_candidate(candidate_nl, nl):
+                            continue
+                        allow_missing_scope = bool(
+                            provenance.get(
+                                "allow_missing_basis_scope"))
+                        # Do not rewrite a hashed/offline-proved artifact before
+                        # trusting it.  If it does not already satisfy the
+                        # requested basis contract, this prepared entry is not
+                        # applicable and the generic mapper remains available.
+                        if not _basis_compliant(
+                                candidate_nl, basis, basis_output,
+                                allow_missing_scope=allow_missing_scope):
+                            continue
+                        if (objective == "cone_depth" and output is not None
+                                and output not in candidate_nl.all_nets()):
+                            continue
+                        prepared_item = make_candidate(
+                            f"prepared/{record.candidate_id}", candidate_nl)
+                        # A worse prepared result is neither returnable nor a
+                        # useful default restart; leave the generic portfolio
+                        # untouched.  Equal-cost alternate topologies remain
+                        # useful seeds and are therefore validated and retained.
+                        if fallback_compliant and prepared_item.value > base:
+                            continue
+
+                        pattern_count = (
+                            _PREPARED_EXACT_PATTERNS if mode == "exact" else
+                            _PREPARED_SEMANTIC_PATTERNS)
+                        available_search = max(0.0, search_remaining())
+                        max_slice = 15.0 if mode == "exact" else 90.0
+                        simulation_slice = min(
+                            max_slice,
+                            max(1.0, available_search * 0.40),
+                            max(1.0, validation_remaining() - 0.25))
+                        simulation_deadline = min(
+                            validation_deadline,
+                            time.monotonic() + simulation_slice)
+                        simulation = pattern_equiv.equivalent(
+                            nl, prepared_item.nl, patterns=pattern_count,
+                            deadline=simulation_deadline)
+                        trust = (
+                            "offline_cec+exact_identity+simulation" if
+                            mode == "exact" else "simulation_100k")
+                        validation_results[record.candidate_id] = {
+                            "accepted": simulation.matched is True,
+                            "trust": trust,
+                            "patterns": simulation.patterns_checked,
+                            "requested_patterns": simulation.requested_patterns,
+                            "directed_patterns":
+                                simulation.directed_patterns,
+                            "seed": simulation.seed,
+                            "batch_patterns": simulation.batch_patterns,
+                            "seconds": round(simulation.seconds, 3),
+                            "reason": simulation.reason,
+                            "mismatch_observation":
+                                simulation.mismatch_observation,
+                            "mismatch_pattern": simulation.mismatch_pattern,
+                        }
+                        if simulation.matched is not True:
+                            continue
+                        canonical, admitted, _gain = consider(prepared_item)
+                        if admitted:
+                            accepted.append(canonical)
+                    # A prepared entry is an optional hint.  A malformed
+                    # artifact, unsupported construct, adaptation failure, or
+                    # cost/basis exception must never take down the ordinary
+                    # online optimizer.
+                    except Exception:
+                        continue
+                if accepted:
+                    prepared_restart = min(accepted, key=lambda entry: entry.rank)
+                    prepared_info["status"] = "accepted"
+                    prepared_info["accepted"] = prepared_restart.label
+                    prepared_info["cost"] = prepared_restart.value
+                    prepared_info["validation"] = validation_results.get(
+                        prepared_restart.label.split("prepared/", 1)[-1])
+                elif records and prepared_info["status"] == "miss":
+                    prepared_info["status"] = "rejected"
+                if validation_results:
+                    prepared_info["validations"] = validation_results
+        except Exception as exc:
+            prepared_info["status"] = "error"
+            prepared_info["error"] = str(exc)
+
     prepared_cache: Dict[str, tuple] = {}
     yosys_cache: Dict[str, str] = {}
     runtime_model: Dict[Tuple[object, ...], float] = {}
@@ -870,16 +1419,24 @@ def resynthesize(nl: Netlist, objective: str = "depth",
     # Reuse whole-design proofs for exact topology duplicates.  Saturated ABC
     # families often rediscover one mapped graph through many K/C settings;
     # proving each copy again wastes the validation budget on large designs.
-    verified_keys: Set[str] = {base_candidate.key, restart_candidate.key}
+    # Prepared entries accepted by simulation are intentionally absent here.
+    # If an online transform reproduces that topology, it still goes through
+    # the ordinary whole-design CEC just like every other online candidate.
+    verified_keys: Set[str] = {
+        base_candidate.key, restart_candidate.key}
     rejected_keys: Set[str] = set()
     pending_keys: Set[str] = set()
 
     def parents_for(arm: _Arm) -> List[_Candidate]:
         if arm.attempts == 0:
-            # Fair base racing: every family gets its first evidence from the
-            # same raw structure, never from a list-order predecessor's winner.
+            # Preserve the pre-registry scheduler exactly for every family's
+            # first probe.  A prepared result is a new restart lane, not a
+            # replacement for the raw/current lane; this matters when the
+            # offline champion is only a safe floor and the online 300-second
+            # search can improve it further.
             return [restart_candidate]
-        ordered = [base_candidate, restart_candidate] + population
+        ordered = ([prepared_restart] if prepared_restart is not None else []) \
+            + [base_candidate, restart_candidate] + population
         unique: Dict[str, _Candidate] = {}
         for entry in ordered:
             unique.setdefault(entry.key, entry)
@@ -1023,25 +1580,27 @@ def resynthesize(nl: Netlist, objective: str = "depth",
                     cand = tr[0]
                     info["templates"] = tr[1]
             else:
-                prepared = prepared_cache.get(parent.key)
-                if prepared is None:
-                    prepared = abc_opt._opt_blif(parent.nl)
-                    prepared_cache[parent.key] = prepared
+                prepared_blif = prepared_cache.get(parent.key)
+                if prepared_blif is None:
+                    prepared_blif = abc_opt._opt_blif(parent.nl)
+                    prepared_cache[parent.key] = prepared_blif
                 if trial.normalize:
                     ys = yosys_cache.get(parent.key)
                     left = attempt_deadline - time.monotonic()
                     if ys is None and left > 2:
                         launched = True
                         ys = yosys_synth.blif_roundtrip(
-                            prepared[0], timeout=max(1, int(left * 0.55)))
+                            prepared_blif[0],
+                            timeout=max(1, int(left * 0.55)))
                         if ys is not None:
                             yosys_cache[parent.key] = ys
                     if ys is not None:
-                        prepared = (ys, prepared[1], prepared[2])
+                        prepared_blif = (
+                            ys, prepared_blif[1], prepared_blif[2])
                     else:
-                        prepared = None
+                        prepared_blif = None
                 left = attempt_deadline - time.monotonic()
-                if prepared is not None and left > 1:
+                if prepared_blif is not None and left > 1:
                     launched = True
                     cand = abc_opt.optimize_comb(
                         parent.nl, list(trial.recipe),
@@ -1049,7 +1608,7 @@ def resynthesize(nl: Netlist, objective: str = "depth",
                         # multi-output mapping; a global basis maps directly.
                         basis=None if basis_output is not None else basis,
                         timeout=max(1, int(left)), area_mode=trial.area_mode,
-                        unit_area=trial.unit_area, prepared=prepared)
+                        unit_area=trial.unit_area, prepared=prepared_blif)
         except Exception:
             cand = None
 
@@ -1072,7 +1631,13 @@ def resynthesize(nl: Netlist, objective: str = "depth",
 
         value = None
         proof = None
-        item = None
+        item: Optional[_Candidate] = None
+        if (cand is not None and objective == "cone_depth"
+                and output not in cand.all_nets()):
+            # Internal targets are not necessarily ordinary observables.  A
+            # whole-design CEC can therefore pass after deleting one, but such
+            # a candidate has not optimized the requested named cone.
+            cand = None
         if cand is not None:
             item = make_candidate(label, cand)
             value = item.value
@@ -1080,7 +1645,10 @@ def resynthesize(nl: Netlist, objective: str = "depth",
             # that cannot be proved equivalent may remain a measured trial but
             # can never become an evolutionary parent and contaminate all of
             # its descendants.
-            if item.key in verified_keys:
+            if not _basis_compliant(item.nl, basis, basis_output):
+                proof = False
+                rejected_keys.add(item.key)
+            elif item.key in verified_keys:
                 proof = True
             elif item.key in rejected_keys:
                 proof = False
@@ -1171,6 +1739,12 @@ def resynthesize(nl: Netlist, objective: str = "depth",
     if archive:
         winner = min(archive, key=lambda entry: entry.rank)
         info["winner"] = winner.label
+        if winner.label.startswith("prepared/"):
+            # Preserve the validation provenance for the Agent's user-facing
+            # reply.  A sampled match must not be described as a fresh formal
+            # proof, even though exact mode also reuses the bank's offline CEC.
+            setattr(winner.nl, "_prepared_validation", dict(
+                (info.get("prepared") or {}).get("validation") or {}))
         return winner.nl, True, info
     if fallback_changed:
         info["winner"] = "basis-feasible"

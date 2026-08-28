@@ -39,7 +39,7 @@ def _abc_rc(abc_bin: str) -> Optional[str]:
     return rc if os.path.exists(rc) else None
 
 
-def run_abc(commands: List[str], timeout: int = 280) -> Tuple[bool, str]:
+def run_abc(commands: List[str], timeout: float = 280.0) -> Tuple[bool, str]:
     abc = find_abc()
     if abc is None:
         return False, "ABC not found"
@@ -59,7 +59,8 @@ def run_abc(commands: List[str], timeout: int = 280) -> Tuple[bool, str]:
         return False, f"ABC error: {exc}"
 
 
-def cec_blif(blif_a: str, blif_b: str, timeout: int = 280) -> Optional[bool]:
+def cec_blif(blif_a: str, blif_b: str,
+             timeout: float = 280.0) -> Optional[bool]:
     """Return True/False for equivalence, or None if the check could not run."""
     d = tempfile.mkdtemp(prefix="cada_cec_")
     pa = os.path.join(d, "a.blif")
