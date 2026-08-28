@@ -141,12 +141,10 @@ def main(argv=None) -> int:
     _configure_tools(config, args.tools)
     agent = Agent(config, use_rules=not args.no_rules, use_bm25=args.bm25)
 
-    # Announce the routing mode.  A rules-off run answers every line from the
-    # LLM, so it has a different accuracy, a different cost, and a different
-    # failure mode from a rules-on run -- and once a build can bake the default
-    # in, the two are indistinguishable from the command line.  Refuse the one
-    # combination that cannot work at all: with no reachable LLM, rules-off has
-    # nothing left to route with and would answer every line with the same ack.
+    # Refuse the one combination that cannot work at all: with no reachable
+    # LLM, rules-off has nothing left to route with and would answer every line
+    # with the same ack.  Successful startup stays silent so stdout/stderr do
+    # not add anything outside the contest #RESPONSE/#END protocol frames.
     if args.no_rules:
         if not agent.llm.available:
             sys.stderr.write(
@@ -154,9 +152,6 @@ def main(argv=None) -> int:
                 f"(provider '{config.provider}'; check the api_key and that the "
                 "provider SDK is installed in this build)\n")
             return 2
-    route_mode = "regex-first" if not args.no_rules else "pure-LLM (no-rules)"
-    bm25_mode = "enabled" if args.bm25 else "disabled (static catalog only)"
-    sys.stderr.write(f"cada: routing={route_mode}; BM25={bm25_mode}\n")
 
     def on_case_name(name: str):
         agent.state.case_name = name

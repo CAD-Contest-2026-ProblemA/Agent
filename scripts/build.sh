@@ -18,9 +18,9 @@
 # faster one -- it answers at the model's routing accuracy and spends one to
 # three API calls per request line. Missing SDK/key fails at startup;
 # request-time provider errors are reported and may degrade a line to a no-op.
-# The binary still accepts --rules to put the table back for one run, prints a
-# line to stderr saying which mode it is in, and refuses to start rules-off with
-# no reachable LLM.
+# The binary still accepts --rules to put the table back for one run and
+# refuses to start rules-off with no reachable LLM.  Successful runtime startup
+# is silent so only protocol frames are emitted during evaluation.
 #
 # BM25 example retrieval is ON by default.  WITH_BM25=0 bakes in an off marker,
 # so LLM requests contain only the static intent catalog.  The small public
@@ -166,8 +166,10 @@ if [ ! -f "$repo/cada/llm/public_examples.jsonl" ]; then
   exit 1
 fi
 
-echo ">> running PyInstaller (name: $NAME) ..."
-"$bvenv/bin/pyinstaller" --onefile --clean --noconfirm \
+echo ">> generating PyInstaller spec (name: $NAME) ..."
+spec="$bvroot/$NAME.spec"
+"$bvenv/bin/pyi-makespec" --onefile \
+  --specpath "$bvroot" \
   --name "$NAME" \
   --paths "$repo" \
   --collect-submodules cada \
@@ -176,6 +178,34 @@ echo ">> running PyInstaller (name: $NAME) ..."
   "${retrieval_args[@]}" \
   "${extra[@]}" \
   "$repo/scripts/_pyi_entry.py"
+
+# pydantic-core/jiter need libgcc, but PyInstaller otherwise copies the build
+# host's libgcc_s.so.1 into the one-file bundle.  A binary built on Ubuntu 22.04
+# then extracts a library requiring GLIBC_2.35 and cannot import the OpenAI SDK
+# on the contest host's older glibc.  Leave just this system library out so the
+# target uses its own compatible libgcc; keep every other collected binary.
+sed -i '/^pyz = PYZ(a.pure)$/i\
+a.binaries = [entry for entry in a.binaries if entry[0] != "libgcc_s.so.1"]\
+' "$spec"
+if ! grep -Fq 'entry[0] != "libgcc_s.so.1"' "$spec"; then
+  echo ">> ERROR: failed to add the libgcc exclusion to the generated spec" >&2
+  exit 1
+fi
+
+echo ">> running PyInstaller ..."
+"$bvenv/bin/pyinstaller" --clean --noconfirm \
+  --distpath "$repo/dist" \
+  --workpath "$repo/build" \
+  "$spec"
+
+# Fail the build instead of silently producing another host-glibc-bound binary
+# if a future PyInstaller spec format makes the filter ineffective.
+archive_listing="$("$bvenv/bin/pyi-archive_viewer" -l "$repo/dist/$NAME")"
+if [[ "$archive_listing" == *"libgcc_s.so.1"* ]]; then
+  echo ">> ERROR: bundled libgcc_s.so.1 is still present" >&2
+  exit 1
+fi
+echo ">> verified: bundled libgcc_s.so.1 is absent"
 
 echo ""
 echo "Built: $repo/dist/$NAME"
