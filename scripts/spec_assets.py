@@ -28,6 +28,7 @@ BANK = "public_examples.jsonl"
 VECS = "example_vecs.npy"
 MODEL_DIR = "embed_model"
 DENSE_IMPORTS = ["numpy", "onnxruntime", "tokenizers"]
+PREPARED_PKG = os.path.join("cada", "optimize", "prepared_assets")
 
 
 def _note(msg: str) -> None:
@@ -51,16 +52,30 @@ def retrieval_assets(root: str, dense: bool = False
     hidden: List[str] = []
 
     bank = os.path.join(root, PKG, BANK)
-    if os.path.isfile(bank):
+    bank_present = os.path.isfile(bank)
+    if bank_present:
         datas.append((bank, PKG))
     else:
         _note(f"WARNING: {bank} missing — the binary will have NO example "
               f"retrieval. Run scripts/export_public_examples.py first.")
 
+    prepared_dir = os.path.join(root, PREPARED_PKG)
+    prepared_manifest = os.path.join(prepared_dir, "manifest.json")
+    if os.path.isfile(prepared_manifest):
+        datas.append((prepared_dir, PREPARED_PKG))
+        _note(f"prepared solution bank bundled ({_tree_size_mb(prepared_dir):.1f} MB)")
+    else:
+        _note(f"WARNING: {prepared_manifest} missing — offline prepared "
+              "solutions will be unavailable")
+
     model = os.path.join(root, PKG, MODEL_DIR)
     vecs = os.path.join(root, PKG, VECS)
     if not dense:
-        _note("example bank bundled; dense encoder skipped (BM25 is the default)")
+        if bank_present:
+            _note("example bank bundled; dense encoder skipped "
+                  "(BM25 is the default)")
+        else:
+            _note("dense encoder skipped (BM25 bank is missing)")
     elif os.path.isdir(model) and os.path.isfile(vecs):
         datas.append((model, os.path.join(PKG, MODEL_DIR)))
         datas.append((vecs, PKG))
@@ -86,6 +101,14 @@ def _size_mb(model_dir: str, vecs: str) -> float:
     for dirpath, _, names in os.walk(model_dir):
         for n in names:
             total += os.path.getsize(os.path.join(dirpath, n))
+    return total / 1e6
+
+
+def _tree_size_mb(directory: str) -> float:
+    total = 0
+    for dirpath, _, names in os.walk(directory):
+        for name in names:
+            total += os.path.getsize(os.path.join(dirpath, name))
     return total / 1e6
 
 

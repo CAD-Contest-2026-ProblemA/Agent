@@ -6,6 +6,7 @@
 #   NO_RULES=0 scripts/build.sh cada1125_alpha   # regex first, LLM fallback
 #   WITH_BM25=0 scripts/build.sh cada1125_alpha  # no retrieved examples
 #   NO_RULES=0 WITH_LLM=0 scripts/build.sh cada1125_alpha  # regex-only, smaller
+#   FULL_OPT_VERIFY=1 scripts/build.sh cada1125_alpha  # run ABC performance regression
 #
 # By default the openai/anthropic clients ARE bundled and the regex table is
 # skipped, so every request is routed by the LLM.  Set NO_RULES=0 to build the
@@ -43,9 +44,15 @@ NAME="${1:-cada0001_alpha}"
 WITH_LLM="${WITH_LLM:-1}"
 NO_RULES="${NO_RULES:-1}"
 WITH_BM25="${WITH_BM25:-1}"
+FULL_OPT_VERIFY="${FULL_OPT_VERIFY:-0}"
 
 if [ "$WITH_BM25" != 0 ] && [ "$WITH_BM25" != 1 ]; then
   echo ">> ERROR: WITH_BM25 must be 0 or 1 (got: $WITH_BM25)" >&2
+  exit 1
+fi
+
+if [ "$FULL_OPT_VERIFY" != 0 ] && [ "$FULL_OPT_VERIFY" != 1 ]; then
+  echo ">> ERROR: FULL_OPT_VERIFY must be 0 or 1 (got: $FULL_OPT_VERIFY)" >&2
   exit 1
 fi
 
@@ -74,6 +81,18 @@ else
   "$bvenv/bin/pip" install -q --upgrade pip
   "$bvenv/bin/pip" install -q pyinstaller pyyaml
   [ "$WITH_LLM" = 1 ] && "$bvenv/bin/pip" install -q openai anthropic
+fi
+
+echo ">> verifying prepared solution assets ..."
+PYTHONPATH="$repo" "$bvenv/bin/python" \
+  "$repo/scripts/verify_prepared_registry.py"
+
+if [ "$FULL_OPT_VERIFY" = 1 ]; then
+  echo ">> verifying generic runtime NAND-super cone flow ..."
+  PYTHONPATH="$repo" "$bvenv/bin/python" \
+    "$repo/scripts/verify_nand_super_runtime.py"
+else
+  echo ">> skipping ABC performance regression (set FULL_OPT_VERIFY=1 to run)"
 fi
 
 extra=()
@@ -141,7 +160,7 @@ mapfile -t retrieval_args < <(
   "$bvenv/bin/python" "$repo/scripts/spec_assets.py" "$repo" \
     --pyinstaller-args "${dense_flag[@]}" | tr ' ' '\n' | grep -v '^$'
 )
-if [ "${#retrieval_args[@]}" -eq 0 ]; then
+if [ ! -f "$repo/cada/llm/public_examples.jsonl" ]; then
   echo ">> ERROR: no retrieval assets resolved — the binary would ship without" >&2
   echo "          the example bank. Run scripts/export_public_examples.py first." >&2
   exit 1

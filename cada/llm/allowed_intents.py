@@ -191,15 +191,35 @@ OPERATION SYNONYMS:
   in scope → omit only_types.
 
 ▸ minimize_depth vs optimize_cone
-  "optimize_cone {output}" only when the CONE ITSELF is the thing being optimized
-  ("optimize/re-synthesize the cone of n9").
-  If the cost function is the DESIGN-level maximum logic depth and a cone is mentioned
-  only as a side constraint ("...while ensuring the cone of n11[0] continues to use only
-  NAND and NOT gates"), use minimize_depth with that basis: {"basis":"NAND_NOT"}.
-  KEY RULE: "minimize (maximum) path depth, ensuring the cone of X continues to
-  use only <basis>" — the TARGET is the whole design, the cone is only the
-    constraint → minimize_depth {"basis":<basis>,"scope":X}, NOT optimize_cone.  Choosing
-  optimize_cone here silently skips the requested design-level optimization.
+  KEY RULE: decide on the QUANTITY THE COST FUNCTION NAMES, nothing else.  Both
+  phrasings mention a cone and a basis, so the cone and the basis carry no signal;
+  the cost function is the only part of the sentence that says what is being scored.
+
+    "The cost function is the depth of the cone of X"
+        → optimize_cone {"output":X, ...}          the cone is the TARGET
+    "The cost function is the maximum logic depth of the final design"
+        → minimize_depth {...}                     the cone is only a CONSTRAINT
+
+  Worked example A — cost names the cone → optimize_cone:
+    "Optimize the depth of the cone of n12[0] while ensuring the cone of n12[0]
+     maintains only NAND and NOT gates. ... The cost function is the depth of the
+     cone of n12[0]; smaller is better."
+    → {"intent":"optimize_cone",
+       "params":{"output":"n12[0]","basis":"NAND_NOT","scope":"n12[0]"}}
+
+  Worked example B — cost names the whole design → minimize_depth:
+    "Perform depth optimization on the combinational logic while ensuring the cone
+     of n11[0] continues to use only NAND and NOT gates. ... The cost function is
+     the maximum logic depth of the final design; smaller is better."
+    → {"intent":"minimize_depth","params":{"basis":"NAND_NOT","scope":"n11[0]"}}
+
+  The rule does not depend on the basis: NOR_NOT, AND_OR_NOT and AND_NOT read
+  exactly the same way, and a sentence with NO basis clause at all still picks by
+  the cost function.  Keep "scope" whenever a cone is named as the basis's scope,
+  in both intents.
+  Picking minimize_depth when the cost names a cone optimizes the wrong quantity —
+  the design's global depth instead of the scored cone — and picking optimize_cone
+  when the cost names the design silently skips the requested design-level work.
 
 ▸ cone CONVERSION vs cone OPTIMIZATION
   KEY RULE: "replace/convert/restructure/rebuild the (logic) cone of X using only

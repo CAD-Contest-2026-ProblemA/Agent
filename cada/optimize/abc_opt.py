@@ -341,6 +341,24 @@ def _finalize(nl, cand, basis, timeout):
     return cand
 
 
+def optimize_nand_super(nl: Netlist, timeout: float = 120.0,
+                        dsd: bool = False,
+                        verify: bool = True) -> Optional[Netlist]:
+    """Map any register-cut netlist with the generic NAND/NOT super library.
+
+    The expensive ``super -I 5 -L 4 -T 20`` enumeration is generated lazily
+    once per process and shared by later calls.  ``dsd=True`` enables the
+    generic DSD pre-transform; no testcase-specific data or prepared solution
+    is consulted.  See :mod:`cada.optimize.nand_super` for fail-closed details.
+
+    This is a separate opt-in arm, so the established :func:`optimize_comb`
+    recipes and mapping behaviour are unchanged.
+    """
+    from . import nand_super
+    return nand_super.map_netlist(
+        nl, timeout=timeout, dsd=dsd, verify=verify)
+
+
 def minimize_depth(nl: Netlist, basis: Optional[str] = None,
                    timeout: int = 290,
                    basis_output: Optional[str] = None) -> Tuple[Netlist, bool]:
@@ -387,8 +405,12 @@ def optimize_cone_depth(nl: Netlist, output: str, basis: Optional[str] = None,
                         timeout: int = 290,
                         basis_output: Optional[str] = None,
                         ) -> Tuple[Netlist, bool]:
-    """Depth-optimise the comb block and keep it only if the cone of ``output``
-    got shallower (and the design stays equivalent / in basis)."""
+    """Run the generic runtime cone flow for ``output``.
+
+    The scheduler extracts the complete register-cut cone, preserves shared
+    side exits, optimises that small window without prepared-registry lookup,
+    safely splices it back, and accepts it only after whole-design CEC.
+    """
     from . import resynth
     res, improved, _info = resynth.resynthesize(
         nl, objective="cone_depth", output=output, basis=basis,
